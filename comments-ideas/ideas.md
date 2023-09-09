@@ -65,12 +65,16 @@ The idea of ui is devided into two parts - Root selection and Association select
           - the classes are simple
           - the properties should be in a form of list + search bar
           - the user would select property and the target class
-       - **graph exapander**
+       - **graph expander**
          - a view with only single class would show up with two edges (parents and children) to the class ending with a plus sign
          - the user would click the pluses and the graph would expand
          - there would be and option for expanding all or just the selected classes
          - properties would be in a form of detail
            - there could be a third edge that would expand single properties to the selected target classes
+         - examples:
+           - there is a graph builder, but it is way too general, it can follow everything
+           - [graph builder children](https://angryloki.github.io/wikidata-graph-builder/?item=Q133067&property=P279&mode=reverse&graph_direction=down)
+           - [graph builder parents](https://angryloki.github.io/wikidata-graph-builder/?item=Q133067&property=P279&graph_direction=down)
 
 Questions to answer:
   1. Should the detail of the classes show the properties? 
