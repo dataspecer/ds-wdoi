@@ -13,12 +13,17 @@ WHERE {
 
 ## Questions
 
-- On the main page, vocabulary sources defines what happends when i click on create data structure? How to integrate it with the wikidata special interface?
+1. On the main page, vocabulary sources defines what happends when i click on create data structure? How to integrate it with the wikidata special interface?
 
-- What defines that something is an attribure or association?
+2. What defines that something is an attribure or association?
 
-- What defines the final type of value of an attribute?
+3. What defines the final type of value of an attribute?
 
-- Dataspecer model? What If I would not like the side bar of the parent classes? 
-  - Co vsechno potrebuju dodat do dataspeceru?
-  - A co muzu upravit na urovni dataspeceru?
+4. Dataspecer model? What If I would not like the side bar of the parent classes? 
+     - Co vsechno potrebuju dodat do dataspeceru?
+     - A co muzu upravit na urovni dataspeceru?
+
+5. How should I approach inheritance of properties?
+   - Should I display properties of parents as well or just the ones specifically for the selected class?
+
+6. Codelists..

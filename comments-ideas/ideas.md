@@ -82,6 +82,50 @@ Questions to answer:
   3. If the browser is a good idea - 
      1. should it encompass the properties?
 
+### Association selection
+
+This comes after the root is selected and user clicks + in the dataspecer
+The view should be similar to what we have in dataspecer now.
+
+- There will be a list of properties shown to the use with basic description
+- Filtering options
+  1. text based filtering on names
+    - can be extended with text based filtering in description
+  2. filter by selecting target classes of properties
+    - the view could then group the properties by target classes
+  3. filter by selecting subject classes of properties
+    - the view could then group the properties by subject classes   
+  4. **by parent**
+     - this depends on whether we are showing all properties to the user (even inherited) or just the ones pertaining to the selected class:
+        1. show everything
+           - might be too much for the user but he can search it faster
+           - okey so if i got everything i would need to know from which parent class came something
+           - i could show either graph or text selection - user would either click to select specific class or select multiple ones, or if we grouped it, we could just follow links directly in the list?
+           - there are multiple points to imagine it generically:
+             1. starting point is - everything is selected so the user sees everything from parents
+             2. what can he do?
+                1. use a graph to select classes he wants to see properties from (graph could be searchable with text)
+                2. if he wanted to navigate, he could use grouping view (based on parent class) and then the group headers could be links to other parents in the shown list -> so it is not a selection but just scroll to a different position in the list
+                3. it could be the same as in dataspecer sidebar, only it could be serialized and show depth + maybe some search options or just navigate as in the previous example (3.) user could maybe select the ones he wants to see
+        2. show only the ones pertainign to the class (by constraints on edges) (this is in current dataspecer?)
+           - I dont like this very much, because there can be a lot of classes, so how should a user be able to search all of them?
+           - what can user do?  
+             1. we could use the same graph and he would select what classes he wants to see properties from
+             2. or the expansion can be done by clicking headers in the list as in the above (1.2.3)
+             3. above (1.2.4)
+      - viable options seems to be a graph with selection or a grouping by parents with expansion or a side panel with navigation and selection
+- view options
+  - by parent grouping
+  - by subject grouping
+  - by object grouping 
+- there could be a 
+
+Questions to answer:
+  1. Should the properties for the given class show only its pertaining properties (given by constraint) or all from parents (inherited)
+  2. What seems as the best option for parent classes management?
+     1. a graph
+     2. a view in which we group properties by parents, the header will be a navigation to the parents in the given list (scroll to that posision or expand the list)
+     3. the side panel would handle the navigation and selection
 
 ## Recommendation of properties
 
@@ -91,11 +135,7 @@ Assuming we are on a current type:
     - I need to obtain all properties, that have subject constraint equal to the current type.
     - What if there are none?
       - I could follow the hierarchy tree to the root and ask for additional properties. Basically repeat the query for my parent classes. This can be precomputed. 
-      - Should this happen always, that is to say, include all properties from parent classes to the shown property list or show only properties for the current class and user should decide depth to which expand parent classes?**
-      - How would that look for a user?
-        1. A user could click to expand parent classes for properties. Just by setting depth.
-        2. A graph of the parent classes and select a few? But in some cases or even most cases it could be very exhaustive since we saw the [graph builder](https://angryloki.github.io/wikidata-graph-builder/).
-        3. If it was done always, the recommendations should be somehow sorted based on the clustering. The closest parents could have more priority or other way around. 
+      - Should this happen always, that is to say, include all properties from parent classes to the shown property list or show only properties for the current class and user should decide depth to which expand parent classes or maybe just by clicking the classes he wants?**
     - Note that I want to exclude the annoying ID properties or properties regarding the wikidata types.
 - **If I obtain some properties to show.** - I must consider the intersection of the valid properties by constraint and recommended properties.
   1. I must take into an account the properties for this type values, before recommending something else. **(This must be done always.)**
