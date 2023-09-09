@@ -116,6 +116,7 @@ This comes after the root is selected and clicks + button in the dataspecer.
   - by parent grouping
   - by subject grouping
   - by object grouping 
+- Threre could be a recommneder option/window in which the there would be a list of recommended properties based on the properties the user has already selected
 
 Questions to answer:
   1. Should the properties for the given class show only its pertaining properties (given by constraint) or all from parents (inherited).
@@ -146,3 +147,24 @@ Assuming we are on a current type:
   - I should be able to sort them with reference to each other, parent should have more pririty because it is more general. 
   - I could count coocured properties and give them more priority.
   - I could maintain the probabilities if i used schema tree, and show only the heighest ones. This makes sense, because good properties on parents want to be seen.
+
+
+## API to backend
+
+So far only in abstraction:
+
+- Searching for a root.
+  - search by a class name
+  - search by a instance (external api)
+  - search by a property
+- Hierarchy and browsing (either in the root search or parent search in association search).
+  - give me parents (multiple input classes)
+  - give me children (multiple input classes)
+  - give me entire parent hierarchy?
+  - give me entire children hierarchy?
+- Details
+  - give me details for a class (multiple input classes) with/out properties
+    - either all properties from hierarchy
+    - or just pertaining to the given class
+- Recommendations
+  - give me recommendations based on already made user association selection
