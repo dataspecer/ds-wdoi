@@ -1,5 +1,6 @@
 # Ideas
 
+This file contains ideas and thoughts written in an informal language.
 
 ## UI
 
