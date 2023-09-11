@@ -4,7 +4,8 @@ This file contains ideas and thoughts written in an informal language.
 
 ## UI
 
-This is a written form of ideas of ui, I am working on an graphical images as well.
+This is a written form of ideas of UI.
+The graphical part can be found [here](https://www.figma.com/file/6iULJh0Hvm4cSu39WisXLq/ds-wdoi?type=design&node-id=0%3A1&mode=design&t=bKwHrGHQHqVoyfMV-1).
 The idea of ui is devided into two parts - Root selection and Association selection.
 
 ### Root selection
@@ -26,6 +27,7 @@ The idea of ui is devided into two parts - Root selection and Association select
            - **possible properties?** - But is it not a bit too much, it would be the same after root is selected?
          - *comments*:
            - The classes will be in our backend.  
+           - The parent classes and child classes will make it possible to browse even without a browser.
        - **Search by instance**
          1. A text based search on the known instances in wikidata.
          2. A user searches for an instance, e.g. Paris.
@@ -61,6 +63,7 @@ The idea of ui is devided into two parts - Root selection and Association select
        2. 1 + properties? If they are actually listed in the detail - but it has multiple target object for a single property, is it even managable?
      - Ideas of views:
        -  **Browser as in slovnik.gov**
+          -  After designing and interface in Figma, I noticed that it somehow assumes it since i can always click on detail in the class.
           - It would be either a separate page or integrated with wikidata.
           - The view would show the same thigs as in slovnik.gov with a bit of detail from wikidata pages.
           - The classes are simple.
@@ -133,6 +136,7 @@ Assuming we are on a current type:
 - **What to even recommend from?**
     - I need to obtain all properties, that have subject constraint equal to the current type.
     - What if there are none?
+      - Some properties do not have assignet subject contrait and, basically, can be used on any class.
       - I could follow the hierarchy tree to the root and ask for additional properties. Basically repeat the query for my parent classes. This can be precomputed. 
       - Should this happen always, that is to say, include all properties from parent classes to the shown property list or show only properties for the current class and user should decide depth to which expand parent classes or maybe just by clicking the classes he wants?**
     - Note that I want to exclude the annoying ID properties or properties regarding the wikidata types.
@@ -169,3 +173,14 @@ So far only in abstraction:
     - or just pertaining to the given class
 - Recommendations
   - give me recommendations based on already made user association selection
+
+
+## Model
+
+Questions to answer:
+
+- A wikidata states that the constraints are just recommendations.
+  - How to approach it during extraction and ontology building?
+- How to view qualifier properties?
+- What if no object subject is defined?
+  - It should use the same thing as in root selection.
