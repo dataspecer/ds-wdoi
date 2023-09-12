@@ -197,3 +197,4 @@ Questions to answer:
 - How to view qualifier properties?
 - What if no object subject is defined?
   - It should use the same thing as in root selection.
+
