@@ -163,6 +163,13 @@ Assuming we are on a current type:
   - I could maintain the probabilities if i used schema tree, and show only the heighest ones. This makes sense, because good properties on parents want to be seen.
 
 
+## Properties 
+
+- Some properties have "instance of" and "subclass of" properties associated with groups:
+  - Such as "Properties related to food"
+  - but It is difficult to extract such information unless I build some specific tree.
+- Constraits are sometimes too much.
+
 ## API to backend
 
 So far only in abstraction:

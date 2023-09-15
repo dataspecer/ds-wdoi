@@ -14,6 +14,8 @@ WHERE {
 ## Questions for Stepan
 
 1. On the main page, vocabulary sources defines what happends when i click on create data structure? How to integrate it with the wikidata special interface?
+   1. nejak to hardcode pokud to jsou wikidata tak se zobrazi to
+   2. muj deal je jen ten dialog
 
 2. What defines that something is an attribure or association?
 
