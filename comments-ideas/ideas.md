@@ -28,6 +28,7 @@ The idea of ui is devided into two parts - Root selection and Association select
            - ? image
            - ? **child and parent classes?** - Could the user browse it?
            - ? **possible properties?** - But is it not a bit too much, it would be the same after root is selected?
+             - The group said it is a good idea.
          - *comments*:
            - The classes will be in our backend.  
            - The parent classes and child classes will make it possible to browse even without a browser.
@@ -44,6 +45,7 @@ The idea of ui is devided into two parts - Root selection and Association select
            - name, label, image, description
            - "instance of" and subclass of" classes with the same detail as in search by class.
          - *comments*:
+           - Maybe it is a bit too much? Why should the user know what class the instance is.
            - This is based on the Stepan's idea.
            - The problem is that managing all instances locally is impossible, so the wikidata php api should be used instead.  
            - [php query api in wikidata](https://www.wikidata.org/w/api.php?action=help&modules=query%2Bsearch)  
@@ -62,7 +64,8 @@ The idea of ui is devided into two parts - Root selection and Association select
            - Classes of subject and object in the same detail as in search by class.
          - *comments*:
            - The properties will be in our backend. 
-  4. **Browsing after detail of the class**
+  4. **What if the result of the search showed only classes?**
+  5. **Browsing after detail of the class**
      - Is it all with the detail?
      - What if the user could browse the class hierarchy as I mentioned in the **search by class** above?
      - How could they do it?
@@ -90,6 +93,20 @@ The idea of ui is devided into two parts - Root selection and Association select
          - Show complete list of hierarchy of the selected class.
          - [graph builder parents](https://angryloki.github.io/wikidata-graph-builder/?item=Q133067&property=P279&graph_direction=down)
 
+### The root selection dialog
+
+- The thing is that it would be a good idea if the user could write only into one dialog line without the need to switch what he is searching
+- It is difficult what should he write and what would be the output
+- I believe there is some need to differentiate what is property input 
+  - Maybe double input fields
+- What is more important?
+  - properties I want or the class?
+- So what?
+  1. Radio selection what to search by - described above.
+     - A bad thing is that the user has to select what to search by. 
+  2. Don' tell him what to search by, but let him choose the after he types the window.
+  3. The user cannot choose and only writes what he wants.
+    - Works by setting either by buttons or text separator -, : etc...
 Questions to answer:
   
   1. Should the detail of the classes show hierarchy information that the user could navigate or leave it as is?
