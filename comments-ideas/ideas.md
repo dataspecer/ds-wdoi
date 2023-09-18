@@ -221,4 +221,9 @@ Questions to answer:
   - Such as "Properties related to food"
   - but It is difficult to extract such information unless I build some specific tree.
 - Constraits are sometimes too much.
+  - I should choose only some of them.
 
+### Qualifiers 
+
+- I think some qualifiers can be anywhere.
+- On edges with only allowed qualifiers, I could do expansion?
