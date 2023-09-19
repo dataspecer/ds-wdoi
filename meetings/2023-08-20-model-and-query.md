@@ -20,3 +20,6 @@ Then, I wish to consult semantics of the search dialog.
   - Add only properties?
   - I think I would put the instance somewhere else.
 
+## Discussing dp.
+
+- Page 42 in ontology browsing
