@@ -12,59 +12,64 @@ The idea of ui is devided into two parts - Root selection and Association select
 
   1. A user will select wikidata as input in the specification main page.
   2. The classical dataspecer search bar would show up - a single line of a search bar.
-  3. The search bar could have settings that sets how to search: 
-       - **Search by class**
-         1. A text based search on the classes names.
-         2. A user searches for a class.
-         3. Output would list classes as in current dataspecer.
-         4. The user would select a single class and could show a detail.
-         5. By clicking the line of the class, the user would select it as the root.
-         6. ? Inside detail, a user could see hierarchy info about parents and children.
-         7. ? By clicking on the info about the class inside detail, the user would navigate the hierarchy.
-         8. ? A back button on the main window could lead him back as he was cliking.
-         - *detail of the classes*:
-           - a name (label)
-           - description (different language options)
-           - ? image
-           - ? **child and parent classes?** - Could the user browse it?
-           - ? **possible properties?** - But is it not a bit too much, it would be the same after root is selected?
-             - The group said it is a good idea.
-         - *comments*:
-           - The classes will be in our backend.  
-           - The parent classes and child classes will make it possible to browse even without a browser.
-       - **Search by instance**
-         1. A text based search on the known instances in wikidata.
-         2. A user searches for an instance, e.g. Paris.
-         3. The output would list matching instances.
-         4. The user would click the line of the instance and detail would show up (as clicking the i in circle normally would).
-         5. The detail would show a list of "instance of" and "subclass of" classes + maybe constraints.
-         6. Then the user would select a class from the detail as the root by clicking on it.
-         7. ? Or if the detail of the class contained parents/children the user could navigate it.
-         8. ? Again by clicking back button would lead him back.
-         - *detail of the instances*:
-           - name, label, image, description
-           - "instance of" and subclass of" classes with the same detail as in search by class.
-         - *comments*:
-           - Maybe it is a bit too much? Why should the user know what class the instance is.
-           - This is based on the Stepan's idea.
-           - The problem is that managing all instances locally is impossible, so the wikidata php api should be used instead.  
-           - [php query api in wikidata](https://www.wikidata.org/w/api.php?action=help&modules=query%2Bsearch)  
-           - [php get entities api in wikidata](https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&search=Veronika%20Scheuerova) (only example link) 
-       - **Search by property**
-         1. A text based search on the existing properties.
-         2. A user searches for a property that the class can have or it is pointed by (wikidata property constaints on values and subjects).
-         3. The output would list matching properties.
-         4. The user would expand the detail and look at the property constaints that contain classes (subjects and objects).
-         5. The user then selects a single class as the root node.
-         6. ? Or if the detail of the class contained parents/children the user could navigate it.
-         7. ? Again by clicking back button would lead him back.
-         - *detail of the properties*:
-           - name, label, description
-           - ? Maybe a bit of other contraints?
-           - Classes of subject and object in the same detail as in search by class.
-         - *comments*:
-           - The properties will be in our backend. 
+  3. Root selection
+     1. The search bar could have settings that sets how to search: 
+          - **Search by class**
+            1. A text based search on the classes names.
+            2. A user searches for a class.
+            3. Output would list classes as in current dataspecer.
+            4. The user would select a single class and could show a detail.
+            5. By clicking the line of the class, the user would select it as the root.
+            6. ? Inside detail, a user could see hierarchy info about parents and children.
+            7. ? By clicking on the info about the class inside detail, the user would navigate the hierarchy.
+            8. ? A back button on the main window could lead him back as he was cliking.
+            - *detail of the classes*:
+              - a name (label)
+              - description (different language options)
+              - ? image
+              - ? **child and parent classes?** - Could the user browse it?
+              - ? **possible properties?** - But is it not a bit too much, it would be the same after root is selected?
+                - The group said it is a good idea.
+            - *comments*:
+              - The classes will be in our backend.  
+              - The parent classes and child classes will make it possible to browse even without a browser.
+          - **Search by instance**
+            1. A text based search on the known instances in wikidata.
+            2. A user searches for an instance, e.g. Paris.
+            3. The output would list matching instances.
+            4. The user would click the line of the instance and detail would show up (as clicking the i in circle normally would).
+            5. The detail would show a list of "instance of" and "subclass of" classes + maybe constraints.
+            6. Then the user would select a class from the detail as the root by clicking on it.
+            7. ? Or if the detail of the class contained parents/children the user could navigate it.
+            8. ? Again by clicking back button would lead him back.
+            - *detail of the instances*:
+              - name, label, image, description
+              - "instance of" and subclass of" classes with the same detail as in search by class.
+            - *comments*:
+              - Maybe it is a bit too much? Why should the user know what class the instance is.
+              - This is based on the Stepan's idea.
+              - The problem is that managing all instances locally is impossible, so the wikidata php api should be used instead.  
+              - [php query api in wikidata](https://www.wikidata.org/w/api.php?action=help&modules=query%2Bsearch)  
+              - [php get entities api in wikidata](https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&search=Veronika%20Scheuerova) (only example link) 
+          - **Search by property**
+            1. A text based search on the existing properties.
+            2. A user searches for a property that the class can have or it is pointed by (wikidata property constaints on values and subjects).
+            3. The output would list matching properties.
+            4. The user would expand the detail and look at the property constaints that contain classes (subjects and objects).
+            5. The user then selects a single class as the root node.
+            6. ? Or if the detail of the class contained parents/children the user could navigate it.
+            7. ? Again by clicking back button would lead him back.
+            - *detail of the properties*:
+              - name, label, description
+              - ? Maybe a bit of other contraints?
+              - Classes of subject and object in the same detail as in search by class.
+            - *comments*:
+              - The properties will be in our backend.
+       2. There could be only the line without settings.
+          1. Show clickable buttons that switch to show properties/classes/instances. In that case, a good idea would be to display the number of found results next to each button.
+          2. Or it could be just dump of everything with a bit of explanation.
   4. **What if the result of the search showed only classes?**
+     - I do not think it is a good thing. 
   5. **Browsing after detail of the class**
      - Is it all with the detail?
      - What if the user could browse the class hierarchy as I mentioned in the **search by class** above?
@@ -93,25 +98,13 @@ The idea of ui is devided into two parts - Root selection and Association select
          - Show complete list of hierarchy of the selected class.
          - [graph builder parents](https://angryloki.github.io/wikidata-graph-builder/?item=Q133067&property=P279&graph_direction=down)
 
-### The root selection dialog
-
-- The thing is that it would be a good idea if the user could write only into one dialog line without the need to switch what he is searching
-- It is difficult what should he write and what would be the output
-- I believe there is some need to differentiate what is property input 
-  - Maybe double input fields
-- What is more important?
-  - properties I want or the class?
-- So what?
-  1. Radio selection what to search by - described above.
-     - A bad thing is that the user has to select what to search by. 
-  2. Don' tell him what to search by, but let him choose the after he types the window.
-  3. The user cannot choose and only writes what he wants.
-    - Works by setting either by buttons or text separator -, : etc...
 Questions to answer:
-  
   1. Should the detail of the classes show hierarchy information that the user could navigate or leave it as is?
+     - So far it seems that yes. 
   2. If yes/not would a graph diagram of the hierarchy a good thing to have?
+     - Both would be good, the dataspecer would browse in the way of clicking + there could be navigation to a different page with a graph. 
   3. Should the class details or graph show properties?
+     - I believe so. 
 
 ### Association selection
 
@@ -146,12 +139,15 @@ Questions to answer:
   - by origin grouping
   - by subject grouping
   - by object grouping 
+  - by relation grouping
 - Threre could be a recommneder option/window in which the there would be a list of recommended properties based on the properties the user has already selected
 
-Questions to answer:
+**Questions to answer**:
   1. Should the properties for the given class show only its pertaining properties (given by constraint) or all from parents (inherited).
+     - I think the user should be able to choose. 
   2. What seems as the best option for parent classes management?
      1. a graph
+        - I like this the best. 
      2. a view in which we group properties by parents, the header will be a navigation to the parents in the given list (scroll to that posision or expand the list)
      3. the side panel would handle the navigation and selection
 
@@ -164,8 +160,10 @@ Assuming we are on a current type:
     - What if there are none?
       - Some properties do not have assignet subject contrait and, basically, can be used on any class.
       - I could follow the hierarchy tree to the root and ask for additional properties. Basically repeat the query for my parent classes. This can be precomputed. 
-      - Should this happen always, that is to say, include all properties from parent classes to the shown property list or show only properties for the current class and user should decide depth to which expand parent classes or maybe just by clicking the classes he wants?**
+      - Should this happen always, that is to say, include all properties from parent classes to the shown property list or show only properties for the current class and user should decide depth to which expand parent classes or maybe just by clicking the classes he wants?
+        - Always.
     - Note that I want to exclude the annoying ID properties or properties regarding the wikidata types.
+      - Not anymore.
 - **If I obtain some properties to show.** - I must consider the intersection of the valid properties by constraint and recommended properties.
   1. I must take into an account the properties for this type values, before recommending something else. **(This must be done always.)**
   2. I could sort them with schema tree recommender only, but only if it recommends everyting for the type. 
@@ -194,6 +192,7 @@ So far only in abstraction:
   - give me children (multiple input classes)
   - give me entire parent hierarchy?
   - give me entire children hierarchy?
+  - give me entire parent/children hierarchy at once?
 - Details
   - give me details for a class (multiple input classes) with/out properties
     - with properties
@@ -208,13 +207,12 @@ So far only in abstraction:
 
 ## Model
 
-Questions to answer:
-
 - A wikidata states that the constraints are just recommendations.
   - How to approach it during extraction and ontology building?
 - How to view qualifier properties?
 - What if no object subject is defined?
   - It should use the same thing as in root selection.
+
 ### Properties 
 
 - Some properties have "instance of" and "subclass of" properties associated with groups:
@@ -227,3 +225,5 @@ Questions to answer:
 
 - I think some qualifiers can be anywhere.
 - On edges with only allowed qualifiers, I could do expansion?
+
+- So far I should not care.
