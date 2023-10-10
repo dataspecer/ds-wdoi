@@ -151,7 +151,7 @@ Questions to answer:
      2. a view in which we group properties by parents, the header will be a navigation to the parents in the given list (scroll to that posision or expand the list)
      3. the side panel would handle the navigation and selection
 
-## Recommendation of properties
+## Class properties
 
 Assuming we are on a current type:
 
@@ -177,33 +177,7 @@ Assuming we are on a current type:
   - I could count coocured properties and give them more priority.
   - I could maintain the probabilities if i used schema tree, and show only the heighest ones. This makes sense, because good properties on parents want to be seen.
 
-
-
-## API to backend
-
-So far only in abstraction:
-
-- Searching for a root.
-  - search by a class name
-  - search by a instance (external api)
-  - search by a property
-- Hierarchy and browsing (either in the root search or association search).
-  - give me parents (multiple input classes)
-  - give me children (multiple input classes)
-  - give me entire parent hierarchy?
-  - give me entire children hierarchy?
-  - give me entire parent/children hierarchy at once?
-- Details
-  - give me details for a class (multiple input classes) with/out properties
-    - with properties
-      - all
-      - own
-      - inherited
-      - general
-  - give me details for a property
-- Recommendations
-  - give me recommendations based on already made user association selection
-
+- **What if we wanted to show all properties since any property can be anywhere?**
 
 ## Model
 

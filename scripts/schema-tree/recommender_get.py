@@ -24,6 +24,7 @@ response = requests.get(RECM_URL, data=json.dumps(requestData))
 recommendations = response.json()
 
 wikidataSession = requests.Session()
+print(len(recommendations['recommendations']))
 for rec in  recommendations['recommendations']:
     response = wikidataSession.get(construct_wikidata_get_entity_from_id(rec['property']))
     rec['label'] = ''
