@@ -10,8 +10,8 @@ So far only in abstraction:
     - search by a instance (external api)
     - search by a property
 - Hierarchy and browsing (either in the root search or association search).
-  - give me parents (multiple input classes)
-  - give me children (multiple input classes)
+  - give me parents
+  - give me children
   - give me entire parent hierarchy?
   - give me entire children hierarchy?
   - give me entire parent/children hierarchy at once?
@@ -19,18 +19,18 @@ So far only in abstraction:
     - for a given class/es return it's information:
       - attributes
       - associations
+        - it should be devined into:
+          - all
+          - own
+          - inherited
+          - general
+        - if returning properties, there should be some order on the returned one or recommended order.
       - related classes
-      - subclasses
+      - parents
       - names/labels/descriptions
-    - the returned associations and properties
-      - it should be devined into:
-        - all
-        - own
-        - inherited
-        - general
-      - if returning properties, there should be some order on the returned one or recommended order.
 - Property/ies detail
-  -  give me details for a property including
+  -  give me details for a property
+     -  instance of (groups)
      -  constraints
      -  wikibase type
      -  internal type: general or not 
@@ -78,18 +78,20 @@ So far only in abstraction:
 
 - Where to keep the data?
   - We need hierarchical queries on the parents and children.
+    - access parents/children hierarchies
+    - for a class detail -> somehow take into account inherited properties.
   - With class detail and properties we need the enpoints classes as well.
   - Ideas:
     1. Everythink can be in memory:   
-        - a tree for the subclass of hierarchy
-        - main data of classes and properties + dealing with inherited properties
+        - a tree for the subclass of hierarchy + dealing with inherited properties (based on constraints)
+        - main data of classes and properties
         - where to put the index of full text search?
     2. Something in db and something in memory.
        - the hierarchical structure subclass of in memory
-       - ? the rest in db?
+       - ? the rest in db
          - we get the full text search
          - is it possible to query for so many properties?
-         - how to get hierarchical properties
+         - how to manage hierarchical queries
 - What technology?
   - Node, Java, Golang
   - Node
