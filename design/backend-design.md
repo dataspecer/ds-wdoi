@@ -59,7 +59,8 @@ So far only in abstraction:
            - cons:
              - The data in the search are up to date, but we depend on the older dump.
              - It can be difficult do decide what is instance and what is not.
-               - And for the instances we need to get information so we can present it. 
+               - And for the instances we need to get information so we can present it.
+             - The search mostly returns instances 
         3. The back end can have internal index for the full text search and additionaly query the Wikidata endpoint.
            - pros:
              - no additional service
