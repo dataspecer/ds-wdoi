@@ -8,8 +8,8 @@ import utils.decoding as decoding
 
 logger = logging.getLogger("extraction")
 
-CLASSES_OUTPUT_FILE = "classes.json"
-PROPERTIES_OUTPUT_FILE = "properties.json"
+CLASSES_OUTPUT_FILE = "classes.json.bz2"
+PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
 LANGUAGES = ['en']
 
 def info_log_message(i, class_count, property_count):
