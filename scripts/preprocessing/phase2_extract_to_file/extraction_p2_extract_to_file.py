@@ -43,17 +43,15 @@ def process_wd_property(wd_entity, properties_output_file, property_counter):
     write_wd_entity_to_file(reduce_entity(wd_entity), properties_output_file)
     property_counter.inc()
 
-def process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, idsSet: set) -> None:
+def process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, ids_set: set) -> None:
     entity_id = wd_extractors.extract_id(wd_entity)
-    if entity_id != None and entity_id in idsSet:
-        if wd_entity_types.is_item(entity_id):
-            process_wd_item(wd_entity, classes_output_file, class_counter)
-        elif wd_entity_types.is_property(entity_id):
+    if entity_id != None:
+        if wd_entity_types.is_property(entity_id):
             process_wd_property(wd_entity, properties_output_file, property_counter)
-        else:
-            logger.warning(f"P2 - Found entity that is in idsSet but is not item or property. ID = {entity_id} .")
+        elif wd_entity_types.is_item(entity_id) and entity_id in ids_set:
+                process_wd_item(wd_entity, classes_output_file, class_counter)
     
-def extract_classes_properties(bz2_dump_file_path: pathlib.Path, idsSet: set):
+def extract_classes_properties(bz2_dump_file_path: pathlib.Path, ids_set: set):
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file,
           bz2.BZ2File(CLASSES_OUTPUT_FILE, "w") as classes_output_file,
           bz2.BZ2File(PROPERTIES_OUTPUT_FILE, "w") as properties_output_file
@@ -66,12 +64,14 @@ def extract_classes_properties(bz2_dump_file_path: pathlib.Path, idsSet: set):
                 if i % 100_000 == 0:
                     logger.info(info_log_message(i, class_counter.get_count(), property_counter.get_count()))
                 
+                i += 1
+                
                 try:
                     string_line = decoding.decode_binary_line(binary_line)
                     if not decoding.line_contains_json_object(string_line):
                         continue
                     wd_entity = decoding.load_wd_entity_json(string_line)
-                    process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, idsSet)
+                    process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, ids_set)
                 except Exception as e:
                     logger.error(e)
                     logger.error("P2 - there was an error during extraction of entity.")
