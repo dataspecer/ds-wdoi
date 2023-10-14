@@ -12,8 +12,8 @@ logger = logging.getLogger("extraction")
 def info_log_message(i, ids_count):
     return f"P1 - Processed {i:,} entities and found {ids_count} ."
 
-def is_entity_class(instance_of_ids, subclass_of_ids) -> bool:
-    if WD_PARENT_CLASS_ID in instance_of_ids or len(subclass_of_ids) != 0:
+def is_wd_entity_class(wd_entity, instance_of_ids, subclass_of_ids) -> bool:
+    if wd_extractors.contains_subclass_of_statement(wd_entity) or WD_PARENT_CLASS_ID in instance_of_ids or len(subclass_of_ids) != 0:
         return True
     else:
         return False
@@ -24,7 +24,7 @@ def process_wd_entity(wd_entity, ids_set: set):
         instance_of_ids = wd_extractors.extract_instance_of_ids(wd_entity)
         subclass_of_ids = wd_extractors.extract_subclass_of_ids(wd_entity)                         
         
-        if is_entity_class(instance_of_ids, subclass_of_ids) or wd_entity_types.is_property(entity_id):
+        if is_wd_entity_class(wd_entity, instance_of_ids, subclass_of_ids) or wd_entity_types.is_property(entity_id):
             ids_set.add(entity_id)
         
         for id in instance_of_ids:
