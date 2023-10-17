@@ -9,22 +9,22 @@ WD_PARENT_CLASS_ID = "Q16889133"
 
 logger = logging.getLogger("extraction").getChild("p1_class_ids")
 
-def info_log_message(i, ids_count):
+def __info_log_message(i, ids_count):
     return f"Processed {i:,} entities and found {ids_count}"
 
-def is_wd_entity_class(wd_entity, instance_of_ids) -> bool:
-    if wd_extractors.contains_subclass_of_statement(wd_entity) or WD_PARENT_CLASS_ID in instance_of_ids:
+def __is_wd_entity_class(wd_entity, instance_of_ids) -> bool:
+    if wd_extractors.contains_wd_subclass_of_statement(wd_entity) or WD_PARENT_CLASS_ID in instance_of_ids:
         return True
     else:
         return False
 
-def process_wd_entity(wd_entity, ids_set: set):
-    entity_id = wd_extractors.extract_id(wd_entity)
-    if wd_entity_types.is_item_or_property(entity_id):
-        instance_of_ids = wd_extractors.extract_instance_of_ids(wd_entity)
-        subclass_of_ids = wd_extractors.extract_subclass_of_ids(wd_entity)                         
+def __process_wd_entity(wd_entity, ids_set: set):
+    entity_id = wd_extractors.extract_wd_id(wd_entity)
+    if wd_entity_types.is_wd_entity_item_or_property(entity_id):
+        instance_of_ids = wd_extractors.extract_wd_instance_of_values(wd_entity)
+        subclass_of_ids = wd_extractors.extract_wd_subclass_of_values(wd_entity)                         
         
-        if is_wd_entity_class(wd_entity, instance_of_ids) or wd_entity_types.is_property(entity_id):
+        if __is_wd_entity_class(wd_entity, instance_of_ids) or wd_entity_types.is_wd_entity_property(entity_id):
             ids_set.add(entity_id)
         
         for id in instance_of_ids:
@@ -38,21 +38,24 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
             i = 0
             for binary_line in bz2_input_file:
                 if i % 100_000 == 0:
-                    logger.info(info_log_message(i, len(ids_set)))
+                    logger.info(__info_log_message(i, len(ids_set)))
 
                 i += 1
+                
+                if i == 10:
+                    break
                 
                 try:
                     string_line = decoding.decode_binary_line(binary_line)
                     if not decoding.line_contains_json_object(string_line):
                         continue
                     wd_entity = decoding.load_wd_entity_json(string_line)
-                    process_wd_entity(wd_entity, ids_set)
+                    __process_wd_entity(wd_entity, ids_set)
                 except Exception as e:
                     logger.exception("There was an error during extraction of an entity")
                 
             logger.info("Finishing up:")
-            logger.info(info_log_message(i, len(ids_set)))
+            logger.info(__info_log_message(i, len(ids_set)))
             return ids_set
                 
     

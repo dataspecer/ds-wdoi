@@ -17,3 +17,15 @@ def load_wd_entity_json(string_line: str):
 
 def serialize_wd_entity_json(wd_entity):
     return orjson.dumps(wd_entity)
+
+def init_json_array_in_files(file_array) -> None:
+    for f in file_array:
+        f.write("[\n".encode())
+        
+def close_json_array_in_files(file_array) -> None:
+    for f in file_array:
+        f.write("]".encode())
+
+def write_wd_entity_to_file(wd_entity, output_file):
+    output_file.write(serialize_wd_entity_json(wd_entity))
+    output_file.write(",\n".encode())

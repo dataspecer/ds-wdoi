@@ -1,19 +1,20 @@
 import wikidata.model.entity_types as wd_entity_types
+from wikidata.model.properties import Properties
 
-def extract_from_json(wd_entity_json, field: str):
+def __extract_from_wd_json(wd_entity_json, field: str):
     if field in wd_entity_json:
         return wd_entity_json[field]
     else:
         return None
     
-def extract_id(wd_entity_json):
-    return extract_from_json(wd_entity_json, "id")
+def extract_wd_id(wd_entity_json):
+    return __extract_from_wd_json(wd_entity_json, "id")
 
-def extract_claims(wd_entity_json):
-    return extract_from_json(wd_entity_json, "claims")
+def extract_wd_claims(wd_entity_json):
+    return __extract_from_wd_json(wd_entity_json, "claims")
 
-def extract_entity_type(wd_entity_json) -> wd_entity_types.EntityTypes:
-    id = extract_id(wd_entity_json)
+def extract_wd_entity_type(wd_entity_json) -> wd_entity_types.EntityTypes:
+    id = extract_wd_id(wd_entity_json)
     if id != None:
         if wd_entity_types.is_item(id):
             return wd_entity_types.EntityTypes.ITEM
@@ -21,27 +22,27 @@ def extract_entity_type(wd_entity_json) -> wd_entity_types.EntityTypes:
             return wd_entity_types.EntityTypes.PROPERTY
     return wd_entity_types.EntityTypes.UNKNOWN
 
-def contains_subclass_of_statement(wd_entity_json):
-    claims = extract_claims(wd_entity_json)
-    if claims != None and "P279" in claims:
+def contains_wd_subclass_of_statement(wd_entity_json) -> bool:
+    claims = extract_wd_claims(wd_entity_json)
+    if claims != None and Properties.SUBCLASS_OF in claims:
         return True
     else:
         return False
 
-def extract_languages(wd_language_object, languages_array):
-    languages = {}
-    for lang in languages_array:
+def __extract_lang_map(wd_language_object, selected_languages):
+    lang_map = {}
+    for lang in selected_languages:
         if lang in wd_language_object:
-            languages[lang] = wd_language_object[lang]
-    return languages
+            lang_map[lang] = wd_language_object[lang]
+    return lang_map
 
-def extract_selected_languages_from_field(wd_entity_json, field: str, languages_array):
+def extract_languages_from_wd_language_field(wd_entity_json, field: str, selected_languages):
     if field in wd_entity_json:
-        return extract_languages(wd_entity_json[field], languages_array)
+        return __extract_lang_map(wd_entity_json[field], selected_languages)
     else:
         return {}
     
-def extract_entityid_from_statement(statement):
+def __extract_wd_statement_value_entityids(statement):
     if "mainsnak" in statement:
         mainsnak = statement["mainsnak"]
         if "datavalue" in mainsnak:
@@ -52,21 +53,21 @@ def extract_entityid_from_statement(statement):
                     return value["id"]
     return None        
 
-def extract_statement_values_entityids_from_entity(wd_entity_json, property: str):
-    claims = extract_claims(wd_entity_json)
+def __extract_wd_statement_values(wd_entity_json, property: str):
+    claims = extract_wd_claims(wd_entity_json)
     if claims != None:
         if property in claims:
             ids = []
             for statement in claims[property]:
-                val = extract_entityid_from_statement(statement)
+                val = __extract_wd_statement_value_entityids(statement)
                 if val != None:
                     ids.append(val)
             return ids
     return []
 
-def extract_instance_of_ids(wd_entity_json):
-    return extract_statement_values_entityids_from_entity(wd_entity_json, "P31")
+def extract_wd_instance_of_values(wd_entity_json):
+    return __extract_wd_statement_values(wd_entity_json, Properties.INSTANCE_OF)
         
-def extract_subclass_of_ids(wd_entity_json):
-    return extract_statement_values_entityids_from_entity(wd_entity_json, "P279")
+def extract_wd_subclass_of_values(wd_entity_json):
+    return __extract_wd_statement_values(wd_entity_json, Properties.SUBCLASS_OF)
  
