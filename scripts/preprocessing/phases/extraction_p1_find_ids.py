@@ -37,11 +37,6 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file):
             i = 0
             for binary_line in bz2_input_file:
-                if i % 100_000 == 0:
-                    logger.info(__info_log_message(i, len(ids_set)))
-
-                i += 1
-                
                 try:
                     string_line = decoding.decode_binary_line(binary_line)
                     if not decoding.line_contains_json_object(string_line):
@@ -50,7 +45,11 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
                     __process_wd_entity(wd_entity, ids_set)
                 except Exception as e:
                     logger.exception("There was an error during extraction of an entity")
+                i += 1
                 
+                if i % 100_000 == 0:
+                    logger.info(__info_log_message(i, len(ids_set)))
+
             logger.info("Finishing up:")
             logger.info(__info_log_message(i, len(ids_set)))
             return ids_set

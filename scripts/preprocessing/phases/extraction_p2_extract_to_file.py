@@ -49,11 +49,6 @@ def extract_classes_properties(bz2_dump_file_path: pathlib.Path, ids_set: set):
             decoding.init_json_array_in_files([classes_output_file, properties_output_file])
             i = 0
             for binary_line in bz2_input_file:
-                if i % 100_000 == 0:
-                    logger.info(__info_log_message(i, class_counter.get_count(), property_counter.get_count()))
-                
-                i += 1
-                
                 try:
                     string_line = decoding.decode_binary_line(binary_line)
                     if not decoding.line_contains_json_object(string_line):
@@ -62,6 +57,11 @@ def extract_classes_properties(bz2_dump_file_path: pathlib.Path, ids_set: set):
                     __process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, ids_set)
                 except Exception as e:
                     logger.exception("There was an error during extraction of an entity")
+                i += 1
+                
+                if i % 100_000 == 0:
+                    logger.info(__info_log_message(i, class_counter.get_count(), property_counter.get_count()))
+                
                 
             logger.info("Finishing up:")
             decoding.close_json_array_in_files([classes_output_file, properties_output_file])
