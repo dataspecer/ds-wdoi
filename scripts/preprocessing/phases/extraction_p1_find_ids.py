@@ -42,9 +42,6 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
 
                 i += 1
                 
-                if i == 10:
-                    break
-                
                 try:
                     string_line = decoding.decode_binary_line(binary_line)
                     if not decoding.line_contains_json_object(string_line):

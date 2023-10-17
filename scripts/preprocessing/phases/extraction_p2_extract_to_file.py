@@ -8,8 +8,8 @@ import utils.decoding as decoding
 
 logger = logging.getLogger("extraction").getChild("p2_classes_properties")
 
-CLASSES_OUTPUT_FILE = "classes2222.json.bz2"
-PROPERTIES_OUTPUT_FILE = "properties2222.json.bz2"
+CLASSES_OUTPUT_FILE = "classes.json.bz2"
+PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
 LANGUAGES = ['en']
 
 def __info_log_message(i, class_count, property_count):
@@ -53,9 +53,6 @@ def extract_classes_properties(bz2_dump_file_path: pathlib.Path, ids_set: set):
                     logger.info(__info_log_message(i, class_counter.get_count(), property_counter.get_count()))
                 
                 i += 1
-                
-                if i == 10:
-                    break
                 
                 try:
                     string_line = decoding.decode_binary_line(binary_line)

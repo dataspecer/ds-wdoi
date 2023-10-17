@@ -4,13 +4,14 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import phase1_find_ids.extraction_p1_find_ids as ph1
-import phase2_extract_to_file.extraction_p2_extract_to_file as ph2
+import phases.extraction_p1_find_ids as ph1
+import phases.extraction_p2_extract_to_file as ph2
 
+LOG_FILE = "info_ex.log"
 logger = logging.getLogger("extraction")
 
 if __name__ == "__main__":
-    logging.basicConfig(level=20, handlers=[logging.FileHandler("info.log"), logging.StreamHandler(sys.stdout)])
+    logging.basicConfig(level=20, handlers=[logging.FileHandler("info_ex.log"), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(
                 prog="Wikidata class and properties extractor",
                 description="""The script extracts classes and properties from the wikidata .bz2 json dump.
