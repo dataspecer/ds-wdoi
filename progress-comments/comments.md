@@ -1,6 +1,6 @@
-# Ideas
+# Comments
 
-This file contains ideas and thoughts written in an informal language.
+This file contains ideas/comments and thoughts written in an informal language.
 
 ## UI
 
@@ -187,17 +187,68 @@ Assuming we are on a current type:
 - What if no object subject is defined?
   - It should use the same thing as in root selection.
 
+## Classes
+
+- [A class is](https://www.wikidata.org/wiki/Wikidata:WikiProject_Ontology/Modelling):
+    - an entity that is used as a value inside a "subclass of" statement in another entity
+    - an entity that is used as a value inside a "instance of" statement in another entity
+    - an entity that contains a value Q16889133 inside a "instance of" statement (Q16889133 is a metaclass for classes)
+    - an entity that contains "subclass of" statement
+- The "Entity" is a root class for the ontology tree.
+- All classes are implicitly instances of Q16889133 metaclass. 
+
+- Interesting statements:
+  - subclass of
+  - instance of
+  - properties for this type
+  - equivalent class
+  - related class
+  - part of/facet of
+
 ### Properties 
 
+- Based on the Wikidata, all properties can be anywhere, the constraints are just recommendations.
 - Some properties have "instance of" and "subclass of" properties associated with groups:
   - Such as "Properties related to food"
   - but It is difficult to extract such information unless I build some specific tree.
-- Constraits are sometimes too much.
-  - I should choose only some of them.
+
+- [Datatypes](https://www.wikidata.org/wiki/Help:Data_type#string-based) and [props by type](https://www.wikidata.org/wiki/Special:ListDatatypes) 
+- [Constraints](https://www.wikidata.org/wiki/Help:Property_constraints_portal):
+  - Constraints to restrict where a property may be added
+    - subject type classes
+    - property scope - main value, reference, qualifier
+    - allowed-entity-types - item, property, lexemes...
+    - conflicts with - if the property is on an entity there should not be other things
+    - item-requires-statement - if the property is on an entity there must be other things
+  - Constraints regarding the number of values
+    - single value
+    - single best value
+    - multiple values
+    - distinct values
+  - Constraints regarding qualifiers
+    - allowed qualifiers
+    - required qualifiers
+  - Constraints for datatype item/entity
+    - value type
+    - one of
+    - none of
+    - value-requires statement
+    - symmetric constraint (sibling)
+    - inverse (father mother with a child)
+  - Quantity constraints
+    - integer
+    - allowed units
+    - no bound
+    - range
+    - difference within range (date of birth and date of death)
+  - Time constraints
+    - range 
+    - difference-within-range constraint
+  - String based datatype
+    - format
 
 ### Qualifiers 
 
 - I think some qualifiers can be anywhere.
 - On edges with only allowed qualifiers, I could do expansion?
-
 - So far I should not care.

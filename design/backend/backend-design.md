@@ -112,5 +112,3 @@ So far only in abstraction:
     - cons
       - i feel there would a lot of boilderplate code
 
-# Comments
-

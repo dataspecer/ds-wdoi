@@ -7,10 +7,10 @@ import utils.decoding as decoding
 
 WD_PARENT_CLASS_ID = "Q16889133"
 
-logger = logging.getLogger("extraction")
+logger = logging.getLogger("extraction").getChild("p1_class_ids")
 
 def info_log_message(i, ids_count):
-    return f"P1 - Processed {i:,} entities and found {ids_count} ."
+    return f"Processed {i:,} entities and found {ids_count}"
 
 def is_wd_entity_class(wd_entity, instance_of_ids) -> bool:
     if wd_extractors.contains_subclass_of_statement(wd_entity) or WD_PARENT_CLASS_ID in instance_of_ids:
@@ -39,7 +39,7 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
             for binary_line in bz2_input_file:
                 if i % 100_000 == 0:
                     logger.info(info_log_message(i, len(ids_set)))
-                
+
                 i += 1
                 
                 try:
@@ -49,10 +49,9 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
                     wd_entity = decoding.load_wd_entity_json(string_line)
                     process_wd_entity(wd_entity, ids_set)
                 except Exception as e:
-                    logger.error(e)
-                    logger.error("P1 - there was an error during extraction of entity.")
+                    logger.exception("There was an error during extraction of an entity")
                 
-            logger.info("P1 - Finishing up:")
+            logger.info("Finishing up:")
             logger.info(info_log_message(i, len(ids_set)))
             return ids_set
                 

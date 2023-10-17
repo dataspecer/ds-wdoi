@@ -6,14 +6,14 @@ import wikidata.extractors.json_extractors as wd_extractors
 import wikidata.model.entity_types as wd_entity_types
 import utils.decoding as decoding
 
-logger = logging.getLogger("extraction")
+logger = logging.getLogger("extraction").getChild("p2_classes_properties")
 
 CLASSES_OUTPUT_FILE = "classes.json.bz2"
 PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
 LANGUAGES = ['en']
 
 def info_log_message(i, class_count, property_count):
-    return f"P2 - Processed {i:,} entities. Classes: {class_count:,} Properties: {property_count:,} ."
+    return f"Processed {i:,} entities. Classes: {class_count:,} Properties: {property_count:,}"
 
 def init_json_array_in_files(file_array) -> None:
     for f in file_array:
@@ -73,10 +73,9 @@ def extract_classes_properties(bz2_dump_file_path: pathlib.Path, ids_set: set):
                     wd_entity = decoding.load_wd_entity_json(string_line)
                     process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, ids_set)
                 except Exception as e:
-                    logger.error(e)
-                    logger.error("P2 - there was an error during extraction of entity.")
+                    logger.exception("There was an error during extraction of an entity")
                 
-            logger.info("P2 - Finishing up:")
+            logger.info("Finishing up:")
             close_json_array_in_files([classes_output_file, properties_output_file])
             logger.info(info_log_message(i, class_counter.get_count(), property_counter.get_count()))
                 
