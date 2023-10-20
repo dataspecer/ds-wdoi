@@ -10,7 +10,7 @@ import utils.decoding as decoding
 
 logger = logging.getLogger("transformation").getChild("p1_transform_classes")
 
-LOGGIN_PROGRESS_STEP = 100
+LOGGIN_PROGRESS_STEP = 100_000
 CLASSES_OUTPUT_FILE = "classes.json"
 
 def __log_progress_message(i):
