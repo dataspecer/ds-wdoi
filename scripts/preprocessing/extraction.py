@@ -11,7 +11,7 @@ LOG_FILE = "info_ex.log"
 logger = logging.getLogger("extraction")
 
 if __name__ == "__main__":
-    logging.basicConfig(level=20, handlers=[logging.FileHandler("info_ex.log"), logging.StreamHandler(sys.stdout)])
+    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(
                 prog="Wikidata class and properties extractor",
                 description="""The script extracts classes and properties from the wikidata .bz2 json dump.
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         logger.info("Starting phase 2 - extracting entities to files")
         phase2_start_time = timer.get_time()
         
-        ph2.extract_classes_properties(args.bz2DumpFile, wd_entity_ids_set)
+        ph2.extract_to_file(args.bz2DumpFile, wd_entity_ids_set)
         
         phase2_end_time = timer.get_time()
         logger.info("Ending phase 2. Elapsed time %s",
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
-        logger.error("Exiting...")
+        logger.critical("Exiting...")
         sys.exit(1)
     
     preprocessing_end_time = timer.get_time()
