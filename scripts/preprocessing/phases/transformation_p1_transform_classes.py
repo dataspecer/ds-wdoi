@@ -10,7 +10,7 @@ import utils.decoding as decoding
 
 logger = logging.getLogger("transformation").getChild("p1_transform_classes")
 
-CLASSES_OUTPUT_FILE = "classes.json"
+CLASSES_OUTPUT_FILE = "classessssss.json"
 
 def __info_log_message(i):
     return f"Processed {i:,} classes"
