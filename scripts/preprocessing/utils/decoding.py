@@ -29,3 +29,10 @@ def close_json_array_in_files(file_array) -> None:
 def write_wd_entity_to_file(wd_entity, output_file):
     output_file.write(serialize_wd_entity_json(wd_entity))
     output_file.write(",\n".encode())
+    
+def line_to_wd_entity(binary_line):
+    string_line = decode_binary_line(binary_line)
+    if line_contains_json_object(string_line):
+        return load_wd_entity_json(string_line)
+    else:
+        return None

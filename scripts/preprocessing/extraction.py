@@ -35,7 +35,7 @@ if __name__ == "__main__":
         logger.info("Starting phase 1 - extracting idsList")
         phase1_start_time = timer.get_time()
         
-        idsSet: set = ph1.extract_ids(args.bz2DumpFile)
+        wd_entity_ids_set: set = ph1.extract_ids(args.bz2DumpFile)
         
         phase1_end_time = timer.get_time()
         logger.info("Ending phase 1. Elapsed time %s",
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         logger.info("Starting phase 2 - extracting entities to files")
         phase2_start_time = timer.get_time()
         
-        ph2.extract_classes_properties(args.bz2DumpFile, idsSet)
+        ph2.extract_classes_properties(args.bz2DumpFile, wd_entity_ids_set)
         
         phase2_end_time = timer.get_time()
         logger.info("Ending phase 2. Elapsed time %s",

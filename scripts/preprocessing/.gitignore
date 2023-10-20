@@ -160,10 +160,6 @@ cython_debug/
 #.idea/
 
 
-classes.json
-properties.json
-
-classes.json.bz2
-properties.json.bz2
-
+*.json
+*.bz2
 preprocessing-env
