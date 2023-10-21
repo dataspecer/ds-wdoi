@@ -12,6 +12,7 @@ class Properties(StrEnum):
     EQUIVALENT_CLASS = "P1709"
     EQUIVALENT_PROPERTY = "P1628"
     RELATED_PROPERTY = "P1659"
+    PROPERTY_CONSTRAINT = "P2302"
     
 class UnderlyingTypes(IntEnum):
     ENTITY = 0
