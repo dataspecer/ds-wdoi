@@ -4,8 +4,7 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import phases.transformation_p1_transform_classes as ph1
-import phases.transformation_p2_transform_properties as ph2
+import phases.transformation_p3_transform_entities as ph3
 
 LOG_FILE = "info_tr.log"
 logger = logging.getLogger("transformation")
@@ -42,7 +41,7 @@ if __name__ == "__main__":
             logger.info("Starting phase 1 - transforming classes")
             phase1_start_time = timer.get_time()
             
-            ph1.transform_classes(args.classesBz2File)
+            ph3.transform_classes(args.classesBz2File)
             
             phase1_end_time = timer.get_time()
             logger.info("Ending phase 1. Elapsed time %s",
@@ -53,7 +52,7 @@ if __name__ == "__main__":
             logger.info("Starting phase 2 - transforming properties")
             phase2_start_time = timer.get_time()
             
-            #ph2.transform_properties(args.propertiesBz2File)
+            ph3.transform_properties(args.propertiesBz2File)
             
             phase2_end_time = timer.get_time()
             logger.info("Ending phase 2. Elapsed time %s",
