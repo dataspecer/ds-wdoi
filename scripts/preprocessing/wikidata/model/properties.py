@@ -2,8 +2,6 @@ from enum import StrEnum
 from enum import IntEnum
 from enum import Enum
 
-
-
 class Properties(StrEnum):
     SUBCLASS_OF = "P279"
     INSTANCE_OF = "P31"
@@ -13,6 +11,11 @@ class Properties(StrEnum):
     EQUIVALENT_PROPERTY = "P1628"
     RELATED_PROPERTY = "P1659"
     PROPERTY_CONSTRAINT = "P2302"
+    PROPERTY_SCOPE = "P5314"
+    ITEM_OF_PROPERTY_CONSTRAINT = "P2305"
+    PROPERTY = "P2306"
+    RELATION = "P2309"
+    CLASS = "P2308"
     
 class UnderlyingTypes(IntEnum):
     ENTITY = 0
@@ -45,11 +48,11 @@ class Datatypes(Enum):
         for idx, item in enumerate(cls):
             if item.value[0] == value:
                 return idx
-        raise ValueError(f"{value} is missing from Datatypes.")
+        raise ValueError(f"{value} is missing from {cls.__name__}.")
     
     @classmethod
     def type_of(cls, value: str):
         for idx, item in enumerate(cls):
             if item.value[0] == value:
                 return item.value[1]
-        raise ValueError(f"{value} is missing from Datatypes.")
+        raise ValueError(f"{value} is missing from {cls.__name__}.")

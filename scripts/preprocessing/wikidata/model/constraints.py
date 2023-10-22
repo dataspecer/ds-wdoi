@@ -1,5 +1,4 @@
 from enum import StrEnum
-
 class GeneralConstraints(StrEnum):
     PROPERTY_SCOPE = "Q53869507"
     ALLOWED_ENTITY_TYPES = "Q52004125"
@@ -34,3 +33,49 @@ class QuantityDatatypeConstraints(StrEnum):
 class TimeDatatypeConstraints(StrEnum):
     RANGE = "Q21510860"
     DIFFERENCE_WITHIN_RANGE = "Q21510854"
+    
+    
+# Allowed values for specific constraints
+
+
+class PropertyScopeValues(StrEnum):
+    AS_MAIN = "Q54828448"
+    AS_QUALIFIER = "Q54828449"
+    AS_REFERENCE = "Q54828450"
+    
+    @classmethod
+    def index_of(cls, value: str):
+        for idx, item in enumerate(cls):
+            if item == value:
+                return idx
+        raise ValueError(f"{value} is missing from {cls.__name__}.")
+
+class AllowedEntityTypesValues(StrEnum):
+    ITEM = "Q29934200"
+    PROPERTY = "Q29934218"
+    LEXEME = "Q51885771"
+    FORM = "Q54285143"
+    SENSE = "Q54285715"
+    MEDIA_INFO = "Q59712033"
+    
+    @classmethod
+    def index_of(cls, value: str):
+        for idx, item in enumerate(cls):
+            if item == value:
+                return idx
+        raise ValueError(f"{value} is missing from {cls.__name__}.")
+
+class SubjectValueRelationsValues(StrEnum):
+    INSTANCE_OF = "Q21503252"
+    SUBCLASS_OF = "Q21514624"
+    SUBCLASS_OF_INSTANCE_OF = "Q30208840"
+    
+    @classmethod
+    def index_of(cls, value: str):
+        for idx, item in enumerate(cls):
+            if item == value:
+                return idx
+        raise ValueError(f"{value} is missing from {cls.__name__}.")
+
+
+
