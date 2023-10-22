@@ -4,6 +4,9 @@ from wikidata.model.entity_json_fields import RootFields
 
 NO_VALUE = "Q0"
 
+def __get_unique_values(arr):
+    return list(set(arr))
+
 def _entityids_value_extractor(snak, include_no_value: bool = False):
     if include_no_value and "novalue" == snak['snaktype']:
         return NO_VALUE
@@ -47,7 +50,7 @@ def _extract_wd_statements_values(statements, typed_extractor, is_qualifier: boo
         stmt_value = _statement_value_extractor(typed_extractor, stmt, is_qualifier, include_no_value)
         if stmt_value != None:
             values.append(stmt_value)
-    return values
+    return __get_unique_values(values)
 
 def _extract_wd_statement_values_for_property(wd_entity_json, field: str, property: Properties, typed_extractor, is_qualifier: bool = False, include_no_value: bool = False):
     statements = _extract_wd_statements_from_field(wd_entity_json, field, property)

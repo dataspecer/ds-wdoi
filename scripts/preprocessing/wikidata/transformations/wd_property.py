@@ -8,14 +8,29 @@ from wikidata.model.properties import Datatypes as wd_property_datatypes
 def __num_ids(str_ids_arr):
     return wd_fields_tran.transform_wd_str_ids_to_num_ids(str_ids_arr)
 
+def __num_id(str_id):
+    return wd_fields_tran.transform_wd_str_id_to_num_id(str_id)
+
+def __make_map_values_num_ids(map):
+    new_map = {}
+    for key, values in map.items():
+        new_map[key] = __num_ids(values)
+    return new_map
+
+def __get_num_ids_map(map):
+    new_map = {}
+    for str_prop, str_values in map.items():
+        new_map[str(__num_id(str_prop))] = __num_ids(str_values)
+    return new_map
+
 def __transform_wd_constraints(wd_property, underlying_type):    
     property_scope = wd_constraints_ex.extract_wd_property_scope_values(wd_property)
     allowed_entity_types = wd_constraints_ex.extract_wd_allowed_entity_types_values(wd_property)
     allowed_qualifiers = __num_ids(wd_constraints_ex.extract_wd_allowed_qualifiers_values(wd_property))
     required_qualifiers = __num_ids(wd_constraints_ex.extract_wd_required_qualifiers_values(wd_property))
-    conflicts_with = wd_constraints_ex.extract_wd_conflicts_with_values(wd_property)
-    item_requires_statement = wd_constraints_ex.extract_wd_item_requires_statement_values(wd_property)
-    subject_types = wd_constraints_ex.extract_wd_subject_value_class_values(wd_property)
+    conflicts_with = __get_num_ids_map(wd_constraints_ex.extract_wd_conflicts_with_values(wd_property))
+    item_requires_statement = __get_num_ids_map(wd_constraints_ex.extract_wd_item_requires_statement_values(wd_property))
+    subject_types = __make_map_values_num_ids(wd_constraints_ex.extract_wd_subject_value_class_values(wd_property))
     
     return {
         "propertyScope": property_scope,
