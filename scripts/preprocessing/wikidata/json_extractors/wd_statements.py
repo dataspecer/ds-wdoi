@@ -55,7 +55,6 @@ def _stmt_value_extractor(typed_extractor, statement, is_qualifier: bool = False
     else:
         return None
 
-# Returns only non-deprecated statements
 def _extract_wd_statements_from_field(wd_json, field: str, property: Properties):
     statements_json = wd_fields.extract_from_wd_json(wd_json, field)
     if statements_json != None:
@@ -71,6 +70,13 @@ def _extract_wd_statements_values(statements, typed_extractor, is_qualifier: boo
             values.append(stmt_value)
     return __get_unique_values(values)
 
+"""
+    Function either expects array of statements or entity which the statements are extracted from provided field (Claims as a default).
+    The is_qualifier denoted whether the statements are/were extracted from withing statements.
+    That means that those statements do not include main snak but only datavalue directly.
+    The include_no_value servers as a helper when a property can have novalue as a value.
+    In that case, the novalue is returned as a non existent identifier Q0.
+"""
 def extract_wd_statement_values(wd_json, property: Properties, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
     statements = wd_json
     if field != None:

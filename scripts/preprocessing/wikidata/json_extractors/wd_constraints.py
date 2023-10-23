@@ -116,14 +116,30 @@ def __constraint_exists(wd_entity_json, constraint):
 
 # API
 
+
+"""
+    The property scope contains a list of Enum values.
+    Each representing a valid property placement usage.
+    Mostly we care about properties that can be used as a main value.
+    If there is invalid value, it maps it to as main by default.
+"""
 def extract_wd_property_scope_values(wd_entity_json):
     map_func_with_default = __map_to_default_on_error(PropertyScopeValues.index_of, PropertyScopeValues.AS_MAIN)
     return __extract_constraint_values_with_one_qualifier(wd_entity_json, GeneralConstraints.PROPERTY_SCOPE, Properties.PROPERTY_SCOPE, map_func_with_default)
 
+"""
+    The entity types list contains a list of Enum values.
+    Each representing a valid entity usage for the property.
+    Mostly we care about items.
+    If there is invalid value, it maps it to item by default.
+"""
 def extract_wd_allowed_entity_types_values(wd_entity_json):
     map_func_with_default = __map_to_default_on_error(AllowedEntityTypesValues.index_of, AllowedEntityTypesValues.ITEM)
     return __extract_constraint_values_with_one_qualifier(wd_entity_json, GeneralConstraints.ALLOWED_ENTITY_TYPES, Properties.ITEM_OF_PROPERTY_CONSTRAINT, map_func_with_default)
 
+"""
+    The allowed qualifiers for a property can contain novalue, with the meaning as a negation -> no qualifier can be used.
+"""
 def extract_wd_allowed_qualifiers_values(wd_entity_json):
     values = __extract_constraint_values_with_one_qualifier(wd_entity_json, GeneralConstraints.ALLOWED_QUALIFIERS, Properties.PROPERTY, include_no_value=True)
     if not __is_valid_novalue_usage(values):
@@ -134,10 +150,21 @@ def extract_wd_allowed_qualifiers_values(wd_entity_json):
 def extract_wd_required_qualifiers_values(wd_entity_json):
     return __extract_constraint_values_with_one_qualifier(wd_entity_json, GeneralConstraints.REQUIRED_QUALIFIERS, Properties.PROPERTY)
     
+    
+"""
+    The functions extracts a map of (property_id: [ids]*)
+    For each listed property withing Properties.Property, the constraint can define allowed/disallowed values.
+    There can be novalue inside [ids] in that case it is the only value present, with the meaning the property can be used with anything/nothing.
+"""
 def extract_wd_allowance_statement_values(wd_entity_json, constraint: Literal[GeneralConstraints.CONFLICTS_WITH, GeneralConstraints.ITEM_REQUIRES_STATEMENT, ItemDatatypeConstraints.VALUE_REQUIRES_STATEMENT]):
     init_map = {}
     return __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constraint, Properties.PROPERTY, Properties.ITEM_OF_PROPERTY_CONSTRAINT, init_map, __process_allowance_values, True)
-    
+
+"""
+    The function extracts and assignes ids to allowed buckets for the subject and value constraints.
+    The values are always unique in the appropriate lists.
+    There can be no novalue for this constraint.
+"""    
 def extract_wd_subject_value_class_values(wd_entity_json, constraint: Literal[GeneralConstraints.SUBJECT_TYPE, ItemDatatypeConstraints.VALUE_TYPE]):
     init_map = {
         "subclassOf": [],
@@ -149,9 +176,20 @@ def extract_wd_subject_value_class_values(wd_entity_json, constraint: Literal[Ge
 def constraint_exists(wd_entity_json, constraint):
     return __constraint_exists(wd_entity_json, constraint)
     
+"""
+    Codelists contain allowed or disallowed values of properties.
+    The codelist contain any items from the Wikidata.
+    This means it does not have to be in the ontology.
+    There can be no novalue for this constraint. 
+"""
 def extract_codelists(wd_entity_json, constraint: Literal[ItemDatatypeConstraints.NONE_OF, ItemDatatypeConstraints.ONE_OF]):
     return __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, Properties.ITEM_OF_PROPERTY_CONSTRAINT, include_no_value=False)
     
+"""
+    The inverse constraint can contain only one property.
+    In case it contained multiple values, choose only the first one.
+    There can be no novalue for this constraint.
+"""
 def extract_inverse(wd_entity_json):
     inverse = __extract_constraint_values_with_one_qualifier(wd_entity_json, ItemDatatypeConstraints.INVERSE, Properties.PROPERTY, include_no_value=False)
     if len(inverse) != 0:
