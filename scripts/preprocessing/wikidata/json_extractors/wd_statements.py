@@ -8,6 +8,15 @@ NO_VALUE = "Q0"
 def __get_unique_values(arr):
     return list(set(arr))
 
+def __filter_non_deprecated_rank(statement):
+    if "rank" in statement:
+        if "deprecated" == statement['rank']:
+            return False
+    return True
+    
+def __exclude_deprecated_statements(statements):
+    return list(filter(__filter_non_deprecated_rank, statements))
+
 def __get_typed_extractor(property: Properties):
     if property.underlyingType == UnderlyingTypes.ENTITY:
         return _entityids_value_extractor
@@ -46,11 +55,12 @@ def _stmt_value_extractor(typed_extractor, statement, is_qualifier: bool = False
     else:
         return None
 
+# Returns only non-deprecated statements
 def _extract_wd_statements_from_field(wd_json, field: str, property: Properties):
     statements_json = wd_fields.extract_from_wd_json(wd_json, field)
     if statements_json != None:
         if property in statements_json:
-            return statements_json[property]
+            return __exclude_deprecated_statements(statements_json[property])
     return []
 
 def _extract_wd_statements_values(statements, typed_extractor, is_qualifier: bool = False, include_no_value: bool = False):

@@ -5,12 +5,6 @@ from wikidata.model.properties import Properties
 from wikidata.model.entity_json_fields import RootFields
 from typing import Literal
 
-def __filter_non_depracated_rank(statement):
-    if "deprecated" == statement['rank']:
-        return False
-    else:
-        return True
-
 def __contains_novalue(collection):
     if wd_stmts_ex.NO_VALUE in collection:
         return True
@@ -57,8 +51,7 @@ def __get_filter_selected_constraint(constraint):
 
 def __extract_wd_constraint_statements(wd_entity_json, constraint):
     constraint_stmts = wd_stmts_ex._extract_wd_statements_from_field(wd_entity_json, RootFields.CLAIMS, Properties.PROPERTY_CONSTRAINT)
-    non_deprecated_constraint_stmts = filter(__filter_non_depracated_rank, constraint_stmts)
-    return list(filter(__get_filter_selected_constraint(constraint), non_deprecated_constraint_stmts))
+    return list(filter(__get_filter_selected_constraint(constraint), constraint_stmts))
 
 
 def __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, qualifier_property: Properties, value_mapping_func = None, include_no_value: bool = False):

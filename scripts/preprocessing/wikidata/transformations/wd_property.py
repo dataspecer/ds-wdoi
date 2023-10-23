@@ -90,7 +90,7 @@ def transform_wd_property(str_property_id, wd_property):
     
     # Statements
     instance_of_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.INSTANCE_OF) 
-    subproperty_of_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.SUBCLASS_OF)
+    subproperty_of_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.SUBPROPERTY_OF)
     related_property_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.RELATED_PROPERTY)
     equivalent_property_urls = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.EQUIVALENT_PROPERTY)
     
