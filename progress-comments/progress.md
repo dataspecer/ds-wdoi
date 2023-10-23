@@ -37,5 +37,15 @@ To the next iteration I should prepare the backend and connect it again to the D
   - I will care about subject and object constraints mostly in this iteration.
 - Preprocessing in python
   - Using bz2 file handle in python I was extracting classes and properties into a bz2 files in two phases - first pass I extracted cls/props ids into a set and in the second pass I extracted the entities that had their id in the set into the output files.
-  - 
+  - In the next step I transformed the entities and picked only certain useful information
+  - The dump I have contained about 3M classes based on the above definitions and 11k properties.
+  - The preprocessing on my computer runs approximately:
+    - 1. phase - 12 hours
+    - 2. phase - 14 hours
+    - 3. phase 
+      - clases - 14 minutes
+      - properties - 10 seconds
+  - The preprocessing does not exclude anything
+  - The excluding must be done on the client of the preprocessed data.
+    - Such as exlude properties that cannot be used on items.
 
