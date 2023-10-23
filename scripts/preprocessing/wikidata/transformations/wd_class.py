@@ -1,26 +1,31 @@
 import wikidata.json_extractors.wd_fields as wd_fields_ex
-import wikidata.json_extractors.wd_statements as wd_statements_ex
+import wikidata.json_extractors.wd_statements as wd_stmts_ex
 import wikidata.transformations.wd_fields as wd_fields_tran
 import wikidata.transformations.wd_languages as wd_languages_tran 
+from wikidata.model.properties import Properties
 
-def __num_ids(str_ids_arr):
+def __str_to_num_ids(str_ids_arr):
     return wd_fields_tran.transform_wd_str_ids_to_num_ids(str_ids_arr)
 
 def transform_wd_class(str_class_id, wd_class):
     num_id = wd_fields_ex.extract_wd_numeric_id_part(str_class_id)
-    instance_of_num_ids = __num_ids(wd_statements_ex.extract_wd_instance_of_values(wd_class)) 
-    subclass_of_num_ids = __num_ids(wd_statements_ex.extract_wd_subclass_of_values(wd_class))
-    properties_for_this_type_num_ids = __num_ids(wd_statements_ex.extract_wd_properties_for_this_type_values(wd_class))
-    equivalent_class_urls = wd_statements_ex.extract_wd_equivalent_class_values(wd_class)
+    
+    # Descriptions
     labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_class))
     descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_class))
     
+    # Statements
+    instance_of_str_ids = wd_stmts_ex.extract_wd_statement_values(wd_class, Properties.INSTANCE_OF)
+    subclass_of_str_ids = wd_stmts_ex.extract_wd_statement_values(wd_class, Properties.SUBCLASS_OF)
+    properties_for_this_type_str_ids = wd_stmts_ex.extract_wd_statement_values(wd_class, Properties.PROPERTIES_FOR_THIS_TYPE)
+    equivalent_class_urls = wd_stmts_ex.extract_wd_statement_values(wd_class, Properties.EQUIVALENT_CLASS)
+    
     return {
         "id": num_id,
-        "instanceOf": instance_of_num_ids,
-        "subclassOf": subclass_of_num_ids,
-        "propertiesForThisType": properties_for_this_type_num_ids,
-        "equivalentClass": equivalent_class_urls, 
         "labels": labels,
-        "descriptions": descriptions
+        "descriptions": descriptions,
+        "instanceOf": __str_to_num_ids(instance_of_str_ids),
+        "subclassOf": __str_to_num_ids(subclass_of_str_ids),
+        "propertiesForThisType": __str_to_num_ids(properties_for_this_type_str_ids),
+        "equivalentClass": equivalent_class_urls, 
     }

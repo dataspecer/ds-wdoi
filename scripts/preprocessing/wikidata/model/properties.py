@@ -1,22 +1,6 @@
 from enum import StrEnum
 from enum import IntEnum
 from enum import Enum
-
-class Properties(StrEnum):
-    SUBCLASS_OF = "P279"
-    INSTANCE_OF = "P31"
-    SUBPROPERTY_OF = "P1647"
-    PROPERTIES_FOR_THIS_TYPE = "P1963"
-    EQUIVALENT_CLASS = "P1709"
-    EQUIVALENT_PROPERTY = "P1628"
-    RELATED_PROPERTY = "P1659"
-    PROPERTY_CONSTRAINT = "P2302"
-    PROPERTY_SCOPE = "P5314"
-    ITEM_OF_PROPERTY_CONSTRAINT = "P2305"
-    PROPERTY = "P2306"
-    RELATION = "P2309"
-    CLASS = "P2308"
-    
 class UnderlyingTypes(IntEnum):
     ENTITY = 0
     STRING = 1
@@ -24,14 +8,14 @@ class UnderlyingTypes(IntEnum):
     QUANTITY = 3
     GLOBE_COORDINATE = 4
     
-class Datatypes(Enum):
+class Datatypes(StrEnum):
     ITEM = ("wikibase-item", UnderlyingTypes.ENTITY)	
     PROPERTY = ("wikibase-property", UnderlyingTypes.ENTITY	)
     LEXEME = ("wikibase-lexeme", UnderlyingTypes.ENTITY)	
     SENSE = ("wikibase-sense", UnderlyingTypes.ENTITY)	
     FORM = ("wikibase-form", UnderlyingTypes.ENTITY	)
     MONOLINGUAL_TEXT = ("monolingualtext", UnderlyingTypes.STRING)
-    STRING =( "string", UnderlyingTypes.STRING)
+    STRING = ("string", UnderlyingTypes.STRING)
     EXTERNAL_IDENTIFIER = ("external-id", UnderlyingTypes.STRING)
     URL = ("url", UnderlyingTypes.STRING)	
     COMMONS_MEDIA_FILE = ("commonsMedia", UnderlyingTypes.STRING)
@@ -43,16 +27,44 @@ class Datatypes(Enum):
     POINT_IN_TIME = ("time", UnderlyingTypes.TIME)
     GEOGRAPHIC_COORDINATES = ("globe-coordinate", UnderlyingTypes.GLOBE_COORDINATE)
     
+    def __new__(cls, value: str, type: UnderlyingTypes):
+        obj = str.__new__(cls, value)
+        obj._value_ = value
+        obj.underlyingType = type
+        return obj
+    
     @classmethod
     def index_of(cls, value: str):
         for idx, item in enumerate(cls):
-            if item.value[0] == value:
+            if item.value == value:
                 return idx
         raise ValueError(f"{value} is missing from {cls.__name__}.")
     
     @classmethod
     def type_of(cls, value: str):
         for idx, item in enumerate(cls):
-            if item.value[0] == value:
-                return item.value[1]
+            if item.value == value:
+                return item.underlyingType
         raise ValueError(f"{value} is missing from {cls.__name__}.")
+    
+class Properties(StrEnum):
+    SUBCLASS_OF = "P279", UnderlyingTypes.ENTITY
+    INSTANCE_OF = "P31", UnderlyingTypes.ENTITY
+    SUBPROPERTY_OF = "P1647", UnderlyingTypes.ENTITY
+    PROPERTIES_FOR_THIS_TYPE = "P1963", UnderlyingTypes.ENTITY
+    EQUIVALENT_CLASS = "P1709", UnderlyingTypes.STRING
+    EQUIVALENT_PROPERTY = "P1628", UnderlyingTypes.STRING
+    RELATED_PROPERTY = "P1659", UnderlyingTypes.ENTITY
+    PROPERTY_CONSTRAINT = "P2302", UnderlyingTypes.ENTITY
+    PROPERTY_SCOPE = "P5314", UnderlyingTypes.ENTITY
+    ITEM_OF_PROPERTY_CONSTRAINT = "P2305", UnderlyingTypes.ENTITY
+    PROPERTY = "P2306", UnderlyingTypes.ENTITY
+    RELATION = "P2309", UnderlyingTypes.ENTITY
+    CLASS = "P2308", UnderlyingTypes.ENTITY
+    
+    def __new__(cls, value: str, type: UnderlyingTypes):
+        obj =  str.__new__(cls, value)
+        obj._value_ = value
+        obj.underlyingType = type
+        return obj
+    
