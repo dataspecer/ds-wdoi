@@ -3,7 +3,7 @@ import wikidata.json_extractors.wd_statements as wd_stmts_ex
 from wikidata.model.constraints import *
 from wikidata.model.properties import Properties
 from wikidata.model.entity_json_fields import RootFields
-import wikidata.transformations.wd_fields as wd_fields_trans
+from typing import Literal
 
 def __filter_non_depracated_rank(statement):
     if "deprecated" == statement['rank']:
@@ -73,36 +73,30 @@ def __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, q
     return constraint_qualifier_values
 
 
-def __create_allowed_statement_value_tuples(allowance_property, allowance_values):
-    if __is_statement_value_empty(allowance_property):
+def __create_allowance_statement_value_tuples(allowance_key_property_values, allowance_value_property_values):
+    if __is_statement_value_empty(allowance_key_property_values):
         return None, None
-    elif __is_statement_value_empty(allowance_values):
-        return allowance_property[0], [wd_stmts_ex.NO_VALUE]
+    elif __is_statement_value_empty(allowance_value_property_values):
+        return allowance_key_property_values[0], [wd_stmts_ex.NO_VALUE]
     else:
-        return allowance_property[0], allowance_values
+        return allowance_key_property_values[0], allowance_value_property_values
         
-def __add_to_statement_allowance_map(map, prop, values):
-    if prop == None:
+def __add_to_statement_allowance_map(map, key, values):
+    if key == None:
         return
-    
-    if prop in map:
-        if __contains_novalue(values) or __contains_novalue(map[prop]):
-            map[prop] = [wd_stmts_ex.NO_VALUE]
+    if key in map:
+        if __contains_novalue(values) or __contains_novalue(map[key]):
+            map[key] = [wd_stmts_ex.NO_VALUE]
         else:
-            map[prop] += values
+            map[key] += values
     else:
-        map[prop] = values
+        map[key] = values
         
-def __extract_constraint_values_for_statement_allowance(wd_entity_json, constraint):
-    constraint_stmts = __extract_wd_constraint_statements(wd_entity_json, constraint)
-    constraint_statement_value_map = {}
-    for stmt in constraint_stmts:
-        allowance_property = wd_stmts_ex.extract_wd_statement_values(stmt, Properties.PROPERTY, field="qualifiers", is_qualifier=True, include_no_value=False)
-        allowance_values = wd_stmts_ex.extract_wd_statement_values(stmt, Properties.ITEM_OF_PROPERTY_CONSTRAINT, field="qualifiers", is_qualifier=True, include_no_value=True)
-        prop, values = __create_allowed_statement_value_tuples(allowance_property, allowance_values)
-        __add_to_statement_allowance_map(constraint_statement_value_map, prop, values)
-    return __make_map_values_unique(constraint_statement_value_map)
-
+def __process_allowance_values(map, allowance_key_property_values, allowance_value_property_values):
+    key, values = __create_allowance_statement_value_tuples(allowance_key_property_values, allowance_value_property_values)
+    __add_to_statement_allowance_map(map, key, values)
+        
+        
 def __add_to_statement_relation_map(constraint_statement_relation_map, relations, classes):
     if len(classes) == 0 or len(relations) == 0:
         return
@@ -113,19 +107,21 @@ def __add_to_statement_relation_map(constraint_statement_relation_map, relations
         constraint_statement_relation_map["subclassOfInstanceOf"] += classes
     else:
         constraint_statement_relation_map["instanceOf"] += classes
-    
-def __extract_constraint_values_for_subject_value_constrainsts(wd_entity_json, constraint):
+
+def __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constraint, key_property: Properties, value_property: Properties, init_map: dict, process_func, values_include_novalue: bool):
     constraint_stmts = __extract_wd_constraint_statements(wd_entity_json, constraint)
-    constraint_statement_relation_map = {
-        "subclassOf": [],
-        "instanceOf": [],
-        "subclassOfInstanceOf": []
-    }
+    constraint_statement_value_map = init_map
     for stmt in constraint_stmts:
-        relation = wd_stmts_ex.extract_wd_statement_values(stmt, Properties.RELATION, field="qualifiers", is_qualifier=True, include_no_value=False)
-        classes = wd_stmts_ex.extract_wd_statement_values(stmt, Properties.CLASS, field="qualifiers", is_qualifier=True, include_no_value=False)
-        __add_to_statement_relation_map(constraint_statement_relation_map, relation, classes)
-    return __make_map_values_unique(constraint_statement_relation_map)
+        keys = wd_stmts_ex.extract_wd_statement_values(stmt, key_property, field="qualifiers", is_qualifier=True, include_no_value=False)
+        values = wd_stmts_ex.extract_wd_statement_values(stmt, value_property, field="qualifiers", is_qualifier=True, include_no_value=values_include_novalue)
+        process_func(constraint_statement_value_map, keys, values)
+    return __make_map_values_unique(constraint_statement_value_map)
+
+
+def __constraint_exists(wd_entity_json, constraint):
+    return len(__extract_wd_constraint_statements(wd_entity_json, constraint)) != 0
+
+# API
 
 def extract_wd_property_scope_values(wd_entity_json):
     map_func_with_default = __map_to_default_on_error(PropertyScopeValues.index_of, PropertyScopeValues.AS_MAIN)
@@ -145,13 +141,27 @@ def extract_wd_allowed_qualifiers_values(wd_entity_json):
 def extract_wd_required_qualifiers_values(wd_entity_json):
     return __extract_constraint_values_with_one_qualifier(wd_entity_json, GeneralConstraints.REQUIRED_QUALIFIERS, Properties.PROPERTY)
     
-def extract_wd_conflicts_with_values(wd_entity_json):
-    return __extract_constraint_values_for_statement_allowance(wd_entity_json, GeneralConstraints.CONFLICTS_WITH)
+def extract_wd_allowance_statement_values(wd_entity_json, constraint: Literal[GeneralConstraints.CONFLICTS_WITH, GeneralConstraints.ITEM_REQUIRES_STATEMENT, ItemDatatypeConstraints.VALUE_REQUIRES_STATEMENT]):
+    init_map = {}
+    return __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constraint, Properties.PROPERTY, Properties.ITEM_OF_PROPERTY_CONSTRAINT, init_map, __process_allowance_values, True)
     
-def extract_wd_item_requires_statement_values(wd_entity_json):
-    return __extract_constraint_values_for_statement_allowance(wd_entity_json, GeneralConstraints.ITEM_REQUIRES_STATEMENT)
-    
-def extract_wd_subject_value_class_values(wd_entity_json):
-    return __extract_constraint_values_for_subject_value_constrainsts(wd_entity_json, GeneralConstraints.SUBJECT_TYPE)
+def extract_wd_subject_value_class_values(wd_entity_json, constraint: Literal[GeneralConstraints.SUBJECT_TYPE, ItemDatatypeConstraints.VALUE_TYPE]):
+    init_map = {
+        "subclassOf": [],
+        "instanceOf": [],
+        "subclassOfInstanceOf": []
+    }
+    return __extract_constraint_values_for_statement_pairs_map(wd_entity_json, GeneralConstraints.SUBJECT_TYPE, Properties.RELATION, Properties.CLASS, init_map, __add_to_statement_relation_map, False)
 
+def constraint_exists(wd_entity_json, constraint):
+    return __constraint_exists(wd_entity_json, constraint)
     
+def extract_codelists(wd_entity_json, constraint: Literal[ItemDatatypeConstraints.NONE_OF, ItemDatatypeConstraints.ONE_OF]):
+    return __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, Properties.ITEM_OF_PROPERTY_CONSTRAINT, include_no_value=False)
+    
+def extract_inverse(wd_entity_json):
+    inverse = __extract_constraint_values_with_one_qualifier(wd_entity_json, ItemDatatypeConstraints.INVERSE, Properties.PROPERTY, include_no_value=False)
+    if len(inverse) != 0:
+        return inverse[0]
+    else:
+        return None
