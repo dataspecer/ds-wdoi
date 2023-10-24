@@ -78,6 +78,48 @@ The first step transforms classes and the second step transforms properties.
 
 ### Transformation comments
 
+- What might be a good idea to add?
+  - exact match (external ontology mapping)
+  - external subproperty of (external ontology mapping)
+  - external superproperty of (external ontology mapping)
+  - part of / has parts?
+  - facet of
+  - constraints for other types than item
+
+- For classes it extracts:
+  - labels
+  - descriptions
+  - instance of values
+  - subclass of values
+  - properties for this type
+  - equivalent class (external ontology mapping)
+- For properties it extracts
+  - labels
+  - descriptions
+  - datatype
+  - underlying type
+  - instance of values
+  - subproperty of values
+  - related property values
+  - equivalent property (external ontology mapping)
+  - constraints
+    - general:
+      - property scope
+      - allowed entity types
+      - conflicts with
+      - item requires statement
+      - subject types
+    - types based:
+      - item:
+        - value type
+        - none of / one of
+        - inverse 
+        - symmetric
+        - value requires statement
+      - string:
+      - quantity:
+      - time:
+
 - Each time entity ids are used, it transformes them into numeric values to reduce the number of strings inside application that further processed the data.
 - The application needs to know whether the ids are of a class or of a property.
 - The extraction of constraints contain:
@@ -92,4 +134,4 @@ The first step transforms classes and the second step transforms properties.
     - none of/ one of - codelists that point to any item from the wikidata
     - inverse - property, exactly one or nothing
     - symmetric - whether the property is symmetric
-    - value requires statement -
+    - value requires statement
