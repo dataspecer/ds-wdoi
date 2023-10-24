@@ -2,6 +2,10 @@
 
 A repository for the Research project subject at my university.
 
+There are two subfolders `info` and `source`.
+`info` contains written research information about the project.
+`source` contains source code.
+
 # Aim of the team project
 
 **Study programme:** Computer Science - Software and Data Engineering
