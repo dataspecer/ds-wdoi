@@ -3,7 +3,6 @@
 This meeting I did not have anything prepared in general.
 But I managed to get some feed back to the server design.
 
-
 # Server design
 
 - What technology to use?
