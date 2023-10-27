@@ -21,10 +21,10 @@ if __name__ == "__main__":
                                The first phase transforms classes and the second phase transforms properties.
                                The output files are ment to be input to the server.
                             """)
-    parser.add_argument("--langs",
+    parser.add_argument("--lang",
                         nargs="+",
                         action="store",
-                        dest="langs",
+                        dest="lang",
                         default=DEFAULT_LANGUAGES,
                         type=str,
                         help="Usage \"--langs en cs ... -- posArg1 posArg2 ...\" or at the end \"... posArgN --lang en cs ...")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             logger.info("Starting phase 1 - transforming classes")
             phase1_start_time = timer.get_time()
             
-            ph3.transform_classes(args.classesBz2File, args.langs)
+            ph3.transform_classes(args.classesBz2File, args.lang)
             
             phase1_end_time = timer.get_time()
             logger.info("Ending phase 1. Elapsed time %s",
@@ -60,7 +60,7 @@ if __name__ == "__main__":
             logger.info("Starting phase 2 - transforming properties")
             phase2_start_time = timer.get_time()
             
-            ph3.transform_properties(args.propertiesBz2File, args.langs)
+            ph3.transform_properties(args.propertiesBz2File, args.lang)
             
             phase2_end_time = timer.get_time()
             logger.info("Ending phase 2. Elapsed time %s",

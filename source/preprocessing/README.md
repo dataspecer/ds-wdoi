@@ -41,9 +41,10 @@ The main script is `extraction.py`
 
 ### Extraction comments
 
-- The first phase considers a class as an entity:
+- The first phase considers a class as an entity (an exhaustive list):
   - that is an instance of a metaclass of a class, or
   - that is a value of a instance of property in any item, or
+  - that is a value of a subclass of property in any item, or
   - that contains a subclass of statement
 - The two phases are separate because we do not know which entities are classes
 - The output files of the second phase contain reduced entities:
@@ -56,10 +57,10 @@ The first step transforms classes and the second step transforms properties.
 
 - input:
   - optional argument for languages extracration
-    - `--langs`
+    - `--lang`
     - accepts a list of space separated language shortcuts
-      - e.g. `--langs en cs de`
-    - defaults to `--langs en`
+      - e.g. `--lang en cs de`
+    - defaults to `--lang en`
     - for available shortcuts refer to the [Wikidata language lists](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all)
   - a required parameter one of `["cls", "props", "both"]`
     - based on the parameter either the first or the second phase is skipped.
@@ -89,35 +90,17 @@ The first step transforms classes and the second step transforms properties.
 
 - The language option denotes that it transforms and includes only `aliases`, `descriptions` and `labels` in the selected languages.
 - Each time entity ids are used, it transformes them into numeric values to reduce the number of strings inside application that further processed the data.
-- The application needs to know whether the ids are of a class or of a property.
-- The extraction of constraints contain:
-  - general constraints:
-    - property scope - allowed placement usage - main value, qualifier, reference
-    - allowed entity types - the property can be used on certain entity types - for us only Item is main focus
-    - conflicts with - contains a map of property: [ids] which denotes that if the property is used, the property from the constraint cannot be used or cannot be used with the given values
-    - item requires statement - the negation of conflicts with
-    - subject type
-  - type based constraints - so far I extracted the constraints for properties of type item
-    - value type
-    - none of/ one of - codelists that point to any item from the wikidata
-    - inverse - property, exactly one or nothing
-    - symmetric - whether the property is symmetric
-- What might be a good idea to add?
-  - exact match (external ontology mapping)
-  - external subproperty of (external ontology mapping)
-  - external superproperty of (external ontology mapping)
-  - part of / has parts?
-  - facet of
-  - constraints for other types than item
-
-- For classes it extracts:
+  - The application needs to know whether the ids are of a class or of a property.
+- For classes it includes:
+  - aliases
   - labels
   - descriptions
   - instance of values
   - subclass of values
   - properties for this type
   - equivalent class (external ontology mapping)
-- For properties it extracts
+- For properties it includes:
+  - aliases
   - labels
   - descriptions
   - datatype
@@ -127,20 +110,34 @@ The first step transforms classes and the second step transforms properties.
   - related property values
   - equivalent property (external ontology mapping)
   - constraints
+    - general constraints:
+      - property scope - allowed placement usage - main value, qualifier, reference
+      - allowed entity types - the property can be used on certain entity types - for us only Item is main focus
+      - conflicts with - contains a map of `(key=property): (value=[ids])` pairs which denotes that if the property is used, the property from the constraint cannot be used or cannot be used with the given values
+      - item requires statement - the negation of conflicts with
+      - subject type
+      - types based:
+        - item:
+          - value type
+          - none of / one of
+          - inverse 
+          - symmetric
+          - value requires statement
+        - string: (empty)
+        - quantity: (empty)
+        - time: (empty)
+- What might be a good idea to add?
+  - exact match (external ontology mapping)
+  - external subproperty of (external ontology mapping)
+  - external superproperty of (external ontology mapping)
+  - part of / has parts?
+  - facet of
+  - constraints for other types than item
+
+  - constraints
     - general:
       - property scope
       - allowed entity types
       - conflicts with
       - item requires statement
       - subject types
-    - types based:
-      - item:
-        - value type
-        - none of / one of
-        - inverse 
-        - symmetric
-        - value requires statement
-      - string:
-      - quantity:
-      - time:
-    - value requires statement
