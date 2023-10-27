@@ -7,13 +7,13 @@ from wikidata.model.properties import Properties
 def __str_to_num_ids(str_ids_arr):
     return wd_fields_tran.transform_wd_str_ids_to_num_ids(str_ids_arr)
 
-def transform_wd_class(str_class_id, wd_class):
+def transform_wd_class(str_class_id, wd_class, languages):
     num_id = wd_fields_ex.extract_wd_numeric_id_part(str_class_id)
     
     # Descriptions
-    aliases = wd_languages_tran.transform_wd_language_array_map(wd_fields_ex.extract_wd_aliases(wd_class))
-    labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_class))
-    descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_class))
+    aliases = wd_languages_tran.transform_wd_language_array_map(wd_fields_ex.extract_wd_aliases(wd_class), languages)
+    labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_class), languages)
+    descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_class), languages)
     
     # Statements
     instance_of_str_ids = wd_stmts_ex.extract_wd_statement_values(wd_class, Properties.INSTANCE_OF)

@@ -47,7 +47,6 @@ The main script is `extraction.py`
   - that contains a subclass of statement
 - The two phases are separate because we do not know which entities are classes
 - The output files of the second phase contain reduced entities:
-  - It extracts only english `descriptions`, `labels` and `aliases`.
   - `sitelinks` are removed since there is no usage directly to the ontology
 
 ## Transformation
@@ -56,15 +55,25 @@ The part contain 3. phase which is conducted in two steps.
 The first step transforms classes and the second step transforms properties.
 
 - input:
-  - a parameter `["cls", "props", "both"]`
+  - optional argument for languages extracration
+    - `--langs`
+    - accepts a list of space separated language shortcuts
+      - e.g. `--langs en cs de`
+    - defaults to `--langs en`
+    - for available shortcuts refer to the [Wikidata language lists](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all)
+  - a required parameter one of `["cls", "props", "both"]`
     - based on the parameter either the first or the second phase is skipped.
     - for conducting only specific transformation:
       - classes transformation - use `cls`
       - properties transformation - use `props`
       - for both transformations - use `both`
-  - a path to `classes.json.bz2` and `properties.json.bz2` in the given order
+  - required paths to `classes.json.bz2` and `properties.json.bz2` in the given order
 
         $> python transformation.py both classes.json.bz2 properties.json.bz2
+
+        or
+
+        $> python transformation.py --langs en -- both classes.json.bz2 properties.json.bz2
 
 
 - output:
@@ -78,6 +87,21 @@ The first step transforms classes and the second step transforms properties.
 
 ### Transformation comments
 
+- The language option denotes that it transforms and includes only `aliases`, `descriptions` and `labels` in the selected languages.
+- Each time entity ids are used, it transformes them into numeric values to reduce the number of strings inside application that further processed the data.
+- The application needs to know whether the ids are of a class or of a property.
+- The extraction of constraints contain:
+  - general constraints:
+    - property scope - allowed placement usage - main value, qualifier, reference
+    - allowed entity types - the property can be used on certain entity types - for us only Item is main focus
+    - conflicts with - contains a map of property: [ids] which denotes that if the property is used, the property from the constraint cannot be used or cannot be used with the given values
+    - item requires statement - the negation of conflicts with
+    - subject type
+  - type based constraints - so far I extracted the constraints for properties of type item
+    - value type
+    - none of/ one of - codelists that point to any item from the wikidata
+    - inverse - property, exactly one or nothing
+    - symmetric - whether the property is symmetric
 - What might be a good idea to add?
   - exact match (external ontology mapping)
   - external subproperty of (external ontology mapping)
@@ -119,19 +143,4 @@ The first step transforms classes and the second step transforms properties.
       - string:
       - quantity:
       - time:
-
-- Each time entity ids are used, it transformes them into numeric values to reduce the number of strings inside application that further processed the data.
-- The application needs to know whether the ids are of a class or of a property.
-- The extraction of constraints contain:
-  - general constraints:
-    - property scope - allowed placement usage - main value, qualifier, reference
-    - allowed entity types - the property can be used on certain entity types - for us only Item is main focus
-    - conflicts with - contains a map of property: [ids] which denotes that if the property is used, the property from the constraint cannot be used or cannot be used with the given values
-    - item requires statement - the negation of conflicts with
-    - subject type
-  - type based constraints - so far I extracted the constraints for properties of type item
-    - value type
-    - none of/ one of - codelists that point to any item from the wikidata
-    - inverse - property, exactly one or nothing
-    - symmetric - whether the property is symmetric
     - value requires statement

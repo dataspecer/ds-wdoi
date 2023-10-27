@@ -2,12 +2,14 @@ import sys
 import argparse
 import pathlib
 import logging
+import json
 import utils.timer as timer
 
 import phases.transformation_p3_transform_entities as ph3
 
 LOG_FILE = "info_tr.log"
 logger = logging.getLogger("transformation")
+DEFAULT_LANGUAGES = ["en"]
 
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
@@ -19,6 +21,13 @@ if __name__ == "__main__":
                                The first phase transforms classes and the second phase transforms properties.
                                The output files are ment to be input to the server.
                             """)
+    parser.add_argument("--langs",
+                        nargs="+",
+                        action="store",
+                        dest="langs",
+                        default=DEFAULT_LANGUAGES,
+                        type=str,
+                        help="Usage \"--langs en cs ... -- posArg1 posArg2 ...\" or at the end \"... posArgN --lang en cs ...")
     parser.add_argument("phases",
                         type=str,
                         choices=["cls", "both", "props"],
@@ -33,15 +42,14 @@ if __name__ == "__main__":
     
     logger.info("Preprocessin started")
     preprocessing_start_time = timer.get_time()
-    
+
     try:
-        
         if args.phases in ["both", "cls"]:
             # Phase one
             logger.info("Starting phase 1 - transforming classes")
             phase1_start_time = timer.get_time()
             
-            ph3.transform_classes(args.classesBz2File)
+            ph3.transform_classes(args.classesBz2File, args.langs)
             
             phase1_end_time = timer.get_time()
             logger.info("Ending phase 1. Elapsed time %s",
@@ -52,7 +60,7 @@ if __name__ == "__main__":
             logger.info("Starting phase 2 - transforming properties")
             phase2_start_time = timer.get_time()
             
-            ph3.transform_properties(args.propertiesBz2File)
+            ph3.transform_properties(args.propertiesBz2File, args.langs)
             
             phase2_end_time = timer.get_time()
             logger.info("Ending phase 2. Elapsed time %s",

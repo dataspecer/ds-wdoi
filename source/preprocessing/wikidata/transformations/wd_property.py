@@ -77,7 +77,7 @@ def __transform_wd_constraints(wd_property, underlying_type):
         "typeDependent": type_dependent_constraints
     }
     
-def transform_wd_property(str_property_id, wd_property):
+def transform_wd_property(str_property_id, wd_property, languages):
     prop_datatype = wd_fields_ex.extract_wd_datatype(wd_property)
     
     num_id = wd_fields_ex.extract_wd_numeric_id_part(str_property_id)
@@ -85,9 +85,9 @@ def transform_wd_property(str_property_id, wd_property):
     underlying_type = PropertyDatatypes.type_of(prop_datatype)
 
     # Descriptions
-    aliases = wd_languages_tran.transform_wd_language_array_map(wd_fields_ex.extract_wd_aliases(wd_property))
-    labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_property))
-    descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_property))
+    aliases = wd_languages_tran.transform_wd_language_array_map(wd_fields_ex.extract_wd_aliases(wd_property), languages)
+    labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_property), languages)
+    descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_property), languages)
     
     # Statements
     instance_of_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.INSTANCE_OF) 

@@ -3,7 +3,6 @@ import pathlib
 import logging
 import utils.counter as counter
 import wikidata.json_extractors.wd_fields as wd_fields_ex
-import wikidata.json_extractors.wd_languages as wd_lang_ex
 import wikidata.model.entity_types as wd_entity_types
 import utils.decoding as decoding
 from wikidata.model.entity_json_fields import RootFields
@@ -12,7 +11,6 @@ logger = logging.getLogger("extraction").getChild("p2_extract_to_file")
 
 CLASSES_OUTPUT_FILE = "classes.json.bz2"
 PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
-LANGUAGES = ['en']
 LOGGIN_PROGRESS_STEP = 100_000
 
 def __log_progress_message(i, class_count, property_count):
@@ -25,12 +23,9 @@ def __try_log_progress(i, class_count, property_count):
     if i % LOGGIN_PROGRESS_STEP == 0:
         __log_progress(i, class_count, property_count)
 
-# Sitelinks are not used in the ontology and remove all unwanted languages from wikidata language objects.
+# Sitelinks are not used in the ontology.
 def __reduce_wd_entity(wd_entity):
     wd_entity[RootFields.SITELINKS] = None
-    wd_entity[RootFields.ALIASES] = wd_lang_ex.extract_languages_from_wd_language_field(wd_entity, RootFields.ALIASES, LANGUAGES)
-    wd_entity[RootFields.LABELS] = wd_lang_ex.extract_languages_from_wd_language_field(wd_entity, RootFields.LABELS, LANGUAGES)
-    wd_entity[RootFields.DESCRIPTIONS] = wd_lang_ex.extract_languages_from_wd_language_field(wd_entity, RootFields.DESCRIPTIONS, LANGUAGES)
     return wd_entity
 
 def __process_wd_item(wd_entity, classes_output_file, class_counter):
