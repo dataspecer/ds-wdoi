@@ -11,6 +11,7 @@ def transform_wd_class(str_class_id, wd_class):
     num_id = wd_fields_ex.extract_wd_numeric_id_part(str_class_id)
     
     # Descriptions
+    aliases = wd_languages_tran.transform_wd_language_array_map(wd_fields_ex.extract_wd_aliases(wd_class))
     labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_class))
     descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_class))
     
@@ -22,6 +23,7 @@ def transform_wd_class(str_class_id, wd_class):
     
     return {
         "id": num_id,
+        "aliases": aliases,
         "labels": labels,
         "descriptions": descriptions,
         "instanceOf": __str_to_num_ids(instance_of_str_ids),

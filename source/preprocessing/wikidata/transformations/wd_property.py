@@ -85,6 +85,7 @@ def transform_wd_property(str_property_id, wd_property):
     underlying_type = PropertyDatatypes.type_of(prop_datatype)
 
     # Descriptions
+    aliases = wd_languages_tran.transform_wd_language_array_map(wd_fields_ex.extract_wd_aliases(wd_property))
     labels = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_labels(wd_property))
     descriptions = wd_languages_tran.transform_wd_language_map(wd_fields_ex.extract_wd_descriptions(wd_property))
     
@@ -98,13 +99,14 @@ def transform_wd_property(str_property_id, wd_property):
     
     return {
         "id": num_id,
+        "aliases": aliases,
+        "labels": labels,
+        "descriptions": descriptions,
         "datatype": datatype,
         "underlyingType": underlying_type,
         "instanceOf": __str_to_num_ids(instance_of_str_ids),
         "subpropertyOf": __str_to_num_ids(subproperty_of_str_ids),
         "relatedProperty": __str_to_num_ids(related_property_str_ids),
         "equivalentProperty": equivalent_property_urls,
-        "labels": labels,
-        "descriptions": descriptions,
         "constraints": constraints
     }
