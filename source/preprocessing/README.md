@@ -153,6 +153,19 @@ The phase loads labels, descriptions and aliases into a search service - elastic
 
 - logging:
   - the logging takes place into `info_load.log` file 
+
+### Helper scripts
+
+This phase contains helper scipt `loading_es_helpers.py`
+It either creates, refreshes or deletes classes and properties indices.
+
+- Usage:
+
+    &> python loading_es_helpers.py create
+    &> python loading_es_helpers.py delete
+    &> python loading_es_helpers.py refresh 
+
+
 ### Loading comments
 
 For each Wikidata entity an object is generated that serves as an input to the Elastic search instance.
