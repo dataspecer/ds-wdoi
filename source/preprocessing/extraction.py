@@ -4,8 +4,8 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import phases.extraction_p1_find_ids as ph1
-import phases.extraction_p2_extract_to_file as ph2
+import source.preprocessing.phases.p1_extraction_find_ids as ph1
+import source.preprocessing.phases.p2_extraction_extract_to_file as ph2
 
 LOG_FILE = "info_ex.log"
 logger = logging.getLogger("extraction")

@@ -2,10 +2,9 @@ import sys
 import argparse
 import pathlib
 import logging
-import json
 import utils.timer as timer
 
-import phases.transformation_p3_transform_entities as ph3
+import source.preprocessing.phases.p3_transformation_transform_entities as ph3
 
 LOG_FILE = "info_tr.log"
 logger = logging.getLogger("transformation")

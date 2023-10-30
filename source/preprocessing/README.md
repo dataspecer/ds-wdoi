@@ -5,14 +5,13 @@ The preprocessing is done in three phases:
 1. Extraction of classes and properties Ids into a set.
 2. The set is then passes to a second phase which extracts the classes and properties into two files.
 3. The extracted classes and properties are then transformed into objects that will serve as input to the server.
+4. Load labels, aliases and description into a search service (Elastic search right now).
 
 > Note: 
 > 1. Types of the properties are not checked, since wikidata does not allow to entry value that do not match the type. Such as: placing a property into subclass of statement.
 > 2. I consider only the unique values from extracted properties.
-> 
 
-
-## Extraction
+## Extraction (1. and 2. phase)
 
 The part contains 1. and 2. phase.
 The main script is `extraction.py`
@@ -50,7 +49,7 @@ The main script is `extraction.py`
 - The output files of the second phase contain reduced entities:
   - `sitelinks` are removed since there is no usage directly to the ontology
 
-## Transformation
+## Transformation (3. phase)
 
 The part contain 3. phase which is conducted in two steps.
 The first step transforms classes and the second step transforms properties.
@@ -133,11 +132,3 @@ The first step transforms classes and the second step transforms properties.
   - part of / has parts?
   - facet of
   - constraints for other types than item
-
-  - constraints
-    - general:
-      - property scope
-      - allowed entity types
-      - conflicts with
-      - item requires statement
-      - subject types
