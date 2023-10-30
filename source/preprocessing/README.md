@@ -161,9 +161,14 @@ It either creates, refreshes or deletes classes and properties indices.
 
 - Usage:
 
-    &> python loading_es_helpers.py create
-    &> python loading_es_helpers.py delete
-    &> python loading_es_helpers.py refresh 
+      # Creating indices
+      &> python loading_es_helpers.py create
+
+      # Deleting everything
+      &> python loading_es_helpers.py delete
+
+      # Refreshing the indices
+      &> python loading_es_helpers.py refresh 
 
 
 ### Loading comments
