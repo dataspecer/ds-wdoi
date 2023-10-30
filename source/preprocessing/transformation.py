@@ -51,7 +51,7 @@ if __name__ == "__main__":
             ph3.transform_classes(args.classesBz2File, args.lang)
             
             phase1_end_time = timer.get_time()
-            logger.info("Ending phase 1. Elapsed time %s",
+            logger.info("Ending phase 1 - transforming classes. Elapsed time %s",
                     timer.get_formated_elapsed_time(phase1_start_time, phase1_end_time))
         
         if args.phases in ["both", "props"]:
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             ph3.transform_properties(args.propertiesBz2File, args.lang)
             
             phase2_end_time = timer.get_time()
-            logger.info("Ending phase 2. Elapsed time %s",
+            logger.info("Ending phase 2 - transforming properties. Elapsed time %s",
                     timer.get_formated_elapsed_time(phase2_start_time, phase2_end_time))
         
     except Exception as e:

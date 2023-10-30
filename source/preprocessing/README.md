@@ -82,7 +82,7 @@ The first step transforms classes and the second step transforms properties.
   - the files are in the same format as in phase 1. 2. except there are not compressed
 
 - logging:
-  - the logging takes place into `info_tr.log` file  
+  - the logging takes place into `info_tr.log` file 
 
 
 ### Transformation comments
@@ -132,3 +132,30 @@ The first step transforms classes and the second step transforms properties.
   - part of / has parts?
   - facet of
   - constraints for other types than item
+
+## Loading into search service (4. phase)
+
+The phase loads labels, descriptions and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py` .
+
+- inputs:
+  - optional argument for languages extracration
+    - `--lang`
+    - accepts a list of space separated language shortcuts
+      - e.g. `--lang en cs de`
+    - defaults to `--lang en`
+    - for available shortcuts refer to the [Wikidata language lists](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all)
+    - it should be the same value as was given in the previous phase.
+  - paths to the two files generated in the previous step - `classes.json` and `properties.json`
+
+        $> python loading.py classes.json properties.json
+- outputs:
+  - none
+
+- logging:
+  - the logging takes place into `info_load.log` file 
+### Loading comments
+
+For each Wikidata entity an object is generated that serves as an input to the Elastic search instance.
+The object contains descriptions, labels and aliases for all the selected languguages. 
+Each language has its own nested object with the above mentioned fields.
+If the values are missing from the Wikidata entity, a default value is used - empty string for description and label, empty array for aliases.

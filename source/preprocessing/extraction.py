@@ -39,7 +39,7 @@ if __name__ == "__main__":
         wd_entity_ids_set: set = ph1.extract_ids(args.bz2DumpFile)
         
         phase1_end_time = timer.get_time()
-        logger.info("Ending phase 1. Elapsed time %s",
+        logger.info("Ending phase 1  - extracting idsList. Elapsed time %s",
                 timer.get_formated_elapsed_time(phase1_start_time, phase1_end_time))
         
         # Phase two
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         ph2.extract_to_file(args.bz2DumpFile, wd_entity_ids_set)
         
         phase2_end_time = timer.get_time()
-        logger.info("Ending phase 2. Elapsed time %s",
+        logger.info("Ending phase 2 - extracting entities to files. Elapsed time %s",
                 timer.get_formated_elapsed_time(phase2_start_time, phase2_end_time))
     
     except Exception as e:

@@ -42,8 +42,6 @@ def __process_wd_entities(bz2_input_file, output_file, transform_func, type_chec
         except Exception as e:
             logger.exception("There was an error during transformation of an entity.")
         i += 1
-        # if i == 5:
-        #     break
         __try_log_progress(logger, logging_step, i)
     __log_progress(logger, i)
     
