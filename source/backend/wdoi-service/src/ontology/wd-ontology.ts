@@ -19,6 +19,12 @@ export class WdOntology {
     const rootClass = cls.get(ROOT_CLASS_ID);
     if (rootClass != null) {
       return new WdOntology(rootClass, cls, props);
+
+      // TO DO postload actions go here
+      // add children to the classes
+      // make all classes rooted to the entity
+      // add properties to the classes
+      // validate properties
     } else {
       throw new Error('Could not find a root class.');
     }
