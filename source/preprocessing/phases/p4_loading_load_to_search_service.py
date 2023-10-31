@@ -30,7 +30,7 @@ def __add_language_value_from_field(language_field_map, wd_entity, field: RootFi
 def __extract_wd_entity_language_values(wd_entity, language):
     language_map_entry_value = {}
     __add_language_value_from_field(language_map_entry_value, wd_entity, RootFields.LABELS, language)    
-    __add_language_value_from_field(language_map_entry_value, wd_entity, RootFields.DESCRIPTIONS, language)    
+    #__add_language_value_from_field(language_map_entry_value, wd_entity, RootFields.DESCRIPTIONS, language)    
     __add_language_value_from_field(language_map_entry_value, wd_entity, RootFields.ALIASES, language, default_value=[])
     return language_map_entry_value
 

@@ -45,7 +45,12 @@ To the next iteration I should prepare the backend and connect it again to the D
     - 3. phase 
       - clases - 14 minutes
       - properties - 10 seconds
-  - The preprocessing does not exclude anything
+    - 4. phase - loading to elastic search - 14 minutes
+  - The preprocessing does exclude `sitelinks` from entities.
+  - The preprocessing enables to select only specific langugages.
   - The excluding must be done on the client of the preprocessed data.
     - Such as exlude properties that cannot be used on items.
-
+  - Backend
+    - Search service is implemented using elastic search.
+      - The ES contains aliases and labels
+      - When descriptions were part of the ES, it somehow intruded the search with classes that I would not expect.

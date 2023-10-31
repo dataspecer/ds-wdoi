@@ -135,7 +135,7 @@ The first step transforms classes and the second step transforms properties.
 
 ## Loading into search service (4. phase)
 
-The phase loads labels, descriptions and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py` .
+The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py` .
 
 - inputs:
   - optional argument for languages extracration
@@ -174,6 +174,7 @@ It either creates, refreshes or deletes classes and properties indices.
 ### Loading comments
 
 For each Wikidata entity an object is generated that serves as an input to the Elastic search instance.
-The object contains descriptions, labels and aliases for all the selected languguages. 
+The object contains labels and aliases for all the selected languguages. 
+There could be also descriptions but the search somehow was overtaken by the descriptions and resulted in not so relevant class search.
 Each language has its own nested object with the above mentioned fields.
 If the values are missing from the Wikidata entity, a default value is used - empty string for description and label, empty array for aliases.
