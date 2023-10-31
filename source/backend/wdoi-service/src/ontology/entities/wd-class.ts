@@ -1,17 +1,19 @@
 import type { EntityId, EntityIdsList, ExternalOntologyMapping, LanguageMap } from './common';
 import type { InputClass } from '../loading/input/input-class';
 
-export class Class {
-  id: EntityId;
-  labels: LanguageMap;
-  descriptions: LanguageMap;
-  instanceOf: EntityIdsList;
-  subclassOf: EntityIdsList;
-  propertiesForThisType: EntityIdsList;
-  equivalentClass: ExternalOntologyMapping;
+export const ROOT_CLASS_ID = 35120;
 
-  children: EntityIdsList;
-  subjectOf: EntityIdsList;
+export class WdClass {
+  readonly id: EntityId;
+  readonly labels: LanguageMap;
+  readonly descriptions: LanguageMap;
+  readonly instanceOf: EntityIdsList;
+  readonly subclassOf: EntityIdsList;
+  readonly propertiesForThisType: EntityIdsList;
+  readonly equivalentClass: ExternalOntologyMapping;
+
+  readonly children: EntityIdsList;
+  readonly subjectOf: EntityIdsList;
 
   constructor(inputClass: InputClass) {
     this.id = inputClass.id;

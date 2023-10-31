@@ -19,18 +19,18 @@ export enum AllowedEntityTypesValue {
 export type StatementAllowanceMap = Record<string, EntityIdsList>;
 
 export interface SubjectValueTypeContraint {
-  subclassOf: EntityIdsList;
-  instanceOf: EntityIdsList;
-  subclassOfInstanceOf: EntityIdsList;
+  readonly subclassOf: EntityIdsList;
+  readonly instanceOf: EntityIdsList;
+  readonly subclassOfInstanceOf: EntityIdsList;
 }
 export class GeneralConstraints {
-  propertyScope: PropertyScopeValue;
-  allowedEntityTypes: AllowedEntityTypesValue;
-  allowedQualifiers: EntityIdsList;
-  requiredQualifiers: EntityIdsList;
-  conflictsWith: StatementAllowanceMap;
-  itemRequiresStatement: StatementAllowanceMap;
-  subjectType: SubjectValueTypeContraint;
+  readonly propertyScope: PropertyScopeValue;
+  readonly allowedEntityTypes: AllowedEntityTypesValue;
+  readonly allowedQualifiers: EntityIdsList;
+  readonly requiredQualifiers: EntityIdsList;
+  readonly conflictsWith: StatementAllowanceMap;
+  readonly itemRequiresStatement: StatementAllowanceMap;
+  readonly subjectType: SubjectValueTypeContraint;
 
   constructor(inputConstraints: InputConstraints) {
     this.propertyScope = inputConstraints.propertyScope;
@@ -44,12 +44,12 @@ export class GeneralConstraints {
 }
 
 export interface ItemTypeConstraints {
-  valueType: SubjectValueTypeContraint;
-  valueRequiresStatement: StatementAllowanceMap;
-  isSymmetric: boolean;
-  oneOf: EntityIdsList;
-  noneOf: EntityIdsList;
-  inverse: null | EntityId;
+  readonly valueType: SubjectValueTypeContraint;
+  readonly valueRequiresStatement: StatementAllowanceMap;
+  readonly isSymmetric: boolean;
+  readonly oneOf: EntityIdsList;
+  readonly noneOf: EntityIdsList;
+  readonly inverse: null | EntityId;
 }
 
 export type EmptyTypeConstraint = null;
