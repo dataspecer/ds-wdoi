@@ -50,7 +50,7 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
     this.generalConstraints = new GeneralConstraints(inputProperty.constraints);
   }
 
-  static Factory(inputProperty: InputProperty): WdProperty | never {
+  static factory(inputProperty: InputProperty): WdProperty | never {
     if (inputProperty.underlyingType === UnderlyingType.ENTITY) {
       return new ItemProperty(inputProperty);
     } else if (inputProperty.underlyingType === UnderlyingType.STRING) {

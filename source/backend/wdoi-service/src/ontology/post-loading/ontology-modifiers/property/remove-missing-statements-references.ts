@@ -23,7 +23,7 @@ export class RemoveMissingStatementsReferences extends ModifierPropertyVisitor {
   }
 
   private removeMissingReferences(prop: WdProperty): void {
-    prop.instanceOf = this.context.filterOutNonExisting(prop.instanceOf, false);
+    prop.instanceOf = this.context.filterOutNonExisting(prop.instanceOf, true);
     prop.relatedProperty = this.context.filterOutNonExisting(prop.relatedProperty, false);
     prop.parentProperty = this.context.filterOutNonExisting(prop.parentProperty, false);
   }

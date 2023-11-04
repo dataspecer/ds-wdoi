@@ -1,6 +1,9 @@
+import { logger, missingLog } from '../../../../logging/logger';
 import type { EntityId } from '../../../entities/common';
 import type { WdClass } from '../../../entities/wd-class';
 import { ModifierClassVisitor } from '../../modifiers';
+
+const moduleLogger = logger.child({ module: 'mark-children-to-parents' });
 
 export class MarkChildrenToParents extends ModifierClassVisitor {
   visitWdClass(cls: WdClass): void {
@@ -9,7 +12,7 @@ export class MarkChildrenToParents extends ModifierClassVisitor {
       if (parent != null) {
         parent.addChild(cls.id);
       } else {
-        // to do logging
+        missingLog(moduleLogger, parentId, true);
       }
     });
   }

@@ -43,7 +43,8 @@ export class ConstraintsValidity extends ModifierPropertyVisitor {
     itemConstraints.valueType.subclassOfInstanceOf = this.context.filterOutNonExisting(itemConstraints.valueType.subclassOfInstanceOf, false);
     itemConstraints.valueRequiresStatement = this.context.filterOutNonExistingAllowanceMap(itemConstraints.valueRequiresStatement, false);
 
-    if (itemConstraints.inverse != null && !(itemConstraints.inverse in this.context.properties)) {
+    const inversePropertyId = itemConstraints.inverse;
+    if (inversePropertyId != null && !this.context.properties.has(inversePropertyId)) {
       itemConstraints.inverse = null;
     }
   }

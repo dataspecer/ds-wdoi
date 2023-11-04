@@ -15,7 +15,7 @@ export abstract class WdEntity {
   }
 
   protected addIfUnique<T extends string | number>(value: T, list: T[]): boolean {
-    if (!(value in list)) {
+    if (!list.includes(value)) {
       list.push(value);
       return true;
     } else return false;

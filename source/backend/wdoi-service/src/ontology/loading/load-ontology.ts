@@ -4,6 +4,10 @@ import { WdClass } from '../entities/wd-class';
 import { WdProperty } from '../entities/wd-property';
 import type { EntityId } from '../entities/common';
 
+import { logger, tryLog } from '../../logging/logger';
+
+const moduleLogger = logger.child({ module: 'loading' });
+
 function processLine(line: string, processEntityFunc: (jsonEntity: any) => void): void {
   const decodedLine = line.trim();
   if (decodedLine.startsWith('{')) {
@@ -12,23 +16,19 @@ function processLine(line: string, processEntityFunc: (jsonEntity: any) => void)
   }
 }
 
-async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jsonEntity: any) => void): Promise<void> {
+async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jsonEntity: any) => void, logStep: number): Promise<void> {
   const fileStream = fs.createReadStream(pathToJsonFile);
   const rl = readline.createInterface({
     input: fileStream,
     crlfDelay: Infinity,
   });
 
-  console.log('start');
   let i = 0;
   for await (const line of rl) {
     processLine(line, processEntityFunc);
     i += 1;
-    if (i % 100_000 === 0) {
-      console.log(i);
-    }
+    tryLog(moduleLogger, i, logStep);
   }
-  console.log('done');
 }
 
 export function processFuncClassesCapture(entitiesMap: Map<EntityId, WdClass>): (jsonEntity: any) => void {
@@ -48,8 +48,9 @@ export function processFuncPropertiesCapture(entitiesMap: Map<EntityId, WdProper
 export async function loadEntities<T>(
   pathToJsonFile: string,
   processFuncCapture: (entitiesMap: Map<EntityId, T>) => (jsonEntity: any) => void,
+  logStep: number,
 ): Promise<Map<EntityId, T>> {
   const entitiesMap = new Map<EntityId, T>();
-  await processWdJsonFile(pathToJsonFile, processFuncCapture(entitiesMap));
+  await processWdJsonFile(pathToJsonFile, processFuncCapture(entitiesMap), logStep);
   return entitiesMap;
 }
