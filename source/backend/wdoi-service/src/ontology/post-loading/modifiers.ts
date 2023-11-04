@@ -4,9 +4,7 @@ import type { WdClass } from '../entities/wd-class';
 import type { WdEntity } from '../entities/wd-entity';
 import type { CoordinatesProperty, ItemProperty, QuantityProperty, StringProperty, TimeProperty, WdProperty } from '../entities/wd-property';
 
-import { logger, missingLog } from '../../logging/logger';
-
-const moduleLogger = logger.child({ module: 'modifier' });
+import { missingLog } from '../../logging/logger';
 
 export interface ModifierVisitableClass {
   accept: (visitor: ModifierClassVisitor) => void;
@@ -41,7 +39,7 @@ export class ModifierContext {
       if (entityMap.has(id)) {
         return true;
       } else {
-        missingLog(moduleLogger, id, classesFlag);
+        missingLog(id, classesFlag);
         return false;
       }
     });
@@ -54,7 +52,7 @@ export class ModifierContext {
       const numId = Number(key);
       if (entityMap.has(numId)) {
         filteredAllowanceMap[key] = allowanceMap[key];
-      } else missingLog(moduleLogger, numId, classesFlag);
+      } else missingLog(numId, classesFlag);
     }
     return filteredAllowanceMap;
   }

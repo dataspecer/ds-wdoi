@@ -10,9 +10,7 @@ import { MarkChildrenToParents } from './post-loading/ontology-modifiers/class/m
 import { ConstraintsValidity } from './post-loading/ontology-modifiers/property/constraints-validity';
 import { AssignSubjectObjectValuesToClasses } from './post-loading/ontology-modifiers/property/assign-subject-object-values-to-classes';
 
-import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, logger, tryLog } from '../logging/logger';
-
-const moduleLogger = logger.child({ module: 'creation' });
+import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, tryLog } from '../logging/logger';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -26,26 +24,30 @@ export class WdOntology {
   }
 
   private static postLoadModifyClasses(ctx: ModifierContext): void {
-    moduleLogger.info('Starting to post process modyfying on classes');
+    console.log('Starting to post process modyfying on classes');
 
     const classModifiers = [new RmsClass(ctx), new AllClassesAreRooted(ctx), new MarkChildrenToParents(ctx)];
     let i = 0;
     for (const wdClass of ctx.classes.values()) {
-      classModifiers.forEach(wdClass.accept);
+      for (const modifier of classModifiers) {
+        wdClass.accept(modifier);
+      }
       i += 1;
-      tryLog(moduleLogger, i, CLASSES_LOG_STEP);
+      tryLog(i, CLASSES_LOG_STEP);
     }
   }
 
   private static postLoadModifyProperties(ctx: ModifierContext): void {
-    moduleLogger.info('Starting to post process modyfying on properties');
+    console.log('Starting to post process modyfying on properties');
 
     const propertyModifiers = [new RmsProperty(ctx), new ConstraintsValidity(ctx), new AssignSubjectObjectValuesToClasses(ctx)];
     let i = 0;
     for (const wdProperty of ctx.properties.values()) {
-      propertyModifiers.forEach(wdProperty.accept);
+      for (const modifier of propertyModifiers) {
+        wdProperty.accept(modifier);
+      }
       i += 1;
-      tryLog(moduleLogger, i, PROPERTIES_LOG_STEP);
+      tryLog(i, PROPERTIES_LOG_STEP);
     }
   }
 
@@ -56,17 +58,16 @@ export class WdOntology {
   }
 
   static async create(classesJsonFilePath: string, propertiesJsonFilePath: string): Promise<WdOntology | never> {
-    moduleLogger.info('Starting to load classes');
+    console.log('Starting to load properties');
     const props = await loadEntities<WdProperty>(propertiesJsonFilePath, processFuncPropertiesCapture, PROPERTIES_LOG_STEP);
 
-    moduleLogger.info('Starting to load properties');
+    console.log('Starting to load classes');
     const cls = await loadEntities<WdClass>(classesJsonFilePath, processFuncClassesCapture, CLASSES_LOG_STEP);
-    const rootClass = cls.get(ROOT_CLASS_ID);
 
+    const rootClass = cls.get(ROOT_CLASS_ID);
     if (rootClass != null) {
       const ontology = new WdOntology(rootClass, cls, props);
       WdOntology.postLoadModify(ontology);
-      moduleLogger.info('Successfully created the ontology');
       return ontology;
     } else {
       throw new Error('Could not find a root class.');

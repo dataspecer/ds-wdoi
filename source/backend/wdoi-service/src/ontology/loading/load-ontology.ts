@@ -4,9 +4,7 @@ import { WdClass } from '../entities/wd-class';
 import { WdProperty } from '../entities/wd-property';
 import type { EntityId } from '../entities/common';
 
-import { logger, tryLog } from '../../logging/logger';
-
-const moduleLogger = logger.child({ module: 'loading' });
+import { tryLog } from '../../logging/logger';
 
 function processLine(line: string, processEntityFunc: (jsonEntity: any) => void): void {
   const decodedLine = line.trim();
@@ -27,7 +25,7 @@ async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jso
   for await (const line of rl) {
     processLine(line, processEntityFunc);
     i += 1;
-    tryLog(moduleLogger, i, logStep);
+    tryLog(i, logStep);
   }
 }
 

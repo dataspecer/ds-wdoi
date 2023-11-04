@@ -31,9 +31,5 @@
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "pino": "^8.16.1",
-    "pino-pretty": "^10.2.3"
   }
 }
