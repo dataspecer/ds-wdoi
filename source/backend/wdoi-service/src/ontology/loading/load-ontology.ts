@@ -2,6 +2,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { WdClass } from '../entities/wd-class';
 import { WdProperty } from '../entities/wd-property';
+import type { EntityId } from '../entities/common';
 
 function processLine(line: string, processEntityFunc: (jsonEntity: any) => void): void {
   const decodedLine = line.trim();
@@ -30,25 +31,25 @@ async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jso
   console.log('done');
 }
 
-export function processFuncClassesCapture(entitiesMap: Map<number, WdClass>): (jsonEntity: any) => void {
+export function processFuncClassesCapture(entitiesMap: Map<EntityId, WdClass>): (jsonEntity: any) => void {
   return (jsonEntity: any) => {
     const newWdClass = new WdClass(jsonEntity);
     entitiesMap.set(newWdClass.id, newWdClass);
   };
 }
 
-export function processFuncPropertiesCapture(entitiesMap: Map<number, WdProperty>): (jsonEntity: any) => void {
+export function processFuncPropertiesCapture(entitiesMap: Map<EntityId, WdProperty>): (jsonEntity: any) => void {
   return (jsonEntity: any) => {
-    const newWdProperty = WdProperty.Factory(jsonEntity);
+    const newWdProperty = WdProperty.factory(jsonEntity);
     entitiesMap.set(newWdProperty.id, newWdProperty);
   };
 }
 
 export async function loadEntities<T>(
   pathToJsonFile: string,
-  processFuncCapture: (entitiesMap: Map<number, T>) => (jsonEntity: any) => void,
-): Promise<Map<number, T>> {
-  const entitiesMap = new Map<number, T>();
+  processFuncCapture: (entitiesMap: Map<EntityId, T>) => (jsonEntity: any) => void,
+): Promise<Map<EntityId, T>> {
+  const entitiesMap = new Map<EntityId, T>();
   await processWdJsonFile(pathToJsonFile, processFuncCapture(entitiesMap));
   return entitiesMap;
 }

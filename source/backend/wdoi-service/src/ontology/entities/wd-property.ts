@@ -1,6 +1,8 @@
 import type { InputProperty } from '../loading/input/input-property';
-import type { EntityId, EntityIdsList, ExternalOntologyMapping, LanguageMap } from './common';
+import type { ModifierPropertyVisitor, ModifierVisitableProperty } from '../post-loading/modifiers';
+import type { EntityIdsList, ExternalOntologyMapping } from './common';
 import { type EmptyTypeConstraint, GeneralConstraints, type ItemTypeConstraints } from './constraint';
+import { WdEntity } from './wd-entity';
 
 export enum UnderlyingType {
   ENTITY = 0,
@@ -30,30 +32,21 @@ export enum Datatype {
   GEOGRAPHIC_COORDINATES = 16,
 }
 
-export class WdProperty {
-  readonly id: EntityId;
-  readonly datatype: Datatype;
-  readonly underlyingType: UnderlyingType;
-  readonly labels: LanguageMap;
-  readonly descriptions: LanguageMap;
-  readonly instanceOf: EntityIdsList;
-  readonly subpropertyOf: EntityIdsList;
-  readonly relatedProperty: EntityIdsList;
-  readonly equivalentProperty: ExternalOntologyMapping;
-
-  readonly generalConstraints: GeneralConstraints;
+export abstract class WdProperty extends WdEntity implements ModifierVisitableProperty {
+  datatype: Datatype;
+  underlyingType: UnderlyingType;
+  parentProperty: EntityIdsList;
+  relatedProperty: EntityIdsList;
+  equivalentExternalOntologyProperties: ExternalOntologyMapping;
+  generalConstraints: GeneralConstraints;
 
   protected constructor(inputProperty: InputProperty) {
-    this.id = inputProperty.id;
+    super(inputProperty);
     this.datatype = inputProperty.datatype;
     this.underlyingType = inputProperty.underlyingType;
-    this.labels = inputProperty.labels;
-    this.descriptions = inputProperty.descriptions;
-    this.instanceOf = inputProperty.instanceOf;
-    this.subpropertyOf = inputProperty.subpropertyOf;
+    this.parentProperty = inputProperty.subpropertyOf;
     this.relatedProperty = inputProperty.relatedProperty;
-    this.equivalentProperty = inputProperty.equivalentProperty;
-
+    this.equivalentExternalOntologyProperties = inputProperty.equivalentProperty;
     this.generalConstraints = new GeneralConstraints(inputProperty.constraints);
   }
 
@@ -72,6 +65,8 @@ export class WdProperty {
       throw new Error('Missing constructor for a property type.');
     }
   }
+
+  abstract accept(visitor: ModifierPropertyVisitor): void;
 }
 
 export class ItemProperty extends WdProperty {
@@ -80,6 +75,10 @@ export class ItemProperty extends WdProperty {
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
     this.itemConstraints = inputProperty.constraints.typeDependent as ItemTypeConstraints;
+  }
+
+  accept(visitor: ModifierPropertyVisitor): void {
+    visitor.visitItemProperty(this);
   }
 }
 
@@ -90,6 +89,10 @@ export class StringProperty extends WdProperty {
     super(inputProperty);
     this.stringConstraints = null;
   }
+
+  accept(visitor: ModifierPropertyVisitor): void {
+    visitor.visitStringProperty(this);
+  }
 }
 
 export class QuantityProperty extends WdProperty {
@@ -98,6 +101,10 @@ export class QuantityProperty extends WdProperty {
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
     this.quantityConstraints = null;
+  }
+
+  accept(visitor: ModifierPropertyVisitor): void {
+    visitor.visitQuantityProperty(this);
   }
 }
 
@@ -108,6 +115,10 @@ export class TimeProperty extends WdProperty {
     super(inputProperty);
     this.timeConstraints = null;
   }
+
+  accept(visitor: ModifierPropertyVisitor): void {
+    visitor.visitTimeProperty(this);
+  }
 }
 
 export class CoordinatesProperty extends WdProperty {
@@ -116,5 +127,9 @@ export class CoordinatesProperty extends WdProperty {
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
     this.coordinatesConstraints = null;
+  }
+
+  accept(visitor: ModifierPropertyVisitor): void {
+    visitor.visitCoordinateProperty(this);
   }
 }

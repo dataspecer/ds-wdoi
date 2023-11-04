@@ -1,4 +1,4 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping, LanguageMap, LanugageArrayMap } from '../../entities/common';
+import type { EntityIdsList, ExternalOntologyMapping } from '../../entities/common';
 import type {
   AllowedEntityTypesValue,
   EmptyTypeConstraint,
@@ -8,15 +8,11 @@ import type {
   SubjectValueTypeContraint,
 } from '../../entities/constraint';
 import type { Datatype, UnderlyingType } from '../../entities/wd-property';
+import type { InputEntity } from './input-entity';
 
-export interface InputProperty {
-  readonly id: EntityId;
+export interface InputProperty extends InputEntity {
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
-  readonly aliases: LanugageArrayMap;
-  readonly labels: LanguageMap;
-  readonly descriptions: LanguageMap;
-  readonly instanceOf: EntityIdsList;
   readonly subpropertyOf: EntityIdsList;
   readonly relatedProperty: EntityIdsList;
   readonly equivalentProperty: ExternalOntologyMapping;

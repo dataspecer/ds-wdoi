@@ -1,11 +1,7 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping, LanguageMap, LanugageArrayMap } from '../../entities/common';
+import type { EntityIdsList, ExternalOntologyMapping } from '../../entities/common';
+import type { InputEntity } from './input-entity';
 
-export interface InputClass {
-  readonly id: EntityId;
-  readonly aliases: LanugageArrayMap;
-  readonly labels: LanguageMap;
-  readonly descriptions: LanguageMap;
-  readonly instanceOf: EntityIdsList;
+export interface InputClass extends InputEntity {
   readonly subclassOf: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentClass: ExternalOntologyMapping;
