@@ -5,7 +5,8 @@ The preprocessing is done in three phases:
 1. Extraction of classes and properties Ids into a set.
 2. The set is then passes to a second phase which extracts the classes and properties into two files.
 3. The extracted classes and properties are then transformed into objects that will serve as input to the server.
-4. Load labels, aliases and description into a search service (Elastic search right now).
+4. Upon the transformed classes it does semantic modification of the classes and properties.
+5. Load labels, aliases and description into a search service (Elastic search right now).
 
 > Note: 
 > 1. Types of the properties are not checked, since wikidata does not allow to entry value that do not match the type. Such as: placing a property into subclass of statement.
@@ -45,6 +46,8 @@ The main script is `extraction.py`
   - that is a value of a instance of property in any item, or
   - that is a value of a subclass of property in any item, or
   - that contains a subclass of statement
+- Note that inside property constraints can be invalid classes based on the definition of a class.
+- There can be also references to items that do not exists in the dump.
 - The two phases are separate because we do not know which entities are classes
 - The output files of the second phase contain reduced entities:
   - `sitelinks` are removed since there is no usage directly to the ontology
@@ -133,7 +136,37 @@ The first step transforms classes and the second step transforms properties.
   - facet of
   - constraints for other types than item
 
-## Loading into search service (4. phase)
+## Semantic modification (4. phase)
+
+The phase loads all the transformed data into a memory and does a semantic checking and modification to the entities.
+Subsequently it saves them to two files. Which then can be loaded to the server instance.
+This phase was added because this part also takes quite a bit of time (which was unexpected).
+
+- input:
+  - required paths to `classes.json` and `properties.json` in the given order from the third phase
+
+        $> python modification.py classes.json properties.json
+
+- output:
+  - `classes-final.json`
+  - `properties-final.json`
+
+- logging:
+  - the logging takes place into `info_mod.log` file
+
+### Modification comments
+
+- For classes:
+  - all classes are rooted
+  - addding children references to the classes
+  - removing unexisting references from the statements
+- for properties:
+  - assign subject/value to the classes
+  - remove unexisting references from the statements
+  - validate constraints
+
+
+## Loading into search service (5. phase)
 
 The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py` .
 

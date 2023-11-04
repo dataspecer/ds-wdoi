@@ -4,7 +4,7 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import phases.p4_loading_load_to_search_service as ph4
+import source.preprocessing.phases.p5_loading_load_to_search_service as ph4
 
 LOG_FILE = "info_load.log"
 logger = logging.getLogger("loading")
