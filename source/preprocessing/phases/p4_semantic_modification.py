@@ -3,12 +3,13 @@ import logging
 import utils.decoding as decoding
 import utils.logging as ul
 from utils.timer import timed
+from wikidata.modifications.properties.remove_unexisting_references_main import *
+from wikidata.modifications.properties.remove_unexisting_references_general_constraints import *
+from wikidata.modifications.properties.remove_unexisting_references_item_constraints import *
 from wikidata.modifications.modifier import *
 from wikidata.modifications.classes.all_classes_are_rooted import *
 from wikidata.modifications.classes.remove_unexisting_references import *
 from wikidata.modifications.classes.mark_children_to_parents import *
-
-
 
 main_logger = logging.getLogger("modification")
 classes_logger = main_logger.getChild("p4_modify_classes")
@@ -42,8 +43,6 @@ def __modify_entities(modifiers, entity_map: dict, context: mods.Context, logger
         for modifier_func in modifiers:
             modifier_func(entity, context)
         ul.try_log_progress(logger, idx, logging_step)
-        if idx % 5 == 0:
-            break
 
 @timed(classes_logger)
 def modify_classes(context: mods.Context):
@@ -54,7 +53,7 @@ def modify_classes(context: mods.Context):
 
 @timed(properties_logger)
 def modify_properties(context: mods.Context):
-    modifiers = []
+    modifiers = [RemoveUnexistingReferencesMainProperties(properties_logger), RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger), RemoveUnexistingReferencesItemConstraintsProperties(properties_logger)]
     __modify_entities(modifiers, context.property_map, context, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     for mod in modifiers:
         mod.report_status()

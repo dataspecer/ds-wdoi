@@ -10,7 +10,7 @@ class UnderlyingTypes(IntEnum):
     
 class Datatypes(StrEnum):
     ITEM = ("wikibase-item", UnderlyingTypes.ENTITY)	
-    PROPERTY = ("wikibase-property", UnderlyingTypes.ENTITY	)
+    PROPERTY = ("wikibase-property", UnderlyingTypes.ENTITY)
     LEXEME = ("wikibase-lexeme", UnderlyingTypes.ENTITY)	
     SENSE = ("wikibase-sense", UnderlyingTypes.ENTITY)	
     FORM = ("wikibase-form", UnderlyingTypes.ENTITY	)

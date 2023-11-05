@@ -9,9 +9,7 @@ class MarkChildrenToParents(mods.Modifier):
             wd_entity[CHILDREN_FIELD] = []
     
     def __init__(self, logger) -> None:
-        super().__init__()
-        self.missing_parent_set = set()
-        self.logger = logger.getChild("mark-children-to-parents")
+        super().__init__(logger.getChild("mark-children-to-parents"))
     
     def __call__(self, wd_entity, context: mods.Context) -> None:
         entityId = wd_entity['id']
@@ -23,8 +21,8 @@ class MarkChildrenToParents(mods.Modifier):
                 parent[CHILDREN_FIELD].append(entityId)
             else:
                 self.logger.info(f"Missing class {parentId}")
-                self.missing_parent_set.add(parentId)
+                self.missing_refs.add(parentId)
     
     def report_status(self) -> None:
-        self.logger.info(f"Missing {len(self.missing_parent_set)} parents")
+        self.logger.info(f"Missing {len(self.missing_refs)} parents")
         
