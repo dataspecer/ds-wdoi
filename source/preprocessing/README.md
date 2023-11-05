@@ -163,10 +163,9 @@ The main script is `4_modification.py`
   - addding children references to the classes
   - removing unexisting references from the statements
 - for properties:
-  - assign subject/value to the classes
-  - remove unexisting references from the statements
-  - validate constraints
-
+  - remove unexisting references from the main statements
+  - remove unexisting references from the general constraints
+  - remove unexisting references from the item constraints
 
 ## Loading into search service (5. phase)
 
