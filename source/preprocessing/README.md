@@ -15,13 +15,13 @@ The preprocessing is done in three phases:
 ## Extraction (1. and 2. phase)
 
 The part contains 1. and 2. phase.
-The main script is `extraction.py`
+The main script is `1_2_extraction.py`
 
 - input:
   - a path to the wikidata json dump in bz2 format
   - Example of running:
     
-        $> python extraction.py latest-all.json.bz2
+        $> python 1_2_extraction.py latest-all.json.bz2
 
 - output:
   - `classes.json.bz2`
@@ -56,6 +56,7 @@ The main script is `extraction.py`
 
 The part contain 3. phase which is conducted in two steps.
 The first step transforms classes and the second step transforms properties.
+The main script is `3_transformation.py`.
 
 - input:
   - optional argument for languages extracration
@@ -72,11 +73,11 @@ The first step transforms classes and the second step transforms properties.
       - for both transformations - use `both`
   - required paths to `classes.json.bz2` and `properties.json.bz2` in the given order
 
-        $> python transformation.py both classes.json.bz2 properties.json.bz2
+        $> python 3_transformation.py both classes.json.bz2 properties.json.bz2
 
         or
 
-        $> python transformation.py --langs en -- both classes.json.bz2 properties.json.bz2
+        $> python 3_transformation.py --langs en -- both classes.json.bz2 properties.json.bz2
 
 
 - output:
@@ -141,11 +142,12 @@ The first step transforms classes and the second step transforms properties.
 The phase loads all the transformed data into a memory and does a semantic checking and modification to the entities.
 Subsequently it saves them to two files. Which then can be loaded to the server instance.
 This phase was added because this part also takes quite a bit of time (which was unexpected).
+The main script is `4_modification.py`
 
 - input:
   - required paths to `classes.json` and `properties.json` in the given order from the third phase
 
-        $> python modification.py classes.json properties.json
+        $> python 4_modification.py classes.json properties.json
 
 - output:
   - `classes-final.json`
@@ -168,7 +170,8 @@ This phase was added because this part also takes quite a bit of time (which was
 
 ## Loading into search service (5. phase)
 
-The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py` .
+The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py`.
+The main script is `5_loading.py`
 
 - inputs:
   - optional argument for languages extracration
