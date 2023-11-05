@@ -17,32 +17,23 @@ CLASSES_OUTPUT_FILE = "classes.json"
 PROPERTIES_OUTPUT_FILE = 'properties.json'
 
 def __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages):
-    str_id = wd_fields_ex.extract_wd_id(wd_entity)
-    if type_check_func(str_id):
-            new_entity = transform_func(str_id, wd_entity, languages)
-            decoding.write_wd_entity_to_file(new_entity, output_file)
-    else:
-        logger.error(f"The entity does not match the desired type. ID = {str_id}")
-   
-def __process_wd_entities(bz2_input_file, output_file, transform_func, type_check_func, logger, logging_step, languages):
-    i = 0
-    for binary_line in bz2_input_file:
-        try:
-            wd_entity = decoding.line_to_wd_entity(binary_line)
-            if wd_entity != None:
-                __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages)
-        except Exception as e:
-            logger.exception("There was an error during transformation of an entity.")
-        i += 1
-        ul.try_log_progress(logger, i, logging_step)
-    ul.log_progress(logger, i)
+    try:
+        str_id = wd_fields_ex.extract_wd_id(wd_entity)
+        if type_check_func(str_id):
+                new_entity = transform_func(str_id, wd_entity, languages)
+                decoding.write_wd_entity_to_file(new_entity, output_file)
+        else:
+            raise ValueError(f"The entity does not match the desired type. ID = {str_id}")
+    except:    
+        logger.exception("There was an error during transformation.")
     
 def __transform_entities(bz2_file_path: pathlib.Path, output_file_name, transform_func, type_check_func, logger, logging_step, languages):
     with (bz2.BZ2File(bz2_file_path) as bz2_input_file,
           open(output_file_name, "wb") as output_file
         ):
             decoding.init_json_array_in_files([output_file])
-            __process_wd_entities(bz2_input_file, output_file, transform_func, type_check_func, logger, logging_step, languages)
+            for wd_entity in decoding.entities_generator(bz2_input_file, logger, logging_step):
+                __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages)
             decoding.close_json_array_in_files([output_file])
 
 @timed(classes_logger)

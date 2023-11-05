@@ -1,6 +1,6 @@
 ENTITY_PROGRESS_STEP = 100_000
 CLASSES_PROGRESS_STEP = 100_000
-PROPERTIES_PROGRESS_STEP = 10_000
+PROPERTIES_PROGRESS_STEP = 1_000
 
 def __log_progress_message(i, context_message):
     return f"Processed {i:,} entities. {context_message}"

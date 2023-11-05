@@ -1,21 +1,21 @@
 import orjson
-
-def line_contains_json_object(line: str) -> bool:
+import utils.logging as ul
+def __line_contains_json_object(line: str) -> bool:
    if line.startswith("{"):
        return True
    else:
        return False
    
-def remove_ending_comma(line: str) -> str:
+def __remove_ending_comma(line: str) -> str:
     return line[:-1]
 
-def decode_binary_line(binary_line: str) -> str:
+def __decode_binary_line(binary_line: str) -> str:
     return binary_line.decode().strip()
 
-def load_wd_entity_json(string_line: str):
-    return orjson.loads(remove_ending_comma(string_line))
+def __load_wd_entity_json(string_line: str):
+    return orjson.loads(__remove_ending_comma(string_line))
 
-def serialize_wd_entity_json(wd_entity):
+def __serialize_wd_entity_json(wd_entity):
     return orjson.dumps(wd_entity)
 
 def init_json_array_in_files(file_array) -> None:
@@ -27,12 +27,29 @@ def close_json_array_in_files(file_array) -> None:
         f.write("]".encode())
 
 def write_wd_entity_to_file(wd_entity, output_file):
-    output_file.write(serialize_wd_entity_json(wd_entity))
+    output_file.write(__serialize_wd_entity_json(wd_entity))
     output_file.write(",\n".encode())
     
-def line_to_wd_entity(binary_line):
-    string_line = decode_binary_line(binary_line)
-    if line_contains_json_object(string_line):
-        return load_wd_entity_json(string_line)
+def __line_to_wd_entity(binary_line):
+    string_line = __decode_binary_line(binary_line)
+    if __line_contains_json_object(string_line):
+        return __load_wd_entity_json(string_line)
     else:
         return None
+    
+def __empty_message():
+    return ""
+    
+def entities_generator(json_file, logger, logging_step, context_message_func = __empty_message):
+    i = 0
+    for binary_line in json_file:
+        try:
+            wd_entity = __line_to_wd_entity(binary_line)
+            if wd_entity != None:
+                yield wd_entity
+        except Exception as e:
+            logger.exception("There was an error during decoding of an entity.")
+        i += 1
+        ul.try_log_progress(logger, i, logging_step, context_message_func())
+    ul.log_progress(logger, i, context_message_func())
+    

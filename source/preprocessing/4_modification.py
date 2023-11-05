@@ -5,6 +5,7 @@ import logging
 import utils.timer as timer
 
 import phases.p4_semantic_modification as ph4
+import wikidata.modifications.modifier as mods
 
 LOG_FILE = "info_mod.log"
 logger = logging.getLogger("modification")
@@ -14,8 +15,11 @@ def __main(args):
     try:
         classes = ph4.load_classes(args.classesJsonFile)
         properties = ph4.load_properties(args.propertiesJsonFile)
-        ph4.modify_classes(classes, properties)
-        ph4.modify_properties(classes, properties)
+        context = mods.Context(classes, properties)
+        ph4.modify_classes(context)
+        ph4.modify_properties(context)
+        ph4.write_classes_to_file(context.class_map)
+        ph4.write_properties_to_file(context.property_map)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")
