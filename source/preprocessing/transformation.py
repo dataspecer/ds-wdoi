@@ -4,11 +4,24 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import source.preprocessing.phases.p3_transformation_transform_entities as ph3
+import phases.p3_transformation_transform_entities as ph3
 
 LOG_FILE = "info_tr.log"
 logger = logging.getLogger("transformation")
 DEFAULT_LANGUAGES = ["en"]
+
+@timer.timed(logger)
+def __main(args):
+    try:
+        if args.phases in ["both", "cls"]:
+            ph3.transform_classes(args.classesBz2File, args.lang)
+        if args.phases in ["both", "props"]:
+            ph3.transform_properties(args.propertiesBz2File, args.lang)
+    except Exception as e:
+        logger.exception("There was an error that cannot be handled")
+        logger.error("Exiting...")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
@@ -39,38 +52,5 @@ if __name__ == "__main__":
                         help="A path to the extracted properties json dump bz2 file.")
     args = parser.parse_args()
     
-    logger.info("Preprocessin started")
-    preprocessing_start_time = timer.get_time()
-
-    try:
-        if args.phases in ["both", "cls"]:
-            # Phase one
-            logger.info("Starting phase 1 - transforming classes")
-            phase1_start_time = timer.get_time()
-            
-            ph3.transform_classes(args.classesBz2File, args.lang)
-            
-            phase1_end_time = timer.get_time()
-            logger.info("Ending phase 1 - transforming classes. Elapsed time %s",
-                    timer.get_formated_elapsed_time(phase1_start_time, phase1_end_time))
-        
-        if args.phases in ["both", "props"]:
-            # Phase two
-            logger.info("Starting phase 2 - transforming properties")
-            phase2_start_time = timer.get_time()
-            
-            ph3.transform_properties(args.propertiesBz2File, args.lang)
-            
-            phase2_end_time = timer.get_time()
-            logger.info("Ending phase 2 - transforming properties. Elapsed time %s",
-                    timer.get_formated_elapsed_time(phase2_start_time, phase2_end_time))
-        
-    except Exception as e:
-        logger.exception("There was an error that cannot be handled")
-        logger.error("Exiting...")
-        sys.exit(1)
-    
-    preprocessing_end_time = timer.get_time()
-    logger.info("Preprocessing finished in %s",
-                timer.get_formated_elapsed_time(preprocessing_start_time, preprocessing_end_time))
+    __main(args)
       

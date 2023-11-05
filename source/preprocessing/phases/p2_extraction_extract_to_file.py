@@ -6,25 +6,22 @@ import wikidata.json_extractors.wd_fields as wd_fields_ex
 import wikidata.model.entity_types as wd_entity_types
 import utils.decoding as decoding
 from wikidata.model.entity_json_fields import RootFields
+import utils.logging as ul
+from utils.timer import timed
 
 logger = logging.getLogger("extraction").getChild("p2_extract_to_file")
 
 CLASSES_OUTPUT_FILE = "classes.json.bz2"
 PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
-LOGGIN_PROGRESS_STEP = 100_000
 
-def __log_progress_message(i, class_count, property_count):
-    return f"Processed {i:,} entities. Classes: {class_count:,} Properties: {property_count:,}"
+def __log_context_message(class_counter, property_counter):
+    return f"Classes: {class_counter.get_count():,} Properties: {property_counter.get_count():,}"
 
-def __log_progress(i, class_count, property_count):
-    logger.info(__log_progress_message(i, class_count, property_count))
-
-def __try_log_progress(i, class_count, property_count):
-    if i % LOGGIN_PROGRESS_STEP == 0:
-        __log_progress(i, class_count, property_count)
-
-def __log_sum_progress(class_count, property_count, set_count):
-    logger.info(f"Found Classes = {class_count} Properties = {property_count:,} . The sum is {(class_count + property_count):,} from the set of {set_count:,}")
+def __log_sum_progress(class_counter, property_counter, set):
+    class_count = class_counter.get_count()
+    property_count = property_counter.get_count()
+    set_count = len(set)
+    logger.info(f"Found Classes: {class_count:,} Properties: {property_count:,} . The sum is {(class_count + property_count):,} from the set of {set_count:,}")
 
 # Sitelinks are not used in the ontology.
 def __reduce_wd_entity(wd_entity):
@@ -57,10 +54,12 @@ def __extract_to_file(bz2_input_file, classes_output_file, properties_output_fil
         except Exception as e:
             logger.exception("There was an error during extraction of an entity")
         i += 1
-        __try_log_progress(i, class_counter.get_count(), property_counter.get_count())
-    __log_progress(i, class_counter.get_count(), property_counter.get_count())
-    __log_sum_progress( class_counter.get_count(), property_counter.get_count(), len(wd_entity_ids_set))
-    
+        ul.try_log_progress(logger, i, ul.ENTITY_PROGRESS_STEP, __log_context_message(class_counter, property_counter))
+    ul.log_progress(logger, i, __log_context_message(class_counter, property_counter))
+    __log_sum_progress(class_counter, property_counter, wd_entity_ids_set)
+
+
+@timed(logger)
 def extract_to_file(bz2_dump_file_path: pathlib.Path, wd_entity_ids_set: set):
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file,
           bz2.BZ2File(CLASSES_OUTPUT_FILE, "w") as classes_output_file,

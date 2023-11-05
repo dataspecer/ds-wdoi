@@ -4,11 +4,21 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import source.preprocessing.phases.p5_loading_load_to_search_service as ph4
+import phases.p5_loading_load_to_search_service as ph4
 
 LOG_FILE = "info_load.log"
 logger = logging.getLogger("loading")
 DEFAULT_LANGUAGES = ["en"]
+
+@timer.timed(logger)
+def __main(args):
+    try:
+        ph4.load_properties(args.propertiesJsonFile, args.lang)
+        ph4.load_classes(args.classesJsonFile, args.lang)
+    except Exception as e:
+        logger.exception("There was an error that cannot be handled")
+        logger.error("Exiting...")
+        sys.exit(1)
 
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
@@ -37,34 +47,5 @@ if __name__ == "__main__":
                         help="A path to the transformed properties json file.")
     args = parser.parse_args()
     
-    logger.info("Preprocessin started")
-    preprocessing_start_time = timer.get_time()
-
-    try:
-        logger.info("Starting phase 1 - loading properties")
-        phase1_start_time = timer.get_time()
-        
-        ph4.load_properties(args.propertiesJsonFile, args.lang)
-        
-        phase1_end_time = timer.get_time()
-        logger.info("Ending phase 1 - loading properties. Elapsed time %s",
-                timer.get_formated_elapsed_time(phase1_start_time, phase1_end_time))
-        
-        logger.info("Starting phase 2 - loading classes")
-        phase1_start_time = timer.get_time()
-        
-        ph4.load_classes(args.classesJsonFile, args.lang)
-        
-        phase1_end_time = timer.get_time()
-        logger.info("Ending phase 2 - loading classes. Elapsed time %s",
-                timer.get_formated_elapsed_time(phase1_start_time, phase1_end_time))
-        
-    except Exception as e:
-        logger.exception("There was an error that cannot be handled")
-        logger.error("Exiting...")
-        sys.exit(1)
-    
-    preprocessing_end_time = timer.get_time()
-    logger.info("Preprocessing finished in %s",
-                timer.get_formated_elapsed_time(preprocessing_start_time, preprocessing_end_time))
+    __main(args)
       

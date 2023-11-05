@@ -6,21 +6,15 @@ import wikidata.json_extractors.wd_statements as wd_stmts_ex
 import wikidata.model.entity_types as wd_entity_types
 from wikidata.model.properties import Properties
 import utils.decoding as decoding
+import utils.logging as ul
+from utils.timer import timed
 
 logger = logging.getLogger("extraction").getChild("p1_find_ids")
 
 WD_PARENT_CLASS_ID = "Q16889133"
-LOGGIN_PROGRESS_STEP = 100_000
 
-def __log_progress_message(i, ids_count):
-    return f"Processed {i:,} entities and found {ids_count}"
-
-def __log_progress(i, ids_count):
-    logger.info(__log_progress_message(i, ids_count))
-
-def __try_log_progress(i, ids_count):
-    if i % LOGGIN_PROGRESS_STEP == 0:
-        __log_progress(i, ids_count)
+def __log_context_message(set):
+    return f"Found {len(set):,}"
 
 def __is_wd_entity_class(wd_entity, instance_of_ids) -> bool:
     if wd_stmts_ex.contains_wd_subclass_of_statement(wd_entity) or WD_PARENT_CLASS_ID in instance_of_ids:
@@ -49,7 +43,8 @@ def __process_wd_entity(wd_entity, wd_entity_ids_set: set):
         
         if __is_wd_entity_for_extration(wd_entity, str_entity_id, instance_of_ids):
             __mark_for_extraction(wd_entity_ids_set, [str_entity_id])
-        
+
+@timed(logger)
 def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
     wd_entity_ids_set = set()
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file):
@@ -62,8 +57,8 @@ def extract_ids(bz2_dump_file_path: pathlib.Path) -> set:
             except Exception as e:
                 logger.exception("There was an error during extraction of an entity")
             i += 1
-            __try_log_progress(i, len(wd_entity_ids_set))
-        __log_progress(i, len(wd_entity_ids_set))
+            ul.try_log_progress(logger, i, ul.ENTITY_PROGRESS_STEP, __log_context_message(wd_entity_ids_set))
+        ul.log_progress(logger, i, __log_context_message(wd_entity_ids_set))
         return wd_entity_ids_set
                 
     
