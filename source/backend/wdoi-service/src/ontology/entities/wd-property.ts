@@ -33,18 +33,18 @@ export enum Datatype {
 }
 
 export abstract class WdProperty extends WdEntity implements ModifierVisitableProperty {
-  datatype: Datatype;
-  underlyingType: UnderlyingType;
-  parentProperty: EntityIdsList;
-  relatedProperty: EntityIdsList;
-  equivalentExternalOntologyProperties: ExternalOntologyMapping;
-  generalConstraints: GeneralConstraints;
+  readonly datatype: Datatype;
+  readonly underlyingType: UnderlyingType;
+  readonly subpropertyOf: EntityIdsList;
+  readonly relatedProperty: EntityIdsList;
+  readonly equivalentExternalOntologyProperties: ExternalOntologyMapping;
+  readonly generalConstraints: GeneralConstraints;
 
   protected constructor(inputProperty: InputProperty) {
     super(inputProperty);
     this.datatype = inputProperty.datatype;
     this.underlyingType = inputProperty.underlyingType;
-    this.parentProperty = inputProperty.subpropertyOf;
+    this.subpropertyOf = inputProperty.subpropertyOf;
     this.relatedProperty = inputProperty.relatedProperty;
     this.equivalentExternalOntologyProperties = inputProperty.equivalentProperty;
     this.generalConstraints = new GeneralConstraints(inputProperty.constraints);
@@ -65,7 +65,6 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
       throw new Error('Missing constructor for a property type.');
     }
   }
-
   abstract accept(visitor: ModifierPropertyVisitor): void;
 }
 

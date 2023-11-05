@@ -20,8 +20,8 @@ export interface InputProperty extends InputEntity {
 }
 
 export interface InputConstraints {
-  readonly propertyScope: PropertyScopeValue;
-  readonly allowedEntityTypes: AllowedEntityTypesValue;
+  readonly propertyScope: PropertyScopeValue[];
+  readonly allowedEntityTypes: AllowedEntityTypesValue[];
   readonly allowedQualifiers: EntityIdsList;
   readonly requiredQualifiers: EntityIdsList;
   readonly conflictsWith: StatementAllowanceMap;

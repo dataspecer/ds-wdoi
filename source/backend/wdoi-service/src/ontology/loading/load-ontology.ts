@@ -4,7 +4,7 @@ import { WdClass } from '../entities/wd-class';
 import { WdProperty } from '../entities/wd-property';
 import type { EntityId } from '../entities/common';
 
-import { tryLog } from '../../logging/logger';
+import { tryLog, log } from '../../logging/log';
 
 function processLine(line: string, processEntityFunc: (jsonEntity: any) => void): void {
   const decodedLine = line.trim();
@@ -27,6 +27,7 @@ async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jso
     i += 1;
     tryLog(i, logStep);
   }
+  log(`${i} entities`);
 }
 
 export function processFuncClassesCapture(entitiesMap: Map<EntityId, WdClass>): (jsonEntity: any) => void {

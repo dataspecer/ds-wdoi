@@ -5,4 +5,5 @@ export interface InputClass extends InputEntity {
   readonly subclassOf: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentClass: ExternalOntologyMapping;
+  readonly children: EntityIdsList;
 }

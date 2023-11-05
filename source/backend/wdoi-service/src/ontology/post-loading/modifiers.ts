@@ -1,10 +1,6 @@
-import type { EntityId, EntityIdsList } from '../entities/common';
-import type { StatementAllowanceMap } from '../entities/constraint';
+import type { EntityId } from '../entities/common';
 import type { WdClass } from '../entities/wd-class';
-import type { WdEntity } from '../entities/wd-entity';
 import type { CoordinatesProperty, ItemProperty, QuantityProperty, StringProperty, TimeProperty, WdProperty } from '../entities/wd-property';
-
-import { missingLog } from '../../logging/logger';
 
 export interface ModifierVisitableClass {
   accept: (visitor: ModifierClassVisitor) => void;
@@ -32,30 +28,6 @@ export class ModifierContext {
   getProperty(entityId: EntityId): WdProperty | undefined {
     return this.properties.get(entityId);
   }
-
-  filterOutNonExisting(idsList: EntityIdsList, classesFlag: boolean): EntityIdsList {
-    const entityMap: Map<EntityId, WdEntity> = classesFlag ? this.classes : this.properties;
-    return idsList.filter((id) => {
-      if (entityMap.has(id)) {
-        return true;
-      } else {
-        missingLog(id, classesFlag);
-        return false;
-      }
-    });
-  }
-
-  filterOutNonExistingAllowanceMap(allowanceMap: StatementAllowanceMap, classesFlag: boolean): StatementAllowanceMap {
-    const entityMap: Map<EntityId, WdEntity> = classesFlag ? this.classes : this.properties;
-    const filteredAllowanceMap: StatementAllowanceMap = {};
-    for (const key in allowanceMap) {
-      const numId = Number(key);
-      if (entityMap.has(numId)) {
-        filteredAllowanceMap[key] = allowanceMap[key];
-      } else missingLog(numId, classesFlag);
-    }
-    return filteredAllowanceMap;
-  }
 }
 
 export abstract class ModifierVisitor {
@@ -64,6 +36,8 @@ export abstract class ModifierVisitor {
   constructor(context: ModifierContext) {
     this.context = context;
   }
+
+  abstract printReport(): void;
 }
 
 export abstract class ModifierClassVisitor extends ModifierVisitor {
