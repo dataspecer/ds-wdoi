@@ -1,22 +1,11 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
-import fastifyRoutes from '@fastify/routes';
-import loadOntology from './ontology/expose-to-fastify';
+import mapAllRoutes from '@fastify/routes';
+// import loadOntology from './ontology/expose-to-fastify';
+import { envToLogger, log } from './logging/log';
+import { ontologyRoutes } from './routes/routes-ontology';
 
 const enviroment = process.env.NODE_ENV ?? 'development';
-const envToLogger: any = {
-  development: {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname',
-      },
-    },
-  },
-  production: true,
-  test: false,
-};
 
 const fastify: FastifyInstance = Fastify({
   logger: envToLogger[enviroment] ?? true,
@@ -24,15 +13,16 @@ const fastify: FastifyInstance = Fastify({
 });
 
 const startFastify = async (): Promise<void> => {
-  void fastify.register(loadOntology);
+  // void fastify.register(loadOntology);
   void fastify.register(cors, {
     origin: '*',
     methods: ['GET'],
   });
-  void fastify.register(fastifyRoutes);
+  void fastify.register(mapAllRoutes);
+  void fastify.register(ontologyRoutes, { prefix: 'api/v1' });
   try {
     await fastify.listen({ port: 3000 });
-    console.log(fastify.routes);
+    log(fastify.routes);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

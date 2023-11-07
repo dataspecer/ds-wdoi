@@ -37,6 +37,7 @@
     "@fastify/cors": "^8.4.1",
     "@fastify/routes": "^5.1.0",
     "fastify": "^4.24.3",
-    "fastify-plugin": "^4.5.1"
+    "fastify-plugin": "^4.5.1",
+    "json-schema-to-ts": "^2.9.2"
   }
 }
