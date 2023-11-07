@@ -160,9 +160,11 @@ The main script is `4_modification.py`
 
 - For classes:
   - all classes are rooted
+  - removing self cycles from instance of and subclass of
   - addding children references to the classes
   - removing unexisting references from the statements
 - for properties:
+  - removing self cycles from subproperty of
   - remove unexisting references from the main statements
   - remove unexisting references from the general constraints
   - remove unexisting references from the item constraints

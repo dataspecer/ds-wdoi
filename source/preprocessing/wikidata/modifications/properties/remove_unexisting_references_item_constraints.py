@@ -21,4 +21,4 @@ class RemoveUnexistingReferencesItemConstraintsProperties(mods.Modifier):
                     itemConstraints["inverse"] = None
     
     def report_status(self) -> None:
-        self.logger.info(f"Missing {len(self.missing_refs)} item constraints references")
+        self.logger.info(f"Missing {len(self.marker_set)} item constraints references")

@@ -10,5 +10,5 @@ class RemoveUnexistingReferencesClasses(mods.Modifier):
         wd_entity["propertiesForThisType"] = self.filter_existing(wd_entity["propertiesForThisType"], False, context)
     
     def report_status(self) -> None:
-        self.logger.info(f"Missing {len(self.missing_refs)} references")
+        self.logger.info(f"Missing {len(self.marker_set)} references")
         

@@ -10,4 +10,4 @@ class RemoveUnexistingReferencesMainProperties(mods.Modifier):
         wd_entity["subpropertyOf"] = self.filter_existing(wd_entity["subpropertyOf"], False, context)
     
     def report_status(self) -> None:
-        self.logger.info(f"Missing {len(self.missing_refs)} main property references")
+        self.logger.info(f"Missing {len(self.marker_set)} main property references")

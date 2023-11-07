@@ -21,8 +21,8 @@ class MarkChildrenToParents(mods.Modifier):
                 parent[CHILDREN_FIELD].append(entityId)
             else:
                 self.logger.info(f"Missing class {parentId}")
-                self.missing_refs.add(parentId)
+                self.marker_set.add(parentId)
     
     def report_status(self) -> None:
-        self.logger.info(f"Missing {len(self.missing_refs)} parents")
+        self.logger.info(f"Missing {len(self.marker_set)} parents")
         

@@ -6,10 +6,12 @@ from utils.timer import timed
 from wikidata.modifications.properties.remove_unexisting_references_main import *
 from wikidata.modifications.properties.remove_unexisting_references_general_constraints import *
 from wikidata.modifications.properties.remove_unexisting_references_item_constraints import *
+from wikidata.modifications.properties.remove_self_cycles import *
 from wikidata.modifications.modifier import *
 from wikidata.modifications.classes.all_classes_are_rooted import *
 from wikidata.modifications.classes.remove_unexisting_references import *
 from wikidata.modifications.classes.mark_children_to_parents import *
+from wikidata.modifications.classes.remove_self_cycles import *
 
 main_logger = logging.getLogger("modification")
 classes_logger = main_logger.getChild("p4_modify_classes")
@@ -46,14 +48,14 @@ def __modify_entities(modifiers, entity_map: dict, context: mods.Context, logger
 
 @timed(classes_logger)
 def modify_classes(context: mods.Context):
-    modifiers = [RemoveUnexistingReferencesClasses(classes_logger), AllClassesAreRooted(classes_logger), MarkChildrenToParents(classes_logger)]
+    modifiers = [RemoveUnexistingReferencesClasses(classes_logger), AllClassesAreRooted(classes_logger), MarkChildrenToParents(classes_logger), RemoveSelfCyclesClass(classes_logger) ]
     __modify_entities(modifiers, context.class_map, context, classes_logger, ul.CLASSES_PROGRESS_STEP)
     for mod in modifiers:
         mod.report_status()
 
 @timed(properties_logger)
 def modify_properties(context: mods.Context):
-    modifiers = [RemoveUnexistingReferencesMainProperties(properties_logger), RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger), RemoveUnexistingReferencesItemConstraintsProperties(properties_logger)]
+    modifiers = [RemoveUnexistingReferencesMainProperties(properties_logger), RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger), RemoveUnexistingReferencesItemConstraintsProperties(properties_logger), RemoveSelfCyclesProperty(properties_logger)]
     __modify_entities(modifiers, context.property_map, context, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     for mod in modifiers:
         mod.report_status()

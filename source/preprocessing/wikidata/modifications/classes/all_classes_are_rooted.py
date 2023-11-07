@@ -15,10 +15,10 @@ class AllClassesAreRooted(mods.Modifier):
         elif len(wd_entity['subclassOf']) == 0:
             wd_entity['subclassOf'].append(ROOT_ENTITY_ID)
             self.logger.info(f"Found entity: {wd_entity['id']} with zero parents.")
-            self.missing_refs.add(wd_entity['id'])
+            self.marker_set.add(wd_entity['id'])
         else:
             pass
     
     def report_status(self) -> None:
-        self.logger.info(f"Found {len(self.missing_refs)} classes without parent. Root = {self.found_root}")
+        self.logger.info(f"Found {len(self.marker_set)} classes without parent. Root = {self.found_root}")
         

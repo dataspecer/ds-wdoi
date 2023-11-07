@@ -18,4 +18,4 @@ class RemoveUnexistingReferencesGeneralConstraintsProperties(mods.Modifier):
         constraints["conflictsWith"] = self.filter_existing_allowance_map(constraints["conflictsWith"], False, context)
     
     def report_status(self) -> None:
-        self.logger.info(f"Missing {len(self.missing_refs)} general constraints references")
+        self.logger.info(f"Missing {len(self.marker_set)} general constraints references")

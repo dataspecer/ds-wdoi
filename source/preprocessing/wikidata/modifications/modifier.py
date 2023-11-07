@@ -12,7 +12,7 @@ class Modifier(ABC):
     def __init__(self, logger) -> None:
         super().__init__()
         self.logger = logger
-        self.missing_refs = set()
+        self.marker_set = set()
     
     @abstractmethod
     def __call__(self, wd_entity, context: Context) -> None:
@@ -30,7 +30,7 @@ class Modifier(ABC):
                 present_vals.append(id)
             else:
                 self.logger.info(f"Found missing reference {id} (is Class = {classFlag})")
-                self.missing_refs.add(id)
+                self.marker_set.add(id)
         return present_vals
     
     def filter_existing_allowance_map(self, allowance_map, classFlag, context: Context):
@@ -42,5 +42,17 @@ class Modifier(ABC):
                 present_vals[strId] = allowance_map[strId]
             else:
                 self.logger.info(f"Found missing reference {id} (is Class = {classFlag})")
-                self.missing_refs.add(id)
+                self.marker_set.add(id)
         return present_vals
+    
+    def remove_self_cycle(self, wd_entity, field: str, classFlag: bool) -> bool:
+        entity_id = wd_entity["id"]
+        ids_list: list = wd_entity[field]
+        if entity_id in ids_list:
+            ids_list.remove(entity_id)
+            self.marker_set.add(entity_id)
+            self.logger.info(f"Found self reference in {"property" if not classFlag else "class"}:{entity_id} on field: {field}")
+            return True
+        else:
+            return False 
+    
