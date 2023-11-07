@@ -36,21 +36,50 @@ To the next iteration I should prepare the backend and connect it again to the D
   - The "Entity" is a root class for all classes.
   - I will care about subject and object constraints mostly in this iteration.
 - Preprocessing in python
-  - Using bz2 file handle in python I was extracting classes and properties into a bz2 files in two phases - first pass I extracted cls/props ids into a set and in the second pass I extracted the entities that had their id in the set into the output files.
-  - In the next step I transformed the entities and picked only certain useful information
-  - The dump I have contained about 3M classes based on the above definitions and 11k properties.
-  - The preprocessing on my computer runs approximately:
-    - 1. phase - 12 hours
-    - 2. phase - 14 hours
-    - 3. phase 
-      - clases - 14 minutes
-      - properties - 10 seconds
-    - 4. phase - loading to elastic search - 14 minutes
-  - The preprocessing does exclude `sitelinks` from entities.
-  - The preprocessing enables to select only specific langugages.
-  - The excluding must be done on the client of the preprocessed data.
-    - Such as exlude properties that cannot be used on items.
-  - Backend
-    - Search service is implemented using elastic search.
+  1. the first - ids extraction
+     - With the Bz2 file handle I was iterating over the lines of the file and was marking entity ids into a set for extraction to a file in the next step.
+     - This is the first pass of the dump file.
+     - runs ~ 12 hours
+  2. the second phase - to file extraction 
+    - Using the bz2 file handle again, I was extracting classes and properties into two bz2 files - one for properties and one for classes.
+    - This is the second pass of the dump file.
+    - In this step I exluded `sitelinks` from entities, since there is no usefullness in them for the ontology.
+    - runs ~ 14 hours and produces ~ 3M classes and ~ 11K properties
+  3. the third phase - transformation    
+     - Iteratig over the produced files from previous step I transformed the entities into a more usefull json format (flattening statements, qualifiers, constraints).
+     - It outputs again two files - one for classes and one for properties, this time in `.json` format.
+     - This step enables to select languages for extraction.
+     - runs ~ 14 mins for classes and ~ 7 secs for properties
+  4. the fourth phase - semantic modification
+     - To tackle certain errors in the ontology, I modified the entities from previous step and outputed them again into another two files.
+     - this phase was added because it took way too much time for the Node js backend.
+     - For classes:
+       - all classes should be rooted
+       - removing self cycle references in instance of and subclass of
+       - marking children to parents
+       - removing unexisting references to entities (entities that are not in the extracted ontology)
+     - For properties
+       - removing self cycle references in the subproperty of
+       - removing unexisting references from main fields
+       - removing unexisting references from general constraints fields
+       - removing unexisting references from item constraints fields
+      - runs ~ 46 secs
+  5. the fifth phase - loading into elastic search
+    - Based on the selected languages in the 3. phase, it loads elastic search with the data.
+    - The data are formatted that all languages belong to one object  
+    - it uses only aliases and labels (based on the php search from wikidata)
+    - runs ~ 14 mins
+  - Comments:
+    - The preprocessing does exclude `sitelinks` from entities.
+    - Extracting values from statements always returns only unique values.
+    - The values it self are not check since wikidata does not allow to intput data in different types into a statement. 
+    - The preprocessing enables to select only specific langugages - 3. phase and 5. phase.
+    - Semantic interpretation of constraints was left for the client of the extracted data.
+      - The extracted data itself should include as much as detail (meaning even not used directly by the clients - such as all the constraints)
+- Backend
+  - Search service is implemented using elastic search.
       - The ES contains aliases and labels
       - When descriptions were part of the ES, it somehow intruded the search with classes that I would not expect.
+  - The main part is in Node js
+    - It loads all the data into the server and keeps them in memory.
+    - This time I use only subject of and value of constraints to assign properties to classes

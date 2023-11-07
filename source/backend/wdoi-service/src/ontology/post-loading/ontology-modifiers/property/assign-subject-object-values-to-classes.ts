@@ -1,6 +1,6 @@
 import { log } from '../../../../logging/log';
 import type { EntityId, EntityIdsList } from '../../../entities/common';
-import { PropertyScopeValue, type ItemTypeConstraints, type SubjectValueTypeContraint, AllowedEntityTypesValue } from '../../../entities/constraint';
+import { type ItemTypeConstraints, type SubjectValueTypeContraint } from '../../../entities/constraint';
 import {
   type ItemProperty,
   type StringProperty,
@@ -8,7 +8,6 @@ import {
   type CoordinatesProperty,
   type TimeProperty,
   type WdProperty,
-  Datatype,
 } from '../../../entities/wd-property';
 import { type ModifierContext, ModifierPropertyVisitor } from '../../modifiers';
 
@@ -40,20 +39,8 @@ export class AssignSubjectObjectValuesToClasses extends ModifierPropertyVisitor 
     this.common(prop, null);
   }
 
-  private canBeUsedAsMainValue(prop: WdProperty): boolean {
-    return prop.generalConstraints.propertyScope.includes(PropertyScopeValue.AS_MAIN);
-  }
-
-  private canBeUsedOnItems(prop: WdProperty): boolean {
-    return prop.generalConstraints.allowedEntityTypes.includes(AllowedEntityTypesValue.ITEM);
-  }
-
-  private datatypeIsNotLexicographic(prop: WdProperty): boolean {
-    return prop.datatype !== Datatype.LEXEME && prop.datatype !== Datatype.FORM && prop.datatype !== Datatype.SENSE;
-  }
-
   private common(prop: WdProperty, itemConstraints: ItemTypeConstraints | null): void {
-    if (this.canBeUsedAsMainValue(prop) && this.canBeUsedOnItems(prop) && this.datatypeIsNotLexicographic(prop)) {
+    if (prop.canBeUsedAsMainValue() && prop.canBeUsedOnItems() && prop.datatypeIsNotLexicographic()) {
       this.assignedProperties.add(prop.id);
 
       this.processSubjectConstraints(prop.generalConstraints.subjectType, prop.id);
