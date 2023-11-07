@@ -19,7 +19,7 @@
     - Muzu je zkusit vic analyzovat z pohledu ontologie a trid -> idealne to nejak propasovat do prostredi dataspeceru a jak se to v nem bude chovat. 
       - To by treba mohlo zkoumat pohled uzivatele na vracene property a jak pohled ovlivni treba qualifiers a nasledne i ty conflicts with or requires statement constrainty.
 
-4. Udelat nejake cool uzivatelske rozhrani pro prochazeni wikidati ontologie -> ale ja moc uzivatelske rozhrani nechci resit. Ale porad je to validni napad. Nebylo by to jen tridy -> hlavne by tam slo o zobrazeni vetsi casti grafu a prochazeni pomoci properties, coz jsem zatim jeste vubec nevidel.
+4. Udelat nejake cool uzivatelske rozhrani pro prochazeni wikidati ontologie -> ale ja moc uzivatelske rozhrani nechci resit, kdyz jsem videl Adama. Ale porad je to validni napad. Nebylo by to jen tridy -> hlavne by tam slo o zobrazeni vetsi casti grafu a prochazeni pomoci properties, coz jsem zatim jeste vubec nevidel.
 
 5. Napada me algoritmicke problemy na reseni problemu, ktere si nejak nastinili ve Wikidatech.
    1. [ontology issues](https://www.wikidata.org/wiki/File:WikidataCon_2021_-_Overview_of_ontology_issues.pdf)
@@ -38,10 +38,10 @@ Matne si pamatuji neco.
 
 1. Napada me zde analyza kvality -> ale spis by bylo uzitecne pro komunitu Wikidat vzit si nejaky jeji issue a vyresit ho. Viz to nahore.
 
-## Third are
+## Third area
 
 1. Jako dalsi ontologie mi pripada kmani DBPedia a Yago. Ale bylo by to dostatecne velke pro DP? Jaky by v tom byl vlastne research potencial?
-   - napada me spis jen porovnani pruchodu tou integraci a popsat nejake hlavni rozdily 
+   - napada me spis jen porovnani pruchodu tou integraci do dataspeceru a popsat nejake hlavni rozdily a problemy -> wikidata jsou bad a yago maji byt lepsi -> ale jak se to prokaze v prostredi dataspeceru?
      - zde by mozna bylo fajn vzit wikidata a yago -> protoze yago vychazi z wikidat a ma to byt procistena verze
-     - U toho yaga jsem koukal na jijich posledni clanek o yago 4.5 kde extrahuji vic veci z wikidati ontologie. Obecne u toho yaga maji upper ontology a lower ontology -> upper ontology je nejaka rucne mapovana ze schema org a lower level je z wikidati ontologie. Zatim to vypadalo, ze nejak rucne neco zmapovali a pak to automaciky zprovoznili. V tom Yagu 4.5 nejdriv vytvorili tu upper level ontology a pak vytvorili mapovani z te upper level do wikidat -> nasledne udelali "shluky" ze pod classu z upper ontology prilepili cely podstrom z wikidat. Ma to pridat vice informaci. Viz paper na jijich strankach.
+     - U toho yaga jsem koukal na jejich posledni clanek o yago 4.5 kde extrahuji vic veci z wikidati ontologie. Obecne u toho yaga maji upper ontology a lower ontology -> upper ontology je nejaka rucne mapovana ze schema org a lower level je z wikidati ontologie. Zatim to vypadalo, ze nejak rucne neco zmapovali a pak to automaciky zprovoznili. V tom Yagu 4.5 nejdriv vytvorili tu upper level ontology a pak vytvorili mapovani z te upper level do wikidat -> nasledne udelali "shluky" ze pod classu z upper ontology prilepili cely podstrom z wikidat. Ma to pridat vice informaci. Viz paper na jijich strankach.
    - Na druhou stranu, prijde mi, ze vlastne si ty problemy resi nejak po svem -> skoro vsechny, ktere jsem ve wikidatech videl, nevim jak bych s tim pokrocil na DP, kdybych je porovnaval.
