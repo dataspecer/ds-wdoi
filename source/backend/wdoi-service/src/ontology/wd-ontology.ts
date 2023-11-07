@@ -8,7 +8,7 @@ import { AssignSubjectObjectValuesToClasses } from './post-loading/ontology-modi
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, tryLog, log } from '../logging/log';
 
 export class WdOntology {
-  private readonly rootClass: WdClass;
+  readonly rootClass: WdClass;
   private readonly classes: Map<EntityId, WdClass>;
   private readonly properties: Map<EntityId, WdProperty>;
 
