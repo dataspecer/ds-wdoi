@@ -1,7 +1,7 @@
 import type { InputProperty } from '../loading/input/input-property';
 import type { ModifierPropertyVisitor, ModifierVisitableProperty } from '../post-loading/modifiers';
 import type { EntityIdsList, ExternalOntologyMapping } from './common';
-import { type EmptyTypeConstraint, GeneralConstraints, type ItemTypeConstraints } from './constraint';
+import { type EmptyTypeConstraint, GeneralConstraints, type ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint';
 import { WdEntity } from './wd-entity';
 
 export enum UnderlyingType {
@@ -66,6 +66,18 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
     }
   }
   abstract accept(visitor: ModifierPropertyVisitor): void;
+
+  canBeUsedAsMainValue(): boolean {
+    return this.generalConstraints.propertyScope.includes(PropertyScopeValue.AS_MAIN);
+  }
+
+  canBeUsedOnItems(): boolean {
+    return this.generalConstraints.allowedEntityTypes.includes(AllowedEntityTypesValue.ITEM);
+  }
+
+  datatypeIsNotLexicographic(): boolean {
+    return this.datatype !== Datatype.LEXEME && this.datatype !== Datatype.FORM && this.datatype !== Datatype.SENSE;
+  }
 }
 
 export class ItemProperty extends WdProperty {
