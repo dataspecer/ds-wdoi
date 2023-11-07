@@ -16,7 +16,7 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   constructor(inputClass: InputClass) {
     super(inputClass);
     this.subclassOf = inputClass.subclassOf;
-    this.children = [];
+    this.children = inputClass.children;
     this.equivalentExternalOntologyClasses = inputClass.equivalentClass;
     this.propertiesForThisType = inputClass.propertiesForThisType;
     this.subjectOfProperty = [];
