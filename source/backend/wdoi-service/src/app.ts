@@ -2,13 +2,6 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import fastifyRoutes from '@fastify/routes';
 import loadOntology from './ontology/expose-to-fastify';
-import type { WdOntology } from './ontology/wd-ontology';
-
-declare module 'fastify' {
-  export interface FastifyInstance {
-    wdOntology: WdOntology;
-  }
-}
 
 const enviroment = process.env.NODE_ENV ?? 'development';
 const envToLogger: any = {
