@@ -22,36 +22,40 @@ class Modifier(ABC):
     def report_status(self) -> None:
         pass
     
-    def filter_existing(self, ids_list, classFlag, context: Context):
-        entity_map = context.class_map if classFlag else context.property_map
-        present_vals = []
-        for id in ids_list:
+    def _filter_existing(self, entities_ids_list, entity_map, *, isClass: bool):
+        existing_entities_ids = []
+        for id in entities_ids_list:
             if id in entity_map:
-                present_vals.append(id)
+                existing_entities_ids.append(id)
             else:
-                self.logger.info(f"Found missing reference {id} (is Class = {classFlag})")
+                self.logger.info(f"Found missing reference {id} (is Class = {isClass})")
                 self.marker_set.add(id)
-        return present_vals
+        return existing_entities_ids
     
-    def filter_existing_allowance_map(self, allowance_map, classFlag, context: Context):
-        entity_map = context.class_map if classFlag else context.property_map
-        present_vals = {}
-        for strId in allowance_map.keys():
-            numId = int(strId)
-            if numId in entity_map:
-                present_vals[strId] = allowance_map[strId]
+    def filter_existing_classes(self, classes_ids_list, classes_map):
+        return self._filter_existing(self, classes_ids_list, classes_map, isClass=True)
+    
+    def filter_existing_properties(self, properties_ids_list, properties_map):
+        return self._filter_existing(self, properties_ids_list, properties_map, isClass=False)
+    
+    def filter_existing_allowance_map(self, allowance_map, properties_map):
+        existing_records = {}
+        for str_property_id in allowance_map.keys():
+            num_property_id = int(str_property_id)
+            if num_property_id in properties_map:
+                existing_records[str_property_id] = allowance_map[str_property_id]
             else:
-                self.logger.info(f"Found missing reference {id} (is Class = {classFlag})")
+                self.logger.info(f"Found missing reference {id} (is Class = {False})")
                 self.marker_set.add(id)
-        return present_vals
+        return existing_records
     
-    def remove_self_cycle(self, wd_entity, field: str, classFlag: bool) -> bool:
+    def remove_self_cycle(self, wd_entity, field: str, *, isClass: bool) -> bool:
         entity_id = wd_entity["id"]
-        ids_list: list = wd_entity[field]
-        if entity_id in ids_list:
-            ids_list.remove(entity_id)
+        entities_ids_list: list = wd_entity[field]
+        if entity_id in entities_ids_list:
+            entities_ids_list.remove(entity_id)
             self.marker_set.add(entity_id)
-            self.logger.info(f"Found self reference in {"property" if not classFlag else "class"}:{entity_id} on field: {field}")
+            self.logger.info(f"Found self reference in {"property" if not isClass else "class"}:{entity_id} on field: {field}")
             return True
         else:
             return False 

@@ -9,14 +9,14 @@ class RemoveUnexistingReferencesItemConstraintsProperties(mods.Modifier):
         if UnderlyingTypes.ENTITY == wd_entity['underlyingType']:
             itemConstraints = wd_entity['constraints']['typeDependent']
         
-            itemConstraints['valueType']['instanceOf'] = self.filter_existing(itemConstraints['valueType']['instanceOf'], True, context)
-            itemConstraints['valueType']['subclassOf'] = self.filter_existing(itemConstraints['valueType']['subclassOf'], True, context)
-            itemConstraints['valueType']['subclassOfInstanceOf'] = self.filter_existing(itemConstraints['valueType']['subclassOfInstanceOf'], True, context)
+            itemConstraints['valueType']['instanceOf'] = self.filter_existing_classes(itemConstraints['valueType']['instanceOf'], context.class_map)
+            itemConstraints['valueType']['subclassOf'] = self.filter_existing_classes(itemConstraints['valueType']['subclassOf'], context.class_map)
+            itemConstraints['valueType']['subclassOfInstanceOf'] = self.filter_existing_classes(itemConstraints['valueType']['subclassOfInstanceOf'], context.class_map)
             
-            itemConstraints["valueRequiresStatement"] = self.filter_existing_allowance_map(itemConstraints["valueRequiresStatement"], False, context)
+            itemConstraints["valueRequiresStatement"] = self.filter_existing_allowance_map(itemConstraints["valueRequiresStatement"], context.property_map)
     
             if itemConstraints["inverse"] != None:
-                inverseList = self.filter_existing([itemConstraints["inverse"]], False, context)
+                inverseList = self.filter_existing_properties([itemConstraints["inverse"]], context.property_map)
                 if len(inverseList) == 0:
                     itemConstraints["inverse"] = None
     
