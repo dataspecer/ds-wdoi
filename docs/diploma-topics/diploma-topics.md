@@ -26,17 +26,17 @@
      - Idealne to zasadit do kontextu Dataspeceru pro vytvareni datovych struktur a jak ovlivni constraints tvorbu nebo jak vsechny constraints vubec zahrnout do Dataspeceru -> qualifiers, conflicts with, atd... 
     - Bylo  by to uzitecne? Prinese to neco noveho? Proc vlastne zatim nikdo moc neresil associace pro tridy? Mame totiz uz constraints a uz se nejak provadi validace na itemech pomoci botů. Co vic na nich vykoukat?
 
-![img](ui1.png)
-![img](ui2.png)
 
      
-1. Uzivatelske rozhrani pro prochazeni ontologie Wikidata:
+4. Uzivatelske rozhrani pro prochazeni ontologie Wikidata:
    - Udelat nejake cool uzivatelske rozhrani pro prochazeni wikidati ontologie -> ale ja moc uzivatelske rozhrani nechci resit, kdyz jsem videl Adama. Ale porad je to validni napad. 
    - Nebylo by to jen pro tridy, alle hlavne by tam slo o zobrazeni vetsi casti grafu a prochazeni grafu pomoci properties na tridach, coz jsem zatim jeste vubec nevidel.
    - Treba by se tam lehko hledaly cykly.
-   - 
 
-2. Algorithmic issues:
+![img](ui1.png)
+![img](ui2.png)
+
+1. Algorithmic issues:
    - Napadaji me algoritmicke reseni problemu s ontologii, ktere si nejak nastinili ve Wikidatech.
      1. [ontology issues](https://www.wikidata.org/wiki/File:WikidataCon_2021_-_Overview_of_ontology_issues.pdf)
      2. [ontology suggestions](https://www.wikidata.org/wiki/File:Wikidata_ontology_issues_%E2%80%94_suggestions_for_prioritisation_2023.pdf)
