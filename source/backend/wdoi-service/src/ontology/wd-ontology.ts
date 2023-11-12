@@ -4,18 +4,38 @@ import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
 import { ModifierContext } from './post-loading/modifiers';
 import { AssignSubjectObjectValuesToClasses } from './post-loading/ontology-modifiers/property/assign-subject-object-values-to-classes';
-
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, tryLog, log } from '../logging/log';
+import { WdEsSearchClient } from './elastic-search/client';
 
 export class WdOntology {
-  readonly rootClass: WdClass;
+  private readonly rootClass: WdClass;
   private readonly classes: Map<EntityId, WdClass>;
   private readonly properties: Map<EntityId, WdProperty>;
+  private readonly esClient: WdEsSearchClient;
 
-  private constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>) {
+  private constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>, esClient: WdEsSearchClient) {
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
+    this.esClient = esClient;
+  }
+
+  public async search(query: string, searchClasses: boolean, searchProperties: boolean, searchInstances: boolean): Promise<WdClass[]> {
+    const classIdsList = await this.esClient.searchClasses(query);
+    const results: WdClass[] = [];
+    classIdsList.forEach((id) => {
+      const cls = this.classes.get(id);
+      if (cls != null) results.push(cls);
+    });
+    return results;
+  }
+
+  public containsClass(id: EntityId): boolean {
+    return this.classes.has(id);
+  }
+
+  public containsProperty(id: EntityId): boolean {
+    return this.properties.has(id);
   }
 
   private static postLoadModifyProperties(ctx: ModifierContext): void {
@@ -40,7 +60,10 @@ export class WdOntology {
     WdOntology.postLoadModifyProperties(ctx);
   }
 
-  static async create(classesJsonFilePath: string, propertiesJsonFilePath: string): Promise<WdOntology | never> {
+  static async create(classesJsonFilePath: string, propertiesJsonFilePath: string, esNode: string): Promise<WdOntology | never> {
+    log('Connecting to elastic search');
+    const client = new WdEsSearchClient(esNode);
+
     log('Starting to load properties');
     const props = await loadEntities<WdProperty>(propertiesJsonFilePath, processFuncPropertiesCapture, PROPERTIES_LOG_STEP);
 
@@ -49,7 +72,7 @@ export class WdOntology {
 
     const rootClass = cls.get(ROOT_CLASS_ID);
     if (rootClass != null) {
-      const ontology = new WdOntology(rootClass, cls, props);
+      const ontology = new WdOntology(rootClass, cls, props, client);
       log('Ontology created');
       WdOntology.postLoadModify(ontology);
       log('Ontology modified');
