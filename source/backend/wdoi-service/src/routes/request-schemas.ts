@@ -118,8 +118,30 @@ export const searchReplySchema = {
   type: 'object',
   properties: {
     results: {
-      type: 'array',
-      items: wdClassSchema,
+      type: 'object',
+      properties: {
+        classes: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+      },
+      required: ['classes'],
+    },
+  },
+} as const;
+
+export const replySchema = {
+  type: 'object',
+  properties: {
+    results: {
+      type: 'object',
+      properties: {
+        classes: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+      },
+      required: ['classes'],
     },
   },
 } as const;
@@ -131,3 +153,4 @@ export type GetEntityInputParamsType = FromSchema<typeof getEntityInputParamsSch
 export type GetHierarchyInputQueryStringType = FromSchema<typeof getHierarchyInputQueryStringSchema>;
 
 export type SearchReplyType = FromSchema<typeof searchReplySchema>;
+export type ReplyType = FromSchema<typeof replySchema>;

@@ -33,12 +33,17 @@ export enum Datatype {
 }
 
 export abstract class WdProperty extends WdEntity implements ModifierVisitableProperty {
+  private static readonly URIType = 'P';
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
   readonly subpropertyOf: EntityIdsList;
   readonly relatedProperty: EntityIdsList;
   readonly equivalentExternalOntologyProperties: ExternalOntologyMapping;
   readonly generalConstraints: GeneralConstraints;
+
+  static {
+    super.entityURITypes.add(this.URIType);
+  }
 
   protected constructor(inputProperty: InputProperty) {
     super(inputProperty);
@@ -77,6 +82,10 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
 
   datatypeIsNotLexicographic(): boolean {
     return this.datatype !== Datatype.LEXEME && this.datatype !== Datatype.FORM && this.datatype !== Datatype.SENSE;
+  }
+
+  public static isURIType(entityType: string): boolean {
+    return entityType === WdProperty.URIType;
   }
 }
 

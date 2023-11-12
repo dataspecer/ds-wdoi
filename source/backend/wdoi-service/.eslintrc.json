@@ -12,6 +12,7 @@
   "plugins": ["prettier"],
   "rules": {
     "@typescript-eslint/no-floating-promises": "warn",
+    "prefer-regex-literals": "off",
     "prettier/prettier": "error"
   }
 }

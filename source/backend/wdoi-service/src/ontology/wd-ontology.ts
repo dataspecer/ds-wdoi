@@ -1,18 +1,19 @@
 import type { EntityId, EntityIdsList } from './entities/common';
-import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class';
+import { ROOT_CLASS_ID, WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
 import { ModifierContext } from './post-loading/modifiers';
 import { AssignSubjectObjectValuesToClasses } from './post-loading/ontology-modifiers/property/assign-subject-object-values-to-classes';
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, tryLog, log } from '../logging/log';
 import { WdEsSearchClient } from './elastic-search/client';
+import { WdEntity } from './entities/wd-entity';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
   private readonly classes: Map<EntityId, WdClass>;
   private readonly properties: Map<EntityId, WdProperty>;
   private readonly esClient: WdEsSearchClient;
-  private static readonly URI_REGEXP = /^http:\/\/www.wikidata.org\/entity\/[QP][1-9][0-9]*$/;
+  private static readonly URI_REGEXP = new RegExp('^http://www.wikidata.org/entity/[QP][1-9][0-9]*$');
 
   private constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>, esClient: WdEsSearchClient) {
     this.rootClass = rootClass;
@@ -30,11 +31,22 @@ export class WdOntology {
     return results;
   }
 
-  private searchBasedOnURI(url: string): WdClass[] {
-    const entityStrId = url.split('/').pop();
+  private parseEntityURI(uri: string): [string | null, number | null] {
+    const entityStrId = uri.split('/').pop();
     if (entityStrId != null) {
+      const entityType = entityStrId[0];
       const entityNumId = Number(entityStrId.slice(1));
-      if (entityStrId?.startsWith('Q')) {
+      if (entityNumId != null && WdEntity.isValidURIType(entityType)) {
+        return [entityType, entityNumId];
+      }
+    }
+    return [null, null];
+  }
+
+  private searchBasedOnURI(uri: string): WdClass[] {
+    const [entityType, entityNumId] = this.parseEntityURI(uri);
+    if (entityType != null && entityNumId != null) {
+      if (WdClass.isURIType(entityType)) {
         const cls = this.classes.get(entityNumId);
         if (cls != null) return [cls];
       }
@@ -50,12 +62,16 @@ export class WdOntology {
     return this.materializeEntities(classIdsList, this.classes);
   }
 
-  public containsClass(id: EntityId): boolean {
-    return this.classes.has(id);
+  public getClass(classId: EntityId): WdClass | undefined {
+    return this.classes.get(classId);
   }
 
-  public containsProperty(id: EntityId): boolean {
-    return this.properties.has(id);
+  public containsClass(classId: EntityId): boolean {
+    return this.classes.has(classId);
+  }
+
+  public containsProperty(propertyId: EntityId): boolean {
+    return this.properties.has(propertyId);
   }
 
   private static postLoadModifyProperties(ctx: ModifierContext): void {

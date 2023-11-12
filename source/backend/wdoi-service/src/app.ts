@@ -9,7 +9,7 @@ import fastifySensible from '@fastify/sensible';
 const enviroment = process.env.NODE_ENV ?? 'development';
 
 const fastify: FastifyInstance = Fastify({
-  logger: envToLogger[enviroment] ?? true,
+  logger: false, //envToLogger[enviroment] ?? true,
   pluginTimeout: 0,
 });
 
