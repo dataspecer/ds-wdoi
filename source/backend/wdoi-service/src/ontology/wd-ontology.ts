@@ -1,4 +1,4 @@
-import type { EntityId } from './entities/common';
+import type { EntityId, EntityIdsList } from './entities/common';
 import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
@@ -12,6 +12,7 @@ export class WdOntology {
   private readonly classes: Map<EntityId, WdClass>;
   private readonly properties: Map<EntityId, WdProperty>;
   private readonly esClient: WdEsSearchClient;
+  private static readonly URI_REGEXP = /^http:\/\/www.wikidata.org\/entity\/[QP][1-9][0-9]*$/;
 
   private constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>, esClient: WdEsSearchClient) {
     this.rootClass = rootClass;
@@ -20,14 +21,33 @@ export class WdOntology {
     this.esClient = esClient;
   }
 
-  public async search(query: string, searchClasses: boolean, searchProperties: boolean, searchInstances: boolean): Promise<WdClass[]> {
-    const classIdsList = await this.esClient.searchClasses(query);
-    const results: WdClass[] = [];
-    classIdsList.forEach((id) => {
-      const cls = this.classes.get(id);
+  private materializeEntities<T extends WdClass | WdProperty>(entityIds: EntityIdsList, entityMap: Map<EntityId, T>): T[] {
+    const results: T[] = [];
+    entityIds.forEach((id) => {
+      const cls = entityMap.get(id);
       if (cls != null) results.push(cls);
     });
     return results;
+  }
+
+  private searchBasedOnURI(url: string): WdClass[] {
+    const entityStrId = url.split('/').pop();
+    if (entityStrId != null) {
+      const entityNumId = Number(entityStrId.slice(1));
+      if (entityStrId?.startsWith('Q')) {
+        const cls = this.classes.get(entityNumId);
+        if (cls != null) return [cls];
+      }
+    }
+    return [];
+  }
+
+  public async search(query: string, searchClasses: boolean, searchProperties: boolean, searchInstances: boolean): Promise<WdClass[]> {
+    if (WdOntology.URI_REGEXP.test(query)) {
+      return this.searchBasedOnURI(query);
+    }
+    const classIdsList = await this.esClient.searchClasses(query);
+    return this.materializeEntities(classIdsList, this.classes);
   }
 
   public containsClass(id: EntityId): boolean {

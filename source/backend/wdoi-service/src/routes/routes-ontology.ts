@@ -29,7 +29,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
     async (req, res) => {
       const { query, searchClasses, searchProperties, searchInstances } = req.query;
-      const searchResults = await fastify.wdOntology.search(query, searchClasses ?? true, searchProperties ?? false, searchInstances ?? false);
+      const searchResults = await fastify.wdOntology.search(query, searchClasses ?? true, searchProperties ?? true, searchInstances ?? true);
       return { results: searchResults };
     },
   );
