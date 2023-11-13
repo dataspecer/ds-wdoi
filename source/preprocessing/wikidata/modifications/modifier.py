@@ -22,7 +22,7 @@ class Modifier(ABC):
     def report_status(self) -> None:
         pass
     
-    def _filter_existing(self, entities_ids_list, entity_map, *, isClass: bool):
+    def _filter_existing(self, entities_ids_list, entity_map, isClass: bool):
         existing_entities_ids = []
         for id in entities_ids_list:
             if id in entity_map:
@@ -33,10 +33,10 @@ class Modifier(ABC):
         return existing_entities_ids
     
     def filter_existing_classes(self, classes_ids_list, classes_map):
-        return self._filter_existing(self, classes_ids_list, classes_map, isClass=True)
+        return self._filter_existing(classes_ids_list, classes_map, True)
     
     def filter_existing_properties(self, properties_ids_list, properties_map):
-        return self._filter_existing(self, properties_ids_list, properties_map, isClass=False)
+        return self._filter_existing(properties_ids_list, properties_map, False)
     
     def filter_existing_allowance_map(self, allowance_map, properties_map):
         existing_records = {}
