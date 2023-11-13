@@ -1,4 +1,4 @@
-import { Queue } from '../../utils/queue';
+import { Queue } from '../utils/queue';
 import { type EntityIdsList, type EntityId } from '../entities/common';
 import { type WdClass } from '../entities/wd-class';
 import { type WdProperty } from '../entities/wd-property';
@@ -17,12 +17,16 @@ export class ClassHierarchyReturnWrapper {
   }
 }
 
+export abstract class Extractor {
+  abstract extract(cls: WdClass): void;
+}
+
 export class ClassHierarchyWalker {
   protected readonly rootClass: WdClass;
-  protected readonly classes: Map<EntityId, WdClass>;
-  protected readonly properties: Map<EntityId, WdProperty>;
+  protected readonly classes: ReadonlyMap<EntityId, WdClass>;
+  protected readonly properties: ReadonlyMap<EntityId, WdProperty>;
 
-  constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>) {
+  constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
@@ -36,7 +40,7 @@ export class ClassHierarchyWalker {
     return cls.subclassOf;
   }
 
-  protected walkHierarchy(startClass: WdClass, nextValueExtractor: (cls: WdClass) => EntityIdsList): WdClass[] {
+  protected walkHierarchy(startClass: WdClass, nextValueExtractor: (cls: WdClass) => EntityIdsList, publicExtractor: Extractor | null): WdClass[] {
     const visitedIds = new Set<EntityId>();
     const queue = new Queue<EntityIdsList>();
     const returnClasses: WdClass[] = [];
@@ -47,6 +51,8 @@ export class ClassHierarchyWalker {
     visitedIds.add(startClass.id);
     queue.enqueue(nextValueExtractor(startClass));
 
+    publicExtractor?.extract(startClass);
+
     while (!queue.isEmpty()) {
       const classIds = queue.dequeue();
       for (const classId of classIds) {
@@ -55,6 +61,7 @@ export class ClassHierarchyWalker {
           visitedIds.add(classId);
           queue.enqueue(nextValueExtractor(cls));
           returnClasses.push(cls);
+          publicExtractor?.extract(cls);
         }
       }
     }
@@ -62,11 +69,15 @@ export class ClassHierarchyWalker {
   }
 
   protected getParentHierarchy(startClass: WdClass): WdClass[] {
-    return this.walkHierarchy(startClass, this.getParentsExtractor);
+    return this.walkHierarchy(startClass, this.getParentsExtractor, null);
   }
 
   protected getChildrenHierarchy(startClass: WdClass): WdClass[] {
-    return this.walkHierarchy(startClass, this.getChildrenExtractor);
+    return this.walkHierarchy(startClass, this.getChildrenExtractor, null);
+  }
+
+  protected getParentHierarchyExt(startClass: WdClass, publicExtractor: Extractor): WdClass[] {
+    return this.walkHierarchy(startClass, this.getParentsExtractor, publicExtractor);
   }
 
   public getHierarchy(startClass: WdClass, part: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
@@ -80,5 +91,9 @@ export class ClassHierarchyWalker {
       console.log('geting full');
       return new ClassHierarchyReturnWrapper(startClass, this.getParentHierarchy(startClass), this.getChildrenHierarchy(startClass));
     }
+  }
+
+  public getParentHierarchyWithExtraction(startClass: WdClass, publicExtractor: Extractor): ClassHierarchyReturnWrapper {
+    return new ClassHierarchyReturnWrapper(startClass, this.getParentHierarchyExt(startClass, publicExtractor), []);
   }
 }

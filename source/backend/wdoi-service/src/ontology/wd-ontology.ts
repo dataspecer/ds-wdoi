@@ -1,4 +1,4 @@
-import type { EntityId, EntityIdsList } from './entities/common';
+import type { EntityId } from './entities/common';
 import { ROOT_CLASS_ID, WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
@@ -6,30 +6,30 @@ import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
 import { WdEsSearchClient } from './elastic-search/client';
 import { WdEntity } from './entities/wd-entity';
 import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
+import { materializeEntities } from './utils/materialize-entities';
+import { ClassSurroundings, type ClassSurroundingsReturnWrapper, PropertyHierarchyExtractor } from './surroundings/class-surroundings';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
-  private readonly classes: Map<EntityId, WdClass>;
-  private readonly properties: Map<EntityId, WdProperty>;
+  private readonly classes: ReadonlyMap<EntityId, WdClass>;
+  private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly esClient: WdEsSearchClient;
   private readonly walker: ClassHierarchyWalker;
+  private readonly surroudings: ClassSurroundings;
   private static readonly URI_REGEXP = new RegExp('^http://www.wikidata.org/entity/[QP][1-9][0-9]*$');
 
-  private constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>, esClient: WdEsSearchClient) {
+  private constructor(
+    rootClass: WdClass,
+    classes: ReadonlyMap<EntityId, WdClass>,
+    properties: ReadonlyMap<EntityId, WdProperty>,
+    esClient: WdEsSearchClient,
+  ) {
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
     this.esClient = esClient;
     this.walker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
-  }
-
-  private materializeEntities<T extends WdClass | WdProperty>(entityIds: EntityIdsList, entityMap: Map<EntityId, T>): T[] {
-    const results: T[] = [];
-    entityIds.forEach((id) => {
-      const cls = entityMap.get(id);
-      if (cls != null) results.push(cls);
-    });
-    return results;
+    this.surroudings = new ClassSurroundings(this.rootClass, this.classes, this.properties);
   }
 
   private parseEntityURI(uri: string): [string | null, number | null] {
@@ -60,11 +60,17 @@ export class WdOntology {
       return this.searchBasedOnURI(query);
     }
     const classIdsList = await this.esClient.searchClasses(query);
-    return this.materializeEntities(classIdsList, this.classes);
+    return materializeEntities(classIdsList, this.classes);
   }
 
   public getHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
     return this.walker.getHierarchy(startClass, parts);
+  }
+
+  public getSurroundings(startClass: WdClass): ClassSurroundingsReturnWrapper {
+    const extractor = new PropertyHierarchyExtractor(this.rootClass, this.classes, this.properties);
+    this.walker.getParentHierarchyWithExtraction(startClass, extractor);
+    return this.surroudings.getSurroundings(startClass, extractor);
   }
 
   public getClass(classId: EntityId): WdClass | undefined {

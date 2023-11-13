@@ -48,7 +48,7 @@ export async function loadEntities<T>(
   pathToJsonFile: string,
   processFuncCapture: (entitiesMap: Map<EntityId, T>) => (jsonEntity: any) => void,
   logStep: number,
-): Promise<Map<EntityId, T>> {
+): Promise<ReadonlyMap<EntityId, T>> {
   const entitiesMap = new Map<EntityId, T>();
   await processWdJsonFile(pathToJsonFile, processFuncCapture(entitiesMap), logStep);
   return entitiesMap;

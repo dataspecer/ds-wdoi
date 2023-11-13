@@ -9,6 +9,7 @@ import {
   type SearchInputQueryStringType,
   type GetHierarchyInputQueryStringType,
   hierarchyReplySchema,
+  surroundingsReplySchema,
 } from './request-schemas';
 import { type EntityId } from '../ontology/entities/common';
 import { type WdClass } from '../ontology/entities/wd-class';
@@ -79,11 +80,20 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
 
   fastify.get<{ Params: GetEntityInputParamsType }>(
     '/classes/:id/surroundings',
-    { schema: { params: getEntityInputParamsSchema } },
+    {
+      schema: {
+        params: getEntityInputParamsSchema,
+        response: {
+          '2xx': surroundingsReplySchema,
+        },
+      },
+    },
     async (req, res) => {
       const { id } = req.params;
       validateIdExistence(id);
-      return { str: 'ahoj' };
+      const cls = fastify.wdOntology.getClass(id) as WdClass;
+      const results = fastify.wdOntology.getSurroundings(cls);
+      return { results };
     },
   );
 

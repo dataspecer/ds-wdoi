@@ -118,6 +118,142 @@ export const wdClassSchema = {
   ],
 } as const;
 
+export const wdPropertySchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'number',
+    },
+    datatype: {
+      type: 'number',
+    },
+    underlyingType: {
+      type: 'number',
+    },
+    labels: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    descriptions: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    instanceOf: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    subpropertyOf: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    relatedProperty: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    equivalentExternalOntologyProperties: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
+    generalConstraints: {
+      type: 'object',
+      properties: {
+        propertyScope: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        allowedEntityTypes: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        allowedQualifiers: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        requiredQualifiers: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        conflictsWith: {
+          type: 'object',
+          additionalProperties: true,
+        },
+        itemRequiresStatement: {
+          type: 'object',
+          additionalProperties: true,
+        },
+        subjectType: {
+          type: 'object',
+          properties: {
+            subclassOf: {
+              type: 'array',
+              items: {
+                type: 'number',
+              },
+            },
+            instanceOf: {
+              type: 'array',
+              items: {
+                type: 'number',
+              },
+            },
+            subclassOfInstanceOf: {
+              type: 'array',
+              items: {
+                type: 'number',
+              },
+            },
+          },
+          additionalProperties: false,
+          required: ['subclassOf', 'instanceOf', 'subclassOfInstanceOf'],
+        },
+      },
+      additionalProperties: false,
+      required: [
+        'propertyScope',
+        'allowedEntityTypes',
+        'allowedQualifiers',
+        'requiredQualifiers',
+        'conflictsWith',
+        'itemRequiresStatement',
+        'subjectType',
+      ],
+    },
+  },
+  additionalProperties: true,
+  required: [
+    'id',
+    'datatype',
+    'underlyingType',
+    'labels',
+    'descriptions',
+    'instanceOf',
+    'subpropertyOf',
+    'relatedProperty',
+    'equivalentExternalOntologyProperties',
+    'generalConstraints',
+  ],
+} as const;
+
 export const searchReplySchema = {
   type: 'object',
   properties: {
@@ -180,6 +316,42 @@ export const hierarchyReplySchema = {
   required: ['results'],
 } as const;
 
+export const surroundingsReplySchema = {
+  type: 'object',
+  properties: {
+    results: {
+      type: 'object',
+      properties: {
+        root: wdClassSchema,
+        parents: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+        children: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+        subjectOf: {
+          type: 'array',
+          items: wdPropertySchema,
+        },
+        valueOf: {
+          type: 'array',
+          items: wdPropertySchema,
+        },
+        propertyEndpoints: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+      },
+      additionalProperties: false,
+      required: ['root', 'parents', 'children', 'subjectOf', 'valueOf', 'propertyEndpoints'],
+    },
+  },
+  additionalProperties: false,
+  required: ['results'],
+} as const;
+
 export type SearchInputQueryStringType = FromSchema<typeof searchInputQueryStringSchema>;
 
 export type GetEntityInputParamsType = FromSchema<typeof getEntityInputParamsSchema>;
@@ -190,3 +362,4 @@ export type SearchReplyType = FromSchema<typeof searchReplySchema>;
 export type ReplyType = FromSchema<typeof replySchema>;
 
 export type HierarchyReplyType = FromSchema<typeof hierarchyReplySchema>;
+export type SurroundingsReplyType = FromSchema<typeof surroundingsReplySchema>;

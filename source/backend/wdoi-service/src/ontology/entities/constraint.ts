@@ -24,8 +24,8 @@ export interface SubjectValueTypeContraint {
   readonly subclassOfInstanceOf: EntityIdsList;
 }
 export class GeneralConstraints {
-  readonly propertyScope: PropertyScopeValue[];
-  readonly allowedEntityTypes: AllowedEntityTypesValue[];
+  readonly propertyScope: readonly PropertyScopeValue[];
+  readonly allowedEntityTypes: readonly AllowedEntityTypesValue[];
   readonly allowedQualifiers: EntityIdsList;
   readonly requiredQualifiers: EntityIdsList;
   readonly conflictsWith: StatementAllowanceMap;
