@@ -24,8 +24,8 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
     this.children = inputClass.children;
     this.equivalentExternalOntologyClasses = inputClass.equivalentClass;
     this.propertiesForThisType = inputClass.propertiesForThisType;
-    this.subjectOfProperty = [];
-    this.valueOfProperty = [];
+    this.subjectOfProperty = inputClass.subjectOf;
+    this.valueOfProperty = inputClass.valueOf;
   }
 
   accept(visitor: ModifierClassVisitor): void {

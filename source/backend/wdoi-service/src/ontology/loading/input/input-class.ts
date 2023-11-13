@@ -6,4 +6,6 @@ export interface InputClass extends InputEntity {
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentClass: ExternalOntologyMapping;
   readonly children: EntityIdsList;
+  readonly subjectOf: EntityIdsList;
+  readonly valueOf: EntityIdsList;
 }

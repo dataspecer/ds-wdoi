@@ -7,11 +7,13 @@ from wikidata.modifications.properties.remove_unexisting_references_main import 
 from wikidata.modifications.properties.remove_unexisting_references_general_constraints import *
 from wikidata.modifications.properties.remove_unexisting_references_item_constraints import *
 from wikidata.modifications.properties.remove_self_cycles import *
+from wikidata.modifications.properties.assign_subject_object_values_to_classes import *
 from wikidata.modifications.modifier import *
 from wikidata.modifications.classes.all_classes_are_rooted import *
 from wikidata.modifications.classes.remove_unexisting_references import *
 from wikidata.modifications.classes.mark_children_to_parents import *
 from wikidata.modifications.classes.remove_self_cycles import *
+from wikidata.modifications.classes.add_fields import *
 
 main_logger = logging.getLogger("modification")
 classes_logger = main_logger.getChild("p4_modify_classes")
@@ -46,19 +48,41 @@ def __modify_entities(modifiers, entity_map: dict, context: mods.Context, logger
             modifier_func(entity, context)
         ul.try_log_progress(logger, idx, logging_step)
 
-@timed(classes_logger)
-def modify_classes(context: mods.Context):
-    modifiers = [RemoveUnexistingReferencesClasses(classes_logger), AllClassesAreRooted(classes_logger), RemoveSelfCyclesClass(classes_logger), MarkChildrenToParents(classes_logger) ]
-    __modify_entities(modifiers, context.class_map, context, classes_logger, ul.CLASSES_PROGRESS_STEP)
+def __report_status_of_modifiers(modifiers):
     for mod in modifiers:
         mod.report_status()
 
+
+"""
+ The order of execution of modifiers matters.
+ First we need to add fields for further modifiers.
+ Then removing unexisting references prepares ground for marking children and self cycles.
+ Removing self cycles must be done before marking children since it removes referencing the class itself in children field.
+ The class modifiers must bu run before classes, since properties use newly constructed fields. 
+"""
+@timed(classes_logger)
+def modify_classes(context: mods.Context):
+    modifiers = [
+        AddFields(classes_logger), 
+        RemoveUnexistingReferencesClasses(classes_logger), 
+        AllClassesAreRooted(classes_logger), 
+        RemoveSelfCyclesClass(classes_logger), 
+        MarkChildrenToParents(classes_logger)
+    ]
+    __modify_entities(modifiers, context.class_map, context, classes_logger, ul.CLASSES_PROGRESS_STEP)
+    __report_status_of_modifiers(modifiers)
+
 @timed(properties_logger)
 def modify_properties(context: mods.Context):
-    modifiers = [RemoveUnexistingReferencesMainProperties(properties_logger), RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger), RemoveUnexistingReferencesItemConstraintsProperties(properties_logger), RemoveSelfCyclesProperty(properties_logger)]
+    modifiers = [
+        RemoveUnexistingReferencesMainProperties(properties_logger), 
+        RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger),
+        RemoveUnexistingReferencesItemConstraintsProperties(properties_logger),
+        RemoveSelfCyclesProperty(properties_logger),
+        AssignSubjectValueToClasses(properties_logger)
+    ]
     __modify_entities(modifiers, context.property_map, context, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
-    for mod in modifiers:
-        mod.report_status()
+    __report_status_of_modifiers(modifiers)
     
 def __write_entities_to_file(entity_map: dict, file_name: pathlib.Path):
     with open(file_name, "wb") as output_file:

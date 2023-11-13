@@ -1,19 +1,17 @@
 import wikidata.modifications.modifier as mods
-
-CHILDREN_FIELD = "children"
+from wikidata.modifications.classes.add_fields import *
 
 class MarkChildrenToParents(mods.Modifier):
     
+    def __init__(self, logger) -> None:
+        super().__init__(logger.getChild("mark-children-to-parents"))
+        
     def add_children_field_if_missing(self, wd_entity):
         if CHILDREN_FIELD not in wd_entity:
             wd_entity[CHILDREN_FIELD] = []
     
-    def __init__(self, logger) -> None:
-        super().__init__(logger.getChild("mark-children-to-parents"))
-    
     def __call__(self, wd_entity, context: mods.Context) -> None:
         entityId = wd_entity['id']
-        self.add_children_field_if_missing(wd_entity)
         for parentId in wd_entity['subclassOf']:
             if parentId in context.class_map:
                 parent = context.class_map[parentId]
