@@ -3,13 +3,15 @@ import {
   getEntityInputParamsSchema,
   getHierarchyInputQueryStringSchema,
   searchInputQueryStringSchema,
+  searchReplySchema,
+  replySchema,
   type GetEntityInputParamsType,
   type SearchInputQueryStringType,
   type GetHierarchyInputQueryStringType,
-  searchReplySchema,
-  replySchema,
+  hierarchyReplySchema,
 } from './request-schemas';
 import { type EntityId } from '../ontology/entities/common';
+import { type WdClass } from '../ontology/entities/wd-class';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   const validateIdExistence = (id: EntityId): void | never => {
@@ -56,12 +58,22 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
 
   fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetHierarchyInputQueryStringType }>(
     '/classes/:id/hierarchy',
-    { schema: { params: getEntityInputParamsSchema, querystring: getHierarchyInputQueryStringSchema } },
+    {
+      schema: {
+        params: getEntityInputParamsSchema,
+        querystring: getHierarchyInputQueryStringSchema,
+        response: {
+          '2xx': hierarchyReplySchema,
+        },
+      },
+    },
     async (req, res) => {
       const { id } = req.params;
       validateIdExistence(id);
-      const { direction } = req.query;
-      return { str: direction };
+      const { part } = req.query;
+      const cls = fastify.wdOntology.getClass(id) as WdClass;
+      const results = fastify.wdOntology.getHierarchy(cls, part);
+      return { results };
     },
   );
 

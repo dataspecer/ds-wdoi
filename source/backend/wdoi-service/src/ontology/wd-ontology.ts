@@ -5,12 +5,14 @@ import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture }
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
 import { WdEsSearchClient } from './elastic-search/client';
 import { WdEntity } from './entities/wd-entity';
+import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
   private readonly classes: Map<EntityId, WdClass>;
   private readonly properties: Map<EntityId, WdProperty>;
   private readonly esClient: WdEsSearchClient;
+  private readonly walker: ClassHierarchyWalker;
   private static readonly URI_REGEXP = new RegExp('^http://www.wikidata.org/entity/[QP][1-9][0-9]*$');
 
   private constructor(rootClass: WdClass, classes: Map<EntityId, WdClass>, properties: Map<EntityId, WdProperty>, esClient: WdEsSearchClient) {
@@ -18,6 +20,7 @@ export class WdOntology {
     this.classes = classes;
     this.properties = properties;
     this.esClient = esClient;
+    this.walker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
   }
 
   private materializeEntities<T extends WdClass | WdProperty>(entityIds: EntityIdsList, entityMap: Map<EntityId, T>): T[] {
@@ -58,6 +61,10 @@ export class WdOntology {
     }
     const classIdsList = await this.esClient.searchClasses(query);
     return this.materializeEntities(classIdsList, this.classes);
+  }
+
+  public getHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
+    return this.walker.getHierarchy(startClass, parts);
   }
 
   public getClass(classId: EntityId): WdClass | undefined {

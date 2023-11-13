@@ -16,6 +16,7 @@ export const searchInputQueryStringSchema = {
       type: 'boolean',
     },
   },
+  additionalProperties: false,
   required: ['query'],
 } as const;
 
@@ -26,17 +27,19 @@ export const getEntityInputParamsSchema = {
       type: 'number',
     },
   },
+  additionalProperties: false,
   required: ['id'],
 } as const;
 
 export const getHierarchyInputQueryStringSchema = {
   type: 'object',
   properties: {
-    direction: {
+    part: {
       enum: ['parents', 'children', 'full'],
     },
   },
-  required: ['direction'],
+  additionalProperties: false,
+  required: ['part'],
 } as const;
 
 export const wdClassSchema = {
@@ -100,6 +103,7 @@ export const wdClassSchema = {
       },
     },
   },
+  additionalProperties: false,
   required: [
     'id',
     'labels',
@@ -125,9 +129,12 @@ export const searchReplySchema = {
           items: wdClassSchema,
         },
       },
+      additionalProperties: false,
       required: ['classes'],
     },
   },
+  additionalProperties: false,
+  required: ['results'],
 } as const;
 
 export const replySchema = {
@@ -141,9 +148,36 @@ export const replySchema = {
           items: wdClassSchema,
         },
       },
+      additionalProperties: false,
       required: ['classes'],
     },
   },
+  additionalProperties: false,
+  required: ['results'],
+} as const;
+
+export const hierarchyReplySchema = {
+  type: 'object',
+  properties: {
+    results: {
+      type: 'object',
+      properties: {
+        root: wdClassSchema,
+        parents: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+        children: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+      },
+      additionalProperties: false,
+      required: ['root', 'parents', 'children'],
+    },
+  },
+  additionalProperties: false,
+  required: ['results'],
 } as const;
 
 export type SearchInputQueryStringType = FromSchema<typeof searchInputQueryStringSchema>;
@@ -154,3 +188,5 @@ export type GetHierarchyInputQueryStringType = FromSchema<typeof getHierarchyInp
 
 export type SearchReplyType = FromSchema<typeof searchReplySchema>;
 export type ReplyType = FromSchema<typeof replySchema>;
+
+export type HierarchyReplyType = FromSchema<typeof hierarchyReplySchema>;
