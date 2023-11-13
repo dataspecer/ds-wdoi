@@ -48,7 +48,7 @@ def __modify_entities(modifiers, entity_map: dict, context: mods.Context, logger
 
 @timed(classes_logger)
 def modify_classes(context: mods.Context):
-    modifiers = [RemoveUnexistingReferencesClasses(classes_logger), AllClassesAreRooted(classes_logger), MarkChildrenToParents(classes_logger), RemoveSelfCyclesClass(classes_logger) ]
+    modifiers = [RemoveUnexistingReferencesClasses(classes_logger), AllClassesAreRooted(classes_logger), RemoveSelfCyclesClass(classes_logger), MarkChildrenToParents(classes_logger) ]
     __modify_entities(modifiers, context.class_map, context, classes_logger, ul.CLASSES_PROGRESS_STEP)
     for mod in modifiers:
         mod.report_status()
