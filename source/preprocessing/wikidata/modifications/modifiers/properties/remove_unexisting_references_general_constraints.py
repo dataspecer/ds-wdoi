@@ -1,10 +1,11 @@
-import wikidata.modifications.modifier as mods
+from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.context import Context
 
-class RemoveUnexistingReferencesGeneralConstraintsProperties(mods.Modifier):
+class RemoveUnexistingReferencesGeneralConstraintsProperties(Modifier):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("rer-properties-general-constraints"))
     
-    def __call__(self, wd_entity, context: mods.Context) -> None:
+    def __call__(self, wd_entity, context: Context) -> None:
         constraints = wd_entity['constraints']
         
         constraints["allowedQualifiers"] = self.filter_existing_properties(constraints["allowedQualifiers"], context.property_map)

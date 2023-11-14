@@ -1,11 +1,12 @@
-import wikidata.modifications.modifier as mods
+from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.context import Context
 from wikidata.model.properties import UnderlyingTypes
 
-class RemoveUnexistingReferencesItemConstraintsProperties(mods.Modifier):
+class RemoveUnexistingReferencesItemConstraintsProperties(Modifier):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("rer-properties-item-constraints"))
     
-    def __call__(self, wd_entity, context: mods.Context) -> None:
+    def __call__(self, wd_entity, context: Context) -> None:
         if UnderlyingTypes.ENTITY == wd_entity['underlyingType']:
             itemConstraints = wd_entity['constraints']['typeDependent']
         

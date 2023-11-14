@@ -1,14 +1,15 @@
-import wikidata.modifications.modifier as mods
-from wikidata.modifications.classes.add_fields import *
+from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.context import Context
+from wikidata.modifications.modifiers.classes.add_fields import *
 from wikidata.model.constraints import *
 from wikidata.model.properties import *
 
-class AssignSubjectValueToClasses(mods.Modifier):
+class AssignSubjectValueToClasses(Modifier):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("assign-subject-object"))
         self.object_assignment = set()
 
-    def __call__(self, wd_entity, context: mods.Context) -> None:
+    def __call__(self, wd_entity, context: Context) -> None:
         prop_id = wd_entity["id"]
         constraints = wd_entity["constraints"]
         if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.datatypeIsNotLexical(wd_entity):
@@ -19,11 +20,11 @@ class AssignSubjectValueToClasses(mods.Modifier):
                 self.object_assignment.add(prop_id)
                 self.assign_type_constraints(constraints["typeDependent"]["valueType"], prop_id, VALUE_OF_FIELD, context)
     
-    def assign_type_constraints(self, type_constraints, prop_id, field: str, context: mods.Context):
+    def assign_type_constraints(self, type_constraints, prop_id, field: str, context: Context):
         self.assign_prop_to_classes_field(type_constraints["instanceOf"], prop_id, field, context)
         self.assign_prop_to_classes_field(type_constraints["subclassOfInstanceOf"], prop_id, field, context)
         
-    def assign_prop_to_classes_field(self, classes_ids_list, prop_id, field: str, context: mods.Context):
+    def assign_prop_to_classes_field(self, classes_ids_list, prop_id, field: str, context: Context):
         for class_id in classes_ids_list:
             cls = context.class_map[class_id]
             cls[field].append(prop_id)

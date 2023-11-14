@@ -1,19 +1,19 @@
-import wikidata.modifications.modifier as mods
+from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.context import Context
+from wikidata.model.classes import *
 
-ROOT_ENTITY_ID = 35120
-
-class AllClassesAreRooted(mods.Modifier):
+class AllClassesAreRooted(Modifier):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("all-classes-are-rooted"))
         self.found_root = False
     
-    def __call__(self, wd_entity, context: mods.Context) -> None:
-        if wd_entity['id'] == ROOT_ENTITY_ID:
+    def __call__(self, wd_entity, context: Context) -> None:
+        if wd_entity['id'] == ROOT_ENTITY_ID_NUM:
             wd_entity['subclassOf'] = []
             self.logger.info("Found root entity.")
             self.found_root = True
         elif len(wd_entity['subclassOf']) == 0:
-            wd_entity['subclassOf'].append(ROOT_ENTITY_ID)
+            wd_entity['subclassOf'].append(ROOT_ENTITY_ID_NUM)
             self.logger.info(f"Found entity: {wd_entity['id']} with zero parents.")
             self.marker_set.add(wd_entity['id'])
         else:

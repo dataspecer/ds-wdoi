@@ -1,14 +1,8 @@
 
-from typing import Any
 from abc import ABC, abstractmethod
-
-class Context:
-    def __init__(self, class_map: dict, property_map: dict) -> None:
-        self.class_map = class_map
-        self.property_map = property_map
+from wikidata.modifications.context import Context
 
 class Modifier(ABC):
-    
     def __init__(self, logger) -> None:
         super().__init__()
         self.logger = logger
@@ -21,6 +15,10 @@ class Modifier(ABC):
     @abstractmethod
     def report_status(self) -> None:
         pass
+    
+    def add_field_if_missing(self, wd_entity, field):
+        if field not in wd_entity:
+            wd_entity[field] = []
     
     def _filter_existing(self, entities_ids_list, entity_map, isClass: bool):
         existing_entities_ids = []

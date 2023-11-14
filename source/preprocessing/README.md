@@ -140,8 +140,8 @@ The main script is `3_transformation.py`.
 ## Semantic modification (4. phase)
 
 The phase loads all the transformed data into a memory and does a semantic checking and modification to the entities.
-Subsequently it saves them to two files. Which then can be loaded to the server instance.
-This phase was added because this part also takes quite a bit of time (which was unexpected).
+Subsequently it saves them to two files. Which then can be loaded to the server instance and to the ES search.
+This phase was moved here from server, because this part also takes quite a bit of time (which was unexpected at first).
 The main script is `4_modification.py`
 
 - input:
@@ -158,16 +158,29 @@ The main script is `4_modification.py`
 
 ### Modification comments
 
-- For classes:
-  - all classes are rooted
-  - removing self cycles from instance of and subclass of
-  - addding children references to the classes
-  - removing unexisting references from the statements
-- for properties:
-  - removing self cycles from subproperty of
-  - remove unexisting references from the main statements
-  - remove unexisting references from the general constraints
-  - remove unexisting references from the item constraints
+- The script itself works in phases that depend on one another.
+  1. Remove all entities that have no label, thus cannot be search for or displayed unless you know the specific numeric id.
+  2. Prepare ground for removing unrooted classes:
+     1. Add fields to each class: `children`, `subjectOf` and `valueOf`. Each field is used by subsequent phases.
+     2. Remove unexisting references from `subclassOf`, `propertiesForThisType` and `instanceOf` fields.
+     3. Remove self cycles of `instanceOf` and `subclassOf`.
+     4. Mark children to parents, so the hierarchy could be traversed in both directions.
+  3. Remove unrooted classes, which poluted the root entity during traversing upwards.
+  4. Post removing unrooted classes:
+     1. Remove unexisting references again in case it referenced the unrooted entity.
+     2. Check that all classes are rooted and that the root is still present.
+  5. Modify properties
+     1. remove unexisting references from the main statements
+     2. remove unexisting references from the general constraints
+     3. remove unexisting references from the item constraints
+     4. removing self cycles from `subpropertyO
+  
+The removing references parts are done in order to exclude entities that were not present in the dump during its creation (it is a continual process during live hours).
+If the transformation phase adds more fields to entities, it is necessary to evaluate whether they need checks.
+The phases as of now are dependend on each other as well as the order of operation inside them.
+The `removers` iterate over the entire ontology, in contrast with the modifiers which are stacked and used per entity basis.
+This was done because it was easier to maintain certain invariants of other modifications.
+The iteration over ontology is done multiple times, but still the time is uncomparable with the first and second phase.
 
 ## Loading into search service (5. phase)
 
@@ -176,6 +189,7 @@ The main script is `5_loading.py`
 
 - inputs:
   - optional argument for languages extracration
+    - This parameter should always be equal to the one used in phase 3, since during development I use the scripts separately. Using it without the values from phase 3 could lead to missing certain classes during search. The option is present because the script needs to know the languages used beforehand, so it could create valid ES objects for classes.
     - `--lang`
     - accepts a list of space separated language shortcuts
       - e.g. `--lang en cs de`
@@ -185,6 +199,7 @@ The main script is `5_loading.py`
   - paths to the two files generated in the previous step - `classes.json` and `properties.json`
 
         $> python loading.py classes.json properties.json
+
 - outputs:
   - none
 
@@ -205,7 +220,10 @@ It either creates, refreshes or deletes classes and properties indices.
       &> python loading_es_helpers.py delete
 
       # Refreshing the indices
-      &> python loading_es_helpers.py refresh 
+      &> python loading_es_helpers.py refresh
+
+      # Searching the class index
+      &> python loading_es_helpers.py search "query string goes here"
 
 
 ### Loading comments

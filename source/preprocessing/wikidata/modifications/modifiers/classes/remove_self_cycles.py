@@ -1,10 +1,14 @@
-import wikidata.modifications.modifier as mods
+from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.context import Context
 
-class RemoveSelfCyclesClass(mods.Modifier):
+"""
+This should be run before removing unexisitng references or marking children.
+"""
+class RemoveSelfCyclesClass(Modifier):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("remove-self-cycles-class"))
         
-    def __call__(self, wd_entity, context: mods.Context) -> None:
+    def __call__(self, wd_entity, context: Context) -> None:
         self.remove_self_cycle(wd_entity, "subclassOf", isClass=True)
         self.remove_self_cycle(wd_entity, "instanceOf", isClass=True)
     
