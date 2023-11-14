@@ -82,13 +82,10 @@ export class ClassHierarchyWalker {
 
   public getHierarchy(startClass: WdClass, part: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
     if (part === 'parents') {
-      console.log('geting parents');
       return new ClassHierarchyReturnWrapper(startClass, this.getParentHierarchy(startClass), []);
     } else if (part === 'children') {
-      console.log('geting children');
       return new ClassHierarchyReturnWrapper(startClass, [], this.getChildrenHierarchy(startClass));
     } else {
-      console.log('geting full');
       return new ClassHierarchyReturnWrapper(startClass, this.getParentHierarchy(startClass), this.getChildrenHierarchy(startClass));
     }
   }
