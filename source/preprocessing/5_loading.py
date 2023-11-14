@@ -4,7 +4,7 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import phases.p5_loading_load_to_search_service as ph4
+import phases.p5_loading_load_to_search_service as ph5
 
 LOG_FILE = "info_load.log"
 logger = logging.getLogger("loading")
@@ -13,8 +13,8 @@ DEFAULT_LANGUAGES = ["en"]
 @timer.timed(logger)
 def __main(args):
     try:
-        ph4.load_properties(args.propertiesJsonFile, args.lang)
-        ph4.load_classes(args.classesJsonFile, args.lang)
+        ph5.load_properties(args.propertiesJsonFile, args.lang)
+        ph5.load_classes(args.classesJsonFile, args.lang)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")
