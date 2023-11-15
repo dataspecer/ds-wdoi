@@ -6,16 +6,34 @@ For the first verion of the backend I chose a combination of Elastic search (as 
 
 - Elastic search contains aliases and labels of entities.
   - There can be also descriptions but upon testing I decided to exclude the descriptions since they somehow destroyed the anticipated results.
-
+- For searching I chose `multi_match` query to include all fields in the input objects.
+- For the internal query type of the `multi_match` I produce two separate queries: `phrase_prefix` and `best_fields`.
+  - The two types are there because they mostly complement each other.
+  - The only problem is the sorting of the results, since one of the types has usually the hiegher scores and out-scores the other, even thought the other can have better resutls semantically.
+  - Maybe it would be a good idea to include the search based on the wikidata search api?
+    - not sparql but the php api
+ 
 ## Node js backend
 
-- All data will be in the memory and will query the search service and wd search service for the instances.
+- All data will be in the memory and will query the search service.
+- Internally I use fastify, because it provides out-of-the-box validation and fast serialization, also it handles asynchronous start ups (it starts server after everything is loaded) and it can be used to generate the Open API specification (thanks to the validation and serialization schemas).
+- I also changed the pipeline to remove any classes that have no label in selected languages and that recursively remove unrooted classes.
+  - The unrooted classes removal was done upon notice of poluting the root entity, which thus had 22k children.
+  - There are three options how to approach this problem:
+    1. Remove unrooted classes 
+    2. Root them forcefully to the root entity (was doing this from the start)
+    3. Leave them unrooted and allow users to search for them, in Dataspecer maybe it could mean there from the owl:Thing.
+- Comments for the api:
+  - surroundings:
+    - maybe it does not need the parents, children hierarchy?
+    - I could try to make it precomputed the properties?
+  - hierarchy:
+    - do i need to return the children?
 
 
 ![server-design](server-v1.drawio.png)
 
+## Questions
 
-
-## Notes for the v2
-
-- I wonder how it would look if the search was done solely by the wikidata search service.
+1. what about the unrooted classes
+2. do i need to return children refernce in hiearchy purpose?

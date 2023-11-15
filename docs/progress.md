@@ -64,6 +64,9 @@ To the next iteration I should prepare the backend and connect it again to the D
        - removing unexisting references from general constraints fields
        - removing unexisting references from item constraints fields
       - runs ~ 46 secs
+      - I modified later on the phase to remove classes with no label (cannot be searched for) and removed unrooted classes recursively.
+        - This was in order to mitigate a "thick" root entity with thousands of classes.
+        - It can be easily removed this behaviour.
   5. the fifth phase - loading into elastic search
     - Based on the selected languages in the 3. phase, it loads elastic search with the data.
     - The data are formatted that all languages belong to one object  
@@ -76,10 +79,11 @@ To the next iteration I should prepare the backend and connect it again to the D
     - The preprocessing enables to select only specific langugages - 3. phase and 5. phase.
     - Semantic interpretation of constraints was left for the client of the extracted data.
       - The extracted data itself should include as much as detail (meaning even not used directly by the clients - such as all the constraints)
-- Backend
+- Backend v1.
   - Search service is implemented using elastic search.
       - The ES contains aliases and labels
       - When descriptions were part of the ES, it somehow intruded the search with classes that I would not expect.
   - The main part is in Node js
     - It loads all the data into the server and keeps them in memory.
     - This time I use only subject of and value of constraints to assign properties to classes
+      - For starters I iterate over parents hierarchy to collect the propertes.
