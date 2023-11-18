@@ -6,6 +6,8 @@
 # C extensions
 *.so
 
+utils/es_config.py
+
 # Distribution / packaging
 .Python
 build/
