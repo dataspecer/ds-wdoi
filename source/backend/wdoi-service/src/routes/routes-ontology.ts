@@ -4,13 +4,13 @@ import {
   getHierarchyInputQueryStringSchema,
   searchInputQueryStringSchema,
   searchReplySchema,
-  replySchema,
+  getClassReplySchema,
   type GetEntityInputParamsType,
   type SearchInputQueryStringType,
   type GetHierarchyInputQueryStringType,
   hierarchyReplySchema,
   surroundingsReplySchema,
-} from './request-schemas';
+} from './schemas/req-resp-schemas';
 import { type EntityId } from '../ontology/entities/common';
 import { type WdClass } from '../ontology/entities/wd-class';
 
@@ -44,7 +44,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       schema: {
         params: getEntityInputParamsSchema,
         response: {
-          '2xx': replySchema,
+          '2xx': getClassReplySchema,
         },
       },
     },
