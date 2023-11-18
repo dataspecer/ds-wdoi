@@ -85,9 +85,9 @@ export class WdOntology {
     return this.properties.has(propertyId);
   }
 
-  static async create(classesJsonFilePath: string, propertiesJsonFilePath: string, esNode: string): Promise<WdOntology | never> {
+  static async create(classesJsonFilePath: string, propertiesJsonFilePath: string): Promise<WdOntology | never> {
     log('Connecting to elastic search');
-    const client = new WdEsSearchClient(esNode);
+    const client = new WdEsSearchClient();
 
     log('Starting to load properties');
     const props = await loadEntities<WdProperty>(propertiesJsonFilePath, processFuncPropertiesCapture, PROPERTIES_LOG_STEP);

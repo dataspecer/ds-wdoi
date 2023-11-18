@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-from utils.es_config import *
+from es_config import *
 
 CLASSES_ELASTIC_INDEX_NAME = "classes"
 PROPERTIES_ELASTIC_INDEX_NAME = "properties"

@@ -1,14 +1,16 @@
 import { Client } from '@elastic/elasticsearch';
 import { type EntityId, type EntityIdsList } from '../entities/common';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
+import { ES_PASSWD, ES_CERT_PATH, ES_NODE } from './es-config';
+import fs from 'fs';
 
 export class WdEsSearchClient {
   private readonly client: Client;
   private static readonly CLASSES_ELASTIC_INDEX_NAME = 'classes';
   private static readonly PROPERTIES_ELASTIC_INDEX_NAME = 'properties';
 
-  constructor(nodeUrl: string) {
-    this.client = new Client({ node: nodeUrl });
+  constructor() {
+    this.client = new Client({ node: ES_NODE, auth: { username: 'elastic', password: ES_PASSWD }, tls: { ca: fs.readFileSync(ES_CERT_PATH) } });
   }
 
   public async searchClasses(queryString: string): Promise<EntityIdsList> {
