@@ -11,23 +11,22 @@ main_logger = logging.getLogger("loading")
 classes_logger = main_logger.getChild("p4_load_classes")
 properties_logger = main_logger.getChild("p4_load_properties")
 
+def __construct_field_lang_key(field: RootFields, lang: str):
+    return str(field) + "_" + lang
+
 def __add_language_value_from_field(language_field_map, wd_entity, field: RootFields, language, default_value = ""):
     wd_language_object = wd_fields_ex.extract_from_wd_json(wd_entity, field)
+    lang_key = __construct_field_lang_key(field, language)
     if wd_language_object != None and language in wd_language_object:
-        language_field_map[str(field)] = wd_language_object[language]
+        language_field_map[lang_key] = wd_language_object[language]
     else:
-        language_field_map[str(field)] = default_value
-
-def __extract_wd_entity_language_values(wd_entity, language):
-    language_map_entry_value = {}
-    __add_language_value_from_field(language_map_entry_value, wd_entity, RootFields.LABELS, language)    
-    __add_language_value_from_field(language_map_entry_value, wd_entity, RootFields.ALIASES, language, default_value=[])
-    return language_map_entry_value
+        language_field_map[lang_key] = default_value
 
 def __create_language_map(wd_entity, languages):
     language_map = {}
     for lang in languages:
-        language_map[lang] = __extract_wd_entity_language_values(wd_entity, lang)
+        __add_language_value_from_field(language_map, wd_entity, RootFields.LABELS, lang)    
+        __add_language_value_from_field(language_map, wd_entity, RootFields.ALIASES, lang, default_value=[])
     return language_map
 
 def __generate_elastic_input(wd_entity, languages, elastic_index_name):
