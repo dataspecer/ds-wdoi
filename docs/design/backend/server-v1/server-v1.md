@@ -9,7 +9,7 @@ For the first verion of the backend I chose a combination of Elastic search (as 
 - For searching I chose `multi_match` query to include all fields in the input objects.
 - For the internal query type of the `multi_match` I produce two separate queries: `phrase_prefix` and `best_fields`.
   - The two types are there because they mostly complement each other.
-  - The only problem is the sorting of the results, since one of the types has usually the hiegher scores and out-scores the other, even thought the other can have better resutls semantically.
+  - The only problem is the sorting of the results, since one of the types has usually the hiegher scores and out-scores the other, even thought the other can have better results semantically.
   - Maybe it would be a good idea to include the search based on the wikidata search api?
     - not sparql but the php api
 

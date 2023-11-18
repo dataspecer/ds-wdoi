@@ -1,5 +1,7 @@
 # Backend design
 
+This file contains general questions about backend architecture and implementation.
+
 ## API
 
 So far only in abstraction:
