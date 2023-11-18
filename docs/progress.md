@@ -66,7 +66,8 @@ To the next iteration I should prepare the backend and connect it again to the D
       - runs ~ 46 secs
       - I modified later on the phase to remove classes with no label (cannot be searched for) and removed unrooted classes recursively.
         - This was in order to mitigate a "thick" root entity with thousands of classes.
-        - It can be easily removed this behaviour.
+        - This behaviour can be easily removed.
+        - Based on supervisors, this should be kept as an issue.
   5. the fifth phase - loading into elastic search
     - Based on the selected languages in the 3. phase, it loads elastic search with the data.
     - The data are formatted that all languages belong to one object  
@@ -83,6 +84,8 @@ To the next iteration I should prepare the backend and connect it again to the D
   - Search service is implemented using elastic search.
       - The ES contains aliases and labels
       - When descriptions were part of the ES, it somehow intruded the search with classes that I would not expect.
+      - The search does two queries - phrase_prefix and best_fields - in order to include all the relevant results.
+        - But another problem was sorting it - so far I use interleaving because prefix always outscored the best_fields even thought best_fields had more meaningful results.
   - The main part is in Node js
     - It loads all the data into the server and keeps them in memory.
     - This time I use only subject of and value of constraints to assign properties to classes
