@@ -1,5 +1,6 @@
 import { Client } from '@elastic/elasticsearch';
 import { type EntityId, type EntityIdsList } from '../entities/common';
+import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
 
 export class WdEsSearchClient {
   private readonly client: Client;
@@ -33,15 +34,32 @@ export class WdEsSearchClient {
       },
     });
 
-    const searchResults = [...(await searchResultsPrefix).hits.hits, ...(await searchResultsMatch).hits.hits];
-    searchResults.sort((a, b) => (b._score as number) - (a._score as number));
+    const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
+    const interleavedResults = this.interleaveArrays(searchResults);
+    return this.makeUnique(interleavedResults);
+  }
+
+  private interleaveArrays(arr: any[][]): any[] {
+    return Array.from(
+      {
+        length: Math.max(...arr.map((o) => o.length)),
+      },
+      (_, i) => arr.map((r) => r[i] ?? null),
+    ).flat();
+  }
+
+  // This must preserver order of the given array.
+  private makeUnique(values: Array<SearchHit<unknown> | null>): EntityIdsList {
     const includedIds = new Set<EntityId>();
-    return searchResults.flatMap((hit) => {
-      const id = Number(hit._id);
-      if (!includedIds.has(id)) {
-        includedIds.add(id);
-        return [id];
-      } else return [];
+    return values.flatMap((hit) => {
+      if (hit != null) {
+        const id = Number(hit._id);
+        if (!includedIds.has(id)) {
+          includedIds.add(id);
+          return [id];
+        }
+      }
+      return [];
     });
   }
 }

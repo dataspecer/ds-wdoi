@@ -3,7 +3,7 @@ import { ROOT_CLASS_ID, WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
-import { WdEsSearchClient } from './elastic-search/client';
+import { WdEsSearchClient } from './search/es-client';
 import { WdEntity } from './entities/wd-entity';
 import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
 import { materializeEntities } from './utils/materialize-entities';

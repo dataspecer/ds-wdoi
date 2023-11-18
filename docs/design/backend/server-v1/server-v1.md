@@ -12,6 +12,12 @@ For the first verion of the backend I chose a combination of Elastic search (as 
   - The only problem is the sorting of the results, since one of the types has usually the hiegher scores and out-scores the other, even thought the other can have better resutls semantically.
   - Maybe it would be a good idea to include the search based on the wikidata search api?
     - not sparql but the php api
+
+- One problem that arised from using one object in the elastic search for one entity, is that it lacks proper language support.
+  - When querying it just search all fields with multiple languages.
+  - Since the `phrase_prefix` and `best_fields` are used to mitigate missing classes, we could use the php api for searching entities.
+    - But to do so, we need to obtain the language for quering php wikidata api.
+    - It would be interesting to add api to the adapters for language specification.
  
 ## Node js backend
 
@@ -23,13 +29,13 @@ For the first verion of the backend I chose a combination of Elastic search (as 
     1. Remove unrooted classes 
     2. Root them forcefully to the root entity (was doing this from the start)
     3. Leave them unrooted and allow users to search for them, in Dataspecer maybe it could mean there from the owl:Thing.
+  - i should keep this in check as an issue. 
 - Comments for the api:
   - surroundings:
     - maybe it does not need the parents, children hierarchy?
     - I could try to make it precomputed the properties?
   - hierarchy:
     - do i need to return the children?
-
 
 ![server-design](server-v1.drawio.png)
 
