@@ -1,9 +1,36 @@
 import argparse
 import utils.elastic_search as es
 import logging
+import pprint 
 
 logger = logging.getLogger("es-helpers")
 logging.basicConfig(level=20)
+pp = pprint.PrettyPrinter(indent=2)
+
+def __create_dynamic_mapping(language_shortcut: str, analyzer: str):
+    template_name = "language" + "_" + language_shortcut + "_" + "template" 
+    template_value = {
+        "match_mapping_type": "string",
+        "match": "*_" + language_shortcut,
+        "mapping": {
+            "type": "text",
+            "analyzer": analyzer,
+            'fields': {'keyword': {'type': 'keyword', 'ignore_above': 256}},
+        }
+    }
+    return { template_name: template_value } 
+
+def __create_language_mappings():
+    dynamic_templates = []
+    analyzer_language_map = es.ANALYZER_LANGUAGE_MAP
+    for analyzer, language_shortcuts in analyzer_language_map.items():
+        for shortcut in language_shortcuts:
+            dynamic_templates.append(__create_dynamic_mapping(shortcut, analyzer))
+    return {
+        "dynamic": True,
+        "dynamic_templates": dynamic_templates,
+    }
+
 
 def index_exists(client, name):
     if not client.indices.exists(index=name):
@@ -19,7 +46,7 @@ def list_indices():
     indices = es.client.indices.get(index="*")
     for index_name, index_info in indices.items():
         print(index_name)
-        print(index_info)
+        pp.pprint(index_info)
         print()
     
     logger.info("Listing indices ended")
@@ -30,7 +57,7 @@ def list_mappings():
     mappings = es.client.indices.get_mapping(index="*")
     for index_name, mapping_info in mappings.items():
         print(index_name)
-        print(mapping_info)
+        pp.pprint(mapping_info)
         print()
     
     logger.info("Listing mappings ended")
@@ -67,12 +94,14 @@ def create():
         logger.critical("Exiting...")
         exit(1)        
     else:
+        mappings = __create_language_mappings()
+        
         logger.info(f"Creating index == {es.CLASSES_ELASTIC_INDEX_NAME}")
-        es.client.indices.create(index=es.CLASSES_ELASTIC_INDEX_NAME)
+        es.client.indices.create(index=es.CLASSES_ELASTIC_INDEX_NAME, mappings=mappings)
         logger.info(f"Created index == {es.CLASSES_ELASTIC_INDEX_NAME} successfully")
         
         logger.info(f"Creating index == {es.PROPERTIES_ELASTIC_INDEX_NAME}")
-        es.client.indices.create(index=es.PROPERTIES_ELASTIC_INDEX_NAME)
+        es.client.indices.create(index=es.PROPERTIES_ELASTIC_INDEX_NAME, mappings=mappings)
         logger.info(f"Created index == {es.PROPERTIES_ELASTIC_INDEX_NAME} successfully")
             
     logger.info("Creating ended")
@@ -112,14 +141,14 @@ def search(search_string):
             "multi_match": {
                 "query":      f"{search_string}",
                 "type":       "phrase_prefix",
-                "slop": 5,
+                "slop": 2,
             }
         }
         resp = es.client.search(index=es.CLASSES_ELASTIC_INDEX_NAME, query=query_obj)
         logger.info("Got %d Hits:" % resp['hits']['total']['value'])
         for hit in resp['hits']['hits']:
             print(hit["_id"])
-            print(hit["_source"])
+            pp.pprint(hit["_source"])
             print()
    
     logger.info("Searching ended")
