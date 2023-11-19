@@ -1,76 +1,51 @@
 import type { EntityId } from './entities/common';
-import { ROOT_CLASS_ID, WdClass } from './entities/wd-class';
+import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
-import { WdEsSearchClient } from './search/es-client';
-import { WdEntity } from './entities/wd-entity';
+import { OntologySearch } from './search/ontologySearch';
 import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
-import { materializeEntities } from './utils/materialize-entities';
-import { ClassSurroundings, type ClassSurroundingsReturnWrapper, PropertyHierarchyExtractor } from './surroundings/class-surroundings';
+import {
+  ClassSurroundingsExpander,
+  type ClassSurroundingsReturnWrapper,
+  PropertyHierarchyExtractor,
+} from './surroundings/class-surroundings-expander';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
-  private readonly esClient: WdEsSearchClient;
-  private readonly walker: ClassHierarchyWalker;
-  private readonly surroudings: ClassSurroundings;
-  private static readonly URI_REGEXP = new RegExp('^http://www.wikidata.org/entity/[QP][1-9][0-9]*$');
+  private readonly ontologySearch: OntologySearch;
+  private readonly hierarchyWalker: ClassHierarchyWalker;
+  private readonly surroundingsExpander: ClassSurroundingsExpander;
 
-  private constructor(
-    rootClass: WdClass,
-    classes: ReadonlyMap<EntityId, WdClass>,
-    properties: ReadonlyMap<EntityId, WdProperty>,
-    esClient: WdEsSearchClient,
-  ) {
+  private constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
-    this.esClient = esClient;
-    this.walker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
-    this.surroudings = new ClassSurroundings(this.rootClass, this.classes, this.properties);
+    this.ontologySearch = new OntologySearch(this.rootClass, this.classes, this.properties);
+    this.hierarchyWalker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
+    this.surroundingsExpander = new ClassSurroundingsExpander(this.rootClass, this.classes, this.properties);
   }
 
-  private parseEntityURI(uri: string): [string | null, number | null] {
-    const entityStrId = uri.split('/').pop();
-    if (entityStrId != null) {
-      const entityType = entityStrId[0];
-      const entityNumId = Number(entityStrId.slice(1));
-      if (entityNumId != null && WdEntity.isValidURIType(entityType)) {
-        return [entityType, entityNumId];
-      }
-    }
-    return [null, null];
-  }
-
-  private searchBasedOnURI(uri: string): WdClass[] {
-    const [entityType, entityNumId] = this.parseEntityURI(uri);
-    if (entityType != null && entityNumId != null) {
-      if (WdClass.isURIType(entityType)) {
-        const cls = this.classes.get(entityNumId);
-        if (cls != null) return [cls];
-      }
-    }
-    return [];
-  }
-
-  public async search(query: string, searchClasses: boolean, searchProperties: boolean, searchInstances: boolean): Promise<WdClass[]> {
-    if (WdOntology.URI_REGEXP.test(query)) {
-      return this.searchBasedOnURI(query);
-    }
-    const classIdsList = await this.esClient.searchClasses(query);
-    return materializeEntities(classIdsList, this.classes);
+  public async search(
+    query: string,
+    searchClasses: boolean | undefined,
+    searchProperties: boolean | undefined,
+    searchInstances: boolean | undefined,
+    languagePriority: string | undefined,
+  ): Promise<WdClass[]> {
+    return await this.ontologySearch.search(query, searchClasses, searchProperties, searchInstances, languagePriority);
   }
 
   public getHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
-    return this.walker.getHierarchy(startClass, parts);
+    return this.hierarchyWalker.getHierarchy(startClass, parts);
   }
 
   public getSurroundings(startClass: WdClass): ClassSurroundingsReturnWrapper {
     const extractor = new PropertyHierarchyExtractor(this.rootClass, this.classes, this.properties);
-    this.walker.getParentHierarchyWithExtraction(startClass, extractor);
-    return this.surroudings.getSurroundings(startClass, extractor);
+    this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
+    return this.surroundingsExpander.getSurroundings(startClass, extractor);
   }
 
   public getClass(classId: EntityId): WdClass | undefined {
@@ -86,9 +61,6 @@ export class WdOntology {
   }
 
   static async create(classesJsonFilePath: string, propertiesJsonFilePath: string): Promise<WdOntology | never> {
-    log('Connecting to elastic search');
-    const client = new WdEsSearchClient();
-
     log('Starting to load properties');
     const props = await loadEntities<WdProperty>(propertiesJsonFilePath, processFuncPropertiesCapture, PROPERTIES_LOG_STEP);
 
@@ -97,7 +69,7 @@ export class WdOntology {
 
     const rootClass = cls.get(ROOT_CLASS_ID);
     if (rootClass != null) {
-      const ontology = new WdOntology(rootClass, cls, props, client);
+      const ontology = new WdOntology(rootClass, cls, props);
       log('Ontology created');
       return ontology;
     } else {

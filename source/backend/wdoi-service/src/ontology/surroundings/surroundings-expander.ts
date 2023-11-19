@@ -3,7 +3,7 @@ import { type WdClass } from '../entities/wd-class';
 import { type WdProperty } from '../entities/wd-property';
 import { materializeEntities } from '../utils/materialize-entities';
 
-export class Surroundings {
+export class SurroundingsExpander {
   protected readonly rootClass: WdClass;
   protected readonly classes: ReadonlyMap<EntityId, WdClass>;
   protected readonly properties: ReadonlyMap<EntityId, WdProperty>;

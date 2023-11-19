@@ -1,21 +1,23 @@
 import { Client } from '@elastic/elasticsearch';
-import { type EntityId, type EntityIdsList } from '../entities/common';
+import { type EntityId, type EntityIdsList } from '../../entities/common';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
 import { ES_PASSWD, ES_CERT_PATH, ES_NODE } from './es-config';
 import fs from 'fs';
+import { Searcher } from './searcher';
 
-export class WdEsSearchClient {
+export class EsSearch extends Searcher {
   private readonly client: Client;
   private static readonly CLASSES_ELASTIC_INDEX_NAME = 'classes';
   private static readonly PROPERTIES_ELASTIC_INDEX_NAME = 'properties';
 
-  constructor() {
+  constructor(defaultLanguagePriority: string) {
+    super(defaultLanguagePriority);
     this.client = new Client({ node: ES_NODE, auth: { username: 'elastic', password: ES_PASSWD }, tls: { ca: fs.readFileSync(ES_CERT_PATH) } });
   }
 
-  public async searchClasses(queryString: string): Promise<EntityIdsList> {
+  public async searchClasses(queryString: string, languagePriority: string | undefined): Promise<EntityIdsList> {
     const searchResultsPrefix = this.client.search({
-      index: WdEsSearchClient.CLASSES_ELASTIC_INDEX_NAME,
+      index: EsSearch.CLASSES_ELASTIC_INDEX_NAME,
       _source: false,
       query: {
         multi_match: {
@@ -26,7 +28,7 @@ export class WdEsSearchClient {
       },
     });
     const searchResultsMatch = this.client.search({
-      index: WdEsSearchClient.CLASSES_ELASTIC_INDEX_NAME,
+      index: EsSearch.CLASSES_ELASTIC_INDEX_NAME,
       _source: false,
       query: {
         multi_match: {
@@ -39,15 +41,6 @@ export class WdEsSearchClient {
     const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
     const interleavedResults = this.interleaveArrays(searchResults);
     return this.makeUnique(interleavedResults);
-  }
-
-  private interleaveArrays(arr: any[][]): any[] {
-    return Array.from(
-      {
-        length: Math.max(...arr.map((o) => o.length)),
-      },
-      (_, i) => arr.map((r) => r[i] ?? null),
-    ).flat();
   }
 
   // This must preserver order of the given array.

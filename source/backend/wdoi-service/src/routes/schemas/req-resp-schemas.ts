@@ -34,6 +34,9 @@ export const searchInputQueryStringSchema = {
     searchInstances: {
       type: 'boolean',
     },
+    languagePriority: {
+      type: 'string',
+    },
   },
   additionalProperties: false,
   required: ['query'],

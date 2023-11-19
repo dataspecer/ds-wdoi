@@ -3,7 +3,7 @@ import { type WdClass } from '../entities/wd-class';
 import type { WdEntity } from '../entities/wd-entity';
 import { type ItemProperty, UnderlyingType, type WdProperty } from '../entities/wd-property';
 import { Extractor } from '../hierarchy-walker/hierarchy-walker';
-import { Surroundings } from './surroundings';
+import { SurroundingsExpander } from './surroundings-expander';
 
 export class ClassSurroundingsReturnWrapper {
   root: WdClass;
@@ -114,7 +114,7 @@ export class PropertyHierarchyExtractor extends Extractor {
   }
 }
 
-export class ClassSurroundings extends Surroundings {
+export class ClassSurroundingsExpander extends SurroundingsExpander {
   public getSurroundings(startClass: WdClass, propertyHierarchyExtractor: PropertyHierarchyExtractor): ClassSurroundingsReturnWrapper {
     const parents = this.getParents(startClass);
     const children = this.getChildren(startClass);
