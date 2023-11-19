@@ -225,6 +225,12 @@ It either creates, refreshes or deletes classes and properties indices.
       # Searching the class index
       &> python loading_es_helpers.py search "query string goes here"
 
+      # Listing indices
+      &> python loading_es_helpers.py list
+
+      # List mappings of indices
+      &> python loading_es_helpers.py mappings
+
 
 ### Loading comments
 

@@ -13,6 +13,28 @@ def index_exists(client, name):
         logger.info(f"Index == {name} does exist.")
         return True
 
+def list_indices():
+    logger.info("Listing indices started")
+    
+    indices = es.client.indices.get(index="*")
+    for index_name, index_info in indices.items():
+        print(index_name)
+        print(index_info)
+        print()
+    
+    logger.info("Listing indices ended")
+
+def list_mappings():
+    logger.info("Listing mappings started")
+    
+    mappings = es.client.indices.get_mapping(index="*")
+    for index_name, mapping_info in mappings.items():
+        print(index_name)
+        print(mapping_info)
+        print()
+    
+    logger.info("Listing mappings ended")
+
 def refresh():
     logger.info("Refreshing started")
     
@@ -112,10 +134,12 @@ if __name__ == "__main__":
                             2. delete properties and classes indeces
                             3. refresh properties and classes indeces
                             4. search for the given string
+                            5. list indices
+                            6. list mappings of indices
                             """)
     parser.add_argument("operation",
                         type=str,
-                        choices=["create", "delete", "refresh", "search"], 
+                        choices=["create", "delete", "refresh", "search", "list", "mappings"], 
                         help="An operation to execute.")
     parser.add_argument("query",
                         type=str,
@@ -133,6 +157,10 @@ if __name__ == "__main__":
         refresh()
     elif operation == "search":
         search(args.query)
+    elif operation == "list":
+        list_indices()
+    elif operation == "mappings":
+        list_mappings()
     else:
         raise ValueError("Operation was not defined for the script.")
     
