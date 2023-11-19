@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-from es_config import *
+import os
 
 CLASSES_ELASTIC_INDEX_NAME = "classes"
 PROPERTIES_ELASTIC_INDEX_NAME = "properties"
@@ -43,4 +43,4 @@ ANALYZER_LANGUAGE_MAP = {
     "thai": ["th"],
 }
 
-client = Elasticsearch("https://localhost:9200", ca_certs=ES_CERT_PATH, basic_auth=('elastic', ES_PASSWD))
+client = Elasticsearch(os.getenv('ES_URL'), ca_certs=os.getenv('ES_CERT_PATH'), basic_auth=('elastic', os.getenv('ES_PASSWD')))

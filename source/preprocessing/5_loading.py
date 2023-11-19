@@ -3,8 +3,10 @@ import argparse
 import pathlib
 import logging
 import utils.timer as timer
-
+from dotenv import load_dotenv
 import phases.p5_loading_load_to_search_service as ph5
+
+load_dotenv()
 
 LOG_FILE = "info_load.log"
 logger = logging.getLogger("loading")

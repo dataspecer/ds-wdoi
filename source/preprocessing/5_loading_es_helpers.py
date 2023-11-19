@@ -1,7 +1,10 @@
 import argparse
 import utils.elastic_search as es
 import logging
-import pprint 
+import pprint
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger("es-helpers")
 logging.basicConfig(level=20)
