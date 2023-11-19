@@ -23,7 +23,7 @@ export class WdSearch extends Searcher {
   private static readonly BASE_URL = 'https://www.wikidata.org/w/api.php';
   private static readonly API_ENDPOINTS = {
     searchEntities: (query: string, languagePriority: string) => {
-      return WdSearch.BASE_URL + `?action=wbsearchentities&search=${encodeURI(query)}&language=${languagePriority}&limit=15&type=item&format=json`;
+      return WdSearch.BASE_URL + `?action=wbsearchentities&search=${encodeURI(query)}&language=${languagePriority}&limit=7&type=item&format=json`;
     },
   };
 
