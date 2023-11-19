@@ -1,9 +1,12 @@
 import { Client } from '@elastic/elasticsearch';
 import { type EntityId, type EntityIdsList } from '../../entities/common';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
-import { ES_PASSWD, ES_CERT_PATH, ES_NODE } from './es-config';
 import fs from 'fs';
 import { Searcher } from './searcher';
+
+const ES_NODE = process.env.ES_NODE ?? '';
+const ES_PASSWD = process.env.ES_PASSWD ?? '';
+const ES_CERT_PATH = process.env.ES_CERT_PATH ?? '';
 
 export class EsSearch extends Searcher {
   private readonly client: Client;
@@ -12,7 +15,11 @@ export class EsSearch extends Searcher {
 
   constructor(defaultLanguagePriority: string) {
     super(defaultLanguagePriority);
-    this.client = new Client({ node: ES_NODE, auth: { username: 'elastic', password: ES_PASSWD }, tls: { ca: fs.readFileSync(ES_CERT_PATH) } });
+    this.client = new Client({
+      node: ES_NODE,
+      auth: { username: 'elastic', password: ES_PASSWD },
+      tls: { ca: fs.readFileSync(ES_CERT_PATH) },
+    });
   }
 
   public async searchClasses(queryString: string, languagePriority: string | undefined): Promise<EntityIdsList> {

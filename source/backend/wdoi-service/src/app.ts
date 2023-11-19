@@ -5,6 +5,9 @@ import loadOntology from './ontology/expose-to-fastify';
 import { envToLogger, log } from './logging/log';
 import { ontologyRoutes } from './routes/routes-ontology';
 import fastifySensible from '@fastify/sensible';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const enviroment = process.env.NODE_ENV ?? 'development';
 

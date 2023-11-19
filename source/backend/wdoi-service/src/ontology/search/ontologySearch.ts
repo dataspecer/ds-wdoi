@@ -61,9 +61,9 @@ export class OntologySearch {
   }
 
   private async searchClasses(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
-    const esClassesIds = await this.esSearch.searchClasses(query, languagePriority);
-    const wdClassesIds = await this.wdSearch.searchClasses(query, languagePriority);
-    return this.makeUnique([...wdClassesIds, ...esClassesIds]);
+    const wdClassesIds = this.wdSearch.searchClasses(query, languagePriority);
+    const esClassesIds = this.esSearch.searchClasses(query, languagePriority);
+    return this.makeUnique([...(await wdClassesIds), ...(await esClassesIds)]);
   }
 
   private makeUnique(entityIds: EntityIdsList): EntityIdsList {
