@@ -68,40 +68,18 @@ export class PropertyHierarchyExtractor extends Extractor {
     const prop = wdEntity as WdProperty;
     if (prop.underlyingType === UnderlyingType.ENTITY) {
       const itemProp = prop as ItemProperty;
-      this.materializeOnMissing(
-        itemProp.itemConstraints.valueType.instanceOf,
-        this.propertySetEndpointsSet,
-        this.propertyEndpoints,
-        this.classes,
-        'class',
-      );
-      this.materializeOnMissing(
-        itemProp.itemConstraints.valueType.subclassOfInstanceOf,
-        this.propertySetEndpointsSet,
-        this.propertyEndpoints,
-        this.classes,
-        'class',
-      );
+      const valueType = itemProp.itemConstraints.valueType;
+      this.materializeOnMissing(valueType.instanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
+      this.materializeOnMissing(valueType.subclassOfInstanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
     }
   }
 
   // If the class is value of a property, we want to extract the subject types which will be used as incoming edges.
   private processValueOf(wdEntity: WdEntity): void {
     const prop = wdEntity as WdProperty;
-    this.materializeOnMissing(
-      prop.generalConstraints.subjectType.instanceOf,
-      this.propertySetEndpointsSet,
-      this.propertyEndpoints,
-      this.classes,
-      'class',
-    );
-    this.materializeOnMissing(
-      prop.generalConstraints.subjectType.subclassOfInstanceOf,
-      this.propertySetEndpointsSet,
-      this.propertyEndpoints,
-      this.classes,
-      'class',
-    );
+    const subjectType = prop.generalConstraints.subjectType;
+    this.materializeOnMissing(subjectType.instanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
+    this.materializeOnMissing(subjectType.subclassOfInstanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
   }
 
   public extract(cls: WdClass): void {
@@ -116,8 +94,8 @@ export class PropertyHierarchyExtractor extends Extractor {
 
 export class ClassSurroundingsExpander extends SurroundingsExpander {
   public getSurroundings(startClass: WdClass, propertyHierarchyExtractor: PropertyHierarchyExtractor): ClassSurroundingsReturnWrapper {
-    const parents = this.getParents(startClass);
-    const children = this.getChildren(startClass);
+    const parents: WdClass[] = []; // this.getParents(startClass);
+    const children: WdClass[] = []; // this.getChildren(startClass);
     const [subjectOf, valueOf, endpoints] = propertyHierarchyExtractor.getResult();
     return new ClassSurroundingsReturnWrapper(startClass, parents, children, subjectOf, valueOf, endpoints);
   }
