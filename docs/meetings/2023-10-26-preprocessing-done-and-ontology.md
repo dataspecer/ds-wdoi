@@ -1,6 +1,7 @@
 # Sixth meeting 
 
 I am presenting finished preprocessing and ontology.
+The presentation and pictures are enclosed in .rar file.
 
 [Presentation](https://docs.google.com/presentation/d/1t5npUp1rF1iwD4QQV67rUZHbZWvvnAhYiGQMgVBXRnE/edit?usp=sharing)
 

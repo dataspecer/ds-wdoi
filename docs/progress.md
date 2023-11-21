@@ -20,6 +20,18 @@ The adapter is a specialization of adapter class that is used for all CIMs in th
   - I followed subject and object constraints on the properties.
   - It was pretty slow.
 
+- Issues:
+  - slow
+    - working with entire wikidata
+    - multiple queries for simple use cases
+  - rigid
+    - difficult to add new features and leave the SPARQL model
+  - hard to change and maintain
+  - simple model
+    - everything can be a class
+    - fake attributes
+    - no notion of classes or constraints
+
 To the next iteration I should prepare the backend and connect it again to the Dataspecer.
 
 ## 2. iteration - creating the backend 
@@ -72,6 +84,7 @@ To the next iteration I should prepare the backend and connect it again to the D
     - Based on the selected languages in the 3. phase, it loads elastic search with the data.
     - The data are formatted that all languages belong to one object  
     - it uses only aliases and labels (based on the php search from wikidata)
+    - I use language analyzers for language fields from Wikidata.
     - runs ~ 14 mins
   - Comments:
     - The preprocessing does exclude `sitelinks` from entities.
@@ -86,7 +99,25 @@ To the next iteration I should prepare the backend and connect it again to the D
       - When descriptions were part of the ES, it somehow intruded the search with classes that I would not expect.
       - The search does two queries - phrase_prefix and best_fields - in order to include all the relevant results.
         - But another problem was sorting it - so far I use interleaving because prefix always outscored the best_fields even thought best_fields had more meaningful results.
+        - I integrated php wikidata search to provide more semantics - it is still fast.
+      - The ES uses dynamic templates to provide language features of the Wikidata language fields.
   - The main part is in Node js
     - It loads all the data into the server and keeps them in memory.
     - This time I use only subject of and value of constraints to assign properties to classes
-      - For starters I iterate over parents hierarchy to collect the propertes.
+      - For starters I iterate over parents hierarchy to collect the properties.
+    - For hierarchy and properties it walks through the hierarchy.
+- Dataspecer v2
+  - I implemented Dataspecer core v1 api.
+  - The new appi is waiting when stepan tells me.
+
+- Pros from previous solution:
+  - It is easier to maintain.
+  - The view on ontology can be changed and we have pipeline.
+  - It is much faster.
+  - We have the ontology under control.
+
+- Issues
+  - Maybe do not remove any classes.
+  - Still no qualifiers, and general properties.
+  - Dont know how to handle the properties as in hierarchy.
+  - No recommendations.
