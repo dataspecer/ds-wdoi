@@ -1,6 +1,9 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import os
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 
 CLASSES_ELASTIC_INDEX_NAME = "classes"
 PROPERTIES_ELASTIC_INDEX_NAME = "properties"
