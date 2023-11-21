@@ -5,7 +5,7 @@
   "main": "./src/app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dist": "rimraf ./dist && tsc",
+    "dist": "rimraf ./dist && tsc && copyfiles ./.env ./dist/",
     "start": "npm run dist && node dist/app.js",
     "dev": "nodemon src/app.ts"
   },
@@ -19,6 +19,7 @@
     "@types/node": "^20.8.8",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "^39.1.1",

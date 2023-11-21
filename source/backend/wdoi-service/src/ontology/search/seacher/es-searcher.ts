@@ -3,11 +3,7 @@ import { type EntityId, type EntityIdsList } from '../../entities/common';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
 import fs from 'fs';
 import { Searcher } from './searcher';
-
-const ES_NODE = process.env.ES_NODE ?? '';
-const ES_PASSWD = process.env.ES_PASSWD ?? '';
-const ES_CERT_PATH = process.env.ES_CERT_PATH ?? '';
-
+import { envVars } from '../../../enviroment';
 export class EsSearch extends Searcher {
   private readonly client: Client;
   private static readonly CLASSES_ELASTIC_INDEX_NAME = 'classes';
@@ -16,9 +12,9 @@ export class EsSearch extends Searcher {
   constructor(defaultLanguagePriority: string) {
     super(defaultLanguagePriority);
     this.client = new Client({
-      node: ES_NODE,
-      auth: { username: 'elastic', password: ES_PASSWD },
-      tls: { ca: fs.readFileSync(ES_CERT_PATH) },
+      node: envVars.ES_NODE,
+      auth: { username: 'elastic', password: envVars.ES_PASSWD },
+      tls: { ca: fs.readFileSync(envVars.ES_CERT_PATH) },
     });
   }
 

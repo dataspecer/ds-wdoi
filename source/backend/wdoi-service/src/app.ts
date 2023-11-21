@@ -1,3 +1,4 @@
+import { envVars } from './enviroment';
 import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import mapAllRoutes from '@fastify/routes';
@@ -5,14 +6,9 @@ import loadOntology from './ontology/expose-to-fastify';
 import { envToLogger, log } from './logging/log';
 import { ontologyRoutes } from './routes/routes-ontology';
 import fastifySensible from '@fastify/sensible';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const enviroment = process.env.NODE_ENV ?? 'development';
 
 const fastify: FastifyInstance = Fastify({
-  logger: envToLogger[enviroment] ?? true,
+  logger: envToLogger[envVars.ENVIROMENT] ?? true,
   pluginTimeout: 0,
 });
 
