@@ -171,7 +171,7 @@ def extract_wd_subject_value_class_values(wd_entity_json, constraint: Literal[Ge
         "instanceOf": [],
         "subclassOfInstanceOf": []
     }
-    return __extract_constraint_values_for_statement_pairs_map(wd_entity_json, GeneralConstraints.SUBJECT_TYPE, Properties.RELATION, Properties.CLASS, init_map, __add_to_statement_relation_map, False)
+    return __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constraint, Properties.RELATION, Properties.CLASS, init_map, __add_to_statement_relation_map, False)
 
 def constraint_exists(wd_entity_json, constraint):
     return __constraint_exists(wd_entity_json, constraint)
