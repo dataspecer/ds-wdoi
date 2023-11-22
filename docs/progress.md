@@ -117,6 +117,7 @@ To the next iteration I should prepare the backend and connect it again to the D
   - We have the ontology under control.
 
 - Issues
+  - We still use only subject and value constraints + we use hierarchy to show properties
   - Maybe do not remove any classes.
   - Still no qualifiers, and general properties.
   - Dont know how to handle the properties as in hierarchy.

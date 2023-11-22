@@ -17,8 +17,9 @@ For the first verion of the backend I chose a combination of Elastic search (as 
   - When querying it just search all fields with multiple languages.
   - Since the `phrase_prefix` and `best_fields` are used to mitigate missing classes, we could use the php api for searching entities.
     - But to do so, we need to obtain the language for quering php wikidata api.
-    - It would be interesting to add api to the adapters for language specification.
- 
+- I solved the problem by adding additional query to the Wikidata php api for searching.
+- I also modified the api of the search so that the user can use a language priority.
+
 ## Node js backend
 
 - All data will be in the memory and will query the search service.
