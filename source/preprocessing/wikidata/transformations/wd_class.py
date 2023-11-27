@@ -2,6 +2,7 @@ import wikidata.json_extractors.wd_fields as wd_fields_ex
 import wikidata.json_extractors.wd_statements as wd_stmts_ex
 import wikidata.transformations.wd_fields as wd_fields_tran
 import wikidata.transformations.wd_languages as wd_languages_tran 
+from wikidata.iri import construct_wd_iri
 from wikidata.model.properties import Properties
 
 def __str_to_num_ids(str_ids_arr):
@@ -23,6 +24,7 @@ def transform_wd_class(str_class_id, wd_class, languages):
     
     return {
         "id": num_id,
+        "iri": construct_wd_iri(str_class_id),
         "aliases": aliases,
         "labels": labels,
         "descriptions": descriptions,

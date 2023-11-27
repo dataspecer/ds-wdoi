@@ -8,7 +8,7 @@ from wikidata.model.properties import UnderlyingTypes as PropertyUnderlyingTypes
 from wikidata.model.properties import Properties
 from wikidata.model.constraints import GeneralConstraints
 from wikidata.model.constraints import ItemDatatypeConstraints
-
+from wikidata.iri import construct_wd_iri
 
 def __str_to_num_ids(str_ids_arr):
     return wd_fields_tran.transform_wd_str_ids_to_num_ids(str_ids_arr)
@@ -99,6 +99,7 @@ def transform_wd_property(str_property_id, wd_property, languages):
     
     return {
         "id": num_id,
+        "iri": construct_wd_iri(str_property_id),
         "aliases": aliases,
         "labels": labels,
         "descriptions": descriptions,
