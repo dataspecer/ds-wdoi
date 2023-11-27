@@ -1,10 +1,10 @@
-from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.modifier_part import ModifierPart
 from wikidata.modifications.context import Context
 
 """
 This should be run before removing unexisitng references or marking children.
 """
-class RemoveSelfCyclesClass(Modifier):
+class RemoveSelfCyclesClass(ModifierPart):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("remove-self-cycles-class"))
         

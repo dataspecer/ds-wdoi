@@ -1,4 +1,4 @@
-from wikidata.modifications.remover import Remover
+from wikidata.modifications.modifier_full import ModifierFull
 from wikidata.modifications.context import Context
 from wikidata.modifications.modifiers.classes.add_fields import *
 from wikidata.model.classes import *
@@ -8,7 +8,7 @@ Assuming this runs after children were assigned to classes.
 Since there is the need to traverse recursively to children and remove them as well.
 In case the removed class is their only parent or all parents are already marked for removal.
 """
-class RemoveClassesWithNoParent(Remover):
+class RemoveClassesWithNoParent(ModifierFull):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("remove-classes-with-no-parent"), context)
     

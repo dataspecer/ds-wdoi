@@ -1,4 +1,4 @@
-from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.modifier_part import ModifierPart
 from wikidata.modifications.context import Context
 
 CHILDREN_FIELD = "children"
@@ -9,7 +9,7 @@ VALUE_OF_FIELD = "valueOf"
 Durig modification this should be run as soon as possible.
 Since it creates fields that will be used by other modifiers later on.
 """
-class AddFields(Modifier):
+class AddFields(ModifierPart):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("add-fields"))
 

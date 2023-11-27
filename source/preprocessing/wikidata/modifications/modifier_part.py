@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from wikidata.modifications.context import Context
 
-class Modifier(ABC):
+class ModifierPart(ABC):
     def __init__(self, logger) -> None:
         super().__init__()
         self.logger = logger

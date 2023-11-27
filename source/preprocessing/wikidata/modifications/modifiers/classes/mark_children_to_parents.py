@@ -1,11 +1,11 @@
-from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.modifier_part import ModifierPart
 from wikidata.modifications.context import Context
 from wikidata.modifications.modifiers.classes.add_fields import *
 
 """
 This should be run after removing unexisting references, self cycles and assigment of fields.
 """
-class MarkChildrenToParents(Modifier):
+class MarkChildrenToParents(ModifierPart):
     
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("mark-children-to-parents"))

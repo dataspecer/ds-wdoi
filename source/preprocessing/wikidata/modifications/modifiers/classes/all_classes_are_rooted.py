@@ -1,8 +1,8 @@
-from wikidata.modifications.modifier import Modifier
+from wikidata.modifications.modifier_part import ModifierPart
 from wikidata.modifications.context import Context
 from wikidata.model.classes import *
 
-class AllClassesAreRooted(Modifier):
+class AllClassesAreRooted(ModifierPart):
     def __init__(self, logger) -> None:
         super().__init__(logger.getChild("all-classes-are-rooted"))
         self.found_root = False

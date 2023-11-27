@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 from wikidata.modifications.context import Context
 
 """
-Removers are different from modifiers in terms of they iterate over the context immediately upon the call.
-This is because some removers could overlap and destroy their assumption of the context,
-if some parts were removed without any notice.
+Full modifiers are different from part modifiers in terms of they iterate over the context immediately upon the call.
+This is because some actions could overlap and destroy their assumption of the context,
+e.g. if some parts were removed without any notice.
 """
-class Remover(ABC):
+class ModifierFull(ABC):
     def __init__(self, logger, context: Context) -> None:
         super().__init__()
         self.logger = logger

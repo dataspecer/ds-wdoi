@@ -8,7 +8,7 @@ from wikidata.modifications.modifiers.properties.remove_unexisting_references_ge
 from wikidata.modifications.modifiers.properties.remove_unexisting_references_item_constraints import *
 from wikidata.modifications.modifiers.properties.remove_self_cycles import *
 from wikidata.modifications.modifiers.properties.assign_subject_object_values_to_classes import *
-from wikidata.modifications.modifier import Context
+from wikidata.modifications.context import Context
 from wikidata.modifications.modifiers.classes.all_classes_are_rooted import *
 from wikidata.modifications.modifiers.classes.remove_unexisting_references import *
 from wikidata.modifications.modifiers.classes.mark_children_to_parents import *
