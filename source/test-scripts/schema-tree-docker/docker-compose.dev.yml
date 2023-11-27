@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  wdrec:
+    build: ./
+    restart: "no"
+    command: ./RecommenderServer serve --hard_limit -1 ./inputdata/latest-all.json.bz2.schemaTree.typed.pb
+    volumes: 
+    - type: bind
+      source: /home/_add_user_name_/recinput
+      target: /usr/src/rec/inputdata
+      bind:
+        create_host_path: true
+    ports:
+      - 8080:8080
