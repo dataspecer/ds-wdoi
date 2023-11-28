@@ -40,10 +40,10 @@ def __write_classes_to_file(class_map: dict):
 def __write_properties_to_file(property_map: dict):
     decoding.write_mapped_entities_to_file(property_map, PROPERTIES_OUTPUT_FILE)
 
-def __modify_entities(modifiers, entity_map: dict, context: Context, logger, logging_step):
+def __modify_entities(modifiers, entity_map: dict, logger, logging_step):
     for idx, entity in enumerate(entity_map.values()):
         for modifier_func in modifiers:
-            modifier_func(entity, context)
+            modifier_func(entity)
         ul.try_log_progress(logger, idx, logging_step)
 
 def __report_status_of_modifiers(modifiers):
@@ -59,12 +59,12 @@ def __remove_entities_with_empty_labels(context: Context):
 def __pre_unrooted_classes_removal(context: Context):
     logger = classes_logger.getChild("pre-unrooted-classes-removal")
     modifiers = [
-        AddFields(logger), 
-        RemoveUnexistingReferencesClasses(logger), 
-        RemoveSelfCyclesClass(logger), 
-        MarkChildrenToParents(logger)
+        AddFields(logger, context), 
+        RemoveUnexistingReferencesClasses(logger, context), 
+        RemoveSelfCyclesClass(logger, context), 
+        MarkChildrenToParents(logger, context)
     ]
-    __modify_entities(modifiers, context.class_map, context, logger, ul.CLASSES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(classes_logger)
@@ -76,22 +76,22 @@ def __remove_unrooted_classes(context: Context):
 def __post_unrooted_classes_removal(context: Context):
     logger = classes_logger.getChild("post-unrooted-classes-removal")
     modifiers = [
-        RemoveUnexistingReferencesClasses(logger),
-        AllClassesAreRooted(logger) # as a check
+        RemoveUnexistingReferencesClasses(logger, context),
+        AllClassesAreRooted(logger, context) # as a check
     ]
-    __modify_entities(modifiers, context.class_map, context, logger, ul.CLASSES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(properties_logger)
 def __modify_properties(context: Context):
     modifiers = [
-        RemoveUnexistingReferencesMainProperties(properties_logger), 
-        RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger),
-        RemoveUnexistingReferencesItemConstraintsProperties(properties_logger),
-        RemoveSelfCyclesProperty(properties_logger),
-        AssignSubjectValueToClasses(properties_logger)
+        RemoveUnexistingReferencesMainProperties(properties_logger, context), 
+        RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger, context),
+        RemoveUnexistingReferencesItemConstraintsProperties(properties_logger, context),
+        RemoveSelfCyclesProperty(properties_logger, context),
+        AssignSubjectValueToClasses(properties_logger, context)
     ]
-    __modify_entities(modifiers, context.property_map, context, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.property_map, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 """
