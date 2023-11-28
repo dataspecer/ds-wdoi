@@ -11,3 +11,8 @@ def log_progress(logger, i, context_message = ""):
 def try_log_progress(logger, i, step, context_message = ""):
     if i % step == 0:
         log_progress(logger, i, context_message)
+        
+def log_loading_to_map(logger, entity_map):
+        logger.info(f"Loaded {len(entity_map)} entities")
+
+        

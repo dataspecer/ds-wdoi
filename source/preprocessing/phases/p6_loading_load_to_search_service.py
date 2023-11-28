@@ -8,8 +8,8 @@ import utils.logging as ul
 from utils.timer import timed
 
 main_logger = logging.getLogger("loading")
-classes_logger = main_logger.getChild("p4_load_classes")
-properties_logger = main_logger.getChild("p4_load_properties")
+classes_logger = main_logger.getChild("p6_load_classes")
+properties_logger = main_logger.getChild("p6_load_properties")
 
 def __construct_field_lang_key(field: RootFields, lang: str):
     return str(field) + "_" + lang

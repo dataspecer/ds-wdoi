@@ -24,41 +24,21 @@ properties_logger = main_logger.getChild("p4_modify_properties")
 CLASSES_OUTPUT_FILE = 'classes-mod.json'
 PROPERTIES_OUTPUT_FILE = 'properties-mod.json'
 
-def __log_sum_status(logger, entity_map: dict):
-    logger.info(f"Loaded {len(entity_map)} entities")
-
-def __load_entities(json_file_path: pathlib.Path, logger, logging_step): 
-    entity_map = dict()
-    with open(json_file_path, "rb") as input_json_file:
-        for wd_entity in decoding.entities_generator(input_json_file, logger, logging_step):
-            entity_map[wd_entity['id']] = wd_entity
-        __log_sum_status(logger, entity_map)
-    return entity_map
-    
 @timed(classes_logger)
-def __load_classes(json_file_path: pathlib.Path) -> dict:
-    return __load_entities(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP)
+def __load_classes_to_map(json_file_path: pathlib.Path) -> dict:
+    return decoding.load_entities_to_map(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP)
 
 @timed(properties_logger)
-def __load_properties(json_file_path: pathlib.Path) -> dict:
-    return __load_entities(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
-
-
-def __write_entities_to_file(entity_map: dict, file_name: pathlib.Path):
-    with open(file_name, "wb") as output_file:
-        decoding.init_json_array_in_files([output_file])
-        for wd_entity in entity_map.values():
-            decoding.write_wd_entity_to_file(wd_entity, output_file)
-        decoding.close_json_array_in_files([output_file])
+def __load_properties_to_map(json_file_path: pathlib.Path) -> dict:
+    return decoding.load_entities_to_map(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     
 @timed(classes_logger)
 def __write_classes_to_file(class_map: dict):
-    __write_entities_to_file(class_map, CLASSES_OUTPUT_FILE)
+    decoding.write_mapped_entities_to_file(class_map, CLASSES_OUTPUT_FILE)
 
 @timed(properties_logger)
 def __write_properties_to_file(property_map: dict):
-    __write_entities_to_file(property_map, PROPERTIES_OUTPUT_FILE)
-
+    decoding.write_mapped_entities_to_file(property_map, PROPERTIES_OUTPUT_FILE)
 
 def __modify_entities(modifiers, entity_map: dict, context: Context, logger, logging_step):
     for idx, entity in enumerate(entity_map.values()):
@@ -69,7 +49,6 @@ def __modify_entities(modifiers, entity_map: dict, context: Context, logger, log
 def __report_status_of_modifiers(modifiers):
     for mod in modifiers:
         mod.report_status()
-
 
 @timed(main_logger)
 def __remove_entities_with_empty_labels(context: Context):
@@ -132,8 +111,8 @@ def __modify_context(context: Context):
 
 @timed(main_logger)
 def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path):
-    classes = __load_classes(classes_json_file_path)
-    properties = __load_properties(properties_json_file_path)
+    classes = __load_classes_to_map(classes_json_file_path)
+    properties = __load_properties_to_map(properties_json_file_path)
     context = Context(classes, properties)
     __modify_context(context)
     __write_classes_to_file(context.class_map)
