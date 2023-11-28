@@ -10,10 +10,10 @@ Durig modification this should be run as soon as possible.
 Since it creates fields that will be used by other modifiers later on.
 """
 class AddFields(ModifierPart):
-    def __init__(self, logger) -> None:
-        super().__init__(logger.getChild("add-fields"))
+    def __init__(self, logger, context: Context) -> None:
+        super().__init__(logger.getChild("add-fields"), context)
 
-    def __call__(self, wd_entity, context: Context) -> None:
+    def __call__(self, wd_entity) -> None:
         self.add_field_if_missing(wd_entity, CHILDREN_FIELD)
         self.add_field_if_missing(wd_entity, SUBJECT_OF_FIELD)
         self.add_field_if_missing(wd_entity, VALUE_OF_FIELD)

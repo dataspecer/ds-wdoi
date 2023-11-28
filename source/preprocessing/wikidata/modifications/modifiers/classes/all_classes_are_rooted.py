@@ -3,11 +3,11 @@ from wikidata.modifications.context import Context
 from wikidata.model.classes import *
 
 class AllClassesAreRooted(ModifierPart):
-    def __init__(self, logger) -> None:
-        super().__init__(logger.getChild("all-classes-are-rooted"))
+    def __init__(self, logger, context: Context) -> None:
+        super().__init__(logger.getChild("all-classes-are-rooted"), context)
         self.found_root = False
     
-    def __call__(self, wd_entity, context: Context) -> None:
+    def __call__(self, wd_entity) -> None:
         if wd_entity['id'] == ROOT_ENTITY_ID_NUM:
             wd_entity['subclassOf'] = []
             self.logger.info("Found root entity.")

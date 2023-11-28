@@ -5,28 +5,28 @@ from wikidata.model.constraints import *
 from wikidata.model.properties import *
 
 class AssignSubjectValueToClasses(ModifierPart):
-    def __init__(self, logger) -> None:
-        super().__init__(logger.getChild("assign-subject-object"))
+    def __init__(self, logger, context: Context) -> None:
+        super().__init__(logger.getChild("assign-subject-object"), context)
         self.object_assignment = set()
 
-    def __call__(self, wd_entity, context: Context) -> None:
+    def __call__(self, wd_entity) -> None:
         prop_id = wd_entity["id"]
         constraints = wd_entity["constraints"]
         if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.datatypeIsNotLexical(wd_entity):
             self.marker_set.add(prop_id)
-            self.assign_type_constraints(constraints["subjectType"], prop_id, SUBJECT_OF_FIELD, context)
+            self.assign_type_constraints(constraints["subjectType"], prop_id, SUBJECT_OF_FIELD)
             
             if self.isItemProperty(constraints):
                 self.object_assignment.add(prop_id)
-                self.assign_type_constraints(constraints["typeDependent"]["valueType"], prop_id, VALUE_OF_FIELD, context)
+                self.assign_type_constraints(constraints["typeDependent"]["valueType"], prop_id, VALUE_OF_FIELD)
     
-    def assign_type_constraints(self, type_constraints, prop_id, field: str, context: Context):
-        self.assign_prop_to_classes_field(type_constraints["instanceOf"], prop_id, field, context)
-        self.assign_prop_to_classes_field(type_constraints["subclassOfInstanceOf"], prop_id, field, context)
+    def assign_type_constraints(self, type_constraints, prop_id, field: str):
+        self.assign_prop_to_classes_field(type_constraints["instanceOf"], prop_id, field)
+        self.assign_prop_to_classes_field(type_constraints["subclassOfInstanceOf"], prop_id, field)
         
-    def assign_prop_to_classes_field(self, classes_ids_list, prop_id, field: str, context: Context):
+    def assign_prop_to_classes_field(self, classes_ids_list, prop_id, field: str):
         for class_id in classes_ids_list:
-            cls = context.class_map[class_id]
+            cls = self.context.class_map[class_id]
             cls[field].append(prop_id)
     
     def canBeUsedAsMainValue(self, constraints) -> bool:

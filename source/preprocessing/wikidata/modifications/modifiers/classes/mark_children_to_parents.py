@@ -7,14 +7,14 @@ This should be run after removing unexisting references, self cycles and assigme
 """
 class MarkChildrenToParents(ModifierPart):
     
-    def __init__(self, logger) -> None:
-        super().__init__(logger.getChild("mark-children-to-parents"))
+    def __init__(self, logger, context: Context) -> None:
+        super().__init__(logger.getChild("mark-children-to-parents"), context)
         
-    def __call__(self, wd_entity, context: Context) -> None:
+    def __call__(self, wd_entity) -> None:
         entityId = wd_entity['id']
         for parentId in wd_entity['subclassOf']:
-            if parentId in context.class_map:
-                parent = context.class_map[parentId]
+            if parentId in self.context.class_map:
+                parent = self.context.class_map[parentId]
                 self.add_field_if_missing(parent, CHILDREN_FIELD)
                 parent[CHILDREN_FIELD].append(entityId)
             else:

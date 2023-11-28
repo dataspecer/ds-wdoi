@@ -1,4 +1,4 @@
-from wikidata.modifications.modifier_full import ModifierFull
+from wikidata.modifications.removers.remover import Remover
 from wikidata.modifications.context import Context
 
 """
@@ -6,7 +6,7 @@ This depends on the selection of the languages during transformation.
 If there are no labels, the users cannot search for the classes.
 These classes usually means they carry no semantic meaning (such as: empty wikidata entities).
 """
-class RemoveEntitiesWithNoLabel(ModifierFull):
+class RemoveEntitiesWithNoLabel(Remover):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("remove-entities-with-no-label"), context)
     

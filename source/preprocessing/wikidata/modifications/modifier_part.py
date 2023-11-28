@@ -1,26 +1,18 @@
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from wikidata.modifications.context import Context
+from wikidata.modifications.modifier import Modifier
 
-class ModifierPart(ABC):
-    def __init__(self, logger) -> None:
-        super().__init__()
-        self.logger = logger
+class ModifierPart(Modifier):
+    def __init__(self, logger, context: Context) -> None:
+        super().__init__(logger, context)
         self.marker_set = set()
     
     @abstractmethod
-    def __call__(self, wd_entity, context: Context) -> None:
+    def __call__(self, wd_entity) -> None:
         pass
     
-    @abstractmethod
-    def report_status(self) -> None:
-        pass
-    
-    def add_field_if_missing(self, wd_entity, field):
-        if field not in wd_entity:
-            wd_entity[field] = []
-    
-    def _filter_existing(self, entities_ids_list, entity_map, isClass: bool):
+    def _filter_existing(self, entities_ids_list, entity_map: dict, isClass: bool):
         existing_entities_ids = []
         for id in entities_ids_list:
             if id in entity_map:
@@ -30,17 +22,17 @@ class ModifierPart(ABC):
                 self.marker_set.add(id)
         return existing_entities_ids
     
-    def filter_existing_classes(self, classes_ids_list, classes_map):
-        return self._filter_existing(classes_ids_list, classes_map, True)
+    def filter_existing_classes(self, classes_ids_list):
+        return self._filter_existing(classes_ids_list, self.context.class_map, True)
     
-    def filter_existing_properties(self, properties_ids_list, properties_map):
-        return self._filter_existing(properties_ids_list, properties_map, False)
+    def filter_existing_properties(self, properties_ids_list):
+        return self._filter_existing(properties_ids_list, self.context.property_map, False)
     
-    def filter_existing_allowance_map(self, allowance_map, properties_map):
+    def filter_existing_allowance_map(self, allowance_map: dict):
         existing_records = {}
         for str_property_id in allowance_map.keys():
             num_property_id = int(str_property_id)
-            if num_property_id in properties_map:
+            if num_property_id in self.context.property_map:
                 existing_records[str_property_id] = allowance_map[str_property_id]
             else:
                 self.logger.info(f"Found missing reference {id} (is Class = {False})")
