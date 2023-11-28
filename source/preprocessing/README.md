@@ -6,7 +6,8 @@ The preprocessing is done in three phases:
 2. The set is then passes to a second phase which extracts the classes and properties into two files.
 3. The extracted classes and properties are then transformed into objects that will serve as input to the server.
 4. Upon the transformed classes it does semantic modification of the classes and properties.
-5. Load labels, aliases and description into a search service (Elastic search right now).
+5. Precomputation of property recommendations
+6. Load labels, aliases and description into a search service (Elastic search right now).
 
 > Note: 
 > 1. Types of the properties are not checked, since wikidata does not allow to entry value that do not match the type. Such as: placing a property into subclass of statement.
@@ -182,7 +183,7 @@ The `removers` iterate over the entire ontology, in contrast with the modifiers 
 This was done because it was easier to maintain certain invariants of other modifications.
 The iteration over ontology is done multiple times, but still the time is uncomparable with the first and second phase.
 
-## Loading into search service (5. phase)
+## Loading into search service (6. phase)
 
 The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py`.
 The main script is `5_loading.py`

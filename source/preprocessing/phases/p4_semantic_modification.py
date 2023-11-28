@@ -21,8 +21,8 @@ main_logger = logging.getLogger("modification")
 classes_logger = main_logger.getChild("p4_modify_classes")
 properties_logger = main_logger.getChild("p4_modify_properties")
 
-CLASSES_OUTPUT_FILE = 'classes-final.json'
-PROPERTIES_OUTPUT_FILE = 'properties-final.json'
+CLASSES_OUTPUT_FILE = 'classes-mod.json'
+PROPERTIES_OUTPUT_FILE = 'properties-mod.json'
 
 def __log_sum_status(logger, entity_map: dict):
     logger.info(f"Loaded {len(entity_map)} entities")

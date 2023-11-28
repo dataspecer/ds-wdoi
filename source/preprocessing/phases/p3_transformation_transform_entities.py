@@ -13,8 +13,8 @@ main_logger = logging.getLogger("transformation")
 classes_logger = main_logger.getChild("p3_transform_classes")
 properties_logger = main_logger.getChild("p3_transform_properties")
 
-CLASSES_OUTPUT_FILE = "classes.json"
-PROPERTIES_OUTPUT_FILE = 'properties.json'
+CLASSES_OUTPUT_FILE = "classes-tran.json"
+PROPERTIES_OUTPUT_FILE = 'properties-tran.json'
 
 def __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages):
     try:

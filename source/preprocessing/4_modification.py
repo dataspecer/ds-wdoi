@@ -20,7 +20,7 @@ def __main(args):
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(
-                prog="Modified samantically classes and properties",
+                prog="Modify samantically classes and properties",
                 description="""The scripts loads all the data from previous step and modifies them.
                                 For classes:
                                     1. removes unexisting references from statements
