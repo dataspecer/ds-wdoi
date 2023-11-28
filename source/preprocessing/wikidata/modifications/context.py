@@ -5,5 +5,5 @@ class Context:
         
 class RecommendationContext(Context):
     def __init__(self, class_map: dict, property_map: dict, global_recs: dict) -> None:
-        super.__init__(class_map, property_map)
+        super().__init__(class_map, property_map)
         self.global_recs = global_recs
