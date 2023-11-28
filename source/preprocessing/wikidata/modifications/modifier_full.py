@@ -22,9 +22,8 @@ class ModifierFull(ABC):
     def report_status(self) -> None:
         pass
     
-    
     @abstractmethod
-    def remove_all(self) -> None:
+    def modify_all(self) -> None:
         pass
     
     def remove(self, entity_map: dict, mark_set: set, remove_set: set):

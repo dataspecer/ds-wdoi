@@ -14,7 +14,7 @@ class RemoveEntitiesWithNoLabel(ModifierFull):
         self.logger.info(f"Classes Marked: {len(self.classes_marked_for_removal)} Removed {len(self.classes_removed)}")
         self.logger.info(f"Properties Marked: {len(self.properties_marked_for_removal)} Removed {len(self.properties_removed)}")
     
-    def remove_all(self) -> None:
+    def modify_all(self) -> None:
         self._mark_for_removal(self.context.class_map, self.classes_marked_for_removal)
         self._mark_for_removal(self.context.property_map, self.properties_marked_for_removal)
         self.remove(self.context.class_map, self.classes_marked_for_removal, self.classes_removed)

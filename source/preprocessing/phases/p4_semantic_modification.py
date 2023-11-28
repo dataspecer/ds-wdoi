@@ -53,7 +53,7 @@ def __report_status_of_modifiers(modifiers):
 @timed(main_logger)
 def __remove_entities_with_empty_labels(context: Context):
     remover = RemoveEntitiesWithNoLabel(main_logger, context)
-    remover.remove_all()
+    remover.modify_all()
 
 @timed(classes_logger)
 def __pre_unrooted_classes_removal(context: Context):
@@ -70,7 +70,7 @@ def __pre_unrooted_classes_removal(context: Context):
 @timed(classes_logger)
 def __remove_unrooted_classes(context: Context):
     remover = RemoveClassesWithNoParent(classes_logger, context)
-    remover.remove_all()
+    remover.modify_all()
     
 @timed(classes_logger)
 def __post_unrooted_classes_removal(context: Context):
