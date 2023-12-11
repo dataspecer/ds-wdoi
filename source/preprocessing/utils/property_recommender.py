@@ -21,6 +21,7 @@ def fill_missing_global_recs_props(global_recs: list, global_recs_map: dict, pro
 It flattens the map to the same structure as returned from recommender api.
 The results are also sorted based on the probabilities.
 Properties which are missing from the list have value of zero.
+The list is sorted in descending order.
 """
 def flatten_global_recs_map(recs_map: dict, properties: dict) -> list:
     flattened_recs = []
@@ -29,6 +30,8 @@ def flatten_global_recs_map(recs_map: dict, properties: dict) -> list:
             flattened_recs.append(__new_empty_hit(key))
         else:
             flattened_recs.append(__new_hit(key, recs_map[key]))
+    flattened_recs.sort(reverse=True, key=lambda hit: hit["probability"])
+    return flattened_recs
 
 """
 This expects the property field contains property id as integer.

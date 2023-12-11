@@ -16,14 +16,14 @@ class ValueOfSorting(ModifierFull):
             class_ids = list(set(subject_type_contraints["instanceOf"] + subject_type_contraints["subclassOfInstanceOf"]))
             probability_sum = float(0)
             for class_id in class_ids:
-                class_local_recs_subject = context.local_recs_subject_map_to_map[class_id]
-                if prop_id in class_local_recs_subject:
-                    probability_sum += class_local_recs_subject[prop_id]
+                class_local_recs_subject_map = context.local_recs_subject_map_to_map[class_id]
+                if prop_id in class_local_recs_subject_map:
+                    probability_sum += class_local_recs_subject_map[prop_id]
                 else:
                     probability_sum += context.global_recs_subject_map[prop_id]
             context.global_recs_value_map[prop_id] = (probability_sum / float(len(class_ids)))
 
-        def sort_value_getter(prop_id):
+        def sort_value_getter(prop_id: int):
             if prop_id not in context.global_recs_value_map:
                 compute_new_global_rec_value(prop_id, context.property_map[prop_id]["constraints"]["subjectType"])
             return context.global_recs_value_map[prop_id]
