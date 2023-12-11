@@ -43,12 +43,14 @@ def __compute_local_recs(context: RecommendationContext):
     value_of_sorting = ValueOfSorting(main_logger, context)
     value_of_sorting.modify_all()
 
+@timed(main_logger)
 def __load_global_recs_subject(properties: dict):
     global_recs = pr.get_global_recs()
     global_recs_map = pr.create_map_from_recs(global_recs)
     pr.fill_missing_global_recs_props(global_recs, global_recs_map, properties)
     return global_recs, global_recs_map
 
+@timed(main_logger)
 def __store_results(global_recs_subject: list, context: RecommendationContext):
     __store_global_recs(global_recs_subject, GLOBAL_REC_SUBJECT_OUTPUT_FILE)
     __store_global_recs(pr.flatten_global_recs_map(context.global_recs_value_map, context.property_map), GLOBAL_REC_VALUE_OUTPUT_FILE)

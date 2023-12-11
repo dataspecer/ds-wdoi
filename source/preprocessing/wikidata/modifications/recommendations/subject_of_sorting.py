@@ -27,16 +27,20 @@ class SubjectOfSorting(ModifierFull):
         for idx, wd_class in enumerate(self.context.class_map.values()):
             self.add_field_if_missing(wd_class, SUBJECT_OF_PROBS_FIELD)
             self.sort_subject_of(wd_class)
-            ul.try_log_progress(self.logger, idx, ul.CLASSES_PROGRESS_STEP)
+            ul.try_log_progress(self.logger, idx, ul.RECS_PROGRESS_STEP)
             
     # to do filter out all things that are not in the fields
     def sort_subject_of(self, wd_class) -> None:
-        recommendations: list = self.filter_valid_recs(wd_class['subjectOf'], pr.get_local_recs(wd_class['id']))
-        local_recs_subject_map: dict = pr.create_map_from_recs(recommendations)
-        wd_class[SUBJECT_OF_PROBS_FIELD] = recommendations
-        self.context.local_recs_subject_map_to_map[wd_class['id']] = local_recs_subject_map
-        wd_class['subjectOf'].sort(reverse=True, key=self.create_sort_value_getter(local_recs_subject_map))        
-
+        subjectOfField = wd_class['subjectOf']
+        if len(subjectOfField) != 0:
+            recommendations: list = self.filter_valid_recs(subjectOfField, pr.get_local_recs(wd_class['id']))
+            local_recs_subject_map: dict = pr.create_map_from_recs(recommendations)
+            wd_class[SUBJECT_OF_PROBS_FIELD] = recommendations
+            self.context.local_recs_subject_map_to_map[wd_class['id']] = local_recs_subject_map
+            subjectOfField.sort(reverse=True, key=self.create_sort_value_getter(local_recs_subject_map))        
+        else:
+            wd_class[SUBJECT_OF_PROBS_FIELD] = []
+        
     def report_status(self) -> None:
         pass
     
