@@ -12,7 +12,7 @@ main_logger = logging.getLogger("recommendations").getChild("p5_property_recomme
 
 GLOBAL_REC_SUBJECT_OUTPUT_FILE = "global-recs-subject.json"
 GLOBAL_REC_VALUE_OUTPUT_FILE = "global-recs-value.json"
-CLASSES_OUTPUT_FILE = "classes-recs"
+CLASSES_OUTPUT_FILE = "classes-recs.json"
 PROPERTIES_OUTPUT_FILE = "properties-recs.json"
 
 @timed(main_logger)
