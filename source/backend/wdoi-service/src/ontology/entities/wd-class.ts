@@ -1,8 +1,9 @@
-import type { EntityIdsList, ExternalOntologyMapping, PropertyProbabilityHitList, PropertyProbabilityHitMap } from './common';
+import type { EntityIdsList, ExternalOntologyMapping } from './common';
 import type { InputClass } from '../loading/input/input-class';
 import type { ModifierClassVisitor, ModifierVisitableClass } from '../post-loading/modifiers';
 import { WdEntity } from './wd-entity';
-import { createProbMap } from '../utils/create-prob-map';
+import type { PropertyProbabilityHitList, PropertyProbabilityHitMap } from './recommendations';
+import { createPropertyProbabilityHitMap } from '../loading/load-property-recommendations';
 
 export const ROOT_CLASS_ID = 35120;
 
@@ -30,7 +31,7 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
     this.valueOfProperty = inputClass.valueOf;
     this.subjectOfProperty = inputClass.subjectOf;
     this.subjectOfProbabilities = inputClass.subjectOfProbs;
-    this.subjectOfProbabilitiesMap = createProbMap(inputClass.subjectOfProbs);
+    this.subjectOfProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.subjectOfProbs);
   }
 
   accept(visitor: ModifierClassVisitor): void {

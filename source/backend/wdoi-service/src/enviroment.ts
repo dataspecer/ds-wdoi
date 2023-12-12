@@ -9,4 +9,6 @@ export const envVars = {
   CLASSES_PATH: process.env.CLASSES_PATH ?? '',
   PROPERTIES_PATH: process.env.PROPERTIES_PATH ?? '',
   ENVIROMENT: process.env.NODE_ENV ?? 'development',
+  GLOBAL_RECS_SUBJECT_PATH: process.env.GLOBAL_RECS_SUBJECT_PATH ?? '',
+  GLOBAL_RECS_VALUE_PATH: process.env.GLOBAL_RECS_VALUE_PATH ?? '',
 };
