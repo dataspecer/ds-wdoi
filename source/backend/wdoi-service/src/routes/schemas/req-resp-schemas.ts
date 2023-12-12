@@ -166,3 +166,59 @@ export const surroundingsReplySchema = {
 } as const;
 
 export type SurroundingsReplyType = FromSchema<typeof surroundingsReplySchema>;
+
+// Surroundings with Recommendations
+
+// Surroundings
+
+export const surroundingsWithRecsReplySchema = {
+  type: 'object',
+  properties: {
+    results: {
+      type: 'object',
+      properties: {
+        root: {
+          type: 'number',
+        },
+        parents: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        propertyEndpoints: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        subjectOf: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        valueOf: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        classes: {
+          type: 'array',
+          items: wdClassSchema,
+        },
+        properties: {
+          type: 'array',
+          items: wdPropertySchema,
+        },
+      },
+      additionalProperties: false,
+      required: ['root', 'parents', 'propertyEndpoints', 'subjectOf', 'valueOf', 'classes', 'properties'],
+    },
+  },
+  additionalProperties: false,
+  required: ['results'],
+} as const;
+
+export type SurroundingsWithRecsReplyType = FromSchema<typeof surroundingsWithRecsReplySchema>;

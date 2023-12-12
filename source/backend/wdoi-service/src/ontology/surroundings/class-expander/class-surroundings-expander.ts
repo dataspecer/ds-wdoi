@@ -25,6 +25,7 @@ export class ClassSurroundingsReturnWrapper {
 
 export class PropertyHierarchyExtractor extends Extractor {
   private readonly rootClass: WdClass;
+  private readonly startClass: WdClass;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly subjectOf: WdProperty[] = [];
@@ -34,8 +35,9 @@ export class PropertyHierarchyExtractor extends Extractor {
   private readonly valueOfSet: Set<EntityId> = new Set<EntityId>();
   private readonly propertySetEndpointsSet: Set<EntityId> = new Set<EntityId>();
 
-  constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(startClass: WdClass, rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     super();
+    this.startClass = startClass;
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
@@ -82,22 +84,22 @@ export class PropertyHierarchyExtractor extends Extractor {
     this.materializeOnMissing(subjectType.subclassOfInstanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
   }
 
-  // The method never receives the same class twice.
+  // The method never receives the same class twice
   public extract(cls: WdClass): void {
     this.materializeOnMissing(cls.subjectOfProperty, this.subjectOfSet, this.subjectOf, this.properties, 'subject');
     this.materializeOnMissing(cls.valueOfProperty, this.valueOfSet, this.valueOf, this.properties, 'value');
   }
 
-  public getResult(): [WdProperty[], WdProperty[], WdClass[]] {
-    return [this.subjectOf, this.valueOf, this.propertyEndpoints];
+  public getResult(): [WdClass, WdProperty[], WdProperty[], WdClass[]] {
+    return [this.startClass, this.subjectOf, this.valueOf, this.propertyEndpoints];
   }
 }
 
 export class ClassSurroundingsExpander extends SurroundingsExpander {
-  public getSurroundings(startClass: WdClass, propertyHierarchyExtractor: PropertyHierarchyExtractor): ClassSurroundingsReturnWrapper {
+  public getSurroundings(propertyHierarchyExtractor: PropertyHierarchyExtractor): ClassSurroundingsReturnWrapper {
     const parents: WdClass[] = []; // this.getParents(startClass);
     const children: WdClass[] = []; // this.getChildren(startClass);
-    const [subjectOf, valueOf, endpoints] = propertyHierarchyExtractor.getResult();
+    const [startClass, subjectOf, valueOf, endpoints] = propertyHierarchyExtractor.getResult();
     return new ClassSurroundingsReturnWrapper(startClass, parents, children, subjectOf, valueOf, endpoints);
   }
 }

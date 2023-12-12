@@ -42,6 +42,7 @@ export class PropertyHierarchyExtractorRecs extends Extractor {
   private readonly contextGlobalValueOfProbs: PropertyProbabilityHitMap;
 
   // Outputs
+  private readonly startClass: WdClass;
   private readonly rootClass: WdClass;
   private readonly parentsIds: EntityId[] = [];
   private readonly propertyEndpointsIds: EntityId[] = [];
@@ -57,6 +58,7 @@ export class PropertyHierarchyExtractorRecs extends Extractor {
   private readonly propertyEndpointsIdsSet: Set<EntityId> = new Set<EntityId>();
 
   constructor(
+    startClass: WdClass,
     rootClass: WdClass,
     contextClasses: ReadonlyMap<EntityId, WdClass>,
     contextProperties: ReadonlyMap<EntityId, WdProperty>,
@@ -64,16 +66,17 @@ export class PropertyHierarchyExtractorRecs extends Extractor {
     contextGlobalValueOfProbs: PropertyProbabilityHitMap,
   ) {
     super();
+    this.startClass = startClass;
     this.rootClass = rootClass;
     this.contextClasses = contextClasses;
     this.contexProperties = contextProperties;
     this.contextGlobalSubjectOfProbs = contextGlobalSubjectOfProbs;
     this.contextGlobalValueOfProbs = contextGlobalValueOfProbs;
 
-    this.classes.push(rootClass);
+    this.classes.push(startClass);
     // The root is always part of an endpoint
-    this.propertyEndpointsIds.push(rootClass.id);
-    this.propertyEndpointsIdsSet.add(rootClass.id);
+    this.propertyEndpointsIds.push(startClass.id);
+    this.propertyEndpointsIdsSet.add(startClass.id);
   }
 
   // The method never receives the same class twice.
@@ -100,7 +103,7 @@ export class PropertyHierarchyExtractorRecs extends Extractor {
   }
 
   private tryAddToMaterializedClasses(cls: WdClass, addAsParent: boolean): void {
-    const isRoot = cls.id === this.rootClass.id;
+    const isRoot = cls.id === this.startClass.id;
     const isInParents = cls.id in this.parentsIdsSet;
     const isInEndpoints = cls.id in this.propertyEndpointsIdsSet;
 
@@ -202,13 +205,13 @@ export class PropertyHierarchyExtractorRecs extends Extractor {
   public getResult(): [EntityId, EntityIdsList, EntityIdsList, EntityIdsList, EntityIdsList, WdClass[], WdProperty[]] {
     Timsort.sort(this.subjectOfIds, (a, b) => (this.subjectOfIdsMap.get(b) as number) - (this.subjectOfIdsMap.get(a) as number));
     Timsort.sort(this.valueOfIds, (a, b) => (this.valueOfIdsMap.get(b) as number) - (this.valueOfIdsMap.get(a) as number));
-    return [this.rootClass.id, this.parentsIds, this.propertyEndpointsIds, this.subjectOfIds, this.valueOfIds, this.classes, this.properties];
+    return [this.startClass.id, this.parentsIds, this.propertyEndpointsIds, this.subjectOfIds, this.valueOfIds, this.classes, this.properties];
   }
 }
 
 export class ClassSurroundingsExpanderRecs extends SurroundingsExpander {
-  public getSurroundings(startClass: WdClass, propertyHierarchyExtractor: PropertyHierarchyExtractorRecs): ClassSurroundingsRecsReturnWrapper {
-    const [rootClassId, parentsIds, propertyEndpointsIds, subjectOfIds, valueOfIds, classes, properties] = propertyHierarchyExtractor.getResult();
-    return new ClassSurroundingsRecsReturnWrapper(rootClassId, parentsIds, propertyEndpointsIds, subjectOfIds, valueOfIds, classes, properties);
+  public getSurroundings(propertyHierarchyExtractor: PropertyHierarchyExtractorRecs): ClassSurroundingsRecsReturnWrapper {
+    const [startClassId, parentsIds, propertyEndpointsIds, subjectOfIds, valueOfIds, classes, properties] = propertyHierarchyExtractor.getResult();
+    return new ClassSurroundingsRecsReturnWrapper(startClassId, parentsIds, propertyEndpointsIds, subjectOfIds, valueOfIds, classes, properties);
   }
 }

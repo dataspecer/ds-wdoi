@@ -9,9 +9,14 @@ import {
   ClassSurroundingsExpander,
   type ClassSurroundingsReturnWrapper,
   PropertyHierarchyExtractor,
-} from './surroundings/class/class-surroundings-expander';
+} from './surroundings/class-expander/class-surroundings-expander';
 import type { GlobalPropertyRecommendations } from './entities/recommendations';
 import { loadGlobalPropertyRecommendations } from './loading/load-property-recommendations';
+import {
+  ClassSurroundingsExpanderRecs,
+  type ClassSurroundingsRecsReturnWrapper,
+  PropertyHierarchyExtractorRecs,
+} from './surroundings/class-expander/class-surroundings-expander-recs';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -20,6 +25,7 @@ export class WdOntology {
   private readonly ontologySearch: OntologySearch;
   private readonly hierarchyWalker: ClassHierarchyWalker;
   private readonly surroundingsExpander: ClassSurroundingsExpander;
+  private readonly surroundingsExpanderRecs: ClassSurroundingsExpanderRecs;
   private readonly globalSubjectRecs: GlobalPropertyRecommendations;
   private readonly globalValueRecs: GlobalPropertyRecommendations;
 
@@ -36,6 +42,7 @@ export class WdOntology {
     this.ontologySearch = new OntologySearch(this.rootClass, this.classes, this.properties);
     this.hierarchyWalker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
     this.surroundingsExpander = new ClassSurroundingsExpander(this.rootClass, this.classes, this.properties);
+    this.surroundingsExpanderRecs = new ClassSurroundingsExpanderRecs(this.rootClass, this.classes, this.properties);
     this.globalSubjectRecs = globalSubjectRecs;
     this.globalValueRecs = globalValueRecs;
   }
@@ -55,9 +62,22 @@ export class WdOntology {
   }
 
   public getSurroundings(startClass: WdClass): ClassSurroundingsReturnWrapper {
-    const extractor = new PropertyHierarchyExtractor(this.rootClass, this.classes, this.properties);
+    const extractor = new PropertyHierarchyExtractor(startClass, this.rootClass, this.classes, this.properties);
     this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
-    return this.surroundingsExpander.getSurroundings(startClass, extractor);
+    return this.surroundingsExpander.getSurroundings(extractor);
+  }
+
+  public getSurroundingsWithRecs(startClass: WdClass): ClassSurroundingsRecsReturnWrapper {
+    const extractor = new PropertyHierarchyExtractorRecs(
+      startClass,
+      this.rootClass,
+      this.classes,
+      this.properties,
+      this.globalSubjectRecs.propertyProbabilityHitMap,
+      this.globalValueRecs.propertyProbabilityHitMap,
+    );
+    this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
+    return this.surroundingsExpanderRecs.getSurroundings(extractor);
   }
 
   public getClass(classId: EntityId): WdClass | undefined {
