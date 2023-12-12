@@ -15,3 +15,4 @@ export interface PropertyProbabilityHit {
   readonly probability: number;
 }
 export type PropertyProbabilityHitList = PropertyProbabilityHit[];
+export type PropertyProbabilityHitMap = Map<EntityId, number>;

@@ -1,4 +1,4 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping, PropertyProbabilityHitList } from './common';
+import type { EntityIdsList, ExternalOntologyMapping, PropertyProbabilityHitList, PropertyProbabilityHitMap } from './common';
 import type { InputClass } from '../loading/input/input-class';
 import type { ModifierClassVisitor, ModifierVisitableClass } from '../post-loading/modifiers';
 import { WdEntity } from './wd-entity';
@@ -15,7 +15,7 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   readonly valueOfProperty: EntityIdsList;
   readonly subjectOfProperty: EntityIdsList;
   readonly subjectOfProbabilities: PropertyProbabilityHitList;
-  readonly subjectOfProbabilitiesMap: Map<EntityId, number> | null;
+  readonly subjectOfProbabilitiesMap: PropertyProbabilityHitMap;
 
   static {
     super.entityURITypes.add(this.URIType);
