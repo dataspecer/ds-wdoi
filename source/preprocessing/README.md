@@ -82,12 +82,12 @@ The main script is `3_transformation.py`.
 
 
 - output:
-  - `classes.json`
-  - `properties.json`
+  - `classes-tran.json`
+  - `properties-tran.json`
   - the files are in the same format as in phase 1. 2. except there are not compressed
 
 - logging:
-  - the logging takes place into `info_tr.log` file 
+  - the logging takes place into `info_tran.log` file 
 
 
 ### Transformation comments
@@ -146,13 +146,13 @@ This phase was moved here from server, because this part also takes quite a bit 
 The main script is `4_modification.py`
 
 - input:
-  - required paths to `classes.json` and `properties.json` in the given order from the third phase
+  - required paths to `classes-tran.json` and `properties-tran.json` in the given order from the third phase
 
-        $> python 4_modification.py classes.json properties.json
+        $> python 4_modification.py classes-tran.json properties-tran.json
 
 - output:
-  - `classes-final.json`
-  - `properties-final.json`
+  - `classes-mod.json`
+  - `properties-mod.json`
 
 - logging:
   - the logging takes place into `info_mod.log` file
@@ -182,6 +182,36 @@ The phases as of now are dependend on each other as well as the order of operati
 The `removers` iterate over the entire ontology, in contrast with the modifiers which are stacked and used per entity basis.
 This was done because it was easier to maintain certain invariants of other modifications.
 The iteration over ontology is done multiple times, but still the time is uncomparable with the first and second phase.
+
+## Precomputing recommendations (5. phase)
+
+The phase precomputes order of properties for classes using SchemaTree recommender.
+It also produces global rankings of all properties from the subject point of view and the value point of view.
+
+The main script is `5_property_recommendations.py`.
+
+- input:
+  - required paths to `classes.json` and `properties.json` in the given order from the fourth phase
+
+        $> python 5_property_recommendations.py classes-mod.json properties-mod.json
+
+- output:
+  - `classes-recs.json`
+  - `properties-recs.json`
+  - `global-recs-subject.json`
+  - `global-recs-value.json`
+
+- logging:
+  - the logging takes place into `info_recs.log` file
+
+## Comments
+
+For each class the recommender's api is called which returns the most probable properties for the given class.
+It then takes a look into the `subjectOf` field and sorts the property ids in descending order based on the score.
+For each property in the `subjectOf` field it regards, firstly, the local recommendations score, secondly, if the local recommendations for the property are missing it searches global rankings of properties.
+For the `valueOf` field, it computes recommendations based on the `subjectType` constraint in a way, that it walks through the classes in the contraint and collects local recommendations for the given property on the class or consults global rankings, subsequently it computes average of all such properties.
+
+The resulting files contain also the global rankings for properties in the subject point of view and the computed rankings from the `valueOf` fields.
 
 ## Loading into search service (6. phase)
 

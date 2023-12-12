@@ -6,7 +6,7 @@ import utils.timer as timer
 
 import phases.p3_transformation_transform_entities as ph3
 
-LOG_FILE = "info_tr.log"
+LOG_FILE = "info_tran.log"
 logger = logging.getLogger("transformation")
 DEFAULT_LANGUAGES = ["en"]
 
