@@ -39,9 +39,11 @@
     "@fastify/cors": "^8.4.1",
     "@fastify/routes": "^5.1.0",
     "@fastify/sensible": "^5.5.0",
+    "@types/timsort": "^0.3.3",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
     "fastify-plugin": "^4.5.1",
-    "json-schema-to-ts": "^2.9.2"
+    "json-schema-to-ts": "^2.9.2",
+    "timsort": "^0.3.0"
   }
 }

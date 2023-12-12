@@ -9,7 +9,7 @@ import {
   ClassSurroundingsExpander,
   type ClassSurroundingsReturnWrapper,
   PropertyHierarchyExtractor,
-} from './surroundings/class-surroundings-expander';
+} from './surroundings/class/class-surroundings-expander';
 import type { GlobalPropertyRecommendations } from './entities/recommendations';
 import { loadGlobalPropertyRecommendations } from './loading/load-property-recommendations';
 

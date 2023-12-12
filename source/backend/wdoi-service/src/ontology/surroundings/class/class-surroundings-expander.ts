@@ -1,9 +1,9 @@
-import type { EntityId, EntityIdsList } from '../entities/common';
-import { type WdClass } from '../entities/wd-class';
-import type { WdEntity } from '../entities/wd-entity';
-import { type ItemProperty, UnderlyingType, type WdProperty } from '../entities/wd-property';
-import { Extractor } from '../hierarchy-walker/hierarchy-walker';
-import { SurroundingsExpander } from './surroundings-expander';
+import type { EntityId, EntityIdsList } from '../../entities/common';
+import { type WdClass } from '../../entities/wd-class';
+import type { WdEntity } from '../../entities/wd-entity';
+import { type ItemProperty, UnderlyingType, type WdProperty } from '../../entities/wd-property';
+import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
+import { SurroundingsExpander } from '../surroundings-expander';
 
 export class ClassSurroundingsReturnWrapper {
   root: WdClass;
@@ -82,6 +82,7 @@ export class PropertyHierarchyExtractor extends Extractor {
     this.materializeOnMissing(subjectType.subclassOfInstanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
   }
 
+  // The method never receives the same class twice.
   public extract(cls: WdClass): void {
     this.materializeOnMissing(cls.subjectOfProperty, this.subjectOfSet, this.subjectOf, this.properties, 'subject');
     this.materializeOnMissing(cls.valueOfProperty, this.valueOfSet, this.valueOf, this.properties, 'value');
