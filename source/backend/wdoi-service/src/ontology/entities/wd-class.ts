@@ -1,7 +1,8 @@
-import type { EntityIdsList, ExternalOntologyMapping } from './common';
+import type { EntityId, EntityIdsList, ExternalOntologyMapping, PropertyProbabilityHitList } from './common';
 import type { InputClass } from '../loading/input/input-class';
 import type { ModifierClassVisitor, ModifierVisitableClass } from '../post-loading/modifiers';
 import { WdEntity } from './wd-entity';
+import { createProbMap } from '../utils/create-prob-map';
 
 export const ROOT_CLASS_ID = 35120;
 
@@ -11,8 +12,10 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   readonly children: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
-  readonly subjectOfProperty: EntityIdsList;
   readonly valueOfProperty: EntityIdsList;
+  readonly subjectOfProperty: EntityIdsList;
+  readonly subjectOfProbabilities: PropertyProbabilityHitList;
+  readonly subjectOfProbabilitiesMap: Map<EntityId, number> | null;
 
   static {
     super.entityURITypes.add(this.URIType);
@@ -24,8 +27,10 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
     this.children = inputClass.children;
     this.equivalentExternalOntologyClasses = inputClass.equivalentClass;
     this.propertiesForThisType = inputClass.propertiesForThisType;
-    this.subjectOfProperty = inputClass.subjectOf;
     this.valueOfProperty = inputClass.valueOf;
+    this.subjectOfProperty = inputClass.subjectOf;
+    this.subjectOfProbabilities = inputClass.subjectOfProbs;
+    this.subjectOfProbabilitiesMap = createProbMap(inputClass.subjectOfProbs);
   }
 
   accept(visitor: ModifierClassVisitor): void {
