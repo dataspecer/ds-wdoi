@@ -122,3 +122,28 @@ To the next iteration I should prepare the backend and connect it again to the D
   - Still no qualifiers, and general properties.
   - Dont know how to handle the properties as in hierarchy.
   - No recommendations.
+
+## Third iteration
+
+The third iteration regards recommendations of properties.
+What I used is the SchemaTree recommender.
+
+- The pipeline is adjusted so that it contains additional fifth phase (the former was moved to the sixth phase).
+  - The 5. phase:
+    1. Local "subject of" recommendations
+       - The phase needs a running instance of the SchemaTree recommender.  
+       - For each class it makes a request to the instance and receives the recommendations for the class only (local recommendations).
+       - It disregards properties that are not part of the "subject of" constraints in the class.
+       - It sorts the properties according to the score and saves the scores as well to the class.
+    2. Global "subject of" recommendations
+       - By using empty input to the recommender tree it receives global order of all properties.
+    3. Local "value of" recommendations
+       - The computation is done for each property and is done as follows. The score of the "value of" is computed based on the average of all "subject of" constraints for the property -> it looks into each class and checks if the property has a score for the local "subject of" constraint.
+    4. Global "value of" recommendations
+       - computed based on the local "value of" recommendations
+- The server was adjusted so it could work with the recommendations.
+  - The walking of the parent tree when asking for the surroundings now collects all the properties and sorts them in the end.
+  - The last sort is ment to sort all the available properties for the class.
+  - Since we stored the local recommendations in each class directly, they can be then accessed when holding a class instance.
+
+## The fourth iteration
