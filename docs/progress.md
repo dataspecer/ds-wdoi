@@ -146,4 +146,17 @@ What I used is the SchemaTree recommender.
   - The last sort is ment to sort all the available properties for the class.
   - Since we stored the local recommendations in each class directly, they can be then accessed when holding a class instance.
 
+- Issues with recommendations:
+  - The recommender is able to recommend only used properties.
+  - For the missing entities we assign probability zero
+  - We are contraint by subject type and value type constraints
+  - It does not include sorting of the values it points to or originates in.
+    - I would have to iterate over the dataset and for each Item property take a look at:
+      - subject item and value item
+      - look at the items and mark that the items were of the type (instance of)
+      - in other words accumulate usage of instances of both ends for each Item property
+      - why not other properties? because only item properties can produce these outputs
+    - why i dont want to do this?
+      - because it seems like a lot of work for a small thing
+
 ## The fourth iteration
