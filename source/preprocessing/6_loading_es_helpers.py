@@ -34,10 +34,10 @@ def __create_language_mappings():
 
 def index_exists(client, name):
     if not client.indices.exists(index=name):
-        logger.info(f"Index == {name} does not exist.")
+        logger.info(f"Index == {name} does NOT EXIST.")
         return False
     else:
-        logger.info(f"Index == {name} does exist.")
+        logger.info(f"Index == {name} does EXIST.")
         return True
 
 def list_indices():
@@ -122,11 +122,13 @@ def delete():
     
     logger.info("Deleting ended")
         
-def search(search_string):
+def search(search_string, search_classes: bool = True):
     logger.info("Searching started")
     
     cls_exists = index_exists(es.client, es.CLASSES_ELASTIC_INDEX_NAME)
     props_exists = index_exists(es.client, es.PROPERTIES_ELASTIC_INDEX_NAME)
+    
+    search_index = es.CLASSES_ELASTIC_INDEX_NAME if search_classes else es.PROPERTIES_ELASTIC_INDEX_NAME
     
     if search_string == "":
         logger.critical("Cannot search for empty string, please add argument for the script.")
@@ -138,14 +140,24 @@ def search(search_string):
         exit(1)
     else:
         query_obj = {
-            "multi_match": {
-                "query":      f"{search_string}",
-                "type":       "phrase_prefix",
-                "slop": 2,
+            "dis_max": {
+                "queries": {
+                    "multi_match": {
+                        "query":      f"{search_string}",
+                        "type":       "most_fields",
+                        "fields": ["labels_en^2", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
+                    },        
+                    "multi_match": {
+                        "query":      f"{search_string}",
+                        "type":       "best_fields",
+                        "fields": ["labels_en^2", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
+                        "tie_breaker": 0.7
+                    },
+                },
             }
         }
-        resp = es.client.search(index=es.CLASSES_ELASTIC_INDEX_NAME, query=query_obj)
-        logger.info("Got %d Hits:" % resp['hits']['total']['value'])
+        resp = es.client.search(index=search_index, query=query_obj)
+        logger.info("Got %d Hits for %s:" % (resp['hits']['total']['value'], search_index))
         for hit in resp['hits']['hits']:
             print(hit["_id"])
             pp.pprint(hit["_source"])
@@ -159,16 +171,17 @@ if __name__ == "__main__":
                 description="""
                             The script enables to execute operations handling indeces in the elastic search instance.
                             The operations are:
-                            1. create properties and classes indeces
-                            2. delete properties and classes indeces
-                            3. refresh properties and classes indeces
-                            4. search for the given string
-                            5. list indices
-                            6. list mappings of indices
+                            1. create - create properties and classes indeces
+                            2. delete - delete properties and classes indeces
+                            3. refresh - refresh properties and classes indeces
+                            4. search_classes - search classes for the given string
+                            4. search_properties - search properties for the given string
+                            5. list - list indices
+                            6. mappings - list mappings of indices
                             """)
     parser.add_argument("operation",
                         type=str,
-                        choices=["create", "delete", "refresh", "search", "list", "mappings"], 
+                        choices=["create", "delete", "refresh", "search_classes", "search_properties", "list", "mappings"], 
                         help="An operation to execute.")
     parser.add_argument("query",
                         type=str,
@@ -184,8 +197,10 @@ if __name__ == "__main__":
         delete()
     elif operation == "refresh":
         refresh()
-    elif operation == "search":
-        search(args.query)
+    elif operation == "search_classes":
+        search(args.query, True)
+    elif operation == "search_properties":
+        search(args.query, False)
     elif operation == "list":
         list_indices()
     elif operation == "mappings":
