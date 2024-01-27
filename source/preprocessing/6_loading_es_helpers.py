@@ -145,12 +145,12 @@ def search(search_string, search_classes: bool = True):
                     "multi_match": {
                         "query":      f"{search_string}",
                         "type":       "most_fields",
-                        "fields": ["labels_en^2", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
+                        "fields": ["labels_en^3", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
                     },        
                     "multi_match": {
                         "query":      f"{search_string}",
                         "type":       "best_fields",
-                        "fields": ["labels_en^2", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
+                        "fields": ["labels_en^3", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
                         "tie_breaker": 0.7
                     },
                 },
