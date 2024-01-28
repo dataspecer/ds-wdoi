@@ -6,6 +6,9 @@ export const wdClassSchema = {
     id: {
       type: 'number',
     },
+    iri: {
+      type: 'string',
+    },
     labels: {
       type: 'object',
       additionalProperties: {
@@ -70,6 +73,7 @@ export const wdClassSchema = {
   additionalProperties: false,
   required: [
     'id',
+    'iri',
     'labels',
     'descriptions',
     'subclassOf',
@@ -83,4 +87,32 @@ export const wdClassSchema = {
   ],
 } as const;
 
-export type WdPropertySchemaType = FromSchema<typeof wdClassSchema>;
+export type WdClassSchemaType = FromSchema<typeof wdClassSchema>;
+
+export const wdClassDescOnlySchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'number',
+    },
+    iri: {
+      type: 'string',
+    },
+    labels: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    descriptions: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+  },
+  additionalProperties: false,
+  required: ['id', 'iri', 'labels', 'descriptions'],
+} as const;
+
+export type WdClassDescOnlySchemaType = FromSchema<typeof wdClassDescOnlySchema>;

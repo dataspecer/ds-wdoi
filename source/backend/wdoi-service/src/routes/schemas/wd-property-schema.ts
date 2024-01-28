@@ -118,6 +118,9 @@ export const wdPropertySchema = {
     id: {
       type: 'number',
     },
+    iri: {
+      type: 'string',
+    },
     datatype: {
       type: 'number',
     },
@@ -195,16 +198,55 @@ export const wdPropertySchema = {
   additionalProperties: false,
   required: [
     'id',
+    'iri',
     'datatype',
     'underlyingType',
     'labels',
     'descriptions',
     'instanceOf',
     'subpropertyOf',
+    'subproperties',
     'relatedProperty',
+    'inverseProperty',
+    'complementaryProperty',
+    'negatesProperty',
     'equivalentExternalOntologyProperties',
     'generalConstraints',
   ],
 } as const;
 
 export type WdPropertySchemaType = FromSchema<typeof wdPropertySchema>;
+
+export const wdPropertyDescOnlySchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'number',
+    },
+    iri: {
+      type: 'string',
+    },
+    datatype: {
+      type: 'number',
+    },
+    underlyingType: {
+      type: 'number',
+    },
+    labels: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    descriptions: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+  },
+  additionalProperties: false,
+  required: ['id', 'iri', 'datatype', 'underlyingType', 'labels', 'descriptions'],
+} as const;
+
+export type WdPropertyDescOnlySchemaType = FromSchema<typeof wdPropertyDescOnlySchema>;

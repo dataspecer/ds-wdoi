@@ -1,25 +1,13 @@
 import { type FastifyPluginCallback } from 'fastify';
-import {
-  getEntityInputParamsSchema,
-  getHierarchyInputQueryStringSchema,
-  searchInputQueryStringSchema,
-  searchReplySchema,
-  getClassReplySchema,
-  type GetEntityInputParamsType,
-  type SearchInputQueryStringType,
-  type GetHierarchyInputQueryStringType,
-  hierarchyReplySchema,
-  surroundingsReplySchema,
-} from './schemas/req-resp-schemas';
-import { type EntityId } from '../ontology/entities/common';
+import { getEntityInputParamsSchema, type GetEntityInputParamsType } from './schemas/input-params';
 import { type WdClass } from '../ontology/entities/wd-class';
+import { getClassReplySchema, getPropertyReplySchema } from './schemas/get-entity';
+import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy';
+import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search';
+import { surroundingsReplySchema } from './schemas/get-surroundings';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
-  const validateIdExistence = (id: EntityId): void | never => {
-    if (!fastify.wdOntology.containsClass(id)) {
-      throw fastify.httpErrors.notFound();
-    }
-  };
+  // Search
 
   fastify.get<{ Querystring: SearchInputQueryStringType }>(
     '/search',
@@ -38,6 +26,8 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
   );
 
+  // Get class
+
   fastify.get<{ Params: GetEntityInputParamsType }>(
     '/classes/:id',
     {
@@ -50,12 +40,35 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
     async (req, res) => {
       const { id } = req.params;
-      validateIdExistence(id);
+      fastify.throwOnMissingClassId(id);
       const cls = fastify.wdOntology.getClass(id);
       const clsReturn = cls != null ? [cls] : [];
       return { results: { classes: clsReturn } };
     },
   );
+
+  // Get property
+
+  fastify.get<{ Params: GetEntityInputParamsType }>(
+    '/properties/:id',
+    {
+      schema: {
+        params: getEntityInputParamsSchema,
+        response: {
+          '2xx': getPropertyReplySchema,
+        },
+      },
+    },
+    async (req, res) => {
+      const { id } = req.params;
+      fastify.throwOnMissingPropertyId(id);
+      const prop = fastify.wdOntology.getProperty(id);
+      const propReturn = prop != null ? [prop] : [];
+      return { results: { props: propReturn } };
+    },
+  );
+
+  // Hierarchy
 
   fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetHierarchyInputQueryStringType }>(
     '/classes/:id/hierarchy',
@@ -70,13 +83,15 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
     async (req, res) => {
       const { id } = req.params;
-      validateIdExistence(id);
+      fastify.throwOnMissingClassId(id);
       const { part } = req.query;
       const cls = fastify.wdOntology.getClass(id) as WdClass;
       const results = fastify.wdOntology.getHierarchy(cls, part);
       return { results };
     },
   );
+
+  // Surroundings
 
   fastify.get<{ Params: GetEntityInputParamsType }>(
     '/classes/:id/surroundings',
@@ -90,7 +105,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
     async (req, res) => {
       const { id } = req.params;
-      validateIdExistence(id);
+      fastify.throwOnMissingClassId(id);
       const cls = fastify.wdOntology.getClass(id) as WdClass;
       const results = fastify.wdOntology.getSurroundings(cls);
       return { results };

@@ -84,13 +84,13 @@ export class WdOntology {
     return this.classes.get(classId);
   }
 
-  public getClassWithMaterializedReferences(classId: EntityId): void {}
+  public getClassWithSurroundingNames(classId: EntityId): void {}
 
   public getProperty(propertyId: EntityId): WdProperty | undefined {
     return this.properties.get(propertyId);
   }
 
-  public getPropertyWithMaterializedReferences(propertyId: EntityId): void {}
+  public getPropertyWithSurroundingNames(propertyId: EntityId): void {}
 
   public containsClass(classId: EntityId): boolean {
     return this.classes.has(classId);

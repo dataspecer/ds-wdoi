@@ -5,7 +5,7 @@ import mapAllRoutes from '@fastify/routes';
 import loadOntology from './ontology/expose-to-fastify';
 import { envToLogger, log } from './logging/log';
 import { ontologyRoutes } from './routes/routes';
-import { ontologyRecsRoutes } from './routes/routes-recs';
+import { ontologyRecsRoutes } from './routes/routes-v2';
 import fastifySensible from '@fastify/sensible';
 
 const fastify: FastifyInstance = Fastify({

@@ -5,12 +5,14 @@ export abstract class WdEntity {
   public static entityURITypes: Set<string> = new Set<string>();
 
   readonly id: EntityId;
+  readonly iri: string;
   readonly labels: LanguageMap;
   readonly descriptions: LanguageMap;
   readonly instanceOf: EntityIdsList;
 
   constructor(inputEntity: InputEntity) {
     this.id = inputEntity.id;
+    this.iri = inputEntity.iri;
     this.labels = inputEntity.labels;
     this.descriptions = inputEntity.descriptions;
     this.instanceOf = inputEntity.instanceOf;
