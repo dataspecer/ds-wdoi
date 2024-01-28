@@ -11,6 +11,7 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   private static readonly URIType = 'Q';
   readonly subclassOf: EntityIdsList;
   readonly children: EntityIdsList;
+  readonly instances: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
   readonly valueOfProperty: EntityIdsList;
@@ -26,6 +27,7 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
     super(inputClass);
     this.subclassOf = inputClass.subclassOf;
     this.children = inputClass.children;
+    this.instances = inputClass.instances;
     this.equivalentExternalOntologyClasses = inputClass.equivalentClass;
     this.propertiesForThisType = inputClass.propertiesForThisType;
     this.valueOfProperty = inputClass.valueOf;

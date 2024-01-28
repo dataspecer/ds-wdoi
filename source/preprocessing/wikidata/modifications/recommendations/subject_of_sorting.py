@@ -10,13 +10,16 @@ class SubjectOfSorting(ModifierFull):
     def __init__(self, logger, context: RecommendationContext) -> None:
         super().__init__(logger.getChild("subject-of-sort"), context)
         self.context = context
+        self.local_recs_missing = { "count": 0 }
 
     def create_sort_value_getter(self, local_recs_subject_map: dict):
         context = self.context
+        counter = self.local_recs_missing
         def sort_value_getter(prop_id: int):
             if prop_id in local_recs_subject_map:
                 return local_recs_subject_map[prop_id]
             else:
+                counter["count"] += 1
                 return context.global_recs_subject_map[prop_id]
         return sort_value_getter
 
@@ -29,7 +32,6 @@ class SubjectOfSorting(ModifierFull):
             self.sort_subject_of(wd_class)
             ul.try_log_progress(self.logger, idx, ul.RECS_PROGRESS_STEP)
             
-    # to do filter out all things that are not in the fields
     def sort_subject_of(self, wd_class) -> None:
         subjectOfField = wd_class['subjectOf']
         if len(subjectOfField) != 0:
@@ -42,6 +44,7 @@ class SubjectOfSorting(ModifierFull):
             wd_class[SUBJECT_OF_PROBS_FIELD] = []
         
     def report_status(self) -> None:
-        pass
+        self.logger.info(f"Count of missing local subject recs: {self.local_recs_missing["count"]}")
+        
     
 

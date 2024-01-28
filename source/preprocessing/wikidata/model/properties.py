@@ -55,6 +55,9 @@ class Properties(StrEnum):
     EQUIVALENT_CLASS = "P1709", UnderlyingTypes.STRING
     EQUIVALENT_PROPERTY = "P1628", UnderlyingTypes.STRING
     RELATED_PROPERTY = "P1659", UnderlyingTypes.ENTITY
+    INVERSE_PROPERTY = "P1696", UnderlyingTypes.ENTITY
+    COMPLEMENTARY_PROPERTY = "P8882", UnderlyingTypes.ENTITY 
+    NEGATES_PROPERTY = "P11317", UnderlyingTypes.ENTITY
     PROPERTY_CONSTRAINT = "P2302", UnderlyingTypes.ENTITY
     PROPERTY_SCOPE = "P5314", UnderlyingTypes.ENTITY
     ITEM_OF_PROPERTY_CONSTRAINT = "P2305", UnderlyingTypes.ENTITY

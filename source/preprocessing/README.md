@@ -112,6 +112,9 @@ The main script is `3_transformation.py`.
   - instance of values
   - subproperty of values
   - related property values
+  - inverse property values
+  - complementary property values
+  - negates property values
   - equivalent property (external ontology mapping)
   - constraints
     - general constraints:
@@ -166,15 +169,17 @@ The main script is `4_modification.py`
      2. Remove unexisting references from `subclassOf`, `propertiesForThisType` and `instanceOf` fields.
      3. Remove self cycles of `instanceOf` and `subclassOf`.
      4. Mark children to parents, so the hierarchy could be traversed in both directions.
+     5. Mark instances to parents, so we get inverse relation for instances.
   3. Remove unrooted classes, which poluted the root entity during traversing upwards.
   4. Post removing unrooted classes:
      1. Remove unexisting references again in case it referenced the unrooted entity.
      2. Check that all classes are rooted and that the root is still present.
   5. Modify properties
-     1. remove unexisting references from the main statements
-     2. remove unexisting references from the general constraints
-     3. remove unexisting references from the item constraints
-     4. removing self cycles from `subpropertyO
+     1. Remove unexisting references from the main statements.
+     2. Remove unexisting references from the general constraints.
+     3. Remove unexisting references from the item constraints.
+     4. Removing self cycles from `subpropertyOf`.
+     5. Mark subproperties to parents.
   
 The removing references parts are done in order to exclude entities that were not present in the dump during its creation (it is a continual process during live hours).
 If the transformation phase adds more fields to entities, it is necessary to evaluate whether they need checks.

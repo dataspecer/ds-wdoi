@@ -94,6 +94,9 @@ def transform_wd_property(str_property_id, wd_property, languages):
     subproperty_of_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.SUBPROPERTY_OF)
     related_property_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.RELATED_PROPERTY)
     equivalent_property_urls = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.EQUIVALENT_PROPERTY)
+    inverse_property_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.INVERSE_PROPERTY)
+    complementary_property_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.COMPLEMENTARY_PROPERTY)
+    negates_property_str_ids = wd_smts_ex.extract_wd_statement_values(wd_property, Properties.NEGATES_PROPERTY)
     
     constraints = __transform_wd_constraints(wd_property, underlying_type)
     
@@ -108,6 +111,9 @@ def transform_wd_property(str_property_id, wd_property, languages):
         "instanceOf": __str_to_num_ids(instance_of_str_ids),
         "subpropertyOf": __str_to_num_ids(subproperty_of_str_ids),
         "relatedProperty": __str_to_num_ids(related_property_str_ids),
+        "inverseProperty": __str_to_num_ids(inverse_property_str_ids),
+        "complementaryProperty": __str_to_num_ids(complementary_property_str_ids),
+        "negatesProperty": __str_to_num_ids(negates_property_str_ids),
         "equivalentProperty": equivalent_property_urls,
         "constraints": constraints
     }

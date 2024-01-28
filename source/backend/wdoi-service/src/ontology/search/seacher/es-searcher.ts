@@ -18,32 +18,54 @@ export class EsSearch extends Searcher {
     });
   }
 
-  public async searchClasses(queryString: string, languagePriority: string | undefined): Promise<EntityIdsList> {
-    const searchResultsPrefix = this.client.search({
-      index: EsSearch.CLASSES_ELASTIC_INDEX_NAME,
-      _source: false,
-      query: {
-        multi_match: {
-          query: queryString,
-          type: 'phrase_prefix',
-          slop: 3,
-        },
-      },
-    });
+  private async search(indexName: string, queryString: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+    // const searchResultsPrefix = this.client.search({
+    //   index: indexName,
+    //   _source: false,
+    //   query: {
+    //     multi_match: {
+    //       query: queryString,
+    //       type: 'phrase_prefix',
+    //       slop: 3,
+    //     },
+    //   },
+    // });
     const searchResultsMatch = this.client.search({
-      index: EsSearch.CLASSES_ELASTIC_INDEX_NAME,
+      index: indexName,
       _source: false,
       query: {
-        multi_match: {
-          query: queryString,
-          type: 'best_fields',
+        dis_max: {
+          queries: [
+            {
+              multi_match: {
+                query: queryString,
+                type: 'best_fields',
+                fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
+              },
+            },
+            {
+              multi_match: {
+                query: queryString,
+                type: 'most_fields',
+                fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
+              },
+            },
+          ],
         },
       },
     });
-
-    const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
+    // const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
+    const searchResults = [(await searchResultsMatch).hits.hits];
     const interleavedResults = this.interleaveArrays(searchResults);
     return this.makeUnique(interleavedResults);
+  }
+
+  public async searchClasses(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+    return await this.search(EsSearch.CLASSES_ELASTIC_INDEX_NAME, query, languagePriority);
+  }
+
+  public async searchProperties(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+    return await this.search(EsSearch.PROPERTIES_ELASTIC_INDEX_NAME, query, languagePriority);
   }
 
   // This must preserver order of the given array.

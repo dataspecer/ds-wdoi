@@ -8,21 +8,24 @@ class ValueOfSorting(ModifierFull):
     def __init__(self, logger, context: RecommendationContext) -> None:
         super().__init__(logger.getChild("value-of-sorting"), context)
         self.context = context
+        self.local_recs_missing = { "count": 0 }
     
     def create_sort_value_getter(self):
         context = self.context
+        counter = self.local_recs_missing
         
         def compute_new_global_rec_value(prop_id: int, subject_type_contraints):
             class_ids = list(set(subject_type_contraints["instanceOf"] + subject_type_contraints["subclassOfInstanceOf"]))
-            probability_sum = float(0)
+            maxValue = float(0)
             if len(class_ids) != 0:
                 for class_id in class_ids:
                     class_local_recs_subject_map = context.local_recs_subject_map_to_map.get(class_id)
                     if class_local_recs_subject_map is not None and prop_id in class_local_recs_subject_map:
-                        probability_sum += class_local_recs_subject_map[prop_id]
+                        maxValue = max(class_local_recs_subject_map[prop_id], maxValue)
                     else:
-                        probability_sum += context.global_recs_subject_map[prop_id]
-                context.global_recs_value_map[prop_id] = (probability_sum / float(len(class_ids)))
+                        counter["count"] += 1
+                        maxValue = max(context.global_recs_subject_map[prop_id], maxValue)
+                context.global_recs_value_map[prop_id] = maxValue
             else:
                 context.global_recs_value_map[prop_id] = context.global_recs_subject_map[prop_id]
             
@@ -42,4 +45,4 @@ class ValueOfSorting(ModifierFull):
         wd_class["valueOf"].sort(reverse=True, key=self.create_sort_value_getter())
         
     def report_status(self) -> None:
-        pass
+        self.logger.info(f"Count of missing local subject recs: {self.local_recs_missing["count"]} for object computation.")

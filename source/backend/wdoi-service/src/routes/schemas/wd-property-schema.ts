@@ -148,6 +148,31 @@ export const wdPropertySchema = {
         type: 'number',
       },
     },
+    subproperties: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+
+    inverseProperty: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    complementaryProperty: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    negatesProperty: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
     relatedProperty: {
       type: 'array',
       items: {

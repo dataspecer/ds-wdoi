@@ -40,8 +40,10 @@ def __store_global_recs(global_recs, output_file):
 def __compute_local_recs(context: RecommendationContext):
     subject_of_sorting = SubjectOfSorting(main_logger, context)
     subject_of_sorting.modify_all()
+    subject_of_sorting.report_status()
     value_of_sorting = ValueOfSorting(main_logger, context)
     value_of_sorting.modify_all()
+    value_of_sorting.report_status()
 
 @timed(main_logger)
 def __load_global_recs_subject(properties: dict):

@@ -36,6 +36,12 @@ export const wdClassSchema = {
         type: 'number',
       },
     },
+    instances: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
     subjectOfProperty: {
       type: 'array',
       items: {
@@ -69,6 +75,7 @@ export const wdClassSchema = {
     'subclassOf',
     // 'children',
     'instanceOf',
+    'instances',
     'subjectOfProperty',
     'valueOfProperty',
     'equivalentExternalOntologyClasses',

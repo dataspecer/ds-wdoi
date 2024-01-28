@@ -15,6 +15,10 @@ export interface InputProperty extends InputEntity {
   readonly underlyingType: UnderlyingType;
   readonly subpropertyOf: EntityIdsList;
   readonly relatedProperty: EntityIdsList;
+  readonly inverseProperty: EntityIdsList;
+  readonly complementaryProperty: EntityIdsList;
+  readonly negatesProperty: EntityIdsList;
+  readonly subproperties: EntityIdsList;
   readonly equivalentProperty: ExternalOntologyMapping;
   readonly constraints: InputConstraints;
 }

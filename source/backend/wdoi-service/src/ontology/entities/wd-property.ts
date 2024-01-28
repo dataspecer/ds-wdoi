@@ -38,6 +38,10 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
   readonly underlyingType: UnderlyingType;
   readonly subpropertyOf: EntityIdsList;
   readonly relatedProperty: EntityIdsList;
+  readonly inverseProperty: EntityIdsList;
+  readonly complementaryProperty: EntityIdsList;
+  readonly negatesProperty: EntityIdsList;
+  readonly subproperties: EntityIdsList;
   readonly equivalentExternalOntologyProperties: ExternalOntologyMapping;
   readonly generalConstraints: GeneralConstraints;
 
@@ -51,6 +55,10 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
     this.underlyingType = inputProperty.underlyingType;
     this.subpropertyOf = inputProperty.subpropertyOf;
     this.relatedProperty = inputProperty.relatedProperty;
+    this.inverseProperty = inputProperty.inverseProperty;
+    this.complementaryProperty = inputProperty.complementaryProperty;
+    this.negatesProperty = inputProperty.negatesProperty;
+    this.subproperties = inputProperty.subproperties;
     this.equivalentExternalOntologyProperties = inputProperty.equivalentProperty;
     this.generalConstraints = new GeneralConstraints(inputProperty.constraints);
   }

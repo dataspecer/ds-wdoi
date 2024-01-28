@@ -3,7 +3,7 @@ import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
-import { OntologySearch } from './search/ontologySearch';
+import { OntologySearch, type SearchResults } from './search/ontologySearch';
 import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
 import {
   ClassSurroundingsExpander,
@@ -53,7 +53,7 @@ export class WdOntology {
     searchProperties: boolean | undefined,
     searchInstances: boolean | undefined,
     languagePriority: string | undefined,
-  ): Promise<WdClass[]> {
+  ): Promise<SearchResults> {
     return await this.ontologySearch.search(query, searchClasses, searchProperties, searchInstances, languagePriority);
   }
 
@@ -83,6 +83,14 @@ export class WdOntology {
   public getClass(classId: EntityId): WdClass | undefined {
     return this.classes.get(classId);
   }
+
+  public getClassWithMaterializedReferences(classId: EntityId): void {}
+
+  public getProperty(propertyId: EntityId): WdProperty | undefined {
+    return this.properties.get(propertyId);
+  }
+
+  public getPropertyWithMaterializedReferences(propertyId: EntityId): void {}
 
   public containsClass(classId: EntityId): boolean {
     return this.classes.has(classId);

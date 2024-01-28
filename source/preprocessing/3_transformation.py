@@ -22,7 +22,6 @@ def __main(args):
         logger.error("Exiting...")
         sys.exit(1)
 
-
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(

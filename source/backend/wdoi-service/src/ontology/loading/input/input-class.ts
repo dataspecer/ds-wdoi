@@ -10,4 +10,5 @@ export interface InputClass extends InputEntity {
   readonly subjectOf: EntityIdsList;
   readonly subjectOfProbs: PropertyProbabilityHitList;
   readonly valueOf: EntityIdsList;
+  readonly instances: EntityIdsList;
 }

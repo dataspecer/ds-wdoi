@@ -7,11 +7,13 @@ from wikidata.modifications.modifiers.properties.remove_unexisting_references_ma
 from wikidata.modifications.modifiers.properties.remove_unexisting_references_general_constraints import *
 from wikidata.modifications.modifiers.properties.remove_unexisting_references_item_constraints import *
 from wikidata.modifications.modifiers.properties.remove_self_cycles import *
+from wikidata.modifications.modifiers.properties.mark_subproperties_to_parents import *
 from wikidata.modifications.modifiers.properties.assign_subject_object_values_to_classes import *
 from wikidata.modifications.context import Context
 from wikidata.modifications.modifiers.classes.all_classes_are_rooted import *
 from wikidata.modifications.modifiers.classes.remove_unexisting_references import *
 from wikidata.modifications.modifiers.classes.mark_children_to_parents import *
+from wikidata.modifications.modifiers.classes.mark_instances_to_parents import *
 from wikidata.modifications.modifiers.classes.remove_self_cycles import *
 from wikidata.modifications.modifiers.classes.add_fields import *
 from wikidata.modifications.removers.remove_entities_with_no_label import *
@@ -62,7 +64,8 @@ def __pre_unrooted_classes_removal(context: Context):
         AddFields(logger, context), 
         RemoveUnexistingReferencesClasses(logger, context), 
         RemoveSelfCyclesClass(logger, context), 
-        MarkChildrenToParents(logger, context)
+        MarkChildrenToParents(logger, context),
+        MarkInstancesToParents(logger, context),
     ]
     __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
@@ -89,7 +92,8 @@ def __modify_properties(context: Context):
         RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger, context),
         RemoveUnexistingReferencesItemConstraintsProperties(properties_logger, context),
         RemoveSelfCyclesProperty(properties_logger, context),
-        AssignSubjectValueToClasses(properties_logger, context)
+        AssignSubjectValueToClasses(properties_logger, context),
+        MarkSubpropertiesToParents(properties_logger, context)
     ]
     __modify_entities(modifiers, context.property_map, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
