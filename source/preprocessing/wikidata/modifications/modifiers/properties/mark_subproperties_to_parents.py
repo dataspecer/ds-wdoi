@@ -13,6 +13,7 @@ class MarkSubpropertiesToParents(ModifierPart):
         
     def __call__(self, wd_entity) -> None:
         entityId = wd_entity['id']
+        self.add_field_if_missing(wd_entity, SUBPROPERTIES_FIELD)
         for parentId in wd_entity['subpropertyOf']:
             if parentId in self.context.property_map:
                 parent = self.context.property_map[parentId]
