@@ -18,7 +18,7 @@ export const hierarchyReplySchema = {
     results: {
       type: 'object',
       properties: {
-        root: wdClassSchema,
+        startClass: wdClassSchema,
         parents: {
           type: 'array',
           items: wdClassSchema,
@@ -29,7 +29,7 @@ export const hierarchyReplySchema = {
         },
       },
       additionalProperties: false,
-      required: ['root', 'parents', 'children'],
+      required: ['startClass', 'parents', 'children'],
     },
   },
   additionalProperties: false,

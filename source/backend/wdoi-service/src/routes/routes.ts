@@ -42,8 +42,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
       const cls = fastify.wdOntology.getClass(id);
-      const clsReturn = cls != null ? [cls] : [];
-      return { results: { classes: clsReturn } };
+      return { results: { classes: [cls] } };
     },
   );
 
@@ -63,8 +62,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { id } = req.params;
       fastify.throwOnMissingPropertyId(id);
       const prop = fastify.wdOntology.getProperty(id);
-      const propReturn = prop != null ? [prop] : [];
-      return { results: { props: propReturn } };
+      return { results: { props: [prop] } };
     },
   );
 

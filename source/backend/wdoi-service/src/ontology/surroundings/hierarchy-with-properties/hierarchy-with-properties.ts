@@ -3,18 +3,25 @@ import { type WdClass } from '../../entities/wd-class';
 import type { WdEntity } from '../../entities/wd-entity';
 import { type ItemProperty, UnderlyingType, type WdProperty } from '../../entities/wd-property';
 import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
-import { SurroundingsExpander } from '../surroundings-expander';
+import { ClassSurroundingsExpander } from '../surroundings-expander';
 
-export class ClassSurroundingsReturnWrapper {
-  root: WdClass;
+export class HierarchyWithPropertiesReturnWrapper {
+  startClass: WdClass;
   parents: WdClass[];
   children: WdClass[];
   subjectOf: WdProperty[];
   valueOf: WdProperty[];
   propertyEndpoints: WdClass[];
 
-  constructor(root: WdClass, parents: WdClass[], children: WdClass[], subjectOf: WdProperty[], valueOf: WdProperty[], propertyEndpoints: WdClass[]) {
-    this.root = root;
+  constructor(
+    startClass: WdClass,
+    parents: WdClass[],
+    children: WdClass[],
+    subjectOf: WdProperty[],
+    valueOf: WdProperty[],
+    propertyEndpoints: WdClass[],
+  ) {
+    this.startClass = startClass;
     this.parents = parents;
     this.children = children;
     this.subjectOf = subjectOf;
@@ -23,8 +30,7 @@ export class ClassSurroundingsReturnWrapper {
   }
 }
 
-export class PropertyHierarchyExtractor extends Extractor {
-  private readonly rootClass: WdClass;
+export class HierarchyWithPropertiesExtractor extends Extractor {
   private readonly startClass: WdClass;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
@@ -35,10 +41,9 @@ export class PropertyHierarchyExtractor extends Extractor {
   private readonly valueOfSet: Set<EntityId> = new Set<EntityId>();
   private readonly propertySetEndpointsSet: Set<EntityId> = new Set<EntityId>();
 
-  constructor(startClass: WdClass, rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(startClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     super();
     this.startClass = startClass;
-    this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
   }
@@ -95,11 +100,11 @@ export class PropertyHierarchyExtractor extends Extractor {
   }
 }
 
-export class ClassSurroundingsExpander extends SurroundingsExpander {
-  public getSurroundings(propertyHierarchyExtractor: PropertyHierarchyExtractor): ClassSurroundingsReturnWrapper {
+export class HierarchyWithPropertiesExpander extends ClassSurroundingsExpander {
+  public getSurroundings(propertyHierarchyExtractor: HierarchyWithPropertiesExtractor): HierarchyWithPropertiesReturnWrapper {
     const parents: WdClass[] = []; // this.getParents(startClass);
     const children: WdClass[] = []; // this.getChildren(startClass);
     const [startClass, subjectOf, valueOf, endpoints] = propertyHierarchyExtractor.getResult();
-    return new ClassSurroundingsReturnWrapper(startClass, parents, children, subjectOf, valueOf, endpoints);
+    return new HierarchyWithPropertiesReturnWrapper(startClass, parents, children, subjectOf, valueOf, endpoints);
   }
 }

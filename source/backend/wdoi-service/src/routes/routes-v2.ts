@@ -40,7 +40,13 @@ export const ontologyRecsRoutes: FastifyPluginCallback = function (fastify, opts
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
       const results = fastify.wdOntology.getClassWithSurroundingNames(id);
-      return { results };
+      return {
+        results: {
+          classes: [results.startClass],
+          surroundingClassNames: results.surroundingClassNames,
+          surroundingPropertyNames: results.surroundingPropertyNames,
+        },
+      };
     },
   );
 
@@ -59,8 +65,14 @@ export const ontologyRecsRoutes: FastifyPluginCallback = function (fastify, opts
     async (req, res) => {
       const { id } = req.params;
       fastify.throwOnMissingPropertyId(id);
-      const results = fastify.wdOntology.getClassWithSurroundingNames(id);
-      return { results };
+      const results = fastify.wdOntology.getPropertyWithSurroundingNames(id);
+      return {
+        results: {
+          properties: [results.startProperty],
+          surroundingClassNames: results.surroundingClassNames,
+          surroundingPropertyNames: results.surroundingPropertyNames,
+        },
+      };
     },
   );
 

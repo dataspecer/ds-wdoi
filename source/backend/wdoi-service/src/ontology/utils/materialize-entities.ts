@@ -12,3 +12,19 @@ export function materializeEntities<T extends WdClass | WdProperty>(entityIds: E
   });
   return results;
 }
+
+export function materializeEntitiesWithContext<T extends WdClass | WdProperty>(
+  entityIds: EntityIdsList,
+  entityMap: ReadonlyMap<EntityId, T>,
+  context: ReadonlySet<EntityId>,
+  contextStorage: T[],
+): void {
+  entityIds.forEach((id) => {
+    if (!context.has(id)) {
+      const cls = entityMap.get(id);
+      if (cls != null) {
+        contextStorage.push(cls);
+      }
+    }
+  });
+}

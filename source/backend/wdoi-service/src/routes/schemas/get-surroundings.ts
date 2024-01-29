@@ -8,7 +8,7 @@ export const surroundingsReplySchema = {
     results: {
       type: 'object',
       properties: {
-        root: wdClassSchema,
+        startClass: wdClassSchema,
         parents: {
           type: 'array',
           items: wdClassSchema,
@@ -31,7 +31,7 @@ export const surroundingsReplySchema = {
         },
       },
       additionalProperties: false,
-      required: ['root', 'parents', 'children', 'subjectOf', 'valueOf', 'propertyEndpoints'],
+      required: ['startClass', 'parents', 'children', 'subjectOf', 'valueOf', 'propertyEndpoints'],
     },
   },
   additionalProperties: false,
@@ -48,7 +48,7 @@ export const surroundingsWithRecsReplySchema = {
     results: {
       type: 'object',
       properties: {
-        root: {
+        startClass: {
           type: 'number',
         },
         parents: {
@@ -85,7 +85,7 @@ export const surroundingsWithRecsReplySchema = {
         },
       },
       additionalProperties: false,
-      required: ['root', 'parents', 'propertyEndpoints', 'subjectOf', 'valueOf', 'classes', 'properties'],
+      required: ['startClass', 'parents', 'propertyEndpoints', 'subjectOf', 'valueOf', 'classes', 'properties'],
     },
   },
   additionalProperties: false,

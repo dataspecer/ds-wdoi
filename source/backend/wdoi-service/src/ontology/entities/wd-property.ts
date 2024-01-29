@@ -95,6 +95,10 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
   public static isURIType(entityType: string): boolean {
     return entityType === WdProperty.URIType;
   }
+
+  public static isItemProperty(property: WdProperty): property is ItemProperty {
+    return property.underlyingType === UnderlyingType.ENTITY;
+  }
 }
 
 export class ItemProperty extends WdProperty {
