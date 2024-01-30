@@ -11,7 +11,7 @@ import {
 import { WdClassDocsOnly } from '../../wikidata/entities/wd-class';
 import { useQuery } from 'react-query';
 import { useState, useEffect } from 'react';
-import { GetSearchReply } from '../../wikidata/query-types/get-search';
+import { GetSearchReply } from '../../wikidata/query/get-search';
 import axios from 'axios';
 import {
   WdEntity,

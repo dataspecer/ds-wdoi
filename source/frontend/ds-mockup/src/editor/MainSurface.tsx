@@ -1,20 +1,27 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, IconButton, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 import { WdClassDocsOnly } from '../wikidata/entities/wd-class';
 import { RootSelectionDialog } from './root-selection/RootSelectionDialog';
+import { SelectedProperty } from './surroundings/selected-property';
+import { SurroundingsDialog } from './surroundings/SurroundingsDialog';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
 export function MainSurface() {
   const [root, setRoot] = useState<WdClassDocsOnly | undefined>(undefined);
   const [rootDialogOpened, setRootDialogOpened] = useState<boolean>(false);
+  const [propertySelectionDialogOpened, setPropertySelectionDialogOpened] = useState(false);
 
   function setNewRootHandle(newRoot: WdClassDocsOnly): void {
     setRoot(newRoot);
     setRootDialogOpened(false);
   }
 
-  function onCloseHandle(): void {
-    console.log('closed');
+  function onSearchDialogCloseHandle(): void {
     setRootDialogOpened(false);
+  }
+
+  function onPropertySelectionDialogClose(selectedProperties: SelectedProperty[]) {
+    setPropertySelectionDialogOpened(false);
   }
 
   return (
@@ -30,17 +37,41 @@ export function MainSurface() {
         </Button>
       </div>
       <div>
-        <Typography>{root != null ? root.labels['en'] : 'Nothing to see'}</Typography>
+        {root != null ? (
+          <div className='flex flex-row items-center'>
+            <Typography className=' font-bold'>{root.labels['en']}</Typography>
+            <IconButton
+              onClick={() => {
+                setPropertySelectionDialogOpened(true);
+              }}
+            >
+              <ControlPointIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
-      {rootDialogOpened ? (
-        <RootSelectionDialog
-          setNewRootHandle={setNewRootHandle}
-          isOpen={rootDialogOpened}
-          onCloseHandle={onCloseHandle}
-        />
-      ) : (
-        <></>
-      )}
+      <>
+        {rootDialogOpened ? (
+          <RootSelectionDialog
+            setNewRootHandle={setNewRootHandle}
+            isOpen={rootDialogOpened}
+            onCloseHandle={onSearchDialogCloseHandle}
+          />
+        ) : (
+          <></>
+        )}
+        {propertySelectionDialogOpened && root != null ? (
+          <SurroundingsDialog
+            root={root}
+            isOpen={propertySelectionDialogOpened}
+            onPropertySelectionDialogClose={onPropertySelectionDialogClose}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </Stack>
   );
 }
