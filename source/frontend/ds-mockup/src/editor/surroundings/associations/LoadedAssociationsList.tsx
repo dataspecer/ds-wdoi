@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { WdClass, WdClassDocsOnly } from '../../../wikidata/entities/wd-class';
+import { WdClass } from '../../../wikidata/entities/wd-class';
 import {
   ClassSurroundings,
   fetchClassSurroundings,
@@ -14,12 +14,9 @@ export function LoadedAssociationsList({
   selectedClass: WdClass;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
 }) {
-  const { isLoading, isError, data, error } = useQuery(
-    ['surroundings', selectedClass.iri],
-    async () => {
-      return await fetchClassSurroundings(selectedClass);
-    },
-  );
+  const { isLoading, isError, data } = useQuery(['surroundings', selectedClass.iri], async () => {
+    return await fetchClassSurroundings(selectedClass);
+  });
 
   if (isLoading || isError) return <>Is loading or is error</>;
 

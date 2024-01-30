@@ -1,5 +1,6 @@
 import { GeneralConstraints, ItemTypeConstraints, EmptyTypeConstraint } from './constraints';
-import { EntityIdsList, ExternalOntologyMapping, WdEntity } from './wd-entity';
+import { WdClass } from './wd-class';
+import { EntityId, EntityIdsList, ExternalOntologyMapping, WdEntity } from './wd-entity';
 
 export enum UnderlyingType {
   ENTITY = 0,
@@ -46,6 +47,22 @@ export interface WdProperty extends WdEntity {
   readonly quantityConstraints?: EmptyTypeConstraint;
   readonly timeConstraints?: EmptyTypeConstraint;
   readonly coordinatesConstraints?: EmptyTypeConstraint;
+}
+
+export function getDomainClassesIds(prop: WdProperty): EntityIdsList {
+  return [
+    ...prop.generalConstraints.subjectType.instanceOf,
+    ...prop.generalConstraints.subjectType.subclassOfInstanceOf,
+  ];
+}
+
+export function getRangeClassesIds(prop: WdProperty): EntityIdsList {
+  if (!('itemConstraints' in prop)) return [];
+  else
+    return [
+      ...(prop.itemConstraints?.valueType.instanceOf ?? []),
+      ...(prop.itemConstraints?.valueType.subclassOfInstanceOf ?? []),
+    ];
 }
 
 export type WdPropertyDocsOnly = Pick<

@@ -14,7 +14,7 @@ export function AssociationsDisplay({
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
 }) {
   const isRootSelected =
-    (selectedClass != null && selectedClass.id === rootSurroundings.startClass) ||
+    (selectedClass != null && selectedClass.id === rootSurroundings.startClassId) ||
     selectedClass == null;
 
   return (

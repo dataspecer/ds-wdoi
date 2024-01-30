@@ -14,6 +14,7 @@ import {
   List,
   ListItemButton,
   IconButton,
+  Divider,
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -38,7 +39,7 @@ export function AncestorsDisplay({
   }
 
   const classesToDisplay = useMemo<EntityIdsList>(() => {
-    const classes = [rootSurroundings.startClass, ...rootSurroundings.parents];
+    const classes = [rootSurroundings.startClassId, ...rootSurroundings.parentsIds];
     if (searchTextInput === '') return classes;
     else {
       return classes.filter((id) => {
@@ -81,35 +82,37 @@ export function AncestorsDisplay({
           const cls = rootSurroundings.classesMap.get(clsId) as WdClass;
           const isSelected =
             (selectedParentLocal != null && selectedParentLocal.id === cls.id) ||
-            (rootSurroundings.startClass === cls.id && selectedParentLocal == null);
+            (rootSurroundings.startClassId === cls.id && selectedParentLocal == null);
           return (
             <div key={cls.iri} ref={refs[cls.id]}>
-              <Accordion>
+              <Accordion variant='outlined'>
                 <AccordionSummary
                   expandIcon={<ArrowDownwardIcon />}
                   aria-controls='panel1-content'
                   id='panel1-header'
                   className={isSelected ? ' bg-slate-200' : ''}
                 >
-                  <Typography>{cls.labels['en']}</Typography>
-                  <Button
-                    onClick={() => {
-                      setSelectedParentLocal(cls);
-                      setSelectedParentUpper(cls);
-                    }}
-                  >
-                    Select
-                  </Button>
-                  <IconButton
-                    edge='end'
-                    aria-label='comments'
-                    onClick={() => {
-                      setDetailOpened(true);
-                      setDetailEntity(cls);
-                    }}
-                  >
-                    <InfoTwoToneIcon />
-                  </IconButton>
+                  <div className='flex flex-row items-center'>
+                    <Typography>{cls.labels['en']}</Typography>
+                    <Button
+                      onClick={() => {
+                        setSelectedParentLocal(cls);
+                        setSelectedParentUpper(cls);
+                      }}
+                    >
+                      Select
+                    </Button>
+                    <IconButton
+                      edge='end'
+                      aria-label='comments'
+                      onClick={() => {
+                        setDetailOpened(true);
+                        setDetailEntity(cls);
+                      }}
+                    >
+                      <InfoTwoToneIcon />
+                    </IconButton>
+                  </div>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography>Children</Typography>
@@ -118,10 +121,11 @@ export function AncestorsDisplay({
                       const subclass = rootSurroundings.classesMap.get(subclassId) as WdClass;
                       const isSubclassSelected =
                         (selectedParentLocal != null && selectedParentLocal.id === subclass.id) ||
-                        (rootSurroundings.startClass === subclass.id &&
+                        (rootSurroundings.startClassId === subclass.id &&
                           selectedParentLocal == null);
                       return (
                         <ListItem
+                          disablePadding
                           key={'subclass' + subclass.iri}
                           className={isSubclassSelected ? ' bg-slate-200' : ''}
                           secondaryAction={
@@ -160,7 +164,7 @@ export function AncestorsDisplay({
           detailEntity={detailEntity as WdClassDocsOnly}
           confirmButtonText='OK'
           onCloseHandle={handleCloseDetail}
-          onConfirmHandle={(newRoot: WdEntityDocsOnly) => {
+          onConfirmHandle={() => {
             handleCloseDetail();
           }}
           disableConfirmOn={() => false}

@@ -19,11 +19,12 @@ interface GetSurroundingsReply {
 }
 
 export interface ClassSurroundings {
-  startClass: EntityId;
-  parents: EntityIdsList;
-  propertyEndpoints: EntityIdsList;
-  subjectOf: EntityIdsList;
-  valueOf: EntityIdsList;
+  startClassId: EntityId;
+  parentsIds: EntityIdsList;
+  propertyEndpointsIds: EntityIdsList;
+  subjectOfIds: EntityIdsList;
+  valueOfIds: EntityIdsList;
+  properties: WdProperty[];
   classesMap: ReadonlyMap<EntityId, WdClass>;
   propertiesMap: ReadonlyMap<EntityId, WdProperty>;
 }
@@ -34,11 +35,12 @@ export async function fetchClassSurroundings(cls: WdClassDocsOnly): Promise<Clas
   const classesMap = buildEntityMap(reply.results.classes);
   const propertyMap = buildEntityMap(reply.results.properties);
   return {
-    startClass: reply.results.startClass,
-    parents: reply.results.parents,
-    propertyEndpoints: reply.results.propertyEndpoints,
-    subjectOf: reply.results.subjectOf,
-    valueOf: reply.results.valueOf,
+    startClassId: reply.results.startClass,
+    parentsIds: reply.results.parents,
+    propertyEndpointsIds: reply.results.propertyEndpoints,
+    subjectOfIds: reply.results.subjectOf,
+    valueOfIds: reply.results.valueOf,
+    properties: reply.results.properties,
     classesMap: classesMap,
     propertiesMap: propertyMap,
   };

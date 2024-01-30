@@ -35,15 +35,14 @@ export function SurroundingsDialog({
         {isLoading || isError ? (
           'Loading or error'
         ) : (
-          <div className='flex flex-row '>
-            <div className='basis-2/6'>
+          <div className='mx-1 flex  flex-row p-1'>
+            <div className='basis-2/6 p-1'>
               <AncestorsDisplay
                 rootSurroundings={data as ClassSurroundings}
                 setSelectedParentUpper={setSelectedParent}
               />
             </div>
-            <div className='basis-4/6'>
-              {selectedParent != null ? selectedParent.labels['en'] : 'I am still root'}
+            <div className='basis-4/6 p-1'>
               <AssociationsDisplay
                 rootSurroundings={data as ClassSurroundings}
                 selectedClass={selectedParent}
