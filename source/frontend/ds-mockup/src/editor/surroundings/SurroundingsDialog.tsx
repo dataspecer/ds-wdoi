@@ -1,19 +1,11 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  ListItem,
-  ListItemButton,
-  List,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { WdClass, WdClassDocsOnly } from '../../wikidata/entities/wd-class';
 import { SelectedProperty } from './selected-property';
 import { useQuery } from 'react-query';
 import { ClassSurroundings, fetchClassSurroundings } from '../../wikidata/query/get-surroundings';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { AncestorsDisplay } from './AncestorsDisplay';
+import { AssociationsDisplay } from './associations/AssociationsDisplay';
 
 export function SurroundingsDialog({
   root,
@@ -26,11 +18,9 @@ export function SurroundingsDialog({
 }) {
   const [selectedParent, setSelectedParent] = useState<WdClass | undefined>(undefined);
   const [selectedProperties, setSelectedProperties] = useState<SelectedProperty[]>([]);
-  const { isLoading, isError, data, error } = useQuery(['surroundings', root.iri], async () => {
+  const { isLoading, isError, data } = useQuery(['surroundings', root.iri], async () => {
     return await fetchClassSurroundings(root);
   });
-
-  // const isParentSelected = selectedParent != null && selectedParent.id !== root.id;
 
   return (
     <Dialog
@@ -48,12 +38,17 @@ export function SurroundingsDialog({
           <div className='flex flex-row '>
             <div className='basis-2/6'>
               <AncestorsDisplay
-                rootSuroundings={data as ClassSurroundings}
+                rootSurroundings={data as ClassSurroundings}
                 setSelectedParentUpper={setSelectedParent}
               />
             </div>
             <div className='basis-4/6'>
               {selectedParent != null ? selectedParent.labels['en'] : 'I am still root'}
+              <AssociationsDisplay
+                rootSurroundings={data as ClassSurroundings}
+                selectedClass={selectedParent}
+                setSelectedPropertiesUpper={setSelectedProperties}
+              />
             </div>
           </div>
         )}

@@ -21,10 +21,10 @@ import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { DetailListDialog } from '../entity-detail/DetailListDialog';
 
 export function AncestorsDisplay({
-  rootSuroundings,
+  rootSurroundings,
   setSelectedParentUpper,
 }: {
-  rootSuroundings: ClassSurroundings;
+  rootSurroundings: ClassSurroundings;
   setSelectedParentUpper: React.Dispatch<React.SetStateAction<WdClass | undefined>>;
 }) {
   const [selectedParentLocal, setSelectedParentLocal] = useState<WdClass | undefined>(undefined);
@@ -38,15 +38,15 @@ export function AncestorsDisplay({
   }
 
   const classesToDisplay = useMemo<EntityIdsList>(() => {
-    const classes = [rootSuroundings.startClass, ...rootSuroundings.parents];
+    const classes = [rootSurroundings.startClass, ...rootSurroundings.parents];
     if (searchTextInput === '') return classes;
     else {
       return classes.filter((id) => {
-        const cls = rootSuroundings.classesMap.get(id) as WdClass;
+        const cls = rootSurroundings.classesMap.get(id) as WdClass;
         return cls.labels['en'].toLowerCase().includes(searchTextInput);
       });
     }
-  }, [searchTextInput, rootSuroundings]);
+  }, [searchTextInput, rootSurroundings]);
 
   const refs = useMemo<{ [key: number]: React.RefObject<HTMLDivElement> }>(() => {
     return classesToDisplay.reduce(
@@ -78,10 +78,10 @@ export function AncestorsDisplay({
       </div>
       <div>
         {classesToDisplay.map((clsId) => {
-          const cls = rootSuroundings.classesMap.get(clsId) as WdClass;
+          const cls = rootSurroundings.classesMap.get(clsId) as WdClass;
           const isSelected =
             (selectedParentLocal != null && selectedParentLocal.id === cls.id) ||
-            (rootSuroundings.startClass === cls.id && selectedParentLocal == null);
+            (rootSurroundings.startClass === cls.id && selectedParentLocal == null);
           return (
             <div key={cls.iri} ref={refs[cls.id]}>
               <Accordion>
@@ -115,10 +115,11 @@ export function AncestorsDisplay({
                   <Typography>Children</Typography>
                   <List>
                     {cls.subclassOf.map((subclassId) => {
-                      const subclass = rootSuroundings.classesMap.get(subclassId) as WdClass;
+                      const subclass = rootSurroundings.classesMap.get(subclassId) as WdClass;
                       const isSubclassSelected =
                         (selectedParentLocal != null && selectedParentLocal.id === subclass.id) ||
-                        (rootSuroundings.startClass === subclass.id && selectedParentLocal == null);
+                        (rootSurroundings.startClass === subclass.id &&
+                          selectedParentLocal == null);
                       return (
                         <ListItem
                           key={'subclass' + subclass.iri}
