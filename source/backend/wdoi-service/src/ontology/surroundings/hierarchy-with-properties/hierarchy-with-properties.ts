@@ -56,7 +56,7 @@ export class HierarchyWithPropertiesExtractor extends Extractor {
     type: 'subject' | 'value' | 'class',
   ): void {
     for (const id of entityIds) {
-      if (!(id in set)) {
+      if (!set.has(id)) {
         set.add(id);
         const entity = context.get(id) as WdEntity;
         storage.push(entity);

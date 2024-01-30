@@ -6,12 +6,12 @@ import { type WdProperty } from '../entities/wd-property';
 export type ClassHierarchyWalkerParts = 'full' | 'parents' | 'children';
 
 export class ClassHierarchyReturnWrapper {
-  public readonly root: WdClass;
+  public readonly startClass: WdClass;
   public readonly parents: WdClass[];
   public readonly children: WdClass[];
 
-  constructor(root: WdClass, parents: WdClass[], children: WdClass[]) {
-    this.root = root;
+  constructor(startClass: WdClass, parents: WdClass[], children: WdClass[]) {
+    this.startClass = startClass;
     this.parents = parents;
     this.children = children;
   }
@@ -54,9 +54,9 @@ export class ClassHierarchyWalker {
     publicExtractor?.extract(startClass);
 
     while (!queue.isEmpty()) {
-      const classIds = queue.dequeue();
-      for (const classId of classIds) {
-        if (!(classId in visitedIds)) {
+      const nextClassIds = queue.dequeue();
+      for (const classId of nextClassIds) {
+        if (!visitedIds.has(classId)) {
           const cls = this.classes.get(classId) as WdClass;
           visitedIds.add(classId);
           queue.enqueue(nextValueExtractor(cls));
@@ -65,6 +65,7 @@ export class ClassHierarchyWalker {
         }
       }
     }
+
     return returnClasses;
   }
 
@@ -72,12 +73,12 @@ export class ClassHierarchyWalker {
     return this.walkHierarchy(startClass, this.getParentsExtractor, null);
   }
 
-  protected getChildrenHierarchy(startClass: WdClass): WdClass[] {
-    return this.walkHierarchy(startClass, this.getChildrenExtractor, null);
-  }
-
   protected getParentHierarchyExt(startClass: WdClass, publicExtractor: Extractor): WdClass[] {
     return this.walkHierarchy(startClass, this.getParentsExtractor, publicExtractor);
+  }
+
+  protected getChildrenHierarchy(startClass: WdClass): WdClass[] {
+    return this.walkHierarchy(startClass, this.getChildrenExtractor, null);
   }
 
   public getHierarchy(startClass: WdClass, part: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {

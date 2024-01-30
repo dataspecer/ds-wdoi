@@ -101,8 +101,8 @@ export class HierarchyWithPropertiesExtractorRecs extends Extractor {
 
   private tryAddToMaterializedClasses(cls: WdClass, addAsParent: boolean): void {
     const isStartClass = cls.id === this.startClass.id;
-    const isInParents = cls.id in this.parentsIdsSet;
-    const isInEndpoints = cls.id in this.propertyEndpointsIdsSet;
+    const isInParents = this.parentsIdsSet.has(cls.id);
+    const isInEndpoints = this.propertyEndpointsIdsSet.has(cls.id);
 
     if (addAsParent) this.tryAddToMaterializedClassesAsParent(cls, isStartClass, isInParents, isInEndpoints);
     else this.tryAddToMaterializedClassesAsEndpoint(cls, isStartClass, isInParents, isInEndpoints);
@@ -139,12 +139,12 @@ export class HierarchyWithPropertiesExtractorRecs extends Extractor {
   ): void {
     for (const propertyId of propertyIds) {
       const propertyProbValue = this.getPropertyProbValue(propertyId, localPropMap, globalPropMap);
-      if (!(propertyId in propsMarker)) {
+      if (!propsMarker.has(propertyId)) {
         propsMarker.set(propertyId, propertyProbValue);
         propsStorage.push(propertyId);
         const property = this.contexProperties.get(propertyId) as WdProperty;
         this.processEndpoints(property, type);
-        if (!(propertyId in propsOppositeMarker)) {
+        if (!propsOppositeMarker.has(propertyId)) {
           this.properties.push(property);
         }
       } else this.tryExchangeProbsInMarkers(propertyId, propertyProbValue, propsMarker);
@@ -163,7 +163,7 @@ export class HierarchyWithPropertiesExtractorRecs extends Extractor {
     localPropMap: PropertyProbabilityHitMap | null,
     globalProbMap: PropertyProbabilityHitMap,
   ): number {
-    if (localPropMap != null && propertyId in localPropMap) {
+    if (localPropMap != null && localPropMap.has(propertyId)) {
       return localPropMap.get(propertyId) as number;
     } else {
       return globalProbMap.get(propertyId) as number;

@@ -5,7 +5,7 @@ import { GlobalPropertyRecommendations, type PropertyProbabilityHitList, type Pr
 export function createPropertyProbabilityHitMap(probList: PropertyProbabilityHitList): PropertyProbabilityHitMap {
   const probHitMap = new Map<EntityId, number>();
   for (const propHit of probList) {
-    if (!(propHit.property in probHitMap)) {
+    if (!probHitMap.has(propHit.property)) {
       probHitMap.set(propHit.property, propHit.probability);
     }
   }
