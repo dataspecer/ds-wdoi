@@ -5,7 +5,7 @@ import { GetClassWithSurroundingNamesReply } from '../../wikidata/query-types/ge
 import { buildEntityMap } from '../utils/build-entity-map';
 import { WdClass, WdClassDocsOnly } from '../../wikidata/entities/wd-class';
 import { useQuery } from 'react-query';
-import { Stack } from '@mui/material';
+import { Divider, Stack } from '@mui/material';
 import { EntityDocsList } from './EntityDocsList';
 
 interface ClassWithSurroundingDocs {
@@ -45,6 +45,24 @@ export function ClassDetail({
         name='Subclass of'
         idsList={results.entity.subclassOf}
         entityMap={results.classesDocsMap}
+        onNewDetailHandle={onNewDetailHandle}
+      />
+      <EntityDocsList
+        name='Instance of'
+        idsList={results.entity.instanceOf}
+        entityMap={results.classesDocsMap}
+        onNewDetailHandle={onNewDetailHandle}
+      />
+      <EntityDocsList
+        name='Domain of'
+        idsList={results.entity.subjectOfProperty}
+        entityMap={results.propertyDocsMap}
+        onNewDetailHandle={onNewDetailHandle}
+      />
+      <EntityDocsList
+        name='Range of '
+        idsList={results.entity.valueOfProperty}
+        entityMap={results.propertyDocsMap}
         onNewDetailHandle={onNewDetailHandle}
       />
     </Stack>

@@ -40,7 +40,7 @@ export class PropertyOneDistanceDocsExpander extends PropertySurroundingsExpande
 
     // Properties
     materializeEntitiesWithContext(this.startProperty.subpropertyOf, this.properties, propertiesPresent, surroundingProperties);
-    // materializeEntitiesWithContext(this.startProperty.subproperties, this.properties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.subproperties, this.properties, propertiesPresent, surroundingProperties);
     materializeEntitiesWithContext(this.startProperty.relatedProperty, this.properties, propertiesPresent, surroundingProperties);
     materializeEntitiesWithContext(this.startProperty.complementaryProperty, this.properties, propertiesPresent, surroundingProperties);
     materializeEntitiesWithContext(this.startProperty.relatedProperty, this.properties, propertiesPresent, surroundingProperties);

@@ -13,9 +13,13 @@ import { useQuery } from 'react-query';
 import { useState, useEffect } from 'react';
 import { GetSearchReply } from '../../wikidata/query-types/get-search';
 import axios from 'axios';
-import { WdEntity, WdEntityDocsOnly } from '../../wikidata/entities/wd-entity';
+import {
+  WdEntity,
+  WdEntityDocsOnly,
+  isEntityPropertyDocs,
+} from '../../wikidata/entities/wd-entity';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
-import { DetailList } from './DetailListDialog';
+import { DetailList } from '../entity-detail/DetailListDialog';
 
 async function search(query: string): Promise<GetSearchReply> {
   return (await axios.get(`/api/v1/search?query=${query}&searchClasses=true&searchProperties=true`))
@@ -132,11 +136,16 @@ export function SearchList({
             setDetailOpened(false);
             setDetailEntity(undefined);
           }}
-          setNewRootHandle={(newRoot: WdClassDocsOnly) => {
+          onConfirmHandle={(newRoot: WdEntityDocsOnly) => {
             setDetailOpened(false);
             setDetailEntity(undefined);
-            setNewRootHandle(newRoot);
+            // Assuming it is never activated with invalid condition.
+            setNewRootHandle(newRoot as WdClassDocsOnly);
           }}
+          disableConfirmOn={(wdEntityDocs: WdEntityDocsOnly) => {
+            return isEntityPropertyDocs(wdEntityDocs);
+          }}
+          confirmButtonText='Select as root'
         />
       ) : (
         <></>

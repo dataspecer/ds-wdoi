@@ -17,12 +17,16 @@ export function DetailList({
   detailOpened,
   detailEntity,
   onCloseHandle,
-  setNewRootHandle,
+  onConfirmHandle,
+  disableConfirmOn,
+  confirmButtonText,
 }: {
   detailOpened: boolean;
   detailEntity: WdEntityDocsOnly | undefined;
   onCloseHandle: () => void;
-  setNewRootHandle: (newRoot: WdClassDocsOnly) => void;
+  onConfirmHandle: (newRoot: WdEntityDocsOnly) => void;
+  disableConfirmOn: (wdEntityDocs: WdEntityDocsOnly) => boolean;
+  confirmButtonText: string;
 }) {
   const [entitiesList, setEntitiesList] = useState<WdEntityDocsOnly[]>([]);
 
@@ -79,10 +83,10 @@ export function DetailList({
         </Button>
         <Button
           variant='text'
-          disabled={currentEntityIsPropertyDocs}
-          onClick={() => setNewRootHandle(currentEntity as WdClassDocsOnly)}
+          disabled={disableConfirmOn(currentEntity)}
+          onClick={() => onConfirmHandle(currentEntity)}
         >
-          Select As root
+          {confirmButtonText}
         </Button>
         <Button variant='text' onClick={onCloseHandle}>
           Cancel

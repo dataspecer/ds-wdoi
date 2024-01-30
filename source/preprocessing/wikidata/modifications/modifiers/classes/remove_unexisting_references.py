@@ -8,6 +8,8 @@ class RemoveUnexistingReferencesClasses(ModifierPart):
     def __call__(self, wd_entity) -> None:
         wd_entity["subclassOf"] = self.filter_existing_classes(wd_entity["subclassOf"])
         wd_entity["instanceOf"] = self.filter_existing_classes(wd_entity["instanceOf"])
+        wd_entity["instances"] = self.filter_existing_classes(wd_entity["instances"])
+        wd_entity["children"] = self.filter_existing_classes(wd_entity["children"])
         wd_entity["propertiesForThisType"] = self.filter_existing_properties(wd_entity["propertiesForThisType"])
     
     def report_status(self) -> None:
