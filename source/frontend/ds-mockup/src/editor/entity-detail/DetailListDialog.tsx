@@ -13,7 +13,7 @@ import { WdPropertyDocsOnly } from '../../wikidata/entities/wd-property';
 import { ClassDetail } from './ClassDetail';
 import { PropertyDetail } from './PropertyDetail';
 
-export function DetailList({
+export function DetailListDialog({
   detailOpened,
   detailEntity,
   onCloseHandle,

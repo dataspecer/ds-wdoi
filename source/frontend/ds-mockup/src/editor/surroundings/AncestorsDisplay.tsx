@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
-import { WdClass } from '../../wikidata/entities/wd-class';
+import { useMemo, useState } from 'react';
+import { WdClass, WdClassDocsOnly } from '../../wikidata/entities/wd-class';
 import { ClassSurroundings } from '../../wikidata/query/get-surroundings';
 import React from 'react';
-import { EntityId, EntityIdsList } from '../../wikidata/entities/wd-entity';
+import { EntityId, EntityIdsList, WdEntityDocsOnly } from '../../wikidata/entities/wd-entity';
 import {
   Accordion,
   AccordionSummary,
@@ -17,6 +17,8 @@ import {
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
+import { DetailListDialog } from '../entity-detail/DetailListDialog';
 
 export function AncestorsDisplay({
   rootSuroundings,
@@ -27,6 +29,13 @@ export function AncestorsDisplay({
 }) {
   const [selectedParentLocal, setSelectedParentLocal] = useState<WdClass | undefined>(undefined);
   const [searchTextInput, setSearchTextInput] = useState('');
+  const [detailOpened, setDetailOpened] = useState(false);
+  const [detailEntity, setDetailEntity] = useState<WdClass | undefined>(undefined);
+
+  function handleCloseDetail() {
+    setDetailEntity(undefined);
+    setDetailOpened(false);
+  }
 
   const classesToDisplay = useMemo<EntityIdsList>(() => {
     const classes = [rootSuroundings.startClass, ...rootSuroundings.parents];
@@ -91,8 +100,19 @@ export function AncestorsDisplay({
                   >
                     Select
                   </Button>
+                  <IconButton
+                    edge='end'
+                    aria-label='comments'
+                    onClick={() => {
+                      setDetailOpened(true);
+                      setDetailEntity(cls);
+                    }}
+                  >
+                    <InfoTwoToneIcon />
+                  </IconButton>
                 </AccordionSummary>
                 <AccordionDetails>
+                  <Typography>Children</Typography>
                   <List>
                     {cls.subclassOf.map((subclassId) => {
                       const subclass = rootSuroundings.classesMap.get(subclassId) as WdClass;
@@ -133,6 +153,20 @@ export function AncestorsDisplay({
           );
         })}
       </div>
+      {detailOpened ? (
+        <DetailListDialog
+          detailOpened={detailOpened}
+          detailEntity={detailEntity as WdClassDocsOnly}
+          confirmButtonText='OK'
+          onCloseHandle={handleCloseDetail}
+          onConfirmHandle={(newRoot: WdEntityDocsOnly) => {
+            handleCloseDetail();
+          }}
+          disableConfirmOn={() => false}
+        ></DetailListDialog>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

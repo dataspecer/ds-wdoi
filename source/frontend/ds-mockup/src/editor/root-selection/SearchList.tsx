@@ -19,7 +19,7 @@ import {
   isEntityPropertyDocs,
 } from '../../wikidata/entities/wd-entity';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
-import { DetailList } from '../entity-detail/DetailListDialog';
+import { DetailListDialog } from '../entity-detail/DetailListDialog';
 
 async function search(query: string): Promise<GetSearchReply> {
   return (await axios.get(`/api/v1/search?query=${query}&searchClasses=true&searchProperties=true`))
@@ -129,7 +129,7 @@ export function SearchList({
         </List>
       </Stack>
       {detailOpened ? (
-        <DetailList
+        <DetailListDialog
           detailOpened={detailOpened}
           detailEntity={detailEntity}
           onCloseHandle={() => {
