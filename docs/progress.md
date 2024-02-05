@@ -152,11 +152,44 @@ What I used is the SchemaTree recommender.
   - We are contraint by subject type and value type constraints
   - It does not include sorting of the values it points to or originates in.
     - I would have to iterate over the dataset and for each Item property take a look at:
-      - subject item and value item
-      - look at the items and mark that the items were of the type (instance of)
+      - Subject item and value item
+      - Look at the items and mark that the items were of the type (instance of)
       - in other words accumulate usage of instances of both ends for each Item property
-      - why not other properties? because only item properties can produce these outputs
-    - why i dont want to do this?
-      - because it seems like a lot of work for a small thing
+      - Why not other properties? because only item properties can produce these outputs
+    - Why i dont want to do this?
+      - Because it seems like a lot of work for a small thing
 
 ## The fourth iteration
+
+The iteration consists of two phases
+The first one is the mockup and the second one is the upgrade of the recommendations.
+
+- Mockup with react
+  - The aim was to create a mockup with some of my ideas from previsous figma design
+  - Itself the mockup works with the data from the backend, it is not a simple mockup with artificial data
+  - Each design includes description of what it did in each of the main phases
+  1. design
+       - Root search
+         - The user can search by property or by class name
+         - After clicking detail the user can browse the classes or properties and click back button as in browser history
+         - Cons:
+           - The search by property is not intuitive, since it seems we are choosing property as a root
+           - Although the thought is a good one
+       - Associations hierarchy of parents
+         - I tried to implement the forward list for parents
+         - The list itself is still on the right
+         - The only difference is that the user can open a small accordion and display the direct parents of the class
+         - Also in the opened accordion a user can click to forward scroll to the class as if browsing
+         - With search bar based on string
+         - Ideas:  
+           - The questions is wheter do we need the parents at all
+           - The graph itself is not a good representation since it wont tell user much
+       - The property associations
+         - A simple search bar based on strings
+         - Displaying inherited properties and Own properties
+       - **Thoughts on the design**
+         -  The search by property is not intuitive, since it seems we are choosing property as a root
+         -  The question is whether do we need the parents bar
+         -  The range for properties should be displayed after the click
+         -  There should be added properties of qualifiers and other with no range or domain
+         -  Maybe I could choose a different lists based on backward or inward associations

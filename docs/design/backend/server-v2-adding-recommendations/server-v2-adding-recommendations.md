@@ -20,9 +20,9 @@ The pipeline will precompute recommendations for each class:
 
 ## Limitations of recommendations
 
-- The recommender is able to recommend only used properties.
+- **The recommender is able to recommend only used properties.**
 - For the missing entities we assign probability zero
-- We are contraint by subject type and value type constraints
+- **We are contraint by subject type and value type constraints**
 - It does not include sorting of the values it points to or originates in.
   - I would have to iterate over the dataset and for each Item property take a look at:
     - subject item and value item
