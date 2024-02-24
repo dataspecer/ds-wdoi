@@ -8,6 +8,13 @@ class UnderlyingTypes(IntEnum):
     QUANTITY = 3
     GLOBE_COORDINATE = 4
     
+    
+def is_allowed_property_datatype(datatype: str):
+    if datatype != Datatypes.LEXEME and datatype != Datatypes.FORM and datatype != Datatypes.SENSE and datatype != Datatypes.PROPERTY:
+        return True
+    else:
+        return False
+
 class Datatypes(StrEnum):
     ITEM = ("wikibase-item", UnderlyingTypes.ENTITY)	
     PROPERTY = ("wikibase-property", UnderlyingTypes.ENTITY)
