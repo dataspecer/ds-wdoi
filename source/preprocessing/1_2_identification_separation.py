@@ -12,8 +12,8 @@ logger = logging.getLogger("identification-separation")
 @timer.timed(logger)
 def __main(args):
     try:
-        wd_entity_ids_set: set = ph1.identify_classes_properties(args.bz2DumpFile)
-        ph2.separate_to_files(args.bz2DumpFile, wd_entity_ids_set)
+        wd_classes_ids_set, wd_properties_ids_set = ph1.identify_classes_properties(args.bz2DumpFile)
+        ph2.separate_to_files(args.bz2DumpFile, wd_classes_ids_set, wd_properties_ids_set)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.critical("Exiting...")
