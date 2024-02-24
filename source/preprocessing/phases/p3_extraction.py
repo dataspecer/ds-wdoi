@@ -4,17 +4,17 @@ import logging
 import wikidata.json_extractors.wd_fields as wd_fields_ex
 import wikidata.model.entity_types as wd_entity_types
 import utils.decoding as decoding
-from wikidata.transformations.wd_class import transform_wd_class
-from wikidata.transformations.wd_property import transform_wd_property
+from wikidata.extraction.wd_class import extract_wd_class
+from wikidata.extraction.wd_property import extract_wd_property
 import utils.logging as ul
 from utils.timer import timed
 
-main_logger = logging.getLogger("transformation")
-classes_logger = main_logger.getChild("p3_transform_classes")
-properties_logger = main_logger.getChild("p3_transform_properties")
+main_logger = logging.getLogger("extraction")
+classes_logger = main_logger.getChild("p3_extract_classes")
+properties_logger = main_logger.getChild("p3_extract_properties")
 
-CLASSES_OUTPUT_FILE = "classes-tran.json"
-PROPERTIES_OUTPUT_FILE = 'properties-tran.json'
+CLASSES_OUTPUT_FILE = "classes-ex.json"
+PROPERTIES_OUTPUT_FILE = 'properties-ex.json'
 
 def __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages):
     try:
@@ -27,7 +27,7 @@ def __process_wd_entity(wd_entity, output_file, transform_func, type_check_func,
     except:    
         logger.exception("There was an error during transformation.")
     
-def __transform_entities(bz2_file_path: pathlib.Path, output_file_name, transform_func, type_check_func, logger, logging_step, languages):
+def __extract_entities(bz2_file_path: pathlib.Path, output_file_name, transform_func, type_check_func, logger, logging_step, languages):
     with (bz2.BZ2File(bz2_file_path) as bz2_input_file,
           open(output_file_name, "wb") as output_file
         ):
@@ -37,10 +37,10 @@ def __transform_entities(bz2_file_path: pathlib.Path, output_file_name, transfor
             decoding.close_json_array_in_files([output_file])
 
 @timed(classes_logger)
-def transform_classes(bz2_file_path: pathlib.Path, languages):
-    __transform_entities(bz2_file_path, CLASSES_OUTPUT_FILE, transform_wd_class, wd_entity_types.is_wd_entity_item, classes_logger, ul.CLASSES_PROGRESS_STEP, languages)
+def extract_classes(bz2_file_path: pathlib.Path, languages):
+    __extract_entities(bz2_file_path, CLASSES_OUTPUT_FILE, extract_wd_class, wd_entity_types.is_wd_entity_item, classes_logger, ul.CLASSES_PROGRESS_STEP, languages)
 
 @timed(properties_logger)
-def transform_properties(bz2_file_path: pathlib.Path, languages):
-    __transform_entities(bz2_file_path, PROPERTIES_OUTPUT_FILE, transform_wd_property, wd_entity_types.is_wd_entity_property, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages)
+def extract_properties(bz2_file_path: pathlib.Path, languages):
+    __extract_entities(bz2_file_path, PROPERTIES_OUTPUT_FILE, extract_wd_property, wd_entity_types.is_wd_entity_property, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages)
     

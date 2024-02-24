@@ -1,7 +1,7 @@
 import pathlib
 import logging 
 import utils.decoding as decoding
-import wikidata.json_extractors.wd_fields as wd_fields_ex
+import wikidata.json_extractors.wd_fields as wd_json_fields_ex
 from wikidata.model.entity_json_fields import RootFields
 import utils.elastic_search as es
 import utils.logging as ul
@@ -15,7 +15,7 @@ def __construct_field_lang_key(field: RootFields, lang: str):
     return str(field) + "_" + lang
 
 def __add_language_value_from_field(language_field_map, wd_entity, field: RootFields, language, default_value = ""):
-    wd_language_object = wd_fields_ex.extract_from_wd_json(wd_entity, field)
+    wd_language_object = wd_json_fields_ex.extract_from_wd_json(wd_entity, field)
     lang_key = __construct_field_lang_key(field, language)
     if wd_language_object != None and language in wd_language_object:
         language_field_map[lang_key] = wd_language_object[language]
@@ -33,7 +33,7 @@ def __generate_elastic_input(wd_entity, languages, elastic_index_name):
     elastic_input =  {
         "_op_type": "index",
         "_index": elastic_index_name,
-        "_id": wd_fields_ex.extract_wd_id(wd_entity),
+        "_id": wd_json_fields_ex.extract_wd_id(wd_entity),
         "_source": __create_language_map(wd_entity, languages)
     }
     return elastic_input

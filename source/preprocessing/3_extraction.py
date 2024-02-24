@@ -4,10 +4,10 @@ import pathlib
 import logging
 import utils.timer as timer
 
-import phases.p3_transformation_transform_entities as ph3
+import phases.p3_extraction as ph3
 
-LOG_FILE = "info_tran.log"
-logger = logging.getLogger("transformation")
+LOG_FILE = "info_ex.log"
+logger = logging.getLogger("extraction")
 DEFAULT_LANGUAGES = ["en"]
 
 @timer.timed(logger)
@@ -25,12 +25,11 @@ def __main(args):
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(
-                prog="Class and properties transformator",
-                description="""The script transforms extracted classes and properties from previous step (extraction).
-                               The outputs are two files "classes.json" and "properties.json" uncompressed.
+                prog="Classes and properties extractor",
+                description="""The script extracts classes and properties from previous step (extraction) into a new simplified data model.
+                               The outputs are two files "classes-ex.json" and "properties-ex.json" uncompressed.
                                The algorithm works in two phases.
-                               The first phase transforms classes and the second phase transforms properties.
-                               The output files are ment to be input to the server.
+                               The first phase extracts classes and the second phase extracts properties.
                             """)
     parser.add_argument("--lang",
                         nargs="+",

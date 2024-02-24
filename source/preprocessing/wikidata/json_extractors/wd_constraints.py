@@ -1,12 +1,12 @@
 
-import wikidata.json_extractors.wd_statements as wd_stmts_ex
+import wikidata.json_extractors.wd_statements as wd_json_stmts_ex
 from wikidata.model.constraints import *
 from wikidata.model.properties import Properties
 from wikidata.model.entity_json_fields import RootFields
 from typing import Literal
 
 def __contains_novalue(collection):
-    if wd_stmts_ex.NO_VALUE in collection:
+    if wd_json_stmts_ex.NO_VALUE in collection:
         return True
     else:
         return False
@@ -42,7 +42,7 @@ def __is_valid_novalue_usage(values) -> bool:
     
 def __get_filter_selected_constraint(constraint):
     def filter_func(statement):
-        stmt_value = wd_stmts_ex._stmt_value_extractor(wd_stmts_ex._entityids_value_extractor, statement)
+        stmt_value = wd_json_stmts_ex._stmt_value_extractor(wd_json_stmts_ex._entityids_value_extractor, statement)
         if stmt_value == constraint:
             return True
         else:
@@ -50,7 +50,7 @@ def __get_filter_selected_constraint(constraint):
     return filter_func
 
 def __extract_wd_constraint_statements(wd_entity_json, constraint):
-    constraint_stmts = wd_stmts_ex._extract_wd_statements_from_field(wd_entity_json, RootFields.CLAIMS, Properties.PROPERTY_CONSTRAINT)
+    constraint_stmts = wd_json_stmts_ex._extract_wd_statements_from_field(wd_entity_json, RootFields.CLAIMS, Properties.PROPERTY_CONSTRAINT)
     return list(filter(__get_filter_selected_constraint(constraint), constraint_stmts))
 
 
@@ -58,7 +58,7 @@ def __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, q
     constraint_stmts = __extract_wd_constraint_statements(wd_entity_json, constraint)
     constraint_qualifier_values = []
     for stmt in constraint_stmts:
-        values = wd_stmts_ex.extract_wd_statement_values(stmt, qualifier_property, field="qualifiers", is_qualifier=True, include_no_value=include_no_value)
+        values = wd_json_stmts_ex.extract_wd_statement_values(stmt, qualifier_property, field="qualifiers", is_qualifier=True, include_no_value=include_no_value)
         constraint_qualifier_values += values
     constraint_qualifier_values = __get_unique_values(constraint_qualifier_values)
     if value_mapping_func != None:
@@ -70,7 +70,7 @@ def __create_allowance_statement_value_tuples(allowance_key_property_values, all
     if __is_statement_value_empty(allowance_key_property_values):
         return None, None
     elif __is_statement_value_empty(allowance_value_property_values):
-        return allowance_key_property_values[0], [wd_stmts_ex.NO_VALUE]
+        return allowance_key_property_values[0], [wd_json_stmts_ex.NO_VALUE]
     else:
         return allowance_key_property_values[0], allowance_value_property_values
         
@@ -79,7 +79,7 @@ def __add_to_statement_allowance_map(map, key, values):
         return
     if key in map:
         if __contains_novalue(values) or __contains_novalue(map[key]):
-            map[key] = [wd_stmts_ex.NO_VALUE]
+            map[key] = [wd_json_stmts_ex.NO_VALUE]
         else:
             map[key] += values
     else:
@@ -105,8 +105,8 @@ def __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constrai
     constraint_stmts = __extract_wd_constraint_statements(wd_entity_json, constraint)
     constraint_statement_value_map = init_map
     for stmt in constraint_stmts:
-        keys = wd_stmts_ex.extract_wd_statement_values(stmt, key_property, field="qualifiers", is_qualifier=True, include_no_value=False)
-        values = wd_stmts_ex.extract_wd_statement_values(stmt, value_property, field="qualifiers", is_qualifier=True, include_no_value=values_include_novalue)
+        keys = wd_json_stmts_ex.extract_wd_statement_values(stmt, key_property, field="qualifiers", is_qualifier=True, include_no_value=False)
+        values = wd_json_stmts_ex.extract_wd_statement_values(stmt, value_property, field="qualifiers", is_qualifier=True, include_no_value=values_include_novalue)
         process_func(constraint_statement_value_map, keys, values)
     return __make_map_values_unique(constraint_statement_value_map)
 
@@ -143,7 +143,7 @@ def extract_wd_allowed_entity_types_values(wd_entity_json):
 def extract_wd_allowed_qualifiers_values(wd_entity_json):
     values = __extract_constraint_values_with_one_qualifier(wd_entity_json, GeneralConstraints.ALLOWED_QUALIFIERS, Properties.PROPERTY, include_no_value=True)
     if not __is_valid_novalue_usage(values):
-        return [wd_stmts_ex.NO_VALUE]
+        return [wd_json_stmts_ex.NO_VALUE]
     else:
         return values
     

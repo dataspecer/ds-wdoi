@@ -3,7 +3,7 @@ import argparse
 import pathlib
 import logging
 import utils.timer as timer
-import phases.p4_semantic_modification as ph4
+import phases.p4_modification as ph4
 
 LOG_FILE = "info_mod.log"
 logger = logging.getLogger("modification")
@@ -20,22 +20,16 @@ def __main(args):
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(
-                prog="Modify samantically classes and properties",
+                prog="Modify strcture and semantics of classes and properties.",
                 description="""The scripts loads all the data from previous step and modifies them.
-                                For classes:
-                                    1. removes unexisting references from statements
-                                    2. assign children references to parents.
-                                    3. makes all classes rooted
-                                For properties:
-                                    1. removes unexisting references from statements (constraints included)
-                                    2. assignes subject and object values to the classes 
+                                For futher information refer to the project readme.
                             """)
     parser.add_argument("classesJsonFile",
                         type=pathlib.Path, 
-                        help="A path to the transformed classes json file.")
+                        help="A path to the extracted classes json file.")
     parser.add_argument("propertiesJsonFile",
                         type=pathlib.Path, 
-                        help="A path to the transformed properties json file.")
+                        help="A path to the extracted properties json file.")
     args = parser.parse_args()
     
     __main(args)

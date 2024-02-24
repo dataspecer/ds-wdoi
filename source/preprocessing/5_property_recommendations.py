@@ -22,9 +22,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
                 prog="Precompute recommendations of properties for classes",
                 description="""The scripts loads all the data from previous step and precomputes recommendations of properties for classes.
-                               It connects to the recommender server and then for each class it sorts it is subjectOf and valueOf properties based on probabilities.
-                               It produces three files:
-                                1. Containing global ranking of properties.
+                               It connects to the recommender server and then for each class it sorts it's subjectOf and valueOf properties based on probabilities.
+                               It produces four files:
+                                1. Containing global ranking of properties based on domain of properties.
+                                2. Containing global ranking of properties based on range of properties.
                                 2. Containing classes.
                                 3. Containing properties.
                             """)

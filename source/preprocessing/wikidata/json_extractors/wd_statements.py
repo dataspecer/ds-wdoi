@@ -1,4 +1,4 @@
-import wikidata.json_extractors.wd_fields as wd_fields
+import wikidata.json_extractors.wd_fields as wd_json_fields_ex
 from wikidata.model.properties import Properties
 from wikidata.model.properties import UnderlyingTypes
 from wikidata.model.entity_json_fields import RootFields
@@ -56,7 +56,7 @@ def _stmt_value_extractor(typed_extractor, statement, is_qualifier: bool = False
         return None
 
 def _extract_wd_statements_from_field(wd_json, field: str, property: Properties):
-    statements_json = wd_fields.extract_from_wd_json(wd_json, field)
+    statements_json = wd_json_fields_ex.extract_from_wd_json(wd_json, field)
     if statements_json != None:
         if property in statements_json:
             return __exclude_deprecated_statements(statements_json[property])
@@ -85,7 +85,7 @@ def extract_wd_statement_values(wd_json, property: Properties, *, field: str | N
     return _extract_wd_statements_values(statements, typed_extractor, is_qualifier, include_no_value)
 
 def contains_wd_subclass_of_statement(wd_entity_json) -> bool:
-    claims = wd_fields.extract_wd_claims(wd_entity_json)
+    claims = wd_json_fields_ex.extract_wd_claims(wd_entity_json)
     if claims != None and Properties.SUBCLASS_OF in claims:
         return True
     else:
