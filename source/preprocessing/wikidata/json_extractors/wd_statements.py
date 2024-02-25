@@ -78,14 +78,14 @@ def _extract_wd_statements_values(statements, typed_extractor, is_qualifier: boo
     In that case, the novalue is returned as a non existent identifier Q0.
 """
 def extract_wd_statement_values(wd_json, property: Properties, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
-    return __extract_wd_statement_values_dynamic_prop(wd_json, property, property.underlyingType, field=field, is_qualifier=is_qualifier, include_no_value=include_no_value)
+    return _extract_wd_statement_values_dynamic_prop(wd_json, property, property.underlyingType, field=field, is_qualifier=is_qualifier, include_no_value=include_no_value)
     # statements = wd_json
     # if field != None:
     #     statements = _extract_wd_statements_from_field(wd_json, field, property)
     # typed_extractor = __get_typed_extractor(property, property.underlyingType)
     # return _extract_wd_statements_values(statements, typed_extractor, is_qualifier, include_no_value)
 
-def __extract_wd_statement_values_dynamic_prop(wd_json, str_property_id: str, underlyingType: UnderlyingTypes, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
+def _extract_wd_statement_values_dynamic_prop(wd_json, str_property_id: str, underlyingType: UnderlyingTypes, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
     statements = wd_json
     if field != None:
         statements = _extract_wd_statements_from_field(wd_json, field, str_property_id)

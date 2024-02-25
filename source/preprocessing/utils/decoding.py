@@ -53,7 +53,7 @@ def entities_generator(json_file, logger, logging_step, context_message_func = _
             if wd_entity != None:
                 yield wd_entity
         except Exception as e:
-            logger.exception("There was an error during decoding of an entity.")
+            logger.exception(f"There was an error during decoding of an entity on line {i}.")
         i += 1
         ul.try_log_progress(logger, i, logging_step, context_message_func())
     ul.log_progress(logger, i, context_message_func())

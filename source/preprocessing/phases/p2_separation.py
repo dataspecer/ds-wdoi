@@ -5,8 +5,9 @@ import utils.counter as counter
 import wikidata.json_extractors.wd_fields as wd_json_fields_ex
 import wikidata.model.entity_types as wd_entity_types
 import utils.decoding as decoding
-from wikidata.model.entity_json_fields import RootFields
 import utils.logging as ul
+from wikidata.model.entity_json_fields import RootFields
+from wikidata.statistics.property_usage import PropertyUsageStatistics
 from utils.timer import timed
 
 logger = logging.getLogger("separation").getChild("p2_separate_to_files")
@@ -53,14 +54,16 @@ def __process_wd_entity(wd_entity, classes_output_file, properties_output_file, 
                 __process_wd_item(wd_entity, classes_output_file, class_counter)
     except:
         logger.exception("There was an error during processing of an entity.")
+        
     
-def __separate_to_files(bz2_input_file, classes_output_file, properties_output_file, wd_classes_ids_set: set, wd_properties_ids_dict: dict, class_counter, property_counter):    
+def __separate_to_files(bz2_input_file, classes_output_file, properties_output_file, wd_classes_ids_set: set, wd_properties_ids_dict: dict, class_counter, property_counter, property_statistics: PropertyUsageStatistics):    
     for wd_entity in decoding.entities_generator(bz2_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict)):
         __process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict) 
+        property_statistics.process_entity(wd_entity)
     __log_sum_progress(class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict)
 
 @timed(logger)
-def separate_to_files(bz2_dump_file_path: pathlib.Path, wd_classes_ids_set: set, wd_properties_ids_dict: dict):
+def separate_to_files(bz2_dump_file_path: pathlib.Path, wd_classes_ids_set: set, wd_properties_ids_dict: dict, property_statistics: PropertyUsageStatistics):
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file,
           bz2.BZ2File(CLASSES_OUTPUT_FILE, "w") as classes_output_file,
           bz2.BZ2File(PROPERTIES_OUTPUT_FILE, "w") as properties_output_file
@@ -68,6 +71,6 @@ def separate_to_files(bz2_dump_file_path: pathlib.Path, wd_classes_ids_set: set,
             class_counter = counter.Counter()
             property_counter = counter.Counter()
             decoding.init_json_array_in_files([classes_output_file, properties_output_file])
-            __separate_to_files(bz2_input_file, classes_output_file, properties_output_file, wd_classes_ids_set, wd_properties_ids_dict, class_counter, property_counter)
+            __separate_to_files(bz2_input_file, classes_output_file, properties_output_file, wd_classes_ids_set, wd_properties_ids_dict, class_counter, property_counter, property_statistics)
             decoding.close_json_array_in_files([classes_output_file, properties_output_file])
                 

@@ -5,8 +5,8 @@ import wikidata.json_extractors.wd_fields as wd_json_fields_ex
 import wikidata.json_extractors.wd_statements as wd_json_stmts_ex
 import wikidata.model.entity_types as wd_entity_types
 from wikidata.model.properties import Properties
-from wikidata.model.properties import Datatypes
 from wikidata.model.properties import is_allowed_property_datatype
+from wikidata.statistics.property_usage import PropertyUsageStatistics
 import utils.decoding as decoding
 import utils.logging as ul
 from utils.timer import timed
@@ -18,8 +18,8 @@ WD_PARENT_CLASS_ID = "Q16889133"
 def __log_context_func(classes_set, properties_dict):
     def log_context_message():
         capture_classes_set = classes_set
-        capture_properties_set = properties_dict 
-        return f"Found {len(capture_classes_set):,} classes and {len(capture_properties_set):,} properties"
+        capture_properties_dict = properties_dict 
+        return f"Found {len(capture_classes_set):,} classes and {len(capture_properties_dict):,} properties"
     return log_context_message
 
 def __is_wd_entity_class_for_separation(wd_entity, instance_of_ids) -> bool:
@@ -62,12 +62,13 @@ def __process_wd_entity(wd_entity, wd_classes_ids_set: set, wd_properties_ids_di
         logger.exception("There was an error during processing of the entity.")
     
 @timed(logger)
-def identify_classes_properties(bz2_dump_file_path: pathlib.Path):
+def identify_classes_properties(bz2_dump_file_path: pathlib.Path, property_statistics: PropertyUsageStatistics):
     wd_classes_ids_set = set()
     wd_properties_ids_dict = dict()
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file):
         for wd_entity in decoding.entities_generator(bz2_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(wd_classes_ids_set, wd_properties_ids_dict)):
-            __process_wd_entity(wd_entity, wd_classes_ids_set, wd_properties_ids_dict)
+            __process_wd_entity(wd_entity, wd_classes_ids_set, wd_properties_ids_dict, property_statistics)
+            property_statistics.process_entity(wd_entity)
         return wd_classes_ids_set, wd_properties_ids_dict
     
     
