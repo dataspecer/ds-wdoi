@@ -6,6 +6,7 @@ import wikidata.json_extractors.wd_statements as wd_json_stmts_ex
 import wikidata.model.entity_types as wd_entity_types
 from wikidata.model.properties import Properties
 from wikidata.model.properties import is_allowed_property_datatype
+from wikidata.model.properties import is_allowed_property
 from wikidata.statistics.property_usage import PropertyUsageStatistics
 import utils.decoding as decoding
 import utils.logging as ul
@@ -29,7 +30,7 @@ def __is_wd_entity_class_for_separation(wd_entity, instance_of_ids) -> bool:
         return False
     
 def __is_wd_entity_property_for_separation(wd_entity, str_entity_id: str) -> bool:
-    if wd_entity_types.is_wd_entity_property(str_entity_id):
+    if wd_entity_types.is_wd_entity_property(str_entity_id) and is_allowed_property(str_entity_id):
         prop_datatype = wd_json_fields_ex.extract_wd_datatype(wd_entity)
         if is_allowed_property_datatype(prop_datatype):
             return True

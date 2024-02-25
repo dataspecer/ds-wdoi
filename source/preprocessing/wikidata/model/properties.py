@@ -15,6 +15,24 @@ def is_allowed_property_datatype(datatype: str):
     else:
         return False
 
+def is_allowed_property(property_id):
+    if (
+        property_id != Properties.SUBCLASS_OF and 
+        property_id != Properties.INSTANCE_OF and
+        property_id != Properties.MAIN_SUBJECT and 
+        property_id != Properties.FOUND_IN_TAXON and 
+        property_id != Properties.TOPICS_MAIN_CATEGORY and 
+        property_id != Properties.PART_OF and 
+        property_id != Properties.HAS_PARTS and 
+        property_id != Properties.FOUND_IN_TAXON and
+        property_id != Properties.PARENT_TAXON and
+        property_id != Properties.INDIVIDUAL_OF_TAXON and
+        property_id != Properties.HAS_EFFECT and 
+        property_id != Properties.TOPICS_MAIN_TEMPLATE 
+    ):
+        return True
+    else:
+        return False
 class Datatypes(StrEnum):
     ITEM = ("wikibase-item", UnderlyingTypes.ENTITY)	
     PROPERTY = ("wikibase-property", UnderlyingTypes.ENTITY)
@@ -70,11 +88,18 @@ class Properties(StrEnum):
     ITEM_OF_PROPERTY_CONSTRAINT = "P2305", UnderlyingTypes.ENTITY
     PROPERTY = "P2306", UnderlyingTypes.ENTITY
     RELATION = "P2309", UnderlyingTypes.ENTITY
-    CLASS = "P2308", UnderlyingTypes.ENTITY
+    MAIN_SUBJECT = "P921", UnderlyingTypes.ENTITY
+    FOUND_IN_TAXON = "P703", UnderlyingTypes.ENTITY
+    TOPICS_MAIN_CATEGORY = "P910", UnderlyingTypes.ENTITY
+    PART_OF = "P361", UnderlyingTypes.ENTITY
+    HAS_PARTS = "P527", UnderlyingTypes.ENTITY
+    PARENT_TAXON = "P171", UnderlyingTypes.ENTITY
+    INDIVIDUAL_OF_TAXON = "P10241", UnderlyingTypes.ENTITY
+    HAS_EFFECT = "P1542", UnderlyingTypes.ENTITY
+    TOPICS_MAIN_TEMPLATE = "P1424", UnderlyingTypes.ENTITY
     
     def __new__(cls, value: str, type: UnderlyingTypes):
         obj =  str.__new__(cls, value)
         obj._value_ = value
         obj.underlyingType = type
         return obj
-    

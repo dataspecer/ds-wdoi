@@ -39,10 +39,19 @@ class PropertyUsageStatistics:
             "range": dict(),
             "counter": count_init
         }
+        
+        
+    # def _fake_props(self):
+    #     fake = dict()
+    #     for i in range(13_000):
+    #         x = f"P{i}"
+    #         fake[x] = Datatypes.ITEM
+    #     return fake
     
     def first_pass_finished(self, classes_ids_set: set, properties_ids_to_datatype_dict: dict) -> None:
         self.classes_ids_set = classes_ids_set
         self.properties_ids_to_datatype_dict = properties_ids_to_datatype_dict
+        # self.properties_ids_to_datatype_dict = self._fake_props()
         self.is_first_pass_finished = True
         self._create_new_class_property_usage_records()
     
@@ -70,11 +79,11 @@ class PropertyUsageStatistics:
             range_prop_usage_record["range"][object_class_id] += count
 
     def _assign_property_usage_to_classes(self, subject_classes_ids, property_id, *, count, object_class_id: str | None):
-        for subject_class_id in subject_classes_ids:
-            if subject_class_id in self.class_property_usage_dict:
-                if object_class_id != None and object_class_id not in self.classes_ids_set:
-                    return
-                else:
+        if (count != 0):
+            for subject_class_id in subject_classes_ids:
+                if subject_class_id in self.class_property_usage_dict:
+                    if object_class_id != None and object_class_id not in self.classes_ids_set:
+                        return
                     property_usage_record = self.class_property_usage_dict[subject_class_id]
                     self._assign_domain_usage(property_usage_record, property_id, count)
                     if object_class_id != None:
@@ -83,7 +92,7 @@ class PropertyUsageStatistics:
     def _process_item_property(self, subject_wd_entity, subject_str_entity_id, property_id):
         property_statement_values = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
         for object_str_entity_id in property_statement_values:
-            if object_str_entity_id in self.entity_to_instance_of_dict and len(self.entity_to_instance_of_dict[object_str_entity_id]) != 0:
+            if object_str_entity_id in self.entity_to_instance_of_dict and len(self.entity_to_instance_of_dict[object_str_entity_id]) != 0 and object_str_entity_id != wd_json_stmts_ex.NO_VALUE:
                 for object_str_entity_class_id in self.entity_to_instance_of_dict[object_str_entity_id]:
                     self._assign_property_usage_to_classes(self.entity_to_instance_of_dict[subject_str_entity_id], property_id, count=1, object_class_id=object_str_entity_class_id)
         
@@ -173,7 +182,7 @@ class PropertyUsageStatistics:
                 "property": wd_json_fields_ex.extract_wd_numeric_id_part(property_id),
                 "probability": record["probability"]
             })
-    
+            
     def _summarize_domain_range_dict(self, property_id, usage_dict: dict, *, add_to_value_of: bool = False, classes_statistics_dict = None):
         total_count = sum([value for value in usage_dict.values()])
         summary = []
@@ -193,13 +202,8 @@ class PropertyUsageStatistics:
             stats_record["valueTypeStats"] = self._summarize_domain_range_dict(property_id, stats_record["valueTypeStats"], add_to_value_of=True, classes_statistics_dict=classes_statistics_dict)
     
     def _sort_value_of_in_classes(self, classes_statistics_dict: dict):
-        def change_id_func(record):
-            record["property"] = wd_json_fields_ex.extract_wd_numeric_id_part(record["property"])
-            return record
-        
         for record in classes_statistics_dict.values():
             record["valueOfStatsProbs"].sort(reverse=True, key=lambda x: x["probability"])
-            record["valueOfStatsProbs"] = list(map(change_id_func, record["valueOfStatsProbs"]))
         
     def _compute_statistics(self, classes_statistics_dict, properties_statistics_dict):
         i = 1
