@@ -67,7 +67,7 @@ def identify_classes_properties(bz2_dump_file_path: pathlib.Path, property_stati
     wd_properties_ids_dict = dict()
     with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file):
         for wd_entity in decoding.entities_generator(bz2_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(wd_classes_ids_set, wd_properties_ids_dict)):
-            __process_wd_entity(wd_entity, wd_classes_ids_set, wd_properties_ids_dict, property_statistics)
+            __process_wd_entity(wd_entity, wd_classes_ids_set, wd_properties_ids_dict)
             property_statistics.process_entity(wd_entity)
         return wd_classes_ids_set, wd_properties_ids_dict
     

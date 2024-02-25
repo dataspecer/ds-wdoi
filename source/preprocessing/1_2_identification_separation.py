@@ -36,7 +36,6 @@ if __name__ == "__main__":
                             The second phase iterates over the dump again separating classes and properties into separate files.
                             """)
     parser.add_argument("bz2DumpFile",
-                        required=True,
                         type=pathlib.Path, 
                         help="A path to the Wikidata .bz2 json dump file.")
     args = parser.parse_args()

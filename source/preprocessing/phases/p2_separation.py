@@ -12,8 +12,8 @@ from utils.timer import timed
 
 logger = logging.getLogger("separation").getChild("p2_separate_to_files")
 
-CLASSES_OUTPUT_FILE = "classes.json.bz2"
-PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
+CLASSES_OUTPUT_FILE = "classes-test.json.bz2"
+PROPERTIES_OUTPUT_FILE = "properties-test.json.bz2"
 
 def __log_context_func(class_counter, property_counter, classes_set, properties_dict):
     def log_context_message():
