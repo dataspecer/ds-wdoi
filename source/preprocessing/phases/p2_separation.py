@@ -10,10 +10,10 @@ from wikidata.model.entity_json_fields import RootFields
 from wikidata.statistics.property_usage import PropertyUsageStatistics
 from utils.timer import timed
 
-logger = logging.getLogger("separation").getChild("p2_separate_to_files")
+logger = logging.getLogger("identification-separation").getChild("p2_separate_to_files")
 
-CLASSES_OUTPUT_FILE = "classes-test.json.bz2"
-PROPERTIES_OUTPUT_FILE = "properties-test.json.bz2"
+CLASSES_OUTPUT_FILE = "classes.json.bz2"
+PROPERTIES_OUTPUT_FILE = "properties.json.bz2"
 
 def __log_context_func(class_counter, property_counter, classes_set, properties_dict):
     def log_context_message():
@@ -33,7 +33,8 @@ def __log_sum_progress(class_counter, property_counter, classes_set, properties_
 
 # Sitelinks are not used in the ontology.
 def __reduce_wd_entity(wd_entity):
-    wd_entity[RootFields.SITELINKS] = None
+    if RootFields.SITELINKS in wd_entity:
+        wd_entity[RootFields.SITELINKS] = None
     return wd_entity
 
 def __process_wd_item(wd_entity, classes_output_file, class_counter):
@@ -41,7 +42,7 @@ def __process_wd_item(wd_entity, classes_output_file, class_counter):
     class_counter.inc()
     
 def __process_wd_property(wd_entity, properties_output_file, property_counter):
-    decoding.write_wd_entity_to_file(__reduce_wd_entity(wd_entity), properties_output_file)
+    decoding.write_wd_entity_to_file(wd_entity, properties_output_file)
     property_counter.inc()
 
 def __process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, wd_classes_ids_set: set, wd_properties_ids_dict: dict) -> None:
@@ -55,7 +56,6 @@ def __process_wd_entity(wd_entity, classes_output_file, properties_output_file, 
     except:
         logger.exception("There was an error during processing of an entity.")
         
-    
 def __separate_to_files(bz2_input_file, classes_output_file, properties_output_file, wd_classes_ids_set: set, wd_properties_ids_dict: dict, class_counter, property_counter, property_statistics: PropertyUsageStatistics):    
     for wd_entity in decoding.entities_generator(bz2_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict)):
         __process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict) 

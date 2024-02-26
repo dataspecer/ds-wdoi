@@ -12,7 +12,7 @@ import utils.decoding as decoding
 import utils.logging as ul
 from utils.timer import timed
 
-logger = logging.getLogger("identification").getChild("p1_identify_classes_properties")
+logger = logging.getLogger("identification-separation").getChild("p1_identify_classes_properties")
 
 WD_PARENT_CLASS_ID = "Q16889133"
 

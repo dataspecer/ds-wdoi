@@ -117,11 +117,13 @@ class PropertyUsageStatistics:
     def process_entity(self, wd_entity):
         str_entity_id = wd_json_fields_ex.extract_wd_id(wd_entity)
         if wd_entity_types.is_wd_entity_item(str_entity_id):
-            if self.is_first_pass_finished:
-                self._process_entity_statements(wd_entity, str_entity_id)
-            else:
-                self._store_entity_instance_of_values(wd_entity, str_entity_id)
-             
+            try:
+                if self.is_first_pass_finished:
+                    self._process_entity_statements(wd_entity, str_entity_id)
+                else:
+                    self._store_entity_instance_of_values(wd_entity, str_entity_id)
+            except:
+                self.logger.exception("There was an error during computing statistics.") 
              
 ###################################  
                 
