@@ -22,10 +22,7 @@ Presenting finished mockup and preparation of the intro.
 
 ## Proposals
 
-- after the finish of the mock up we should do a testing
-- instace na vyhledavani 
-- chci i property ktere nemaji domain a range
-- tri moznosti
-  - instance summary predpocitat
-  - nebo to delat uz na frontendu
-  - nebo na zaklade instanci
+- After the finish of the mock up we should do a testing
+- We should try to do other methods of property surroundings in the classes then range/domain constraints.
+  1. We should precompute usage on instances and do our recomendations based on usage statistics.
+  2. We could provide a user with a new prompt to enter instance id which would then provide properties on the given instance.
