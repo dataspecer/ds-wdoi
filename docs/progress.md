@@ -48,19 +48,19 @@ To the next iteration I should prepare the backend and connect it again to the D
   - The "Entity" is a root class for all classes.
   - I will care about subject and object constraints mostly in this iteration.
 - Preprocessing in python
-  1. the first - ids extraction
-     - With the Bz2 file handle I was iterating over the lines of the file and was marking entity ids into a set for extraction to a file in the next step.
+  1. the first - ids identification
+     - With the Bz2 file handle I was iterating over the lines of the file and was marking entity ids into a set for identification to a file in the next step.
      - This is the first pass of the dump file.
      - runs ~ 12 hours
-  2. the second phase - to file extraction 
-    - Using the bz2 file handle again, I was extracting classes and properties into two bz2 files - one for properties and one for classes.
+  2. the second phase - to file separation 
+    - Using the bz2 file handle again, I was separating classes and properties into two bz2 files - one for properties and one for classes.
     - This is the second pass of the dump file.
     - In this step I exluded `sitelinks` from entities, since there is no usefullness in them for the ontology.
     - runs ~ 14 hours and produces ~ 3M classes and ~ 11K properties
-  3. the third phase - transformation    
-     - Iteratig over the produced files from previous step I transformed the entities into a more usefull json format (flattening statements, qualifiers, constraints).
+  3. the third phase - extraction    
+     - Iteratig over the produced files from previous step I extraction the entities from wikidata model into a more usefull json format (flattening statements, qualifiers, constraints).
      - It outputs again two files - one for classes and one for properties, this time in `.json` format.
-     - This step enables to select languages for extraction.
+     - This step enables to select languages for separation.
      - runs ~ 14 mins for classes and ~ 7 secs for properties
   4. the fourth phase - semantic modification
      - To tackle certain errors in the ontology, I modified the entities from previous step and outputed them again into another two files.
