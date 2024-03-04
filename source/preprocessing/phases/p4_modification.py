@@ -115,7 +115,7 @@ def __modify_properties(context: Context):
 def __post_properties_mod_on_stats_references(context: Context):
     logger = classes_logger.getChild("post-properties_mod_on_stats_references")
     modifiers = [
-        RemoveUnexistingReferencesClasses(logger, context),
+        RemoveUnexistingReferencesClasses(logger, context)
     ]
     __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
@@ -130,7 +130,7 @@ After we can safely modify properties.
 """
 @timed(main_logger)
 def __modify_context(context: Context, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
-    __merge_property_usage_stats(classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
+    __merge_property_usage_stats(context, classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
     __remove_entities_with_empty_labels(context)
     __pre_unrooted_classes_removal(context)
     __remove_unrooted_classes(context)

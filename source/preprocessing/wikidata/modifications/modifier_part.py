@@ -31,12 +31,11 @@ class ModifierPart(Modifier):
     def filter_existing_allowance_map(self, allowance_map: dict):
         existing_records = {}
         for str_property_id in allowance_map.keys():
-            num_property_id = int(str_property_id)
-            if num_property_id in self.context.property_map:
-                existing_records[str_property_id] = allowance_map[str_property_id]
+            if str_property_id in self.context.property_map:
+                existing_records[str_property_id] = list(filter(lambda x: x in self.context.property_map or x == "0", allowance_map[str_property_id]))
             else:
-                self.logger.info(f"Found missing reference {id} (is Class = {False})")
-                self.marker_set.add(id)
+                self.logger.info(f"Found missing reference {str_property_id} (is Class = {False})")
+                self.marker_set.add(str_property_id)
         return existing_records
     
     def remove_self_cycle(self, wd_entity, field: str, *, isClass: bool) -> bool:

@@ -106,7 +106,7 @@ The main script is `3_extraction.py`.
       - classes extraction - use `cls`
       - properties extraction - use `props`
       - for both extractions - use `both`
-  - required paths to `classes.json.bz2` and `properties.json.bz2` in the given order
+  - required paths to `classes.json.bz2` and `properties.json.bz2` from previous phase, in the given order
 
         $> python 3_extraction.py both classes.json.bz2 properties.json.bz2
 
@@ -183,9 +183,9 @@ This phase was moved here from server, because this part also takes quite a bit 
 The main script is `4_modification.py`
 
 - input:
-  - required paths to `classes-ex.json` and `properties-ex.json` in the given order from the third phase
+  - required paths to `classes-ex.json`, `properties-ex.json`, `classes-property-usage.json` and `properties-domain-range-usage.json` in the given order, from the 3. phase
 
-        $> python 4_modification.py classes-ex.json properties-ex.json
+        $> python 4_modification.py classes-ex.json properties-ex.json classes-property-usage.json properties-domain-range-usage.json
 
 - output:
   - `classes-mod.json`
@@ -197,23 +197,25 @@ The main script is `4_modification.py`
 ### Modification comments
 
 - The script itself works in steps that depend on one another.
-  1. Remove all entities that have no label, thus cannot be search for or displayed unless you know the specific numeric id.
-  2. Preparing a ground for removing unrooted classes:
+  1. Merge property usage statistics to classes and properties.
+  2. Remove all entities that have no label, thus cannot be search for or displayed unless you know the specific numeric id.
+  3. Preparing a ground for removing unrooted classes:
      1. Add fields to each class: `children`, `instances`, `subjectOf` and `valueOf`. Each field is used by subsequent steps.
-     2. Remove unexisting references from `subclassOf`, `propertiesForThisType`, `instances`, `children` and `instanceOf` fields.
-     3. Remove self cycles of `instanceOf` and `subclassOf`.
+     2. Remove unexisting references from all fields of classes.
+     3. Remove self cycles of `instanceOf` and `subclassOf` in each class.
      4. Mark children to parents, so the hierarchy could be traversed in both directions.
      5. Mark instances to parents, so we get inverse relation for instances.
-  3. Remove unrooted classes recursively.
-  4. Post removing unrooted classes:
+  4. Remove unrooted classes recursively.
+  5. Post removing unrooted classes:
      1. Remove unexisting references again in case it referenced the unrooted entity.
      2. Check that all classes are rooted and that the root is still present.
-  5. Modify properties
+  6. Modify properties
      1. Remove unexisting references from the main statements.
      2. Remove unexisting references from the general constraints.
      3. Remove unexisting references from the item constraints.
      4. Removing self cycles from `subpropertyOf`.
      5. Mark subproperties to parents.
+  7. Remove unexisting references on merged statistics on classes.
   
 The removing references parts are done in order to exclude entities that were not present in the dump during its creation (it is a continual process during live hours).
 If the extraction phase adds more fields to entities, it is necessary to evaluate whether they need checks.

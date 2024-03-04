@@ -30,7 +30,6 @@ def __str_map_to_num_ids_map(map):
         new_map[str(__str_to_num_id(str_prop))] = __str_to_num_ids(str_values)
     return new_map
 
-
 def __extract_entity_type_constraints(wd_property):
     values_types_map = wd_json_const_ex.extract_wd_subject_value_class_values(wd_property, ItemDatatypeConstraints.VALUE_TYPE)
     value_requires_statement = wd_json_const_ex.extract_wd_allowance_statement_values(wd_property, ItemDatatypeConstraints.VALUE_REQUIRES_STATEMENT)

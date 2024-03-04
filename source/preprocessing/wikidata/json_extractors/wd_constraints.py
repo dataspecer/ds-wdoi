@@ -53,7 +53,6 @@ def __extract_wd_constraint_statements(wd_entity_json, constraint):
     constraint_stmts = wd_json_stmts_ex._extract_wd_statements_from_field(wd_entity_json, RootFields.CLAIMS, Properties.PROPERTY_CONSTRAINT)
     return list(filter(__get_filter_selected_constraint(constraint), constraint_stmts))
 
-
 def __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, qualifier_property: Properties, value_mapping_func = None, include_no_value: bool = False):
     constraint_stmts = __extract_wd_constraint_statements(wd_entity_json, constraint)
     constraint_qualifier_values = []
@@ -64,7 +63,6 @@ def __extract_constraint_values_with_one_qualifier(wd_entity_json, constraint, q
     if value_mapping_func != None:
         return list(map(value_mapping_func, constraint_qualifier_values))
     return constraint_qualifier_values
-
 
 def __create_allowance_statement_value_tuples(allowance_key_property_values, allowance_value_property_values):
     if __is_statement_value_empty(allowance_key_property_values):

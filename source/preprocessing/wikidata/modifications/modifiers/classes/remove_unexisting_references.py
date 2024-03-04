@@ -16,8 +16,8 @@ class RemoveUnexistingReferencesClasses(ModifierPart):
         wd_entity[ClassFields.SUBJECT_OF_STATS.value] = self.filter_existing_properties(wd_entity[ClassFields.SUBJECT_OF_STATS.value])
         wd_entity[ClassFields.VALUE_OF_STATS.value] = self.filter_existing_properties(wd_entity[ClassFields.VALUE_OF_STATS.value])
 
-        wd_entity[ClassFields.SUBJECT_OF_STATS_PROBS.value] = filter(lambda x: x["property"] in wd_entity[ClassFields.SUBJECT_OF_STATS.value], wd_entity[ClassFields.SUBJECT_OF_STATS_PROBS.value])
-        wd_entity[ClassFields.VALUE_OF_STATS_PROBS.value] = filter(lambda x: x["property"] in wd_entity[ClassFields.VALUE_OF_STATS.value], wd_entity[ClassFields.VALUE_OF_STATS_PROBS.value])
+        wd_entity[ClassFields.SUBJECT_OF_STATS_PROBS.value] = list(filter(lambda x: x["property"] in wd_entity[ClassFields.SUBJECT_OF_STATS.value], wd_entity[ClassFields.SUBJECT_OF_STATS_PROBS.value]))
+        wd_entity[ClassFields.VALUE_OF_STATS_PROBS.value] = list(filter(lambda x: x["property"] in wd_entity[ClassFields.VALUE_OF_STATS.value], wd_entity[ClassFields.VALUE_OF_STATS_PROBS.value]))
     
     def report_status(self) -> None:
         self.logger.info(f"Missing {len(self.marker_set)} references")

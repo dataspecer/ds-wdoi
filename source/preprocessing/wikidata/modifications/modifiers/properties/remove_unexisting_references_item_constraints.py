@@ -9,7 +9,7 @@ class RemoveUnexistingReferencesItemConstraintsProperties(ModifierPart):
         super().__init__(logger.getChild("rer-properties-item-constraints"), context)
     
     def __call__(self, wd_entity) -> None:
-        if UnderlyingTypes.ENTITY == wd_entity[PropertyFields.UNDERLYING_TYPE.value]:
+        if wd_entity[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:
             itemConstraints = wd_entity[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value]
         
             itemConstraints[ItemConstFields.VALUE_TYPE.value]['instanceOf'] = self.filter_existing_classes(itemConstraints[ItemConstFields.VALUE_TYPE.value]['instanceOf'])

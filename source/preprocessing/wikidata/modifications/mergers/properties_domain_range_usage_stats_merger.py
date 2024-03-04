@@ -3,7 +3,7 @@ from wikidata.modifications.context import *
 import utils.logging as ul
 import pathlib
 import utils.decoding as decoding
-from wikidata.model.properties import Datatypes
+from wikidata.model.properties import UnderlyingTypes
 from wikidata.model_simplified.properties import PropertyFields
 from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
 
@@ -21,7 +21,7 @@ class PropertiesDomainRangeUsageStatsMerger(ModifierFull):
             if property_id in self.context.property_map:
                 wd_property = self.context.property_map[property_id]
                 wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value] = stats_property[GenConstFields.SUBJECT_TYPE_STATS.value]
-                if wd_property[PropertyFields.DATATYPE.value] == Datatypes.ITEM:
+                if wd_property[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:
                     wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] = stats_property[ItemConstFields.VALUE_TYPE_STATS.value]
                 else:
                     pass

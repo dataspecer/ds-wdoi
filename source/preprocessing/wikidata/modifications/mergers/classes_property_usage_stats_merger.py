@@ -19,9 +19,9 @@ class ClassesPropertyUsageStatsMerger(ModifierFull):
             if cls_id in self.context.class_map:
                 wd_class = self.context.class_map[cls_id]
                 wd_class[ClassFields.SUBJECT_OF_STATS_PROBS.value] = stats_class[ClassFields.SUBJECT_OF_STATS_PROBS.value]
-                wd_class[ClassFields.SUBJECT_OF_STATS.value] = list(map(lambda x: x["property"]), stats_class[ClassFields.SUBJECT_OF_STATS_PROBS.value])
+                wd_class[ClassFields.SUBJECT_OF_STATS.value] = list(map(lambda x: x["property"], stats_class[ClassFields.SUBJECT_OF_STATS_PROBS.value]))
                 wd_class[ClassFields.VALUE_OF_STATS_PROBS.value] = stats_class[ClassFields.VALUE_OF_STATS_PROBS.value]
-                wd_class[ClassFields.VALUE_OF_STATS.value] = list(map(lambda x: x["property"]), stats_class[ClassFields.VALUE_OF_STATS_PROBS.value])
+                wd_class[ClassFields.VALUE_OF_STATS.value] = list(map(lambda x: x["property"], stats_class[ClassFields.VALUE_OF_STATS_PROBS.value]))
             else:
                 self.missing_classes.add(cls_id)
                 self.logger.info(f"Found missing class = {cls_id}")

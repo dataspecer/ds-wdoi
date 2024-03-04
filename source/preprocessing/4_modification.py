@@ -11,7 +11,7 @@ logger = logging.getLogger("modification")
 @timer.timed(logger)
 def __main(args):
     try:
-        ph4.modify(args.classesJsonFile, args.propertiesJsonFile)
+        ph4.modify(args.classesJsonFile, args.propertiesJsonFile, args.classesPropertyStatsJsonFile, args.propertiesStatsJsonFile)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")
@@ -26,10 +26,16 @@ if __name__ == "__main__":
                             """)
     parser.add_argument("classesJsonFile",
                         type=pathlib.Path, 
-                        help="A path to the extracted classes json file.")
+                        help="A path to the separated classes json file.")
     parser.add_argument("propertiesJsonFile",
                         type=pathlib.Path, 
-                        help="A path to the extracted properties json file.")
+                        help="A path to the separated properties json file.")
+    parser.add_argument("classesPropertyStatsJsonFile",
+                        type=pathlib.Path, 
+                        help="A path to the property usage statistics on classes json file.")
+    parser.add_argument("propertiesStatsJsonFile",
+                        type=pathlib.Path, 
+                        help="A path to the property domain and range statistics on properties json file.")
     args = parser.parse_args()
     
     __main(args)
