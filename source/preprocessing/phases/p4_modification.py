@@ -111,6 +111,16 @@ def __modify_properties(context: Context):
     __modify_entities(modifiers, context.property_map, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
+@timed(classes_logger)
+def __post_properties_mod_on_stats_references(context: Context):
+    logger = classes_logger.getChild("post-properties_mod_on_stats_references")
+    modifiers = [
+        RemoveUnexistingReferencesClasses(logger, context),
+    ]
+    __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
+    __report_status_of_modifiers(modifiers)
+
+
 """
 The order matters here.
 First we remove entities that has no label.
@@ -126,6 +136,7 @@ def __modify_context(context: Context, classes_property_usage_stats_filename: pa
     __remove_unrooted_classes(context)
     __post_unrooted_classes_removal(context)
     __modify_properties(context)
+    __post_properties_mod_on_stats_references(context)
 
 @timed(main_logger)
 def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):

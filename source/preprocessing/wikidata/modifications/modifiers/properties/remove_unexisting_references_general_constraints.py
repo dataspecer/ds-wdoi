@@ -17,6 +17,8 @@ class RemoveUnexistingReferencesGeneralConstraintsProperties(ModifierPart):
         constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOf'] = self.filter_existing_classes(constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOf'])
         constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOfInstanceOf'] = self.filter_existing_classes(constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOfInstanceOf'])
         
+        constraints[GenConstFields.SUBJECT_TYPE_STATS.value] = self.filter_existing_classes(constraints[GenConstFields.SUBJECT_TYPE_STATS.value])
+        
         constraints[GenConstFields.ITEM_REQUIRES_STATEMENT.value] = self.filter_existing_allowance_map(constraints[GenConstFields.ITEM_REQUIRES_STATEMENT.value])
         constraints[GenConstFields.CONFLICTS_WITH.value] = self.filter_existing_allowance_map(constraints[GenConstFields.CONFLICTS_WITH.value])
     

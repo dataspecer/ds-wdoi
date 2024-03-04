@@ -16,6 +16,8 @@ class RemoveUnexistingReferencesItemConstraintsProperties(ModifierPart):
             itemConstraints[ItemConstFields.VALUE_TYPE.value]['subclassOf'] = self.filter_existing_classes(itemConstraints[ItemConstFields.VALUE_TYPE.value]['subclassOf'])
             itemConstraints[ItemConstFields.VALUE_TYPE.value]['subclassOfInstanceOf'] = self.filter_existing_classes(itemConstraints[ItemConstFields.VALUE_TYPE.value]['subclassOfInstanceOf'])
             
+            itemConstraints[ItemConstFields.VALUE_TYPE_STATS.value] = self.filter_existing_classes(itemConstraints[ItemConstFields.VALUE_TYPE_STATS.value])
+
             itemConstraints[ItemConstFields.VALUE_REQUIRES_STATEMENT.value] = self.filter_existing_allowance_map(itemConstraints[ItemConstFields.VALUE_REQUIRES_STATEMENT.value])
     
             if itemConstraints[ItemConstFields.INVERSE.value] != None:
