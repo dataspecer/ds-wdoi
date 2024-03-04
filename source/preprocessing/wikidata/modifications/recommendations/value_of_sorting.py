@@ -3,6 +3,8 @@ from wikidata.modifications.modifier_full import ModifierFull
 from wikidata.modifications.context import *
 import utils.logging as ul
 from wikidata.model_simplified.classes import ClassFields
+from wikidata.model_simplified.properties import PropertyFields
+from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
 
 class ValueOfSorting(ModifierFull):
     
@@ -32,7 +34,7 @@ class ValueOfSorting(ModifierFull):
             
         def sort_value_getter(prop_id: int):
             if prop_id not in context.global_recs_value_map:
-                compute_new_global_rec_value(prop_id, context.property_map[prop_id]["constraints"]["subjectType"])
+                compute_new_global_rec_value(prop_id, context.property_map[prop_id][PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE.value])
             return context.global_recs_value_map[prop_id]
 
         return sort_value_getter

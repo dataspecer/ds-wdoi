@@ -4,22 +4,23 @@ from wikidata.modifications.modifiers.classes.add_fields import *
 from wikidata.model.constraints import *
 from wikidata.model.properties import *
 from wikidata.model_simplified.classes import ClassFields
-
+from wikidata.model_simplified.properties import PropertyFields
+from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
 class AssignSubjectValueToClasses(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("assign-subject-object"), context)
         self.object_assignment = set()
 
     def __call__(self, wd_entity) -> None:
-        prop_id = wd_entity["id"]
-        constraints = wd_entity["constraints"]
+        prop_id = wd_entity[PropertyFields.ID.value]
+        constraints = wd_entity[PropertyFields.CONSTRAINTS.value]
         if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.datatypeIsNotLexical(wd_entity):
             self.marker_set.add(prop_id)
-            self.assign_type_constraints(constraints["subjectType"], prop_id, ClassFields.SUBJECT_OF.value)
+            self.assign_type_constraints(constraints[GenConstFields.SUBJECT_TYPE.value], prop_id, ClassFields.SUBJECT_OF.value)
             
             if self.isItemProperty(constraints):
                 self.object_assignment.add(prop_id)
-                self.assign_type_constraints(constraints["typeDependent"]["valueType"], prop_id, ClassFields.VALUE_OF.value)
+                self.assign_type_constraints(constraints[GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE.value], prop_id, ClassFields.VALUE_OF.value)
     
     def assign_type_constraints(self, type_constraints, prop_id, field: str):
         self.assign_prop_to_classes_field(type_constraints["instanceOf"], prop_id, field)
@@ -31,17 +32,17 @@ class AssignSubjectValueToClasses(ModifierPart):
             cls[field].append(prop_id)
     
     def canBeUsedAsMainValue(self, constraints) -> bool:
-        return PropertyScopeValues.index_of(PropertyScopeValues.AS_MAIN) in constraints["propertyScope"]
+        return PropertyScopeValues.index_of(PropertyScopeValues.AS_MAIN) in constraints[GenConstFields.PROPERTY_SCOPE.value]
 
     def canBeUsedOnItems(self, constraints) -> bool:
-        return AllowedEntityTypesValues.index_of(AllowedEntityTypesValues.ITEM) in constraints["allowedEntityTypes"]
+        return AllowedEntityTypesValues.index_of(AllowedEntityTypesValues.ITEM) in constraints[GenConstFields.ALLOWED_ENTITY_TYPES.value]
     
     def datatypeIsNotLexical(self, property) -> bool:
-        datatype = property["datatype"]
+        datatype = property[PropertyFields.DATATYPE.value]
         return datatype != Datatypes.index_of("wikibase-lexeme") and datatype != Datatypes.index_of("wikibase-sense") and datatype != Datatypes.index_of("wikibase-form")
     
     def isItemProperty(self, constraints) -> bool:
-        return "valueType" in constraints["typeDependent"]
+        return ItemConstFields.VALUE_TYPE.value in constraints[GenConstFields.TYPE_DEPENDENT.value]
     
     def report_status(self) -> None:
         self.logger.info(f"Assigned {len(self.marker_set)} subject values and {len(self.object_assignment)} object values")

@@ -4,9 +4,8 @@ import utils.logging as ul
 import pathlib
 import utils.decoding as decoding
 from wikidata.model.properties import Datatypes
-
-SUBJECT_TYPE_STATS = "subjectTypeStats"
-VALUE_TYPE_STATS = "valueTypeStats"
+from wikidata.model_simplified.properties import PropertyFields
+from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
 
 class PropertiesDomainRangeUsageStatsMerger(ModifierFull):
     
@@ -18,12 +17,12 @@ class PropertiesDomainRangeUsageStatsMerger(ModifierFull):
     def modify_all(self) -> None:
         properties_domain_range_usage_stats: dict = decoding.load_entities_to_map(self.properties_domain_range_usage_stats_filename, self.logger, ul.PROPERTIES_PROGRESS_STEP)
         for idx, stats_property in enumerate(properties_domain_range_usage_stats.values()):
-            property_id = stats_property["id"]
+            property_id = stats_property[PropertyFields.ID.value]
             if property_id in self.context.property_map:
                 wd_property = self.context.property_map[property_id]
-                wd_property["constraints"][SUBJECT_TYPE_STATS] = stats_property[SUBJECT_TYPE_STATS]
-                if wd_property["datatype"] == Datatypes.ITEM:
-                    wd_property["constraints"]["typeDependent"][VALUE_TYPE_STATS] = stats_property[VALUE_TYPE_STATS]
+                wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value] = stats_property[GenConstFields.SUBJECT_TYPE_STATS.value]
+                if wd_property[PropertyFields.DATATYPE.value] == Datatypes.ITEM:
+                    wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] = stats_property[ItemConstFields.VALUE_TYPE_STATS.value]
                 else:
                     pass
             else:

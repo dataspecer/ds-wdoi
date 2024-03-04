@@ -1,22 +1,24 @@
 from wikidata.modifications.modifier_part import ModifierPart
 from wikidata.modifications.context import Context
+from wikidata.model_simplified.properties import PropertyFields
+from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
 
 class RemoveUnexistingReferencesGeneralConstraintsProperties(ModifierPart):
     def __init__(self, logger,  context: Context) -> None:
         super().__init__(logger.getChild("rer-properties-general-constraints"), context)
     
     def __call__(self, wd_entity) -> None:
-        constraints = wd_entity['constraints']
+        constraints = wd_entity[PropertyFields.CONSTRAINTS.value]
         
-        constraints["allowedQualifiers"] = self.filter_existing_properties(constraints["allowedQualifiers"])
-        constraints["requiredQualifiers"] = self.filter_existing_properties(constraints["requiredQualifiers"])
+        constraints[GenConstFields.ALLOWED_QUALIFIERS.value] = self.filter_existing_properties(constraints[GenConstFields.ALLOWED_QUALIFIERS.value])
+        constraints[GenConstFields.REQUIRED_QUALIFIERS.value] = self.filter_existing_properties(constraints[GenConstFields.REQUIRED_QUALIFIERS.value])
         
-        constraints['subjectType']['instanceOf'] = self.filter_existing_classes(constraints['subjectType']['instanceOf'])
-        constraints['subjectType']['subclassOf'] = self.filter_existing_classes(constraints['subjectType']['subclassOf'])
-        constraints['subjectType']['subclassOfInstanceOf'] = self.filter_existing_classes(constraints['subjectType']['subclassOfInstanceOf'])
+        constraints[GenConstFields.SUBJECT_TYPE.value]['instanceOf'] = self.filter_existing_classes(constraints[GenConstFields.SUBJECT_TYPE.value]['instanceOf'])
+        constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOf'] = self.filter_existing_classes(constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOf'])
+        constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOfInstanceOf'] = self.filter_existing_classes(constraints[GenConstFields.SUBJECT_TYPE.value]['subclassOfInstanceOf'])
         
-        constraints["itemRequiresStatement"] = self.filter_existing_allowance_map(constraints["itemRequiresStatement"])
-        constraints["conflictsWith"] = self.filter_existing_allowance_map(constraints["conflictsWith"])
+        constraints[GenConstFields.ITEM_REQUIRES_STATEMENT.value] = self.filter_existing_allowance_map(constraints[GenConstFields.ITEM_REQUIRES_STATEMENT.value])
+        constraints[GenConstFields.CONFLICTS_WITH.value] = self.filter_existing_allowance_map(constraints[GenConstFields.CONFLICTS_WITH.value])
     
     def report_status(self) -> None:
         self.logger.info(f"Missing {len(self.marker_set)} general constraints references")

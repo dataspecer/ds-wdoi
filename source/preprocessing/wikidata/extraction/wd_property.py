@@ -9,6 +9,8 @@ from wikidata.model.properties import Properties
 from wikidata.model.constraints import GeneralConstraints
 from wikidata.model.constraints import ItemDatatypeConstraints
 from wikidata.iri import construct_wd_iri
+from wikidata.model_simplified.properties import PropertyFields
+from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
 
 def __str_to_num_ids(str_ids_arr):
     return wd_fields_tran.transform_wd_str_ids_to_num_ids(str_ids_arr)
@@ -38,12 +40,12 @@ def __extract_entity_type_constraints(wd_property):
     inverse = wd_json_const_ex.extract_inverse(wd_property)
     
     return {
-        "valueType": __map_str_values_to_num_ids(values_types_map),
-        "valueRequiresStatement": __str_map_to_num_ids_map(value_requires_statement),
-        "isSymmetric": is_symetric,
-        "oneOf": __str_to_num_ids(one_of),
-        "noneOf": __str_to_num_ids(none_of),
-        "inverse": __str_to_num_id(inverse)
+        ItemConstFields.VALUE_TYPE.value: __map_str_values_to_num_ids(values_types_map),
+        ItemConstFields.VALUE_REQUIRES_STATEMENT.value: __str_map_to_num_ids_map(value_requires_statement),
+        ItemConstFields.IS_SYMETRIC.value: is_symetric,
+        ItemConstFields.ONE_OF.value: __str_to_num_ids(one_of),
+        ItemConstFields.NONE_OF.value: __str_to_num_ids(none_of),
+        ItemConstFields.INVERSE.value: __str_to_num_id(inverse)
     }
 
 def __extract_type_dependent_constraints(wd_property, underlying_type):
@@ -67,14 +69,14 @@ def __extract_wd_constraints(wd_property, underlying_type):
     type_dependent_constraints = __extract_type_dependent_constraints(wd_property, underlying_type)
     
     return {
-        "propertyScope": property_scope,
-        "allowedEntityTypes": allowed_entity_types,
-        "allowedQualifiers": __str_to_num_ids(allowed_qualifiers_str_ids),
-        "requiredQualifiers": __str_to_num_ids(required_qualifiers_str_ids),
-        "conflictsWith": __str_map_to_num_ids_map(conflicts_with_map),
-        "itemRequiresStatement": __str_map_to_num_ids_map(item_requires_statement_map),
-        "subjectType": __map_str_values_to_num_ids(subject_types_map),
-        "typeDependent": type_dependent_constraints
+        GenConstFields.PROPERTY_SCOPE.value: property_scope,
+        GenConstFields.ALLOWED_ENTITY_TYPES.value: allowed_entity_types,
+        GenConstFields.ALLOWED_QUALIFIERS.value: __str_to_num_ids(allowed_qualifiers_str_ids),
+        GenConstFields.REQUIRED_QUALIFIERS.value: __str_to_num_ids(required_qualifiers_str_ids),
+        GenConstFields.CONFLICTS_WITH.value: __str_map_to_num_ids_map(conflicts_with_map),
+        GenConstFields.ITEM_REQUIRES_STATEMENT.value: __str_map_to_num_ids_map(item_requires_statement_map),
+        GenConstFields.SUBJECT_TYPE.value: __map_str_values_to_num_ids(subject_types_map),
+        GenConstFields.TYPE_DEPENDENT.value: type_dependent_constraints
     }
     
 def extract_wd_property(str_property_id, wd_property, languages):
@@ -101,19 +103,19 @@ def extract_wd_property(str_property_id, wd_property, languages):
     constraints = __extract_wd_constraints(wd_property, underlying_type)
     
     return {
-        "id": num_id,
-        "iri": construct_wd_iri(str_property_id),
-        "aliases": aliases,
-        "labels": labels,
-        "descriptions": descriptions,
-        "datatype": datatype,
-        "underlyingType": underlying_type,
-        "instanceOf": __str_to_num_ids(instance_of_str_ids),
-        "subpropertyOf": __str_to_num_ids(subproperty_of_str_ids),
-        "relatedProperty": __str_to_num_ids(related_property_str_ids),
-        "inverseProperty": __str_to_num_ids(inverse_property_str_ids),
-        "complementaryProperty": __str_to_num_ids(complementary_property_str_ids),
-        "negatesProperty": __str_to_num_ids(negates_property_str_ids),
-        "equivalentProperty": equivalent_property_urls,
-        "constraints": constraints
+        PropertyFields.ID.value: num_id,
+        PropertyFields.IRI.value: construct_wd_iri(str_property_id),
+        PropertyFields.ALIASES.value: aliases,
+        PropertyFields.LABELS.value: labels,
+        PropertyFields.DESCRIPTIONS.value: descriptions,
+        PropertyFields.DATATYPE.value: datatype,
+        PropertyFields.UNDERLYING_TYPE.value: underlying_type,
+        PropertyFields.INSTANCE_OF.value: __str_to_num_ids(instance_of_str_ids),
+        PropertyFields.SUBPROPERTY_OF.value: __str_to_num_ids(subproperty_of_str_ids),
+        PropertyFields.RELATED_PROPERTY.value: __str_to_num_ids(related_property_str_ids),
+        PropertyFields.INVERSE_PROPERTY.value: __str_to_num_ids(inverse_property_str_ids),
+        PropertyFields.COMPLEMENTARY_PROPERTY.value: __str_to_num_ids(complementary_property_str_ids),
+        PropertyFields.NEGATES_PROPERTY.value: __str_to_num_ids(negates_property_str_ids),
+        PropertyFields.EQUIVALENT_PROPERTY.value: equivalent_property_urls,
+        PropertyFields.CONSTRAINTS.value: constraints
     }
