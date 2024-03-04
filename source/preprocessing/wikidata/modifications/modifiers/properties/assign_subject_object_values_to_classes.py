@@ -3,6 +3,7 @@ from wikidata.modifications.context import Context
 from wikidata.modifications.modifiers.classes.add_fields import *
 from wikidata.model.constraints import *
 from wikidata.model.properties import *
+from wikidata.model_simplified.classes import ClassFields
 
 class AssignSubjectValueToClasses(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
@@ -14,11 +15,11 @@ class AssignSubjectValueToClasses(ModifierPart):
         constraints = wd_entity["constraints"]
         if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.datatypeIsNotLexical(wd_entity):
             self.marker_set.add(prop_id)
-            self.assign_type_constraints(constraints["subjectType"], prop_id, SUBJECT_OF_FIELD)
+            self.assign_type_constraints(constraints["subjectType"], prop_id, ClassFields.SUBJECT_OF.value)
             
             if self.isItemProperty(constraints):
                 self.object_assignment.add(prop_id)
-                self.assign_type_constraints(constraints["typeDependent"]["valueType"], prop_id, VALUE_OF_FIELD)
+                self.assign_type_constraints(constraints["typeDependent"]["valueType"], prop_id, ClassFields.VALUE_OF.value)
     
     def assign_type_constraints(self, type_constraints, prop_id, field: str):
         self.assign_prop_to_classes_field(type_constraints["instanceOf"], prop_id, field)

@@ -1,6 +1,6 @@
 from wikidata.modifications.removers.remover import Remover
 from wikidata.modifications.context import Context
-
+from wikidata.model_simplified.classes import ClassFields
 """
 This depends on the selection of the languages during transformation.
 If there are no labels, the users cannot search for the classes.

@@ -9,3 +9,5 @@ class RootFields(StrEnum):
     ALIASES = "aliases"
     CLAIMS = "claims"
     SITELINKS = "sitelinks"
+    
+    

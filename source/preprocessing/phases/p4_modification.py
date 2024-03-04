@@ -9,6 +9,8 @@ from wikidata.modifications.modifiers.properties.remove_unexisting_references_it
 from wikidata.modifications.modifiers.properties.remove_self_cycles import *
 from wikidata.modifications.modifiers.properties.mark_subproperties_to_parents import *
 from wikidata.modifications.modifiers.properties.assign_subject_object_values_to_classes import *
+from wikidata.modifications.mergers.classes_property_usage_stats_merger import *
+from wikidata.modifications.mergers.properties_domain_range_usage_stats_merger import *
 from wikidata.modifications.context import Context
 from wikidata.modifications.modifiers.classes.all_classes_are_rooted import *
 from wikidata.modifications.modifiers.classes.remove_unexisting_references import *
@@ -53,6 +55,16 @@ def __report_status_of_modifiers(modifiers):
         mod.report_status()
 
 @timed(main_logger)
+def __merge_property_usage_stats(context: Context, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
+    cls_merger = ClassesPropertyUsageStatsMerger(classes_logger, context, classes_property_usage_stats_filename)
+    cls_merger.modify_all()
+    cls_merger.report_status()
+    
+    props_merger = PropertiesDomainRangeUsageStatsMerger(properties_logger, context, properties_domain_range_usage_stats_filename)
+    props_merger.modify_all()
+    props_merger.report_status()
+
+@timed(main_logger)
 def __remove_entities_with_empty_labels(context: Context):
     remover = RemoveEntitiesWithNoLabel(main_logger, context)
     remover.modify_all()
@@ -72,7 +84,8 @@ def __pre_unrooted_classes_removal(context: Context):
 
 @timed(classes_logger)
 def __remove_unrooted_classes(context: Context):
-    remover = RemoveClassesWithNoParent(classes_logger, context)
+    logger = classes_logger.getChild("unrooted-classes-removal")
+    remover = RemoveClassesWithNoParent(logger, context)
     remover.modify_all()
     
 @timed(classes_logger)
@@ -106,7 +119,8 @@ After the unrooted classes removal, we remove any hanging references to the remo
 After we can safely modify properties.
 """
 @timed(main_logger)
-def __modify_context(context: Context):
+def __modify_context(context: Context, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
+    __merge_property_usage_stats(classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
     __remove_entities_with_empty_labels(context)
     __pre_unrooted_classes_removal(context)
     __remove_unrooted_classes(context)
@@ -114,11 +128,11 @@ def __modify_context(context: Context):
     __modify_properties(context)
 
 @timed(main_logger)
-def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path):
+def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
     classes = __load_classes_to_map(classes_json_file_path)
     properties = __load_properties_to_map(properties_json_file_path)
     context = Context(classes, properties)
-    __modify_context(context)
+    __modify_context(context, classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
     __write_classes_to_file(context.class_map)
     __write_properties_to_file(context.property_map)
     

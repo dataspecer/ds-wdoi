@@ -4,6 +4,7 @@ import wikidata.extraction.wd_fields as wd_fields_tran
 import wikidata.extraction.wd_languages as wd_languages_tran 
 from wikidata.iri import construct_wd_iri
 from wikidata.model.properties import Properties
+from wikidata.model_simplified.classes import ClassFields
 
 def __str_to_num_ids(str_ids_arr):
     return wd_fields_tran.transform_wd_str_ids_to_num_ids(str_ids_arr)
@@ -23,13 +24,13 @@ def extract_wd_class(str_class_id, wd_class, languages):
     equivalent_class_urls = wd_json_stmts_ex.extract_wd_statement_values(wd_class, Properties.EQUIVALENT_CLASS)
     
     return {
-        "id": num_id,
-        "iri": construct_wd_iri(str_class_id),
-        "aliases": aliases,
-        "labels": labels,
-        "descriptions": descriptions,
-        "instanceOf": __str_to_num_ids(instance_of_str_ids),
-        "subclassOf": __str_to_num_ids(subclass_of_str_ids),
-        "propertiesForThisType": __str_to_num_ids(properties_for_this_type_str_ids),
-        "equivalentClass": equivalent_class_urls, 
+        ClassFields.ID.value: num_id,
+        ClassFields.IRI.value: construct_wd_iri(str_class_id),
+        ClassFields.ALIASES.value: aliases,
+        ClassFields.LABELS.value: labels,
+        ClassFields.DESCRIPTIONS.value: descriptions,
+        ClassFields.INSTANCE_OF.value: __str_to_num_ids(instance_of_str_ids),
+        ClassFields.SUBCLASS_OF.value: __str_to_num_ids(subclass_of_str_ids),
+        ClassFields.PROPERTIES_FOR_THIS_TYPE.value: __str_to_num_ids(properties_for_this_type_str_ids),
+        ClassFields.EQUIVALENT_CLASS.value: equivalent_class_urls, 
     }

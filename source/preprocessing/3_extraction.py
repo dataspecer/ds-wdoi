@@ -14,9 +14,9 @@ DEFAULT_LANGUAGES = ["en"]
 def __main(args):
     try:
         if args.phases in ["both", "cls"]:
-            ph3.transform_classes(args.classesBz2File, args.lang)
+            ph3.extract_classes(args.classesBz2File, args.lang)
         if args.phases in ["both", "props"]:
-            ph3.transform_properties(args.propertiesBz2File, args.lang)
+            ph3.extract_properties(args.propertiesBz2File, args.lang)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")

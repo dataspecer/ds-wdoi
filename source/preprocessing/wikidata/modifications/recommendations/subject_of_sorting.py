@@ -2,8 +2,7 @@ from wikidata.modifications.modifier_full import ModifierFull
 from wikidata.modifications.context import *
 import  utils.property_recommender as pr 
 import utils.logging as ul
-
-SUBJECT_OF_PROBS_FIELD = 'subjectOfProbs'
+from wikidata.model_simplified.classes import ClassFields
 
 class SubjectOfSorting(ModifierFull):
     
@@ -28,20 +27,20 @@ class SubjectOfSorting(ModifierFull):
     
     def modify_all(self) -> None:
         for idx, wd_class in enumerate(self.context.class_map.values()):
-            self.add_field_if_missing(wd_class, SUBJECT_OF_PROBS_FIELD)
+            self.add_field_if_missing(wd_class, ClassFields.SUBJECT_OF_PROBS.value)
             self.sort_subject_of(wd_class)
             ul.try_log_progress(self.logger, idx, ul.RECS_PROGRESS_STEP)
             
     def sort_subject_of(self, wd_class) -> None:
-        subjectOfField = wd_class['subjectOf']
+        subjectOfField = wd_class[ClassFields.SUBJECT_OF.value]
         if len(subjectOfField) != 0:
-            recommendations: list = self.filter_valid_recs(subjectOfField, pr.get_local_recs(wd_class['id']))
+            recommendations: list = self.filter_valid_recs(subjectOfField, pr.get_local_recs(wd_class[ClassFields.ID.value]))
             local_recs_subject_map: dict = pr.create_map_from_recs(recommendations)
-            wd_class[SUBJECT_OF_PROBS_FIELD] = recommendations
-            self.context.local_recs_subject_map_to_map[wd_class['id']] = local_recs_subject_map
+            wd_class[ClassFields.SUBJECT_OF_PROBS.value] = recommendations
+            self.context.local_recs_subject_map_to_map[wd_class[ClassFields.ID.value]] = local_recs_subject_map
             subjectOfField.sort(reverse=True, key=self.create_sort_value_getter(local_recs_subject_map))        
         else:
-            wd_class[SUBJECT_OF_PROBS_FIELD] = []
+            wd_class[ClassFields.SUBJECT_OF_PROBS.value] = []
         
     def report_status(self) -> None:
         self.logger.info(f"Count of missing local subject recs: {self.local_recs_missing["count"]}")

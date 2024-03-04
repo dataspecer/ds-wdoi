@@ -88,6 +88,7 @@ class Properties(StrEnum):
     ITEM_OF_PROPERTY_CONSTRAINT = "P2305", UnderlyingTypes.ENTITY
     PROPERTY = "P2306", UnderlyingTypes.ENTITY
     RELATION = "P2309", UnderlyingTypes.ENTITY
+    CLASS = "P2308", UnderlyingTypes.ENTITY
     MAIN_SUBJECT = "P921", UnderlyingTypes.ENTITY
     FOUND_IN_TAXON = "P703", UnderlyingTypes.ENTITY
     TOPICS_MAIN_CATEGORY = "P910", UnderlyingTypes.ENTITY

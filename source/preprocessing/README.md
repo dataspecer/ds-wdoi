@@ -3,9 +3,16 @@
 The preprocessing is done in six phases:
 
 1. Identification 
-   - the first pass of the dump - identification of classes and properties
+   - the first pass of the dump 
+     - identification of classes and properties
+     - *property usage statistics*
+        - store instance of values for each entity in the dump for further processing 
 2. Separation
-   -  the second pass of the dump - separation of classes and properties from the dump into two new files preserving the Wikidata data model
+   -  the second pass of the dump 
+      -  separation of classes and properties from the dump into two new files preserving the Wikidata data model
+      -  *property usage statistics*
+           - store property usage for domain and range of classes
+           - compute summary from the stored property usage for each class and property   
 3. Extraction 
    - the data from separated wikidata classes and properties are extracted into a simplified data model
 4. Modification
@@ -15,13 +22,18 @@ The preprocessing is done in six phases:
 6. Loading to ElasticSearch
    - load labels and aliases into ElasticSearch service
 
+
+
+
 > Note: 
-> 1. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
-> 2. I consider only the unique values from extracted properties.
+> 1. During 1. and 2. phase, there are running statistics for property usage happening during the dump pases. The statistics run with during 1. and 2. phase to reduce time of the computation.
+> 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
+> 3. I consider only the unique values from extracted properties.
 
-## Identification and separation (1. and 2. phase)
+## Identification and separation with statistics (1. and 2. phase)
 
-The part contains 1. and 2. phase.
+The part contains 1. and 2. phase with computation of property usage statistics.
+The statistics is run during the phases to reduce time of the statistics computation.
 The main script is `1_2_identification_separation.py`
 
 - input:
@@ -31,17 +43,23 @@ The main script is `1_2_identification_separation.py`
         $> python 1_2_identification_separation.py latest-all.json.bz2
 
 - output:
-  - `classes.json.bz2`
-  - `properties.json.bz2`
-  - Each output file contains an json array where on each line is a wikidata entity.
-  - Example:
+  - separated classes and propeties
+    - `classes.json.bz2`
+    - `properties.json.bz2`
+    - Each output file contains an json array where on each line is a wikidata entity.
+    - Example:
 
-        [
-        { ... },
-        { ... },
-        { ... },
-        ...
-        ]
+          [
+          { ... },
+          { ... },
+          { ... },
+          ...
+          ]
+  - statistics summaries
+    - `classes-property-usage.json`
+      - contains property usage summary for each class with probabilities
+    - `properties-domain-range-usage.json`
+      - contains domain and range statistics for each property without probabilities
 
 - logging:
   - the logging takes place into `info_id_sep.log` file 
@@ -58,7 +76,15 @@ The main script is `1_2_identification_separation.py`
 - There can be also references to items that do not exists in the dump.
 - The two phases are separate because we do not know which entities are classes.
 - The output files of the second phase contain reduced entities:
-  - `sitelinks` are removed since there is no usage directly to the ontology
+  - `sitelinks` are removed from classes only, since properties do not contain sitelinks
+
+### Property usage statistics comments
+
+In the 1. phase, the statistics module stores information about instance of values for each entity to later use it in the 2. phase.
+In the 2. phase, the module iterates over each statement in in each entity and stores information about the usage in the identified classes from the 1. phase.
+When the 2. phase is finished, the module finalizes the usage and stores summaries for each class into a file and also a domain range summaries for each properties in a separate file.
+For the summaries for classes, the subject of and value of statistics contain probabilities/score for each property, hence there is no need for further recommendations in the 5. phase, and thus can be directly used in the backend.
+For the summaries for properties, the domain and range do not contain probabilities/score, since there will be no additional recommendations for domains and ranges.
 
 ## Extraction (3. phase)
 

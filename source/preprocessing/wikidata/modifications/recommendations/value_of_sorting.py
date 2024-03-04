@@ -2,6 +2,7 @@ from wikidata.modifications.context import *
 from wikidata.modifications.modifier_full import ModifierFull
 from wikidata.modifications.context import *
 import utils.logging as ul
+from wikidata.model_simplified.classes import ClassFields
 
 class ValueOfSorting(ModifierFull):
     
@@ -42,7 +43,7 @@ class ValueOfSorting(ModifierFull):
             ul.try_log_progress(self.logger, idx, ul.RECS_PROGRESS_STEP)
 
     def sort_value_of(self, wd_class) -> None:
-        wd_class["valueOf"].sort(reverse=True, key=self.create_sort_value_getter())
+        wd_class[ClassFields.VALUE_OF.value].sort(reverse=True, key=self.create_sort_value_getter())
         
     def report_status(self) -> None:
         self.logger.info(f"Count of missing local subject recs: {self.local_recs_missing["count"]} for object computation.")
