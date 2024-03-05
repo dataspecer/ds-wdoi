@@ -313,13 +313,13 @@ If the values are missing from the Wikidata entity, a default value is used - em
 
 The scripts require `.env` file in the `preprocessing` folder with four values:
 1. `ES_PASSWD` - a password of the elastic search instance provided with certificate
-2. `ES_CERT_PATH` a path to certification file to elastic search instance
+2. `ES_CA_FINGERPRINT` a cerficate fingerprint
 3. `ES_URL` - an url to elastic search instance
 4. `REC_URL` - an url to schema tree recommender server instance
 
 Example (notice that `" "` are not used):
 
     ES_PASSWD=abcdefg
-    ES_CERT_PATH=c:/AAA/http_ca.crt
+    ES_CA_FINGERPRINT=xxx...
     ES_URL=https://localhost:1234
     REC_URL=http://localhost:1235/recommender
