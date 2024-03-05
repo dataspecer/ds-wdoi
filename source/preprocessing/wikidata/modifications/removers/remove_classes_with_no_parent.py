@@ -21,17 +21,17 @@ class RemoveClassesWithNoParent(Remover):
         self.report_status()
         
     def _mark_for_removal(self):
-        for entity in self.context.class_map.values():
-            if len(entity[ClassFields.SUBCLASS_OF.value]) == 0 and entity[ClassFields.ID.value] != ROOT_ENTITY_ID_NUM:
-                self.classes_marked_for_removal.add(entity[ClassFields.ID.value])
-                if len(entity[ClassFields.CHILDREN.value]) == 0:
-                    self.logger.info(f"Marked empty class for removal {entity[ClassFields.ID.value]}")
+        for wd_class in self.context.class_map.values():
+            if len(wd_class[ClassFields.SUBCLASS_OF.value]) == 0 and wd_class[ClassFields.ID.value] != ROOT_ENTITY_ID_NUM:
+                self.classes_marked_for_removal.add(wd_class[ClassFields.ID.value])
+                if len(wd_class[ClassFields.CHILDREN.value]) == 0:
+                    self.logger.info(f"Marked empty class for removal {wd_class[ClassFields.ID.value]}")
                 else:
-                    self.logger.info(f"Marked class for removal {entity[ClassFields.ID.value]}")
-                    self._recursive_removal(entity[ClassFields.CHILDREN.value])
+                    self.logger.info(f"Marked class for removal {wd_class[ClassFields.ID.value]}")
+                    self._recursive_removal(wd_class[ClassFields.CHILDREN.value])
                     
-    def _recursive_removal(self, entity_children_ids):
-        queue = [entity_children_ids]
+    def _recursive_removal(self, class_children_ids):
+        queue = [class_children_ids]
         while len(queue) != 0:
             children_ids = queue.pop()
             for child_id in children_ids:

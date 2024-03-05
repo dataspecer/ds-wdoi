@@ -6,15 +6,17 @@ from wikidata.model.properties import *
 from wikidata.model_simplified.classes import ClassFields
 from wikidata.model_simplified.properties import PropertyFields
 from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
+
+
 class AssignSubjectValueToClasses(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("assign-subject-object"), context)
         self.object_assignment = set()
 
-    def __call__(self, wd_entity) -> None:
-        prop_id = wd_entity[PropertyFields.ID.value]
-        constraints = wd_entity[PropertyFields.CONSTRAINTS.value]
-        if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.isAllowedDatatype(wd_entity):
+    def __call__(self, wd_property) -> None:
+        prop_id = wd_property[PropertyFields.ID.value]
+        constraints = wd_property[PropertyFields.CONSTRAINTS.value]
+        if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.isAllowedDatatype(wd_property):
             self.marker_set.add(prop_id)
             self.assign_type_constraints(constraints[GenConstFields.SUBJECT_TYPE.value], prop_id, ClassFields.SUBJECT_OF.value)
             
@@ -37,8 +39,8 @@ class AssignSubjectValueToClasses(ModifierPart):
     def canBeUsedOnItems(self, constraints) -> bool:
         return AllowedEntityTypesValues.index_of(AllowedEntityTypesValues.ITEM) in constraints[GenConstFields.ALLOWED_ENTITY_TYPES.value]
     
-    def isAllowedDatatype(self, property) -> bool:
-        datatype = property[PropertyFields.DATATYPE.value]
+    def isAllowedDatatype(self, wd_property) -> bool:
+        datatype = wd_property[PropertyFields.DATATYPE.value]
         return datatype != Datatypes.index_of("wikibase-lexeme") and datatype != Datatypes.index_of("wikibase-sense") and datatype != Datatypes.index_of("wikibase-form") and datatype != Datatypes.index_of("wikibase-property") 
     
     def isItemProperty(self, constraints) -> bool:

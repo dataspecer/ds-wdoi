@@ -12,11 +12,11 @@ class AddFields(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("add-fields"), context)
 
-    def __call__(self, wd_entity) -> None:
-        self.add_field_if_missing(wd_entity, ClassFields.CHILDREN.value)
-        self.add_field_if_missing(wd_entity, ClassFields.SUBJECT_OF.value)
-        self.add_field_if_missing(wd_entity, ClassFields.VALUE_OF.value)
-        self.add_field_if_missing(wd_entity, ClassFields.INSTANCES.value)
+    def __call__(self, wd_class) -> None:
+        self.add_field_if_missing(wd_class, ClassFields.CHILDREN.value)
+        self.add_field_if_missing(wd_class, ClassFields.SUBJECT_OF.value)
+        self.add_field_if_missing(wd_class, ClassFields.VALUE_OF.value)
+        self.add_field_if_missing(wd_class, ClassFields.INSTANCES.value)
     
     def report_status(self) -> None:
         self.logger.info(f"Missing {len(self.marker_set)} classes")

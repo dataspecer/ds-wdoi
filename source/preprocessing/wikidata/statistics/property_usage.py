@@ -7,6 +7,9 @@ import utils.logging as ul
 import wikidata.json_extractors.wd_fields as wd_json_fields_ex
 import wikidata.json_extractors.wd_statements as wd_json_stmts_ex
 import wikidata.model.entity_types as wd_entity_types
+from wikidata.model_simplified.classes import ClassFields
+from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
+from wikidata.model_simplified.properties import PropertyFields
 
 CLASSES_STATS_OUTPUT_FILE = "classes-property-usage.json"
 PROPERTIES_STATS_OUTPUT_FILE = "properties-domain-range-usage.json"
@@ -131,9 +134,9 @@ class PropertyUsageStatistics:
         classes_statistics_dict = dict()
         for class_id in self.class_property_usage_dict.keys():
             classes_statistics_dict[class_id] = {
-                "id": wd_json_fields_ex.extract_wd_numeric_id_part(class_id),
-                "subjectOfStatsProbs": [],
-                "valueOfStatsProbs": []
+                ClassFields.ID.value: wd_json_fields_ex.extract_wd_numeric_id_part(class_id),
+                ClassFields.SUBJECT_OF_STATS_PROBS.value: [],
+                ClassFields.VALUE_OF_STATS_PROBS.value: []
             }
         return classes_statistics_dict
                 
@@ -141,9 +144,9 @@ class PropertyUsageStatistics:
         properties_statistics_dict = dict()
         for property_id in self.properties_ids_to_datatype_dict.keys():
             properties_statistics_dict[property_id] = {
-                "id": wd_json_fields_ex.extract_wd_numeric_id_part(property_id),
-                "subjectTypeStats": dict(),
-                "valueTypeStats": dict()
+                PropertyFields.ID.value: wd_json_fields_ex.extract_wd_numeric_id_part(property_id),
+                GenConstFields.SUBJECT_TYPE_STATS.value: dict(),
+                ItemConstFields.VALUE_TYPE_STATS.value: dict()
             }
         return properties_statistics_dict
     
@@ -159,17 +162,17 @@ class PropertyUsageStatistics:
         return subjectOfStatsProbs
     
     def _add_to_domain_of_property(self, prop_stats, class_id, count):
-        if class_id not in prop_stats["subjectTypeStats"]:
-            prop_stats["subjectTypeStats"][class_id] = count
+        if class_id not in prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value]:
+            prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value][class_id] = count
         else:
-            prop_stats["subjectTypeStats"][class_id] += count
+            prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value][class_id] += count
     
     def _add_to_range_of_property(self, prop_stats, range_record):
         for object_class_id, count in range_record["range"].items():
-            if object_class_id not in prop_stats["valueTypeStats"]:
-                prop_stats["valueTypeStats"][object_class_id] = count
+            if object_class_id not in prop_stats[ItemConstFields.VALUE_TYPE_STATS.value]:
+                prop_stats[ItemConstFields.VALUE_TYPE_STATS.value][object_class_id] = count
             else:
-                prop_stats["valueTypeStats"][object_class_id] += count
+                prop_stats[ItemConstFields.VALUE_TYPE_STATS.value][object_class_id] += count
     
     def _add_to_domain_and_range_of_property(self, properties_statistics_dict, class_id, class_property_usage_record):
         for property_id, range_record in class_property_usage_record["properties"].items():
@@ -180,7 +183,7 @@ class PropertyUsageStatistics:
     def _add_to_classes_value_of(self, property_id, range_summary, classes_statistics_dict):
         for record in range_summary:
             class_id = record["class"]
-            classes_statistics_dict[class_id]["valueOfStatsProbs"].append({
+            classes_statistics_dict[class_id][ClassFields.VALUE_OF_STATS_PROBS.value].append({
                 "property": wd_json_fields_ex.extract_wd_numeric_id_part(property_id),
                 "probability": record["probability"]
             })
@@ -200,17 +203,17 @@ class PropertyUsageStatistics:
     
     def _summarize_domain_and_range(self, classes_statistics_dict: dict, properties_statistics_dict: dict):
         for property_id, stats_record in properties_statistics_dict.items():
-            stats_record["subjectTypeStats"] = self._summarize_domain_range_dict(property_id, stats_record["subjectTypeStats"], add_to_value_of=False, classes_statistics_dict=None)
-            stats_record["valueTypeStats"] = self._summarize_domain_range_dict(property_id, stats_record["valueTypeStats"], add_to_value_of=True, classes_statistics_dict=classes_statistics_dict)
+            stats_record[GenConstFields.SUBJECT_TYPE_STATS.value] = self._summarize_domain_range_dict(property_id, stats_record[GenConstFields.SUBJECT_TYPE_STATS.value], add_to_value_of=False, classes_statistics_dict=None)
+            stats_record[ItemConstFields.VALUE_TYPE_STATS.value] = self._summarize_domain_range_dict(property_id, stats_record[ItemConstFields.VALUE_TYPE_STATS.value], add_to_value_of=True, classes_statistics_dict=classes_statistics_dict)
     
     def _sort_value_of_in_classes(self, classes_statistics_dict: dict):
         for record in classes_statistics_dict.values():
-            record["valueOfStatsProbs"].sort(reverse=True, key=lambda x: x["probability"])
+            record[ClassFields.VALUE_OF_STATS_PROBS.value].sort(reverse=True, key=lambda x: x["probability"])
         
     def _compute_statistics(self, classes_statistics_dict, properties_statistics_dict):
         i = 1
         for class_id, property_usage_record in self.class_property_usage_dict.items():
-            classes_statistics_dict[class_id]["subjectOfStatsProbs"] = self._compute_class_subject_of_statistics(property_usage_record)
+            classes_statistics_dict[class_id][ClassFields.SUBJECT_OF_STATS_PROBS.value] = self._compute_class_subject_of_statistics(property_usage_record)
             self._add_to_domain_and_range_of_property(properties_statistics_dict, class_id, property_usage_record)
             i += 1
             ul.try_log_progress(self.logger, i, ul.CLASSES_PROGRESS_STEP)

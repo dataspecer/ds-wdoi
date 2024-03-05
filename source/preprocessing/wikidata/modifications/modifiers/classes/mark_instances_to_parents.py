@@ -10,9 +10,9 @@ class MarkInstancesToParents(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("mark-instances-to-parents"), context)
         
-    def __call__(self, wd_entity) -> None:
-        entityId = wd_entity[ClassFields.ID.value]
-        for parentId in wd_entity[ClassFields.INSTANCE_OF.value]:
+    def __call__(self, wd_class) -> None:
+        entityId = wd_class[ClassFields.ID.value]
+        for parentId in wd_class[ClassFields.INSTANCE_OF.value]:
             if parentId in self.context.class_map:
                 parent = self.context.class_map[parentId]
                 self.add_field_if_missing(parent, ClassFields.INSTANCES.value)

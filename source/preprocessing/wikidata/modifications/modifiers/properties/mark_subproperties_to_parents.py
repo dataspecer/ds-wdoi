@@ -11,10 +11,10 @@ class MarkSubpropertiesToParents(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("mark-subproperties-to-parents"), context)
         
-    def __call__(self, wd_entity) -> None:
-        entityId = wd_entity[PropertyFields.ID.value]
-        self.add_field_if_missing(wd_entity, PropertyFields.SUBPROPERTIES.value)
-        for parentId in wd_entity[PropertyFields.SUBPROPERTY_OF.value]:
+    def __call__(self, wd_property) -> None:
+        entityId = wd_property[PropertyFields.ID.value]
+        self.add_field_if_missing(wd_property, PropertyFields.SUBPROPERTIES.value)
+        for parentId in wd_property[PropertyFields.SUBPROPERTY_OF.value]:
             if parentId in self.context.property_map:
                 parent = self.context.property_map[parentId]
                 self.add_field_if_missing(parent, PropertyFields.SUBPROPERTIES.value)

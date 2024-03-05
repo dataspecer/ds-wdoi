@@ -7,8 +7,8 @@ class RemoveUnexistingReferencesGeneralConstraintsProperties(ModifierPart):
     def __init__(self, logger,  context: Context) -> None:
         super().__init__(logger.getChild("rer-properties-general-constraints"), context)
     
-    def __call__(self, wd_entity) -> None:
-        constraints = wd_entity[PropertyFields.CONSTRAINTS.value]
+    def __call__(self, wd_property) -> None:
+        constraints = wd_property[PropertyFields.CONSTRAINTS.value]
         
         constraints[GenConstFields.ALLOWED_QUALIFIERS.value] = self.filter_existing_properties(constraints[GenConstFields.ALLOWED_QUALIFIERS.value])
         constraints[GenConstFields.REQUIRED_QUALIFIERS.value] = self.filter_existing_properties(constraints[GenConstFields.REQUIRED_QUALIFIERS.value])
