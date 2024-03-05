@@ -15,6 +15,7 @@ class PropertiesDomainRangeUsageStatsMerger(ModifierFull):
         self.missing_properties = set()
     
     def modify_all(self) -> None:
+        self.logger.info("Starting loading of property domain and range statistics")
         properties_domain_range_usage_stats: dict = decoding.load_entities_to_map(self.properties_domain_range_usage_stats_filename, self.logger, ul.PROPERTIES_PROGRESS_STEP)
         for idx, stats_property in enumerate(properties_domain_range_usage_stats.values()):
             property_id = stats_property[PropertyFields.ID.value]

@@ -115,6 +115,7 @@ def __modify_properties(context: Context):
 def __post_properties_mod_on_stats_references(context: Context):
     logger = classes_logger.getChild("post-properties_mod_on_stats_references")
     modifiers = [
+        # As a final check on property usage statistics in case previous step removed properties
         RemoveUnexistingReferencesClasses(logger, context)
     ]
     __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)

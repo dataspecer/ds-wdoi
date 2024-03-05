@@ -20,7 +20,7 @@ def __main(args):
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
     parser = argparse.ArgumentParser(
-                prog="Precompute recommendations of properties for classes",
+                prog="Precompute recommendations of properties for classes based on domain and range constraints",
                 description="""The scripts loads all the data from previous step and precomputes recommendations of properties for classes.
                                It connects to the recommender server and then for each class it sorts it's subjectOf and valueOf properties based on probabilities.
                                It produces four files:

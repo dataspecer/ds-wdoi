@@ -22,9 +22,6 @@ The preprocessing is done in six phases:
 6. Loading to ElasticSearch
    - load labels and aliases into ElasticSearch service
 
-
-
-
 > Note: 
 > 1. During 1. and 2. phase, there are running statistics for property usage happening during the dump pases. The statistics run with during 1. and 2. phase to reduce time of the computation.
 > 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
@@ -226,7 +223,7 @@ The iteration over ontology is done multiple times, but still the time is uncomp
 
 ## Precomputing recommendations (5. phase)
 
-The phase precomputes order of properties for classes using SchemaTree recommender.
+The phase precomputes order of properties for classes based on domain and range constraints only using SchemaTree recommender.
 It also produces global rankings of all properties from the subject point of view and the value point of view.
 
 The main script is `5_property_recommendations.py`.
@@ -311,3 +308,18 @@ The object contains labels and aliases for all the selected languguages.
 There could be also descriptions but the search somehow was overtaken by the descriptions and resulted in not so relevant class search.
 Each language has its own nested object with the above mentioned fields.
 If the values are missing from the Wikidata entity, a default value is used - empty string for description and label, empty array for aliases.
+
+# .env
+
+The scripts require `.env` file in the `preprocessing` folder with four values:
+1. `ES_PASSWD` - a password of the elastic search instance provided with certificate
+2. `ES_CERT_PATH` a path to certification file to elastic search instance
+3. `ES_URL` - an url to elastic search instance
+4. `REC_URL` - an url to schema tree recommender server instance
+
+Example (notice that `" "` are not used):
+
+    ES_PASSWD=abcdefg
+    ES_CERT_PATH=c:/AAA/http_ca.crt
+    ES_URL=https://localhost:1234
+    REC_URL=http://localhost:1235/recommender
