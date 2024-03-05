@@ -11,4 +11,5 @@ export const envVars = {
   ENVIROMENT: process.env.NODE_ENV ?? 'development',
   GLOBAL_RECS_SUBJECT_PATH: process.env.GLOBAL_RECS_SUBJECT_PATH ?? '',
   GLOBAL_RECS_VALUE_PATH: process.env.GLOBAL_RECS_VALUE_PATH ?? '',
+  ES_CA_FINGERPRINT: process.env.ES_CA_FINGERPRINT ?? '',
 };

@@ -46,5 +46,4 @@ ANALYZER_LANGUAGE_MAP = {
     "thai": ["th"],
 }
 
-#client = Elasticsearch(os.getenv('ES_URL'), ca_certs=os.getenv('ES_CERT_PATH'), basic_auth=('elastic', os.getenv('ES_PASSWD')))
 client = Elasticsearch(os.getenv('ES_URL'), ssl_assert_fingerprint=os.getenv('ES_CA_FINGERPRINT'), basic_auth=('elastic', os.getenv('ES_PASSWD')))

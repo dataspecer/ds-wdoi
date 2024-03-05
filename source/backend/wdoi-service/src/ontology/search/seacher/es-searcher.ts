@@ -1,7 +1,6 @@
 import { Client } from '@elastic/elasticsearch';
 import { type EntityId, type EntityIdsList } from '../../entities/common';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
-import fs from 'fs';
 import { Searcher } from './searcher';
 import { envVars } from '../../../enviroment';
 export class EsSearch extends Searcher {
@@ -14,7 +13,8 @@ export class EsSearch extends Searcher {
     this.client = new Client({
       node: envVars.ES_NODE,
       auth: { username: 'elastic', password: envVars.ES_PASSWD },
-      tls: { ca: fs.readFileSync(envVars.ES_CERT_PATH) },
+      caFingerprint: envVars.ES_CA_FINGERPRINT,
+      // tls: { ca: fs.readFileSync(envVars.ES_CERT_PATH) },
     });
   }
 
@@ -30,31 +30,73 @@ export class EsSearch extends Searcher {
     //     },
     //   },
     // });
+    // const searchResultsMatch = this.client.search({
+    //   index: indexName,
+    //   _source: false,
+    //   query: {
+    //     dis_max: {
+    //       queries: [
+    //         {
+    //           multi_match: {
+    //             query: queryString,
+    //             type: 'best_fields',
+    //             fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
+    //           },
+    //         },
+    //         {
+    //           multi_match: {
+    //             query: queryString,
+    //             type: 'most_fields',
+    //             fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
+    //           },
+    //         },
+    //       ],
+    //     },
+    //   },
+    // });
+    // const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
     const searchResultsMatch = this.client.search({
       index: indexName,
       _source: false,
       query: {
-        dis_max: {
-          queries: [
+        bool: {
+          should: [
             {
-              multi_match: {
-                query: queryString,
-                type: 'best_fields',
-                fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
+              match: {
+                labels_en: {
+                  query: queryString,
+                  fuzziness: 'AUTO',
+                },
               },
             },
             {
-              multi_match: {
-                query: queryString,
-                type: 'most_fields',
-                fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
+              term: {
+                'labels_en.keyword': {
+                  value: queryString,
+                  boost: 2.0,
+                },
+              },
+            },
+            {
+              match: {
+                aliases_en: {
+                  query: queryString,
+                  fuzziness: 'AUTO',
+                },
+              },
+            },
+            {
+              term: {
+                'aliases_en.keyword': {
+                  value: queryString,
+                  boost: 2.0,
+                },
               },
             },
           ],
         },
       },
     });
-    // const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
     const searchResults = [(await searchResultsMatch).hits.hits];
     const interleavedResults = this.interleaveArrays(searchResults);
     return this.makeUnique(interleavedResults);

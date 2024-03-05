@@ -139,21 +139,59 @@ def search(search_string, search_classes: bool = True):
         logger.critical("Exiting...")
         exit(1)
     else:
+        # query_obj = {
+        #     "dis_max": {
+        #         "queries": {
+        #             "multi_match": {
+        #                 "query":      f"{search_string}",
+        #                 "type":       "most_fields",
+        #                 "fields": ["labels_en", "labels_en.keyword^2", "aliases_en.keyword^2", "aliases_en"],
+        #             },        
+        #             "multi_match": {
+        #                 "query":      f"{search_string}",
+        #                 "type":       "best_fields",
+        #                 "fields": ["labels_en", "labels_en.keyword^2", "aliases_en.keyword^2", "aliases_en"],
+        #             },
+        #         },
+        #         "tie_breaker": 0.7
+        #     }
+        # }
         query_obj = {
-            "dis_max": {
-                "queries": {
-                    "multi_match": {
-                        "query":      f"{search_string}",
-                        "type":       "most_fields",
-                        "fields": ["labels_en^3", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
-                    },        
-                    "multi_match": {
-                        "query":      f"{search_string}",
-                        "type":       "best_fields",
-                        "fields": ["labels_en^3", "labels_en.keyword^2", "aliases_en.keyword", "aliases_en"],
-                        "tie_breaker": 0.7
+            "bool": {
+                "should": [
+                    {
+                        "match": {
+                        "labels_en": {
+                            "query": f"{search_string}",
+                            "fuzziness": "AUTO"
+                            },
+                        }
                     },
-                },
+                    {
+                        "term": {
+                        "labels_en.keyword": {
+                            "value": f"{search_string}",
+                            "boost": 2.0
+                            },
+                        }
+                    },
+                    {
+                        "match": {
+                        "aliases_en": {
+                            "query": f"{search_string}",
+                            "fuzziness": "AUTO"
+                            },
+                        }
+                    },
+                    {
+                        "term": {
+                        "aliases_en.keyword": {
+                            "value": f"{search_string}",
+                            "boost": 2.0
+                            },
+                        }
+                    }
+                ]
             }
         }
         resp = es.client.search(index=search_index, query=query_obj)
