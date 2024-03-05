@@ -31,5 +31,6 @@ export interface InputConstraints {
   readonly conflictsWith: StatementAllowanceMap;
   readonly itemRequiresStatement: StatementAllowanceMap;
   readonly subjectType: SubjectValueTypeContraint;
+  readonly subjectTypeStats: EntityIdsList;
   readonly typeDependent: ItemTypeConstraints | EmptyTypeConstraint;
 }

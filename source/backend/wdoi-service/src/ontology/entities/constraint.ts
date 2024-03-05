@@ -45,6 +45,7 @@ export class GeneralConstraints {
 
 export interface ItemTypeConstraints {
   readonly valueType: SubjectValueTypeContraint;
+  readonly valueTypeStats: EntityIdsList;
   readonly valueRequiresStatement: StatementAllowanceMap;
   readonly isSymmetric: boolean;
   readonly oneOf: EntityIdsList;

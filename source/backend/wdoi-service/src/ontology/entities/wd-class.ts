@@ -14,10 +14,20 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   readonly instances: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
+
   readonly valueOfProperty: EntityIdsList;
+
   readonly subjectOfProperty: EntityIdsList;
   readonly subjectOfProbabilities: PropertyProbabilityHitList;
   readonly subjectOfProbabilitiesMap: PropertyProbabilityHitMap;
+
+  readonly subjectOfPropertyStats: EntityIdsList;
+  readonly subjectOfPropertyStatsProbabilities: PropertyProbabilityHitList;
+  readonly subjectOfPropertyStatsProbabilitiesMap: PropertyProbabilityHitMap;
+
+  readonly valueOfPropertyStats: EntityIdsList;
+  readonly valueOfPropertyStatsProbabilities: PropertyProbabilityHitList;
+  readonly valueOfPropertyStatsProbabilitiesMap: PropertyProbabilityHitMap;
 
   static {
     super.entityURITypes.add(this.URIType);
@@ -30,10 +40,20 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
     this.instances = inputClass.instances;
     this.equivalentExternalOntologyClasses = inputClass.equivalentClass;
     this.propertiesForThisType = inputClass.propertiesForThisType;
+
     this.valueOfProperty = inputClass.valueOf;
+
     this.subjectOfProperty = inputClass.subjectOf;
     this.subjectOfProbabilities = inputClass.subjectOfProbs;
     this.subjectOfProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.subjectOfProbs);
+
+    this.subjectOfPropertyStats = inputClass.subjectOfStats;
+    this.subjectOfPropertyStatsProbabilities = inputClass.subjectOfStatsProbs;
+    this.subjectOfPropertyStatsProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.subjectOfStatsProbs);
+
+    this.valueOfPropertyStats = inputClass.valueOfStats;
+    this.valueOfPropertyStatsProbabilities = inputClass.valueOfStatsProbs;
+    this.valueOfPropertyStatsProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.valueOfStatsProbs);
   }
 
   accept(visitor: ModifierClassVisitor): void {

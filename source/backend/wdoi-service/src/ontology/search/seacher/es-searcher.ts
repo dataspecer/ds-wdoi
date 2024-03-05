@@ -14,7 +14,10 @@ export class EsSearch extends Searcher {
       node: envVars.ES_NODE,
       auth: { username: 'elastic', password: envVars.ES_PASSWD },
       caFingerprint: envVars.ES_CA_FINGERPRINT,
-      // tls: { ca: fs.readFileSync(envVars.ES_CERT_PATH) },
+      tls: {
+        // ca: fs.readFileSync(envVars.ES_CERT_PATH),
+        rejectUnauthorized: false,
+      },
     });
   }
 
