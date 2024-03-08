@@ -62,6 +62,12 @@ export const generalConstraintsSchema = {
       additionalProperties: true,
     },
     subjectType: subjectObjectConstraintSchema,
+    // subjectTypeStats: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
   },
   additionalProperties: false,
   required: [
@@ -72,6 +78,7 @@ export const generalConstraintsSchema = {
     'conflictsWith',
     'itemRequiresStatement',
     'subjectType',
+    // 'subjectTypeStats'
   ],
 } as const;
 
@@ -79,6 +86,12 @@ export const itemConstraintsSchema = {
   type: 'object',
   properties: {
     valueType: subjectObjectConstraintSchema,
+    // valueTypeStats: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
     valueRequiresStatement: {
       type: 'object',
       additionalProperties: true,
@@ -104,7 +117,7 @@ export const itemConstraintsSchema = {
     },
   },
   additionalProperties: false,
-  required: ['valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse'],
+  required: ['valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse' /** , 'valueTypeStats' */],
 } as const;
 
 export const emptyConstraintsSchema = {
@@ -157,7 +170,6 @@ export const wdPropertySchema = {
         type: 'number',
       },
     },
-
     inverseProperty: {
       type: 'array',
       items: {

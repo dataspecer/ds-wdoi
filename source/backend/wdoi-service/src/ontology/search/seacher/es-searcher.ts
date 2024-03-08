@@ -3,6 +3,7 @@ import { type EntityId, type EntityIdsList } from '../../entities/common';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
 import { Searcher } from './searcher';
 import { envVars } from '../../../enviroment';
+
 export class EsSearch extends Searcher {
   private readonly client: Client;
   private static readonly CLASSES_ELASTIC_INDEX_NAME = 'classes';
@@ -58,6 +59,7 @@ export class EsSearch extends Searcher {
     //   },
     // });
     // const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
+    // const interleavedResults = this.interleaveArrays(searchResults);
     const searchResultsMatch = this.client.search({
       index: indexName,
       _source: false,
@@ -100,9 +102,7 @@ export class EsSearch extends Searcher {
         },
       },
     });
-    const searchResults = [(await searchResultsMatch).hits.hits];
-    const interleavedResults = this.interleaveArrays(searchResults);
-    return this.makeUnique(interleavedResults);
+    return this.makeUnique((await searchResultsMatch).hits.hits);
   }
 
   public async searchClasses(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
@@ -113,7 +113,7 @@ export class EsSearch extends Searcher {
     return await this.search(EsSearch.PROPERTIES_ELASTIC_INDEX_NAME, query, languagePriority);
   }
 
-  // This must preserver order of the given array.
+  // This must preserve order of the given array.
   private makeUnique(values: Array<SearchHit<unknown> | null>): EntityIdsList {
     const includedIds = new Set<EntityId>();
     return values.flatMap((hit) => {

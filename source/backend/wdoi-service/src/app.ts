@@ -4,8 +4,7 @@ import cors from '@fastify/cors';
 import mapAllRoutes from '@fastify/routes';
 import loadOntology from './ontology/expose-to-fastify';
 import { envToLogger, log } from './logging/log';
-import { ontologyRoutes } from './routes/routes';
-import { ontologyRecsRoutes } from './routes/routes-v2';
+import { ontologyRoutes } from './routes/routes-v3';
 import fastifySensible from '@fastify/sensible';
 
 const fastify: FastifyInstance = Fastify({
@@ -21,8 +20,7 @@ const startFastify = async (): Promise<void> => {
   });
   void fastify.register(mapAllRoutes);
   void fastify.register(fastifySensible);
-  void fastify.register(ontologyRoutes, { prefix: 'api/v1' });
-  void fastify.register(ontologyRecsRoutes, { prefix: 'api/v2' });
+  void fastify.register(ontologyRoutes, { prefix: 'api/v3' });
   try {
     await fastify.listen({ port: 3042 });
     log(fastify.routes);

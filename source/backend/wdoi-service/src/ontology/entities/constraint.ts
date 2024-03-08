@@ -31,6 +31,7 @@ export class GeneralConstraints {
   readonly conflictsWith: StatementAllowanceMap;
   readonly itemRequiresStatement: StatementAllowanceMap;
   readonly subjectType: SubjectValueTypeContraint;
+  readonly subjectTypeStats: EntityIdsList;
 
   constructor(inputConstraints: InputConstraints) {
     this.propertyScope = inputConstraints.propertyScope;
@@ -40,6 +41,7 @@ export class GeneralConstraints {
     this.conflictsWith = inputConstraints.conflictsWith;
     this.itemRequiresStatement = inputConstraints.itemRequiresStatement;
     this.subjectType = inputConstraints.subjectType;
+    this.subjectTypeStats = inputConstraints.subjectTypeStats;
   }
 }
 

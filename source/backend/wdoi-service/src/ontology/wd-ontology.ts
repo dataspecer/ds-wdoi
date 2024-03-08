@@ -5,23 +5,21 @@ import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture }
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
 import { OntologySearch, type SearchResults } from './search/ontologySearch';
 import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
-import {
-  type HierarchyWithPropertiesReturnWrapper,
-  HierarchyWithPropertiesExtractor,
-  HierarchyWithPropertiesExpander,
-} from './surroundings/hierarchy-with-properties/hierarchy-with-properties';
 import type { GlobalPropertyRecommendations } from './entities/recommendations';
 import { loadGlobalPropertyRecommendations } from './loading/load-property-recommendations';
 import {
-  type HierarchyWithPropertiesRecsReturnWrapper,
-  HierarchyWithPropertiesExtractorRecs,
-  HierarchyWithPropertiesExpanderRecs,
-} from './surroundings/hierarchy-with-properties/hierarchy-with-properties-recs';
-import { ClassOneDistanceDocsExpander, type ClassOneDistanceDocsReturnWrapper } from './surroundings/one-distance-docs/class-one-distance-docs';
+  HierarchyWithPropertiesConstraintsExtractor,
+  HierarchyWithPropertiesUsageStatisticsExtractor,
+  type HierarchyWithPropertiesReturnWrapper,
+} from './surroundings/hierarchy-with-properties/hierarchy-with-properties';
+import {
+  ClassOneDistanceDocsExpander,
+  type ClassOneDistanceDocsReturnWrapper,
+} from './surroundings/one-distance-docs/class-one-distance-docs-expander';
 import {
   PropertyOneDistanceDocsExpander,
   type PropertyOneDistanceDocsReturnWrapper,
-} from './surroundings/one-distance-docs/property-one-distance-docs';
+} from './surroundings/one-distance-docs/property-one-distance-docs-expander';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -29,8 +27,6 @@ export class WdOntology {
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly ontologySearch: OntologySearch;
   private readonly hierarchyWalker: ClassHierarchyWalker;
-  private readonly surroundingsExpander: HierarchyWithPropertiesExpander;
-  private readonly surroundingsExpanderRecs: HierarchyWithPropertiesExpanderRecs;
   private readonly globalSubjectRecs: GlobalPropertyRecommendations;
   private readonly globalValueRecs: GlobalPropertyRecommendations;
 
@@ -46,8 +42,6 @@ export class WdOntology {
     this.properties = properties;
     this.ontologySearch = new OntologySearch(this.rootClass, this.classes, this.properties);
     this.hierarchyWalker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
-    this.surroundingsExpander = new HierarchyWithPropertiesExpander(this.rootClass, this.classes, this.properties);
-    this.surroundingsExpanderRecs = new HierarchyWithPropertiesExpanderRecs(this.rootClass, this.classes, this.properties);
     this.globalSubjectRecs = globalSubjectRecs;
     this.globalValueRecs = globalValueRecs;
   }
@@ -66,14 +60,8 @@ export class WdOntology {
     return this.hierarchyWalker.getHierarchy(startClass, parts);
   }
 
-  public getSurroundings(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
-    const extractor = new HierarchyWithPropertiesExtractor(startClass, this.classes, this.properties);
-    this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
-    return this.surroundingsExpander.getSurroundings(extractor);
-  }
-
-  public getSurroundingsWithRecs(startClass: WdClass): HierarchyWithPropertiesRecsReturnWrapper {
-    const extractor = new HierarchyWithPropertiesExtractorRecs(
+  public getSurroundingsConstraints(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
+    const extractor = new HierarchyWithPropertiesConstraintsExtractor(
       startClass,
       this.classes,
       this.properties,
@@ -81,7 +69,13 @@ export class WdOntology {
       this.globalValueRecs.propertyProbabilityHitMap,
     );
     this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
-    return this.surroundingsExpanderRecs.getSurroundings(extractor);
+    return extractor.getResult();
+  }
+
+  public getSurroundingsUsageStatistics(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
+    const extractor = new HierarchyWithPropertiesUsageStatisticsExtractor(startClass, this.classes, this.properties);
+    this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
+    return extractor.getResult();
   }
 
   public getClass(classId: EntityId): WdClass | undefined {

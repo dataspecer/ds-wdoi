@@ -1,110 +1,210 @@
 import type { EntityId, EntityIdsList } from '../../entities/common';
+import type { PropertyProbabilityHitMap } from '../../entities/recommendations';
 import { type WdClass } from '../../entities/wd-class';
-import type { WdEntity } from '../../entities/wd-entity';
-import { type ItemProperty, UnderlyingType, type WdProperty } from '../../entities/wd-property';
+import { type WdProperty } from '../../entities/wd-property';
 import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
-import { ClassSurroundingsExpander } from '../surroundings-expander';
+import * as Timsort from 'timsort';
+
+export type HierarchyWithPropertiesExtractorParts = 'constraints' | 'usage';
 
 export class HierarchyWithPropertiesReturnWrapper {
-  startClass: WdClass;
-  parents: WdClass[];
-  children: WdClass[];
-  subjectOf: WdProperty[];
-  valueOf: WdProperty[];
-  propertyEndpoints: WdClass[];
+  startClass: EntityId;
+  parents: EntityIdsList;
+  subjectOf: EntityIdsList;
+  valueOf: EntityIdsList;
+  classes: WdClass[];
+  properties: WdProperty[];
 
   constructor(
-    startClass: WdClass,
-    parents: WdClass[],
-    children: WdClass[],
-    subjectOf: WdProperty[],
-    valueOf: WdProperty[],
-    propertyEndpoints: WdClass[],
+    startClass: EntityId,
+    parents: EntityIdsList,
+    subjectOf: EntityIdsList,
+    valueOf: EntityIdsList,
+    classes: WdClass[],
+    properties: WdProperty[],
   ) {
     this.startClass = startClass;
     this.parents = parents;
-    this.children = children;
     this.subjectOf = subjectOf;
     this.valueOf = valueOf;
-    this.propertyEndpoints = propertyEndpoints;
-  }
-}
-
-export class HierarchyWithPropertiesExtractor extends Extractor {
-  private readonly startClass: WdClass;
-  private readonly classes: ReadonlyMap<EntityId, WdClass>;
-  private readonly properties: ReadonlyMap<EntityId, WdProperty>;
-  private readonly subjectOf: WdProperty[] = [];
-  private readonly valueOf: WdProperty[] = [];
-  private readonly propertyEndpoints: WdClass[] = [];
-  private readonly subjectOfSet: Set<EntityId> = new Set<EntityId>();
-  private readonly valueOfSet: Set<EntityId> = new Set<EntityId>();
-  private readonly propertySetEndpointsSet: Set<EntityId> = new Set<EntityId>();
-
-  constructor(startClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
-    super();
-    this.startClass = startClass;
     this.classes = classes;
     this.properties = properties;
   }
+}
 
-  private materializeOnMissing(
-    entityIds: EntityIdsList,
-    set: Set<EntityId>,
-    storage: WdEntity[],
-    context: ReadonlyMap<EntityId, WdEntity>,
-    type: 'subject' | 'value' | 'class',
-  ): void {
-    for (const id of entityIds) {
-      if (!set.has(id)) {
-        set.add(id);
-        const entity = context.get(id) as WdEntity;
-        storage.push(entity);
-        this.process(entity, type);
-      }
-    }
+export abstract class HierarchyWithPropertiesExtractor extends Extractor {
+  // Context
+  protected readonly contextClasses: ReadonlyMap<EntityId, WdClass>;
+  protected readonly contexProperties: ReadonlyMap<EntityId, WdProperty>;
+
+  // Outputs
+  private readonly startClass: WdClass;
+  private readonly parentsIds: EntityId[] = [];
+  protected readonly subjectOfIds: EntityId[] = [];
+  protected readonly valueOfIds: EntityId[] = [];
+  private readonly classes: WdClass[] = [];
+  private readonly properties: WdProperty[] = [];
+
+  // Markers
+  private isStartClassProcessed: boolean;
+  protected readonly subjectOfIdsMap: Map<EntityId, number> = new Map<EntityId, number>();
+  protected readonly valueOfIdsMap: Map<EntityId, number> = new Map<EntityId, number>();
+  private readonly parentsIdsSet: Set<EntityId> = new Set<EntityId>();
+  private readonly classesIdsSet: Set<EntityId> = new Set<EntityId>();
+
+  constructor(startClass: WdClass, contextClasses: ReadonlyMap<EntityId, WdClass>, contextProperties: ReadonlyMap<EntityId, WdProperty>) {
+    super();
+    this.startClass = startClass;
+    this.contextClasses = contextClasses;
+    this.contexProperties = contextProperties;
+
+    this.classes.push(startClass);
+    this.classesIdsSet.add(startClass.id);
+    this.isStartClassProcessed = false;
   }
 
-  private process(wdEntity: WdEntity, type: 'subject' | 'value' | 'class'): void {
-    if (type === 'subject') this.processSubjectOf(wdEntity);
-    else if (type === 'value') this.processValueOf(wdEntity);
-  }
+  protected abstract extract_internal(cls: WdClass): void;
 
-  // If the class is subject of a property, we want to extract the value types which will be used as outgoing edges.
-  private processSubjectOf(wdEntity: WdEntity): void {
-    const prop = wdEntity as WdProperty;
-    if (prop.underlyingType === UnderlyingType.ENTITY) {
-      const itemProp = prop as ItemProperty;
-      const valueType = itemProp.itemConstraints.valueType;
-      this.materializeOnMissing(valueType.instanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
-      this.materializeOnMissing(valueType.subclassOfInstanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
-    }
-  }
-
-  // If the class is value of a property, we want to extract the subject types which will be used as incoming edges.
-  private processValueOf(wdEntity: WdEntity): void {
-    const prop = wdEntity as WdProperty;
-    const subjectType = prop.generalConstraints.subjectType;
-    this.materializeOnMissing(subjectType.instanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
-    this.materializeOnMissing(subjectType.subclassOfInstanceOf, this.propertySetEndpointsSet, this.propertyEndpoints, this.classes, 'class');
-  }
-
-  // The method never receives the same class twice
+  // The method should never receive the same parent class twice.
+  // The start class is always the first one seen.
   public extract(cls: WdClass): void {
-    this.materializeOnMissing(cls.subjectOfProperty, this.subjectOfSet, this.subjectOf, this.properties, 'subject');
-    this.materializeOnMissing(cls.valueOfProperty, this.valueOfSet, this.valueOf, this.properties, 'value');
+    if (this.isStartClassProcessed && !this.tryAddToParents(cls)) return;
+    if (!this.isStartClassProcessed) this.isStartClassProcessed = true;
+
+    this.extract_internal(cls);
   }
 
-  public getResult(): [WdClass, WdProperty[], WdProperty[], WdClass[]] {
-    return [this.startClass, this.subjectOf, this.valueOf, this.propertyEndpoints];
+  private tryAddToParents(cls: WdClass): boolean {
+    if (!this.parentsIdsSet.has(cls.id)) {
+      this.parentsIdsSet.add(cls.id);
+      this.parentsIds.push(cls.id);
+      this.tryAddToMaterializedClasses(cls);
+      return true;
+    } else return false;
+  }
+
+  private tryAddToMaterializedClasses(cls: WdClass): boolean {
+    if (!this.classesIdsSet.has(cls.id)) {
+      this.classesIdsSet.add(cls.id);
+      this.classes.push(cls);
+      return true;
+    } else return false;
+  }
+
+  protected processProperties(
+    type: 'subject' | 'value',
+    propertyIds: EntityIdsList,
+    localPropMap: PropertyProbabilityHitMap | null,
+    globalPropMap: PropertyProbabilityHitMap | null,
+    propsMarker: Map<EntityId, number>,
+    propsStorage: EntityId[],
+    propsOppositeMarker: Map<EntityId, number>,
+  ): void {
+    for (const propertyId of propertyIds) {
+      const propertyProbValue = this.getPropertyProbValue(propertyId, localPropMap, globalPropMap);
+      if (!propsMarker.has(propertyId)) {
+        propsMarker.set(propertyId, propertyProbValue);
+        propsStorage.push(propertyId);
+        const property = this.contexProperties.get(propertyId) as WdProperty;
+        if (!propsOppositeMarker.has(propertyId)) {
+          this.properties.push(property);
+        }
+      } else this.tryExchangeProbsInMarkers(propertyId, propertyProbValue, propsMarker);
+    }
+  }
+
+  private tryExchangeProbsInMarkers(propertyId: EntityId, newProbValue: number, marker: Map<EntityId, number>): void {
+    const currentProbValue = marker.get(propertyId) as number;
+    if (currentProbValue < newProbValue) {
+      marker.set(propertyId, newProbValue);
+    }
+  }
+
+  private getPropertyProbValue(
+    propertyId: EntityId,
+    localPropMap: PropertyProbabilityHitMap | null,
+    globalProbMap: PropertyProbabilityHitMap | null,
+  ): number {
+    if (localPropMap != null && localPropMap.has(propertyId)) {
+      return localPropMap.get(propertyId) as number;
+    } else if (globalProbMap != null && globalProbMap.has(propertyId)) {
+      return globalProbMap.get(propertyId) as number;
+    } else {
+      return 0;
+    }
+  }
+
+  public getResult(): HierarchyWithPropertiesReturnWrapper {
+    Timsort.sort(this.subjectOfIds, (a, b) => (this.subjectOfIdsMap.get(b) as number) - (this.subjectOfIdsMap.get(a) as number));
+    Timsort.sort(this.valueOfIds, (a, b) => (this.valueOfIdsMap.get(b) as number) - (this.valueOfIdsMap.get(a) as number));
+    return new HierarchyWithPropertiesReturnWrapper(
+      this.startClass.id,
+      this.parentsIds,
+      this.subjectOfIds,
+      this.valueOfIds,
+      this.classes,
+      this.properties,
+    );
   }
 }
 
-export class HierarchyWithPropertiesExpander extends ClassSurroundingsExpander {
-  public getSurroundings(propertyHierarchyExtractor: HierarchyWithPropertiesExtractor): HierarchyWithPropertiesReturnWrapper {
-    const parents: WdClass[] = []; // this.getParents(startClass);
-    const children: WdClass[] = []; // this.getChildren(startClass);
-    const [startClass, subjectOf, valueOf, endpoints] = propertyHierarchyExtractor.getResult();
-    return new HierarchyWithPropertiesReturnWrapper(startClass, parents, children, subjectOf, valueOf, endpoints);
+export class HierarchyWithPropertiesConstraintsExtractor extends HierarchyWithPropertiesExtractor {
+  protected readonly contextGlobalSubjectOfProbs: PropertyProbabilityHitMap;
+  protected readonly contextGlobalValueOfProbs: PropertyProbabilityHitMap;
+
+  constructor(
+    startClass: WdClass,
+    contextClasses: ReadonlyMap<EntityId, WdClass>,
+    contextProperties: ReadonlyMap<EntityId, WdProperty>,
+    contextGlobalSubjectOfProbs: PropertyProbabilityHitMap,
+    contextGlobalValueOfProbs: PropertyProbabilityHitMap,
+  ) {
+    super(startClass, contextClasses, contextProperties);
+    this.contextGlobalSubjectOfProbs = contextGlobalSubjectOfProbs;
+    this.contextGlobalValueOfProbs = contextGlobalValueOfProbs;
+  }
+
+  protected extract_internal(cls: WdClass): void {
+    this.processProperties(
+      'subject',
+      cls.subjectOfProperty,
+      cls.subjectOfProbabilitiesMap,
+      this.contextGlobalSubjectOfProbs,
+      this.subjectOfIdsMap,
+      this.subjectOfIds,
+      this.valueOfIdsMap,
+    );
+    this.processProperties(
+      'value',
+      cls.valueOfProperty,
+      null,
+      this.contextGlobalValueOfProbs,
+      this.valueOfIdsMap,
+      this.valueOfIds,
+      this.subjectOfIdsMap,
+    );
+  }
+}
+
+export class HierarchyWithPropertiesUsageStatisticsExtractor extends HierarchyWithPropertiesExtractor {
+  protected extract_internal(cls: WdClass): void {
+    this.processProperties(
+      'subject',
+      cls.subjectOfPropertyStats,
+      cls.subjectOfPropertyStatsProbabilitiesMap,
+      null,
+      this.subjectOfIdsMap,
+      this.subjectOfIds,
+      this.valueOfIdsMap,
+    );
+    this.processProperties(
+      'value',
+      cls.valueOfPropertyStats,
+      cls.valueOfPropertyStatsProbabilitiesMap,
+      null,
+      this.valueOfIdsMap,
+      this.valueOfIds,
+      this.subjectOfIdsMap,
+    );
   }
 }

@@ -2,7 +2,7 @@ import { type EntityId } from '../../entities/common';
 import { type WdClass } from '../../entities/wd-class';
 import { WdProperty } from '../../entities/wd-property';
 import { materializeEntitiesWithContext } from '../../utils/materialize-entities';
-import { PropertySurroundingsExpander } from '../surroundings-expander';
+import { OneDistanceDocsExpander } from './one-distance-docs-expander';
 
 export class PropertyOneDistanceDocsReturnWrapper {
   startProperty: WdProperty;
@@ -16,7 +16,14 @@ export class PropertyOneDistanceDocsReturnWrapper {
   }
 }
 
-export class PropertyOneDistanceDocsExpander extends PropertySurroundingsExpander {
+export class PropertyOneDistanceDocsExpander extends OneDistanceDocsExpander {
+  protected readonly startProperty: WdProperty;
+
+  constructor(startProperty: WdProperty, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+    super(classes, properties);
+    this.startProperty = startProperty;
+  }
+
   private getOneDistanceDocsSurroundings(): [WdClass[], WdProperty[]] {
     const surroundingClasses: WdClass[] = [];
     const surroundingProperties: WdProperty[] = [];
