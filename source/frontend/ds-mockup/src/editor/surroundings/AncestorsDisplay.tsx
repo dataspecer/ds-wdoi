@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { WdClass, WdClassDocsOnly } from '../../wikidata/entities/wd-class';
 import { ClassSurroundings } from '../../wikidata/query/get-surroundings';
 import React from 'react';
-import { EntityId, EntityIdsList, WdEntityDocsOnly } from '../../wikidata/entities/wd-entity';
+import { EntityId, EntityIdsList } from '../../wikidata/entities/wd-entity';
 import {
   Accordion,
   AccordionSummary,
@@ -14,7 +14,6 @@ import {
   List,
   ListItemButton,
   IconButton,
-  Divider,
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -115,7 +114,7 @@ export function AncestorsDisplay({
                   </div>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Typography>Children</Typography>
+                  <Typography>Parents</Typography>
                   <List>
                     {cls.subclassOf.map((subclassId) => {
                       const subclass = rootSurroundings.classesMap.get(subclassId) as WdClass;

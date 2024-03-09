@@ -1,35 +1,44 @@
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { WdClass } from '../../../wikidata/entities/wd-class';
-import { ClassSurroundings } from '../../../wikidata/query/get-surroundings';
+import { SurroundingsParts } from '../../../wikidata/query/get-surroundings';
 import { SelectedProperty } from '../selected-property';
-import { AssociationsList } from './AssociationsList';
 import { LoadedAssociationsList } from './LoadedAssociationsList';
+import { useState } from 'react';
 
 export function AssociationsDisplay({
-  rootSurroundings,
   selectedClass,
   setSelectedPropertiesUpper,
 }: {
-  rootSurroundings: ClassSurroundings;
-  selectedClass: WdClass | undefined;
+  selectedClass: WdClass;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
 }) {
-  const isRootSelected =
-    (selectedClass != null && selectedClass.id === rootSurroundings.startClassId) ||
-    selectedClass == null;
+  const [part, setPart] = useState<SurroundingsParts>('constraints');
 
   return (
     <div>
-      {isRootSelected ? (
-        <AssociationsList
-          rootSurroundings={rootSurroundings}
-          setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-        />
-      ) : (
-        <LoadedAssociationsList
-          selectedClass={selectedClass as WdClass}
-          setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-        />
-      )}
+      <FormControl>
+        <InputLabel id='part-selection-label'>Selection</InputLabel>
+        <Select
+          labelId='part-selection-label'
+          id='part-selection'
+          value={part}
+          label='Selection'
+          size='small'
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value !== 'constraints' && value !== 'usage') setPart('constraints');
+            else setPart(value);
+          }}
+        >
+          <MenuItem value={'constraints'}>Constraints</MenuItem>
+          <MenuItem value={'usage'}>Usage</MenuItem>
+        </Select>
+      </FormControl>
+      <LoadedAssociationsList
+        selectedClass={selectedClass}
+        setSelectedPropertiesUpper={setSelectedPropertiesUpper}
+        part={part}
+      />
     </div>
   );
 }

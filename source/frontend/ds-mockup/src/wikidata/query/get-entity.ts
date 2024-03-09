@@ -25,7 +25,7 @@ export interface ClassWithSurroundingDocs {
 export async function fetchClassWithSurroundingsDocs(
   cls: WdClassDocsOnly,
 ): Promise<ClassWithSurroundingDocs> {
-  const reply = (await axios.get(`/api/v2/classes/${cls.id}`))
+  const reply = (await axios.get(`/api/v3/classes/${cls.id}`))
     .data as GetClassWithSurroundingNamesReply;
   const classesDocsMap = buildEntityMap(reply.results.surroundingClassNames);
   const propertyDocsMap = buildEntityMap(reply.results.surroundingPropertyNames);
@@ -53,7 +53,7 @@ export interface PropertyWithSurroundingDocs {
 export async function fetchPropertyWithSurroundingsNames(
   property: WdPropertyDocsOnly,
 ): Promise<PropertyWithSurroundingDocs> {
-  const reply = (await axios.get(`/api/v2/properties/${property.id}`))
+  const reply = (await axios.get(`/api/v3/properties/${property.id}`))
     .data as GetPropertyWithSurroundingNamesReply;
   const classesDocsMap = buildEntityMap(reply.results.surroundingClassNames);
   const propertyDocsMap = buildEntityMap(reply.results.surroundingPropertyNames);

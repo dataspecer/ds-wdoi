@@ -1,5 +1,5 @@
 import { WdClassDocsOnly } from './wd-class';
-import { WdProperty, WdPropertyDocsOnly } from './wd-property';
+import { WdPropertyDocsOnly } from './wd-property';
 
 export type LanguageMap = Record<string, string>;
 

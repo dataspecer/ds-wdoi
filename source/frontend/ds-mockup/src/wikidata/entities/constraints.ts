@@ -30,10 +30,12 @@ export interface GeneralConstraints {
   readonly conflictsWith: StatementAllowanceMap;
   readonly itemRequiresStatement: StatementAllowanceMap;
   readonly subjectType: SubjectValueTypeContraint;
+  readonly subjectTypeStats: EntityIdsList;
 }
 
 export interface ItemTypeConstraints {
   readonly valueType: SubjectValueTypeContraint;
+  readonly valueTypeStats: EntityIdsList;
   readonly valueRequiresStatement: StatementAllowanceMap;
   readonly isSymmetric: boolean;
   readonly oneOf: EntityIdsList;

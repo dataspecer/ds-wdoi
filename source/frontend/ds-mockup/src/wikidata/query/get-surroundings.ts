@@ -7,7 +7,6 @@ import { buildEntityMap } from '../../editor/utils/build-entity-map';
 interface GetSurroundingsReplyResults {
   startClass: EntityId;
   parents: EntityIdsList;
-  propertyEndpoints: EntityIdsList;
   subjectOf: EntityIdsList;
   valueOf: EntityIdsList;
   classes: WdClass[];
@@ -21,7 +20,6 @@ interface GetSurroundingsReply {
 export interface ClassSurroundings {
   startClassId: EntityId;
   parentsIds: EntityIdsList;
-  propertyEndpointsIds: EntityIdsList;
   subjectOfIds: EntityIdsList;
   valueOfIds: EntityIdsList;
   properties: WdProperty[];
@@ -29,15 +27,19 @@ export interface ClassSurroundings {
   propertiesMap: ReadonlyMap<EntityId, WdProperty>;
 }
 
-export async function fetchClassSurroundings(cls: WdClassDocsOnly): Promise<ClassSurroundings> {
-  const reply = (await axios.get(`/api/v2/classes/${cls.id}/surroundings`))
+export type SurroundingsParts = 'constraints' | 'usage';
+
+export async function fetchClassSurroundings(
+  cls: WdClassDocsOnly,
+  part: SurroundingsParts,
+): Promise<ClassSurroundings> {
+  const reply = (await axios.get(`/api/v3/classes/${cls.id}/surroundings?part=${part}`))
     .data as GetSurroundingsReply;
   const classesMap = buildEntityMap(reply.results.classes);
   const propertyMap = buildEntityMap(reply.results.properties);
   return {
     startClassId: reply.results.startClass,
     parentsIds: reply.results.parents,
-    propertyEndpointsIds: reply.results.propertyEndpoints,
     subjectOfIds: reply.results.subjectOf,
     valueOfIds: reply.results.valueOf,
     properties: reply.results.properties,

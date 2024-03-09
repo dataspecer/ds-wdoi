@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
-import { ClassSurroundings } from '../../../wikidata/query/get-surroundings';
+import { ClassSurroundings, SurroundingsParts } from '../../../wikidata/query/get-surroundings';
 import { SelectedProperty } from '../selected-property';
 import { EntityIdsList, WdEntityDocsOnly } from '../../../wikidata/entities/wd-entity';
-import { WdClass, WdClassDocsOnly } from '../../../wikidata/entities/wd-class';
+import { WdClass } from '../../../wikidata/entities/wd-class';
 import { UnderlyingType, WdProperty } from '../../../wikidata/entities/wd-property';
 import { DetailListDialog } from '../../entity-detail/DetailListDialog';
 import {
@@ -35,7 +35,6 @@ function getFilteredProperties(
   }
   if (searchTextInput === '') return [rootIsSubjectOf, rootIsValueOf];
   else {
-    console.log(searchTextInput);
     rootIsSubjectOf = rootIsSubjectOf.filter((propId) => {
       const prop = rootSurroundings.propertiesMap.get(propId) as WdProperty;
       return prop.labels['en'].toLowerCase().includes(searchTextInput);
@@ -50,27 +49,27 @@ function getFilteredProperties(
 
 function RenderProperty({
   rootSurroundings,
-  prop,
+  wdProperty,
   handleOpenDetail,
   orientation,
   endpoint,
 }: {
   rootSurroundings: ClassSurroundings;
-  prop: WdProperty;
+  wdProperty: WdProperty;
   handleOpenDetail: (wdEntityDocs: WdEntityDocsOnly) => void;
   orientation: 'in' | 'out';
   endpoint: WdClass | undefined;
 }) {
   return (
     <ListItem
-      key={'out+' + prop.iri}
+      key={'out+' + wdProperty.iri}
       disablePadding
       secondaryAction={
         <IconButton
           edge='end'
           aria-label='comments'
           onClick={() => {
-            handleOpenDetail(prop);
+            handleOpenDetail(wdProperty);
           }}
         >
           <InfoTwoToneIcon />
@@ -80,14 +79,14 @@ function RenderProperty({
       <ListItemButton>
         <div className='flex flex-col'>
           <div className='flex flex-row items-center space-x-2'>
-            <Typography className='font-bold'>{prop.labels['en']} </Typography>
-            <Typography>({'P' + prop.id.toString()})</Typography>
+            <Typography className='font-bold'>{wdProperty.labels['en']} </Typography>
+            <Typography>({'P' + wdProperty.id.toString()})</Typography>
             <Typography>{orientation === 'out' ? ' -(out)-> ' : '<-(in)-  '}</Typography>
             <Typography>
-              {endpoint != null ? endpoint.labels['en'] : UnderlyingType[prop.underlyingType]}
+              {endpoint != null ? endpoint.labels['en'] : UnderlyingType[wdProperty.underlyingType]}
             </Typography>
           </div>
-          <Typography>{prop.descriptions['en'] ?? ''}</Typography>
+          <Typography>{wdProperty.descriptions['en'] ?? ''}</Typography>
         </div>
       </ListItemButton>
     </ListItem>
@@ -125,11 +124,11 @@ function RenderAssociationList({
     <div>
       <List>
         {propertyList.map((propId) => {
-          const prop = rootSurroundings.propertiesMap.get(propId) as WdProperty;
+          const wdProperty = rootSurroundings.propertiesMap.get(propId) as WdProperty;
           return (
             <RenderProperty
               rootSurroundings={rootSurroundings}
-              prop={prop}
+              wdProperty={wdProperty}
               handleOpenDetail={handleOpenDetail}
               orientation={orientation}
               endpoint={undefined}
@@ -158,10 +157,13 @@ function RenderAssociationList({
 export function AssociationsList({
   rootSurroundings,
   setSelectedPropertiesUpper,
+  part,
 }: {
   rootSurroundings: ClassSurroundings;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
+  part: SurroundingsParts;
 }) {
+  console.log(rootSurroundings);
   const [searchTextInput, setSearchTextInput] = useState('');
   const [propertySelection, setPropertySelection] = useState<PropertySelectionInput>('own');
 

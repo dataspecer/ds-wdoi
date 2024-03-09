@@ -18,9 +18,14 @@ export function SurroundingsDialog({
 }) {
   const [selectedParent, setSelectedParent] = useState<WdClass | undefined>(undefined);
   const [selectedProperties, setSelectedProperties] = useState<SelectedProperty[]>([]);
-  const { isLoading, isError, data } = useQuery(['surroundings', root.iri], async () => {
-    return await fetchClassSurroundings(root);
-  });
+  const { isLoading, isError, data } = useQuery(
+    ['surroundings', root.iri, 'constraints'],
+    async () => {
+      return await fetchClassSurroundings(root, 'constraints');
+    },
+  );
+
+  const rootSurroundings = data as ClassSurroundings;
 
   return (
     <Dialog
@@ -33,7 +38,11 @@ export function SurroundingsDialog({
       <DialogTitle>Select interpreted surroundings</DialogTitle>
       <DialogContent className='bg-slate-100 px-0'>
         {isLoading || isError ? (
-          'Loading or error'
+          isLoading ? (
+            'Loading'
+          ) : (
+            'Error'
+          )
         ) : (
           <div className='mx-1 flex  flex-row p-1'>
             <div className='basis-2/6 p-1'>
@@ -44,8 +53,11 @@ export function SurroundingsDialog({
             </div>
             <div className='basis-4/6 p-1'>
               <AssociationsDisplay
-                rootSurroundings={data as ClassSurroundings}
-                selectedClass={selectedParent}
+                selectedClass={
+                  selectedParent == null
+                    ? (rootSurroundings.classesMap.get(rootSurroundings.startClassId) as WdClass)
+                    : selectedParent
+                }
                 setSelectedPropertiesUpper={setSelectedProperties}
               />
             </div>

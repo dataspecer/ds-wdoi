@@ -1,6 +1,5 @@
 import { GeneralConstraints, ItemTypeConstraints, EmptyTypeConstraint } from './constraints';
-import { WdClass } from './wd-class';
-import { EntityId, EntityIdsList, ExternalOntologyMapping, WdEntity } from './wd-entity';
+import { EntityIdsList, ExternalOntologyMapping, WdEntity } from './wd-entity';
 
 export enum UnderlyingType {
   ENTITY = 0,
