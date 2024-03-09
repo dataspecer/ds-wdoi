@@ -40,8 +40,3 @@ The sorting will take place inside the backend.
 The dataspecer will not get the probabilities only the sorted list.
 In the future, it could be adjusted to contain also the probabilities.
 Maybe include the properties for this type -> but what if they are missing from the subject of and subclass of?
-
-## Questions
-
-- How to include properties for this type constraints?
-  - It does not have to exists in the first place.

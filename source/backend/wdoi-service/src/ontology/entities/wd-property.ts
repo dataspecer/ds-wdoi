@@ -99,6 +99,22 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
   public static isItemProperty(property: WdProperty): property is ItemProperty {
     return property.underlyingType === UnderlyingType.ENTITY;
   }
+
+  public getDomainClassIdsByUsage(): EntityIdsList {
+    return this.generalConstraints.subjectTypeStats.slice(0, 1_000);
+  }
+
+  public getDomainClassIdsByConstraints(): EntityIdsList {
+    return this.generalConstraints.subjectType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
+  }
+
+  public getRangeClassIdsByConstraints(): EntityIdsList {
+    return [];
+  }
+
+  public getRangeClassIdsByUsage(): EntityIdsList {
+    return [];
+  }
 }
 
 export class ItemProperty extends WdProperty {
@@ -111,6 +127,14 @@ export class ItemProperty extends WdProperty {
 
   accept(visitor: ModifierPropertyVisitor): void {
     visitor.visitItemProperty(this);
+  }
+
+  public getRangeClassIdsByConstraints(): EntityIdsList {
+    return this.itemConstraints.valueType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
+  }
+
+  public getRangeClassIdsByUsage(): EntityIdsList {
+    return this.itemConstraints.valueTypeStats.slice(0, 1_000);
   }
 }
 

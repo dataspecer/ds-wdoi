@@ -62,12 +62,14 @@ export const generalConstraintsSchema = {
       additionalProperties: true,
     },
     subjectType: subjectObjectConstraintSchema,
-    // subjectTypeStats: {
-    //   type: 'array',
-    //   items: {
-    //     type: 'number',
-    //   },
-    // },
+    subjectTypeStats: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+      minItems: 0,
+      maxItems: 1_000,
+    },
   },
   additionalProperties: false,
   required: [
@@ -78,7 +80,7 @@ export const generalConstraintsSchema = {
     'conflictsWith',
     'itemRequiresStatement',
     'subjectType',
-    // 'subjectTypeStats'
+    'subjectTypeStats',
   ],
 } as const;
 
@@ -86,12 +88,14 @@ export const itemConstraintsSchema = {
   type: 'object',
   properties: {
     valueType: subjectObjectConstraintSchema,
-    // valueTypeStats: {
-    //   type: 'array',
-    //   items: {
-    //     type: 'number',
-    //   },
-    // },
+    valueTypeStats: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+      minItems: 0,
+      maxItems: 1_000,
+    },
     valueRequiresStatement: {
       type: 'object',
       additionalProperties: true,
@@ -117,7 +121,7 @@ export const itemConstraintsSchema = {
     },
   },
   additionalProperties: false,
-  required: ['valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse' /** , 'valueTypeStats' */],
+  required: ['valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse', 'valueTypeStats'],
 } as const;
 
 export const emptyConstraintsSchema = {

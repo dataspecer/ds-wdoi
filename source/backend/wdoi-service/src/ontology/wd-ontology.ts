@@ -1,4 +1,4 @@
-import type { EntityId } from './entities/common';
+import type { EntityId, EntityIdsList } from './entities/common';
 import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class';
 import { type WdProperty } from './entities/wd-property';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
@@ -11,6 +11,7 @@ import {
   HierarchyWithPropertiesConstraintsExtractor,
   HierarchyWithPropertiesUsageStatisticsExtractor,
   type HierarchyWithPropertiesReturnWrapper,
+  type HierarchyWithPropertiesExtractorParts,
 } from './surroundings/hierarchy-with-properties/hierarchy-with-properties';
 import {
   ClassOneDistanceDocsExpander,
@@ -20,6 +21,7 @@ import {
   PropertyOneDistanceDocsExpander,
   type PropertyOneDistanceDocsReturnWrapper,
 } from './surroundings/one-distance-docs/property-one-distance-docs-expander';
+import { materializeEntities } from './utils/materialize-entities';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -98,6 +100,26 @@ export class WdOntology {
       this.properties,
     );
     return propertyOneDistanceDocsExpander.getSurroundings();
+  }
+
+  public getDomainFor(propertyId: EntityId, part: HierarchyWithPropertiesExtractorParts): WdClass[] {
+    const wdProperty = this.properties.get(propertyId) as WdProperty;
+    let classIds: EntityIdsList = [];
+
+    if (part === 'constraints') classIds = wdProperty.getDomainClassIdsByConstraints();
+    if (part === 'usage') classIds = wdProperty.getDomainClassIdsByUsage();
+
+    return materializeEntities(classIds, this.classes);
+  }
+
+  public getRangeFor(propertyId: EntityId, part: HierarchyWithPropertiesExtractorParts): WdClass[] {
+    const wdProperty = this.properties.get(propertyId) as WdProperty;
+    let classIds: EntityIdsList = [];
+
+    if (part === 'constraints') classIds = wdProperty.getRangeClassIdsByConstraints();
+    if (part === 'usage') classIds = wdProperty.getRangeClassIdsByUsage();
+
+    return materializeEntities(classIds, this.classes);
   }
 
   public containsClass(classId: EntityId): boolean {

@@ -1,10 +1,12 @@
 import { type FastifyPluginCallback } from 'fastify';
 import { getEntityInputParamsSchema, type GetEntityInputParamsType } from './schemas/input-params';
 import { type WdClass } from '../ontology/entities/wd-class';
-import { getClassWithSurroundingNamesReplySchema, getPropertyWithSurroundingNamesReplySchema } from './schemas/get-entity';
 import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy';
 import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search';
 import { getSurroundingsInputQueryStringSchema, type GetSurroundingsInputQueryStringType, surroundingsReplySchema } from './schemas/get-surroundings';
+import { getClassWithSurroundingNamesReplySchema } from './schemas/get-class';
+import { getPropertyWithSurroundingNamesReplySchema } from './schemas/get-property';
+import { getPropertyDomainRangeReplySchema } from './schemas/get-property-domain-range';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   // Search
@@ -73,6 +75,58 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
           properties: [results.startProperty],
           surroundingClassNames: results.surroundingClassNames,
           surroundingPropertyNames: results.surroundingPropertyNames,
+        },
+      };
+    },
+  );
+
+  // Get domain of a property
+
+  fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetSurroundingsInputQueryStringType }>(
+    '/properties/:id/domain',
+    {
+      schema: {
+        params: getEntityInputParamsSchema,
+        querystring: getSurroundingsInputQueryStringSchema,
+        response: {
+          '2xx': getPropertyDomainRangeReplySchema,
+        },
+      },
+    },
+    async (req, res) => {
+      const { id } = req.params;
+      fastify.throwOnMissingPropertyId(id);
+      const { part } = req.query;
+      const results = fastify.wdOntology.getDomainFor(id, part);
+      return {
+        results: {
+          classes: results,
+        },
+      };
+    },
+  );
+
+  // Get range of a property
+
+  fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetSurroundingsInputQueryStringType }>(
+    '/properties/:id/range',
+    {
+      schema: {
+        params: getEntityInputParamsSchema,
+        querystring: getSurroundingsInputQueryStringSchema,
+        response: {
+          '2xx': getPropertyDomainRangeReplySchema,
+        },
+      },
+    },
+    async (req, res) => {
+      const { id } = req.params;
+      fastify.throwOnMissingPropertyId(id);
+      const { part } = req.query;
+      const results = fastify.wdOntology.getRangeFor(id, part);
+      return {
+        results: {
+          classes: results,
         },
       };
     },
