@@ -1,35 +1,30 @@
-import {
-  ListItem,
-  IconButton,
-  ListItemButton,
-  Typography,
-  List,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-} from '@mui/material';
+import { Typography, List, Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useState } from 'react';
 import { WdClass } from '../../../../wikidata/entities/wd-class';
 import { WdEntityDocsOnly } from '../../../../wikidata/entities/wd-entity';
 import { WdProperty } from '../../../../wikidata/entities/wd-property';
-import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
+import { ClassSurroundings, SurroundingsParts } from '../../../../wikidata/query/get-surroundings';
 import { DetailListDialog } from '../../../entity-detail/DetailListDialog';
 import { SelectedProperty } from '../../selected-property';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { RenderProperty } from './RenderProperty';
+
+export type PropertyAccordionType = 'Identifiers' | 'Attributes' | 'Inwards' | 'Outwards';
 
 export function AssociationsAccordion({
   rootClass,
   rootSurroundings,
   setSelectedPropertiesUpper,
   propertyList,
-  name,
+  surroundingsPart,
+  propertyAccordionType,
 }: {
   rootClass: WdClass;
   rootSurroundings: ClassSurroundings;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
   propertyList: WdProperty[];
-  name: 'Identifiers' | 'Attributes' | 'Inwards' | 'Outwards';
+  surroundingsPart: SurroundingsParts;
+  propertyAccordionType: PropertyAccordionType;
 }) {
   const [detailOpened, setDetailOpened] = useState(false);
   const [detailEntity, setDetailEntity] = useState<WdEntityDocsOnly | undefined>(undefined);
@@ -54,7 +49,7 @@ export function AssociationsAccordion({
           id='panel1-header'
         >
           <div className='flex flex-row items-center space-x-1'>
-            <Typography>{name}</Typography>
+            <Typography>{propertyAccordionType}</Typography>
             <Typography className='text-sm text-slate-400'>
               {' (' + propertyList.length.toString() + ') '}
             </Typography>
@@ -69,6 +64,8 @@ export function AssociationsAccordion({
                   rootSurroundings={rootSurroundings}
                   wdProperty={wdProperty}
                   handleOpenDetail={handleOpenDetail}
+                  surroundingsPart={surroundingsPart}
+                  propertyAccordionType={propertyAccordionType}
                 />
               );
             })}
@@ -81,9 +78,7 @@ export function AssociationsAccordion({
           detailEntity={detailEntity as WdEntityDocsOnly}
           confirmButtonText='OK'
           onCloseHandle={handleCloseDetail}
-          onConfirmHandle={() => {
-            handleCloseDetail();
-          }}
+          onConfirmHandle={handleCloseDetail}
           disableConfirmOn={() => false}
         ></DetailListDialog>
       ) : (

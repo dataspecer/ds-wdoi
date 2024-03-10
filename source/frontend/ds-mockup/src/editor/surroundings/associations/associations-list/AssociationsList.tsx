@@ -240,7 +240,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={attributeProperties}
-            name={'Attributes'}
+            surroundingsPart={surroundingsPart}
+            propertyAccordionType={'Attributes'}
           />
         ) : (
           <></>
@@ -252,7 +253,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={identifierProperties}
-            name={'Identifiers'}
+            surroundingsPart={surroundingsPart}
+            propertyAccordionType={'Identifiers'}
           />
         ) : (
           <></>
@@ -264,7 +266,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={outItemProperties}
-            name={'Outwards'}
+            surroundingsPart={surroundingsPart}
+            propertyAccordionType={'Outwards'}
           />
         ) : (
           <></>
@@ -276,7 +279,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={inItemProperties}
-            name={'Inwards'}
+            surroundingsPart={surroundingsPart}
+            propertyAccordionType={'Inwards'}
           />
         ) : (
           <></>
