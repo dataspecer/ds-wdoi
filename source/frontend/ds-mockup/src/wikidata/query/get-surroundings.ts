@@ -22,7 +22,6 @@ export interface ClassSurroundings {
   parentsIds: EntityIdsList;
   subjectOfIds: EntityIdsList;
   valueOfIds: EntityIdsList;
-  properties: WdProperty[];
   classesMap: ReadonlyMap<EntityId, WdClass>;
   propertiesMap: ReadonlyMap<EntityId, WdProperty>;
 }
@@ -42,7 +41,6 @@ export async function fetchClassSurroundings(
     parentsIds: reply.results.parents,
     subjectOfIds: reply.results.subjectOf,
     valueOfIds: reply.results.valueOf,
-    properties: reply.results.properties,
     classesMap: classesMap,
     propertiesMap: propertyMap,
   };

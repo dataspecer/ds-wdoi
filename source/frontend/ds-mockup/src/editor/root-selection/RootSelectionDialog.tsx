@@ -15,9 +15,9 @@ export function RootSelectionDialog({
     <Dialog
       open={isOpen}
       onClose={onCloseHandle}
-      maxWidth='md'
+      maxWidth='lg'
       fullWidth={true}
-      PaperProps={{ sx: { height: 500 } }}
+      PaperProps={{ sx: { height: '90%' } }}
     >
       <DialogTitle>Root selection</DialogTitle>
       <DialogContent>

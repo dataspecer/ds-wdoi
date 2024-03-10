@@ -1,26 +1,26 @@
 import { useQuery } from 'react-query';
-import { WdClass } from '../../../wikidata/entities/wd-class';
+import { WdClass } from '../../../../wikidata/entities/wd-class';
 import {
   ClassSurroundings,
   SurroundingsParts,
   fetchClassSurroundings,
-} from '../../../wikidata/query/get-surroundings';
-import { SelectedProperty } from '../selected-property';
+} from '../../../../wikidata/query/get-surroundings';
+import { SelectedProperty } from '../../selected-property';
 import { AssociationsList } from './AssociationsList';
 
 export function LoadedAssociationsList({
   selectedClass,
   setSelectedPropertiesUpper,
-  part,
+  surroundingsPart,
 }: {
   selectedClass: WdClass;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
-  part: SurroundingsParts;
+  surroundingsPart: SurroundingsParts;
 }) {
   const { isLoading, isError, data } = useQuery(
-    ['surroundings', selectedClass.iri, part],
+    ['surroundings', selectedClass.iri, surroundingsPart],
     async () => {
-      return await fetchClassSurroundings(selectedClass, part);
+      return await fetchClassSurroundings(selectedClass, surroundingsPart);
     },
   );
 
@@ -32,7 +32,7 @@ export function LoadedAssociationsList({
     <AssociationsList
       rootSurroundings={rootSurroundings}
       setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-      part={part}
+      surroundingsPart={surroundingsPart}
     />
   );
 }

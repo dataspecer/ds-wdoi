@@ -31,9 +31,9 @@ export function SurroundingsDialog({
     <Dialog
       open={isOpen}
       onClose={() => onPropertySelectionDialogClose([])}
-      maxWidth='md'
+      maxWidth='lg'
       fullWidth={true}
-      PaperProps={{ sx: { height: 500 } }}
+      PaperProps={{ sx: { height: '90%' } }}
     >
       <DialogTitle>Select interpreted surroundings</DialogTitle>
       <DialogContent className='bg-slate-100 px-0'>
@@ -45,13 +45,13 @@ export function SurroundingsDialog({
           )
         ) : (
           <div className='mx-1 flex  flex-row p-1'>
-            <div className='basis-2/6 p-1'>
+            <div className='basis-3/12 p-1'>
               <AncestorsDisplay
                 rootSurroundings={data as ClassSurroundings}
                 setSelectedParentUpper={setSelectedParent}
               />
             </div>
-            <div className='basis-4/6 p-1'>
+            <div className='basis-9/12 p-1'>
               <AssociationsDisplay
                 selectedClass={
                   selectedParent == null
