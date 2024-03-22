@@ -63,11 +63,11 @@ def __process_wd_entity(wd_entity, wd_classes_ids_set: set, wd_properties_ids_di
         logger.exception("There was an error during processing of the entity.")
     
 @timed(logger)
-def identify_classes_properties(bz2_dump_file_path: pathlib.Path, property_statistics: PropertyUsageStatistics):
+def identify_classes_properties(gzip_dump_file_path: pathlib.Path, property_statistics: PropertyUsageStatistics):
     wd_classes_ids_set = set()
     wd_properties_ids_dict = dict()
-    with (gzip.open(bz2_dump_file_path) as bz2_input_file):
-        for wd_entity in decoding.entities_generator(bz2_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(wd_classes_ids_set, wd_properties_ids_dict)):
+    with (gzip.open(gzip_dump_file_path) as gzip_input_file):
+        for wd_entity in decoding.entities_generator(gzip_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(wd_classes_ids_set, wd_properties_ids_dict)):
             __process_wd_entity(wd_entity, wd_classes_ids_set, wd_properties_ids_dict)
             property_statistics.process_entity(wd_entity)
         return wd_classes_ids_set, wd_properties_ids_dict

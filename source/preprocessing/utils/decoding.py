@@ -55,11 +55,8 @@ def entities_generator(json_file, logger, logging_step, context_message_func = _
         except Exception as e:
             logger.exception(f"There was an error during decoding of an entity on line {i}.")
         i += 1
-        if i == 10_000:
-            break
         ul.try_log_progress(logger, i, logging_step, context_message_func())
     ul.log_progress(logger, i, context_message_func())
-    
     
 def load_entities_to_map(json_file_path: pathlib.Path, logger, logging_step): 
     entity_map = dict()

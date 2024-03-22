@@ -123,7 +123,7 @@ To the next iteration I should prepare the backend and connect it again to the D
   - Dont know how to handle the properties as in hierarchy.
   - No recommendations.
 
-## Third iteration
+## 3. iteration - recommender server
 
 The third iteration regards recommendations of properties.
 What I used is the SchemaTree recommender.
@@ -159,55 +159,71 @@ What I used is the SchemaTree recommender.
     - Why i dont want to do this?
       - Because it seems like a lot of work for a small thing
 
-## The fourth iteration
+## 4. iteration - mock up and new properties assigment based on usage statistics
+
+> I moved from using `.bz2` dump to using `.gz` dump, since it is much faster.
 
 The iteration consists of two phases.
 The first one is the mockup and the second one is the upgrade of the recommendations.
 
-- Mockup with react.
-  - The aim was to create a mockup with some of my ideas from previsous figma design.
-  - Itself the mockup works with the data from the backend, it is not a simple mockup with artificial data.
-  - Each design includes description of what it did in each of the main phases.
-  1. design
-       - Root search
-         - The user can search by property or by class name.
-         - After clicking detail the user can browse the classes or properties and click back button as in browser history.
-         - Cons:
-           - The search by property is not intuitive, since it seems we are choosing property as a root.
-           - Although the thought is a good one.
-       - Associations hierarchy of parents
-         - I tried to implement the forward list for parents.
-         - The list itself is still on the right.
-         - The only difference is that the user can open a small accordion and display the direct parents of the class.
-         - Also in the opened accordion a user can click to forward scroll to the class as if browsing.
-         - With search bar based on string.
-         - Ideas:  
-           - The questions is wheter do we need the parents at all.
-           - The graph itself is not a good representation since it wont tell user much.
-       - The property associations
-         - A simple search bar based on strings
-         - Displaying inherited properties and Own properties
-       - **Thoughts on the design**
-         -  The search by property is not intuitive, since it seems we are choosing property as a root.
-         -  The question is whether do we need the parents bar.
-         -  The range for properties should be displayed after the click.
-         -  There should be added properties of qualifiers and other with no range or domain.
-         -  Maybe I could choose a different lists based on backward or inward associations.
+### Mockup with react.
 
-- A new way to assign properties to classes
-  - There was an idea to try include more information from instances of clases to the surroundings.
-  - This means that I had to compute usage statistics of properties.
-  - I had to reimplement 1. phase and 2. phase of the pipeline to be able to include statistics.
-  - There were several problems: 
-    - I had to have access to instace of values of all entities to work with the range values of properties. This ment I had to create a big map of all instances to their instance of values to enable fast access during statistics computation.
-    - Storing the computed statistics ment that I had to compute the whole recommendation phase in order to store the results effectively.
-  - What I compute?
-    - For each instance I iterate over it's statements and store them into it's class records with counts.
-    - For literal properties it is easy, but for range properties I need to access the object value of the triple and find its class information, and then store it.
-    - After the 1. and 2. phases are done, there is a need to finalize the statistics and compute probabilities/scores of property usage on classes. This includes:
-      - The subjectOf classes.
-      - The domain and range of properties based on the class usage.
-      - The valueOf classes which I chose the score from the probability of the class being range of the property from it's range classes.
-  - **Thoughts**:
-    - There might be a problem with the number of range/domain values of properties. Depending on the usage in the ontology. Some propreties can probably have a lot of domain and range classes.
-    - It is similar to the SchemaTree recommender, so maybe we could exclude it?
+- The aim was to create a mockup with some of my ideas from previsous figma design.
+- Itself the mockup works with the data from the backend, it is not a simple mockup with artificial data.
+- Each design includes description of what it did in each of the main phases.
+
+1. design
+  - Root search
+    - The user can search by property or by class name.
+    - After clicking detail the user can browse the classes or properties and click back button as in browser history.
+    - Cons:
+      - The search by property is not intuitive, since it seems we are choosing property as a root.
+      - Although the thought is a good one.
+  - Associations hierarchy of parents
+    - I tried to implement the forward list for parents.
+    - The list itself is still on the right.
+    - The only difference is that the user can open a small accordion and display the direct parents of the class.
+    - Also in the opened accordion a user can click to forward scroll to the class as if browsing.
+    - With search bar based on string.
+    - Ideas:  
+      - The questions is wheter do we need the parents at all.
+      - The graph itself is not a good representation since it wont tell user much.
+  - The property associations
+    - A simple search bar based on strings
+    - Displaying inherited properties and Own properties
+  - **Thoughts on the design**
+    -  The search by property is not intuitive, since it seems we are choosing property as a root.
+    -  The question is whether do we need the parents bar.
+    -  The range for properties should be displayed after the click.
+    -  There should be added properties of qualifiers and other with no range or domain.
+    -  Maybe I could choose a different lists based on backward or inward associations.
+2. Changed the mockup based on the comments and additional ideas
+  - I removed the search by property option.
+  - Kept the parents side bar.
+  - Properies:
+    - I split the properties into 4 cathegories: attributes, identifiers, outward, and inward properties.
+    - All the lists are made out of accordion and the default way is not displaying anything, just a number.
+    - Domain and ranges are diaplayed upon click on item property, to reduce the amount of data sent to the user.
+    - TODO add the api for new domain and range
+    - TODO add possibility of using restriction with instance
+
+### A new way to assign properties to classes
+  
+1.  There was an idea to try include more information from instances of clases to the surroundings.
+    - This means that I had to compute usage statistics of properties.
+    - I had to reimplement 1. phase and 2. phase of the pipeline to be able to include statistics.
+    - There were several problems: 
+      - I had to have access to instace of values of all entities to work with the range values of properties. This ment I had to create a big map of all instances to their instance of values to enable fast access during statistics computation.
+      - Storing the computed statistics ment that I had to compute the whole recommendation phase in order to store the results effectively.
+    - What I compute?
+      - For each instance I iterate over it's statements and store them into it's class records with counts.
+      - For literal properties it is easy, but for range properties I need to access the object value of the triple and find its class information, and then store it.
+      - After the 1. and 2. phases are done, there is a need to finalize the statistics and compute probabilities/scores of property usage on classes. This includes:
+        - The subjectOf classes.
+        - The domain and range of properties based on the class usage.
+        - The valueOf classes which I chose the score from the probability of the class being range of the property from it's range classes.
+    - **Thoughts**:
+      - There might be a problem with the number of range/domain values of properties. Depending on the usage in the ontology. Some propreties can probably have a lot of domain and range classes.
+      - It is similar to the SchemaTree recommender, so maybe we could exclude it?
+2. I tackled the problem with the number of properties in range/domain by computing the statistics only for a class and not globally.
+3. TODO merg the results with domain and range constraints

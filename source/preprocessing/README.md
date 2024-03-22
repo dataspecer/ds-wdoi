@@ -34,15 +34,15 @@ The statistics is run during the phases to reduce time of the statistics computa
 The main script is `1_2_identification_separation.py`
 
 - input:
-  - a path to the wikidata json dump in `.bz2` format
+  - a path to the wikidata json dump in `.gz` format
   - Example of running:
     
-        $> python 1_2_identification_separation.py latest-all.json.bz2
+        $> python 1_2_identification_separation.py latest-all.json.gz
 
 - output:
   - separated classes and propeties
-    - `classes.json.bz2`
-    - `properties.json.bz2`
+    - `classes.json.gz`
+    - `properties.json.gz`
     - Each output file contains an json array where on each line is a wikidata entity.
     - Example:
 
@@ -103,13 +103,13 @@ The main script is `3_extraction.py`.
       - classes extraction - use `cls`
       - properties extraction - use `props`
       - for both extractions - use `both`
-  - required paths to `classes.json.bz2` and `properties.json.bz2` from previous phase, in the given order
+  - required paths to `classes.json.gz` and `properties.json.gz` from previous phase, in the given order
 
-        $> python 3_extraction.py both classes.json.bz2 properties.json.bz2
+        $> python 3_extraction.py both classes.json.gz properties.json.gz
 
         or
 
-        $> python 3_extraction.py --langs en -- both classes.json.bz2 properties.json.bz2
+        $> python 3_extraction.py --langs en -- both classes.json.gz properties.json.gz
 
 
 - output:

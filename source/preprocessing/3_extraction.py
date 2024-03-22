@@ -14,9 +14,9 @@ DEFAULT_LANGUAGES = ["en"]
 def __main(args):
     try:
         if args.phases in ["both", "cls"]:
-            ph3.extract_classes(args.classesBz2File, args.lang)
+            ph3.extract_classes(args.classesGzipFile, args.lang)
         if args.phases in ["both", "props"]:
-            ph3.extract_properties(args.propertiesBz2File, args.lang)
+            ph3.extract_properties(args.propertiesGzipFile, args.lang)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")
@@ -42,12 +42,12 @@ if __name__ == "__main__":
                         type=str,
                         choices=["cls", "both", "props"],
                         help="cls - transform only classes, props - transform only properties, both - transform both")
-    parser.add_argument("classesBz2File",
+    parser.add_argument("classesGzipFile",
                         type=pathlib.Path, 
-                        help="A path to the extracted classes json dump bz2 file.")
-    parser.add_argument("propertiesBz2File",
+                        help="A path to the extracted classes json dump .gz file.")
+    parser.add_argument("propertiesGzipFile",
                         type=pathlib.Path, 
-                        help="A path to the extracted properties json dump bz2 file.")
+                        help="A path to the extracted properties json dump .gz file.")
     args = parser.parse_args()
     
     __main(args)

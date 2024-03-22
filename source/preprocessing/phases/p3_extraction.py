@@ -1,4 +1,4 @@
-import bz2
+import gzip
 import pathlib
 import logging
 import wikidata.json_extractors.wd_fields as wd_fields_ex
@@ -27,20 +27,20 @@ def __process_wd_entity(wd_entity, output_file, transform_func, type_check_func,
     except:    
         logger.exception("There was an error during transformation.")
     
-def __extract_entities(bz2_file_path: pathlib.Path, output_file_name, transform_func, type_check_func, logger, logging_step, languages):
-    with (bz2.BZ2File(bz2_file_path) as bz2_input_file,
+def __extract_entities(gzip_file_path: pathlib.Path, output_file_name, transform_func, type_check_func, logger, logging_step, languages):
+    with (gzip.open(gzip_file_path) as gzip_input_file,
           open(output_file_name, "wb") as output_file
         ):
             decoding.init_json_array_in_files([output_file])
-            for wd_entity in decoding.entities_generator(bz2_input_file, logger, logging_step):
+            for wd_entity in decoding.entities_generator(gzip_input_file, logger, logging_step):
                 __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages)
             decoding.close_json_array_in_files([output_file])
 
 @timed(classes_logger)
-def extract_classes(bz2_file_path: pathlib.Path, languages):
-    __extract_entities(bz2_file_path, CLASSES_OUTPUT_FILE, extract_wd_class, wd_entity_types.is_wd_entity_item, classes_logger, ul.CLASSES_PROGRESS_STEP, languages)
+def extract_classes(gzip_file_path: pathlib.Path, languages):
+    __extract_entities(gzip_file_path, CLASSES_OUTPUT_FILE, extract_wd_class, wd_entity_types.is_wd_entity_item, classes_logger, ul.CLASSES_PROGRESS_STEP, languages)
 
 @timed(properties_logger)
-def extract_properties(bz2_file_path: pathlib.Path, languages):
-    __extract_entities(bz2_file_path, PROPERTIES_OUTPUT_FILE, extract_wd_property, wd_entity_types.is_wd_entity_property, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages)
+def extract_properties(gzip_file_path: pathlib.Path, languages):
+    __extract_entities(gzip_file_path, PROPERTIES_OUTPUT_FILE, extract_wd_property, wd_entity_types.is_wd_entity_property, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages)
     
