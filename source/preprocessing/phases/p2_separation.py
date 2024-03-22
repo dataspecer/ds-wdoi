@@ -1,4 +1,5 @@
 import bz2
+import gzip
 import pathlib
 import logging
 import utils.counter as counter
@@ -64,7 +65,7 @@ def __separate_to_files(bz2_input_file, classes_output_file, properties_output_f
 
 @timed(logger)
 def separate_to_files(bz2_dump_file_path: pathlib.Path, wd_classes_ids_set: set, wd_properties_ids_dict: dict, property_statistics: PropertyUsageStatistics):
-    with (bz2.BZ2File(bz2_dump_file_path) as bz2_input_file,
+    with (gzip.open(bz2_dump_file_path) as bz2_input_file,
           bz2.BZ2File(CLASSES_OUTPUT_FILE, "w") as classes_output_file,
           bz2.BZ2File(PROPERTIES_OUTPUT_FILE, "w") as properties_output_file
         ):

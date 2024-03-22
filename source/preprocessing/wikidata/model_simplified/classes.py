@@ -15,7 +15,7 @@ class ClassFields(StrEnum):
     SUBJECT_OF_PROBS = 'subjectOfProbs'
     VALUE_OF = "valueOf"
     SUBJECT_OF_STATS = "subjectOfStats"
-    SUBJECT_OF_STATS_PROBS = "subjectOfStatsProbs"
+    SUBJECT_OF_STATS_SCORES = "subjectOfStatsScores"
     VALUE_OF_STATS = "valueOfStats"
-    VALUE_OF_STATS_PROBS = "valueOfStatsProbs"
+    VALUE_OF_STATS_SCORES = "valueOfStatsScores"
     INSTANCES = "instances"

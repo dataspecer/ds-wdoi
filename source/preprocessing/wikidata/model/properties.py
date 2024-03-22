@@ -1,6 +1,6 @@
 from enum import StrEnum
 from enum import IntEnum
-from enum import Enum
+
 class UnderlyingTypes(IntEnum):
     ENTITY = 0
     STRING = 1
@@ -18,17 +18,17 @@ def is_allowed_property_datatype(datatype: str):
 def is_allowed_property(property_id):
     if (
         property_id != Properties.SUBCLASS_OF and 
-        property_id != Properties.INSTANCE_OF and
-        property_id != Properties.MAIN_SUBJECT and 
-        property_id != Properties.FOUND_IN_TAXON and 
-        property_id != Properties.TOPICS_MAIN_CATEGORY and 
-        property_id != Properties.PART_OF and 
-        property_id != Properties.HAS_PARTS and 
-        property_id != Properties.FOUND_IN_TAXON and
-        property_id != Properties.PARENT_TAXON and
-        property_id != Properties.INDIVIDUAL_OF_TAXON and
-        property_id != Properties.HAS_EFFECT and 
-        property_id != Properties.TOPICS_MAIN_TEMPLATE 
+        property_id != Properties.INSTANCE_OF #and
+        # property_id != Properties.MAIN_SUBJECT and 
+        # property_id != Properties.FOUND_IN_TAXON and 
+        # property_id != Properties.TOPICS_MAIN_CATEGORY and 
+        # property_id != Properties.PART_OF and 
+        # property_id != Properties.HAS_PARTS and 
+        # property_id != Properties.FOUND_IN_TAXON and
+        # property_id != Properties.PARENT_TAXON and
+        # property_id != Properties.INDIVIDUAL_OF_TAXON and
+        # property_id != Properties.HAS_EFFECT and 
+        # property_id != Properties.TOPICS_MAIN_TEMPLATE 
     ):
         return True
     else:
