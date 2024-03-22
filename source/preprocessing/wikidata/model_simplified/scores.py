@@ -5,3 +5,4 @@ class ScoresFields(StrEnum):
     PROPERTY = "property"
     SCORE = "score"
     RANGE_SCORES = "rangeStatsScores"
+    RANGE = "rangeStats"
