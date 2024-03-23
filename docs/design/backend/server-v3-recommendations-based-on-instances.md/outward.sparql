@@ -1,0 +1,22 @@
+# Properties with no class either mean it is a literal property or that the value pointed to was not an instance of a class.
+
+SELECT ?propertyId ?classId
+WHERE
+{
+  wd:Q42 ?p ?statement .
+  
+  # Get only properties pointing to statement nodes. 
+  FILTER(STRSTARTS(STR(?p), CONCAT(STR(p:), "P")))
+  
+  ?statement ?ps ?statementValue .
+  
+  # Get only values of statements  (with ps: property prefix)
+  FILTER(STRSTARTS(STR(?ps), CONCAT(STR(ps:), "P")))
+  
+  OPTIONAL {
+    ?statementValue wdt:P31 ?class . 
+  } 
+ 
+  BIND(STRDT(STRAFTER(STR(?p), CONCAT(STR(p:), "P")), xsd:integer) as ?propertyId)
+  BIND(STRDT(STRAFTER(STR(?class), CONCAT(STR(wd:), "Q")), xsd:integer) as ?classId)
+}

@@ -24,7 +24,7 @@ def __main(args):
         sys.exit(1)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)])
+    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     parser = argparse.ArgumentParser(
                 prog="Wikidata class and properties identification and separation",
                 description="""The script identifies and separates classes and properties from the wikidata .gz json dump to two new files.

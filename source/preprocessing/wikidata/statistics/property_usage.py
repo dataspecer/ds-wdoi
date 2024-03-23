@@ -176,11 +176,11 @@ class PropertyUsageStatistics:
 
 ## Property statistics
  
-    def _add_to_domain_of_property(self, prop_stats, class_id, count):
-        if class_id not in prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value]:
-            prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value][class_id] = count
+    def _add_to_domain_of_property(self, prop_stats, subject_class_id, count):
+        if subject_class_id not in prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value]:
+            prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value][subject_class_id] = count
         else:
-            prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value][class_id] += count
+            prop_stats[GenConstFields.SUBJECT_TYPE_STATS.value][subject_class_id] += count
     
     def _add_to_range_of_property(self, prop_stats, range_record):
         for object_class_id, count in range_record["range"].items():
