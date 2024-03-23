@@ -57,7 +57,8 @@ class PropertyUsageStatistics:
     
     def _store_entity_instance_of_values(self, wd_entity, str_entity_id):
         instance_of_ids = wd_json_stmts_ex.extract_wd_statement_values(wd_entity, Properties.INSTANCE_OF)
-        self.entity_to_instance_of_dict[str_entity_id] = instance_of_ids
+        if len(instance_of_ids) != 0:
+            self.entity_to_instance_of_dict[str_entity_id] = instance_of_ids
 
     def _is_instance_with_statements(self, str_entity_id, claims):
         if str_entity_id in self.entity_to_instance_of_dict and len(self.entity_to_instance_of_dict[str_entity_id]) != 0 and claims != None:
