@@ -61,7 +61,7 @@ class PropertyUsageStatistics:
             self.entity_to_instance_of_dict[str_entity_id] = instance_of_ids
 
     def _is_instance_with_statements(self, str_entity_id, claims):
-        if str_entity_id in self.entity_to_instance_of_dict and len(self.entity_to_instance_of_dict[str_entity_id]) != 0 and claims != None:
+        if str_entity_id in self.entity_to_instance_of_dict and claims != None:
             return True
         else:
             return False
@@ -97,7 +97,7 @@ class PropertyUsageStatistics:
     def _process_item_property(self, subject_wd_entity, subject_str_entity_id, property_id):
         property_statement_values = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
         for object_str_entity_id in property_statement_values:
-            if object_str_entity_id in self.entity_to_instance_of_dict and len(self.entity_to_instance_of_dict[object_str_entity_id]) != 0 and object_str_entity_id != wd_json_stmts_ex.NO_VALUE:
+            if object_str_entity_id in self.entity_to_instance_of_dict and object_str_entity_id != wd_json_stmts_ex.NO_VALUE:
                 for object_str_entity_class_id in self.entity_to_instance_of_dict[object_str_entity_id]:
                     self._assign_property_usage_to_classes(self.entity_to_instance_of_dict[subject_str_entity_id], property_id, statement_count=1, object_class_id=object_str_entity_class_id)
         
@@ -233,6 +233,8 @@ class PropertyUsageStatistics:
         decoding.write_mapped_entities_to_file(properties_statistics_dict, PROPERTIES_STATS_OUTPUT_FILE)
     
     def finalize_statistics(self):
+        # Clear the instance of dict
+        self.entity_to_instance_of_dict = None
         classes_statistics_dict = self._init_classes_statistics_dict()
         properties_statistics_dict = self._init_properties_statistics_dict()
         self.logger.info("Finilizing statistics")
