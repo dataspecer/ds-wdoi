@@ -2,10 +2,10 @@ import sys
 import argparse
 import pathlib
 import logging
-import utils.timer as timer
-from wikidata.statistics.property_usage import PropertyUsageStatistics
-import phases.p1_identification as ph1
-import phases.p2_separation as ph2
+import core.utils.timer as timer
+from core.statistics.property_usage import PropertyUsageStatistics
+import phases.identification_separation.identification_phase as identification
+import phases.identification_separation.separation_phase as separation
 
 LOG_FILE = "info_id_sep.log"
 logger = logging.getLogger("identification-separation")
@@ -14,9 +14,9 @@ logger = logging.getLogger("identification-separation")
 def __main(args):
     try:
         property_statistics = PropertyUsageStatistics(logger)
-        wd_classes_ids_set, wd_properties_ids_dict = ph1.identify_classes_properties(args.gzipDumpFile, property_statistics)
+        wd_classes_ids_set, wd_properties_ids_dict = identification.identify_classes_properties(args.gzipDumpFile, property_statistics)
         property_statistics.first_pass_finished(wd_classes_ids_set, wd_properties_ids_dict)
-        ph2.separate_to_files(args.gzipDumpFile, wd_classes_ids_set, wd_properties_ids_dict, property_statistics)
+        separation.separate_to_files(args.gzipDumpFile, wd_classes_ids_set, wd_properties_ids_dict, property_statistics)
         property_statistics.finalize_statistics()
     except Exception as e:
         logger.exception("There was an error that cannot be handled")

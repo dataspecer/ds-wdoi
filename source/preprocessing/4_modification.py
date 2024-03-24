@@ -2,8 +2,8 @@ import sys
 import argparse
 import pathlib
 import logging
-import utils.timer as timer
-import phases.p4_modification as ph4
+import core.utils.timer as timer
+import phases.modification.modification_phase as modification
 
 LOG_FILE = "info_mod.log"
 logger = logging.getLogger("modification")
@@ -11,7 +11,7 @@ logger = logging.getLogger("modification")
 @timer.timed(logger)
 def __main(args):
     try:
-        ph4.modify(args.classesJsonFile, args.propertiesJsonFile, args.classesPropertyStatsJsonFile, args.propertiesStatsJsonFile)
+        modification.modify(args.classesJsonFile, args.propertiesJsonFile, args.classesPropertyStatsJsonFile, args.propertiesStatsJsonFile)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")

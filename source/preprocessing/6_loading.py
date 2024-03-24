@@ -2,18 +2,18 @@ import sys
 import argparse
 import pathlib
 import logging
-import utils.timer as timer
-import phases.p6_loading_load_to_search_service as ph5
+import core.utils.timer as timer
+import phases.search_engine_loading.loading_to_es_search_phase as loading
+from core.default_languages import DEFAULT_LANGUAGES
 
 LOG_FILE = "info_load.log"
 logger = logging.getLogger("loading")
-DEFAULT_LANGUAGES = ["en"]
 
 @timer.timed(logger)
 def __main(args):
     try:
-        ph5.load_properties(args.propertiesJsonFile, args.lang)
-        ph5.load_classes(args.classesJsonFile, args.lang)
+        loading.load_properties(args.propertiesJsonFile, args.lang)
+        loading.load_classes(args.classesJsonFile, args.lang)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")

@@ -2,21 +2,20 @@ import sys
 import argparse
 import pathlib
 import logging
-import utils.timer as timer
-
-import phases.p3_extraction as ph3
+import core.utils.timer as timer
+import phases.extraction.extraction_phase as extraction
+from core.default_languages import DEFAULT_LANGUAGES
 
 LOG_FILE = "info_ex.log"
 logger = logging.getLogger("extraction")
-DEFAULT_LANGUAGES = ["en"]
 
 @timer.timed(logger)
 def __main(args):
     try:
         if args.phases in ["both", "cls"]:
-            ph3.extract_classes(args.classesGzipFile, args.lang)
+            extraction.extract_classes(args.classesGzipFile, args.lang)
         if args.phases in ["both", "props"]:
-            ph3.extract_properties(args.propertiesGzipFile, args.lang)
+            extraction.extract_properties(args.propertiesGzipFile, args.lang)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")

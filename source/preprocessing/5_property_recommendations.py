@@ -2,8 +2,8 @@ import sys
 import argparse
 import pathlib
 import logging
-import utils.timer as timer
-import phases.p5_property_recommendations as ph5
+import core.utils.timer as timer
+import phases.property_recommendations.property_recommendations_phase as recommendations
 
 LOG_FILE = "info_rec.log"
 logger = logging.getLogger("recommendations")
@@ -11,7 +11,7 @@ logger = logging.getLogger("recommendations")
 @timer.timed(logger)
 def __main(args):
     try:
-        ph5.compute_recommendations(args.classesJsonFile, args.propertiesJsonFile)
+        recommendations.compute_recommendations(args.classesJsonFile, args.propertiesJsonFile)
     except Exception as e:
         logger.exception("There was an error that cannot be handled")
         logger.error("Exiting...")

@@ -1,5 +1,5 @@
 import argparse
-import utils.elastic_search as es
+import phases.search_engine_loading.elastic_search_config as es
 import logging
 import pprint
 
