@@ -23,7 +23,7 @@ def __main(args):
         sys.exit(1)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(name)s : %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     parser = argparse.ArgumentParser(
                 prog="Classes and properties extractor",
                 description="""The script extracts classes and properties from previous step (extraction) into a new simplified data model.

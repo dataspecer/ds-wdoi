@@ -6,6 +6,7 @@ import utils.decoding as decoding
 from wikidata.model.properties import UnderlyingTypes
 from wikidata.model_simplified.properties import PropertyFields
 from wikidata.model_simplified.constraints import GenConstFields, ItemConstFields
+from wikidata.model_simplified.scores import ScoresFields
 
 class PropertiesDomainRangeUsageStatsMerger(ModifierFull):
     
@@ -21,9 +22,9 @@ class PropertiesDomainRangeUsageStatsMerger(ModifierFull):
             property_id = stats_property[PropertyFields.ID.value]
             if property_id in self.context.property_map:
                 wd_property = self.context.property_map[property_id]
-                wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value] = stats_property[GenConstFields.SUBJECT_TYPE_STATS.value]
+                wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value] = list(map(lambda x: x[ScoresFields.CLASS.value], stats_property[GenConstFields.SUBJECT_TYPE_STATS.value]))
                 if wd_property[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:
-                    wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] = stats_property[ItemConstFields.VALUE_TYPE_STATS.value]
+                    wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] = list(map(lambda x: x[ScoresFields.CLASS.value], stats_property[ItemConstFields.VALUE_TYPE_STATS.value]))
                 else:
                     pass
             else:
