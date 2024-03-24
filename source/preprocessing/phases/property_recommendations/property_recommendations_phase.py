@@ -27,13 +27,12 @@ def __write_properties_to_file(property_map: dict):
     decoding.write_mapped_entities_to_file(property_map, PROPERTIES_OUTPUT_FILE)
 
 @timed(main_logger)
-def __compute_local_recs(context: RecommendationContext):
-    subject_of_sorting = SubjectOfSorting(main_logger, context)
-    subject_of_sorting.modify_all()
-    subject_of_sorting.report_status()
-    value_of_sorting = ValueOfSorting(main_logger, context)
-    value_of_sorting.modify_all()
-    value_of_sorting.report_status()
+def __merge_constraints_with_statistics_usage(context: Context):
+    pass
+
+@timed(main_logger)
+def __boost_properties_for_this_type(context: Context):
+    pass
 
 @timed(main_logger)
 def __store_results(context: Context):
@@ -45,5 +44,6 @@ def compute_recommendations(classes_json_file_path: pathlib.Path, properties_jso
     properties = __load_properties_to_map(properties_json_file_path)
     classes = __load_classes_to_map(classes_json_file_path)
     context = Context(classes, properties)
-    __compute_local_recs(context)
+    __merge_constraints_with_statistics_usage(context)
+    __boost_properties_for_this_type(context)
     __store_results(context)
