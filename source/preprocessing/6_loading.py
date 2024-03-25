@@ -22,13 +22,13 @@ def __main(args):
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(name)s : %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     parser = argparse.ArgumentParser(
-                prog="Loads aliases, descriptions and labels into the search service (Elastic search)",
-                description="""The script loads aliases, descriptions and labels into the search service (Elastic search).
-                               The input of the script are two files from the previous step - classes.json and properties.json.
+                prog="Loads aliases and labels into the search service (Elastic search)",
+                description="""The script loads aliases and labels into the search service (Elastic search).
+                               The input of the script are two files from the previous step - classes-*.json and properties-*.json
                                The script iterates over the entities in the files and extracts the selected languages into an object,
                                that will serve as an input to the Elastic search.
                                The object will contain the selected languages as fields, and for each field there will be an object,
-                               that will contain fields label, aliases and description.
+                               that will contain fields label and aliases.
                                If for the selected languages the value does not exists it will be inited as default empty string or empty array (in the case of aliases).
                             """)
     parser.add_argument("--lang",

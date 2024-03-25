@@ -34,6 +34,8 @@ if __name__ == "__main__":
                             The algorithm runs in two phases. 
                             The first phase identifies classes and properties Ids from the dump into a set.
                             The second phase iterates over the dump again separating classes and properties into separate files.
+                            During this phases, the statistics of property usage are computed.
+                            For the statistics it creates two files: classes-property-usage.json and properties-domain-range-usage.json.
                             """)
     parser.add_argument("gzipDumpFile",
                         type=pathlib.Path, 

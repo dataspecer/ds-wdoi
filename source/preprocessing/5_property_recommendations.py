@@ -20,14 +20,9 @@ def __main(args):
 if __name__ == "__main__":
     logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(name)s : %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     parser = argparse.ArgumentParser(
-                prog="Precompute recommendations of properties for classes based on domain and range constraints",
+                prog="A phase for changing ordering of properties that require precomputation.",
                 description="""The scripts loads all the data from previous step and precomputes recommendations of properties for classes.
-                               It connects to the recommender server and then for each class it sorts it's subjectOf and valueOf properties based on probabilities.
-                               It produces four files:
-                                1. Containing global ranking of properties based on domain of properties.
-                                2. Containing global ranking of properties based on range of properties.
-                                2. Containing classes.
-                                3. Containing properties.
+                               It boosts properties of classes enclosed in the properties_for_this_type property.
                             """)
     parser.add_argument("classesJsonFile",
                         type=pathlib.Path, 

@@ -212,7 +212,7 @@ The main script is `4_modification.py`
      3. Remove unexisting references from the item constraints.
      4. Removing self cycles from `subpropertyOf`.
      5. Mark subproperties to parents.
-  7. Remove unexisting references on merged statistics on classes.
+  7. Remove unexisting references on merged statistics on classes as a sanity check.
   
 The removing references parts are done in order to exclude entities that were not present in the dump during its creation (it is a continual process during live hours).
 If the extraction phase adds more fields to entities, it is necessary to evaluate whether they need checks.
@@ -223,38 +223,32 @@ The iteration over ontology is done multiple times, but still the time is uncomp
 
 ## Precomputing recommendations (5. phase)
 
-The phase precomputes order of properties for classes based on domain and range constraints only using SchemaTree recommender.
-It also produces global rankings of all properties from the subject point of view and the value point of view.
+A phase that enables to change property orderings on classes.
+So far only boosting of propeerties from properties_for_this_type field.
 
 The main script is `5_property_recommendations.py`.
 
 - input:
-  - required paths to `classes.json` and `properties.json` in the given order from the fourth phase
+  - required paths to `classes-mod.json` and `properties-mod.json` in the given order from the fourth phase
 
         $> python 5_property_recommendations.py classes-mod.json properties-mod.json
 
 - output:
   - `classes-recs.json`
   - `properties-recs.json`
-  - `global-recs-subject.json`
-  - `global-recs-value.json`
 
 - logging:
   - the logging takes place into `info_recs.log` file
 
 ## Comments
 
-For each class the recommender's api is called which returns the most probable properties for the given class.
-It then takes a look into the `subjectOf` field and sorts the property ids in descending order based on the score.
-For each property in the `subjectOf` field it regards, firstly, the local recommendations score, secondly, if the local recommendations for the property are missing it searches global rankings of properties.
-For the `valueOf` field, it computes recommendations based on the `subjectType` constraint in a way, that it walks through the classes in the contraint and collects local recommendations for the given property on the class or consults global rankings, subsequently it computes average of all such properties.
-
-The resulting files contain also the global rankings for properties in the subject point of view and the computed rankings from the `valueOf` fields.
+Boosting properties to 1 for classes that are subject of some property based on usage statistics.
+There is a lot of classes that do not contain the properties - I do not add them.
 
 ## Loading into search service (6. phase)
 
 The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py`.
-The main script is `5_loading.py`
+The main script is `6_loading.py`
 
 - inputs:
   - optional argument for languages extracration
@@ -265,9 +259,9 @@ The main script is `5_loading.py`
     - defaults to `--lang en`
     - for available shortcuts refer to the [Wikidata language lists](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all)
     - it should be the same value as was given in the previous phase.
-  - paths to the two files generated in the previous step - `classes.json` and `properties.json`
+  - paths to the two files generated in the previous step - `classes-recs.json` and `properties-recs.json`
 
-        $> python loading.py classes.json properties.json
+        $> python loading.py classes-recs.json properties-recs.json
 
 - outputs:
   - none
