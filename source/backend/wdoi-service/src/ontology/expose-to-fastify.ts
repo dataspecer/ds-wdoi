@@ -5,12 +5,7 @@ import { envVars } from '../enviroment';
 import { type EntityId } from './entities/common';
 
 const fastifyPluginLoadOntology: FastifyPluginAsync = async function (fastify) {
-  const wdOntology = await WdOntology.create(
-    envVars.CLASSES_PATH,
-    envVars.PROPERTIES_PATH,
-    envVars.GLOBAL_RECS_SUBJECT_PATH,
-    envVars.GLOBAL_RECS_VALUE_PATH,
-  );
+  const wdOntology = await WdOntology.create(envVars.CLASSES_PATH, envVars.PROPERTIES_PATH);
   fastify.decorate('wdOntology', wdOntology);
 
   fastify.decorate('throwOnMissingClassId', (id: EntityId): void | never => {

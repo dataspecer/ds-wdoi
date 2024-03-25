@@ -8,7 +8,7 @@ export const getSurroundingsInputQueryStringSchema = {
   type: 'object',
   properties: {
     part: {
-      enum: ['constraints', 'usage'],
+      enum: ['usage', 'combined'],
     },
   },
   additionalProperties: false,

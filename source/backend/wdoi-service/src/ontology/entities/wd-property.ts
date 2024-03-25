@@ -1,8 +1,9 @@
 import type { InputProperty } from '../loading/input/input-property';
 import type { ModifierPropertyVisitor, ModifierVisitableProperty } from '../post-loading/modifiers';
 import type { EntityIdsList, ExternalOntologyMapping } from './common';
-import { type EmptyTypeConstraint, GeneralConstraints, type ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint';
+import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint';
 import { WdEntity } from './wd-entity';
+import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave } from './empty-type-constants';
 
 export enum UnderlyingType {
   ENTITY = 0,
@@ -53,13 +54,13 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
     super(inputProperty);
     this.datatype = inputProperty.datatype;
     this.underlyingType = inputProperty.underlyingType;
-    this.subpropertyOf = inputProperty.subpropertyOf;
-    this.relatedProperty = inputProperty.relatedProperty;
-    this.inverseProperty = inputProperty.inverseProperty;
-    this.complementaryProperty = inputProperty.complementaryProperty;
-    this.negatesProperty = inputProperty.negatesProperty;
-    this.subproperties = inputProperty.subproperties;
-    this.equivalentExternalOntologyProperties = inputProperty.equivalentProperty;
+    this.subpropertyOf = emptyEntitiesIdsListOrSave(inputProperty.subpropertyOf);
+    this.relatedProperty = emptyEntitiesIdsListOrSave(inputProperty.relatedProperty);
+    this.inverseProperty = emptyEntitiesIdsListOrSave(inputProperty.inverseProperty);
+    this.complementaryProperty = emptyEntitiesIdsListOrSave(inputProperty.complementaryProperty);
+    this.negatesProperty = emptyEntitiesIdsListOrSave(inputProperty.negatesProperty);
+    this.subproperties = emptyEntitiesIdsListOrSave(inputProperty.subproperties);
+    this.equivalentExternalOntologyProperties = emptyExternalMappingsListOrSave(inputProperty.equivalentProperty);
     this.generalConstraints = new GeneralConstraints(inputProperty.constraints);
   }
 
@@ -122,7 +123,7 @@ export class ItemProperty extends WdProperty {
 
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
-    this.itemConstraints = inputProperty.constraints.typeDependent as ItemTypeConstraints;
+    this.itemConstraints = new ItemTypeConstraints(inputProperty.constraints.typeDependent as ItemTypeConstraints);
   }
 
   accept(visitor: ModifierPropertyVisitor): void {

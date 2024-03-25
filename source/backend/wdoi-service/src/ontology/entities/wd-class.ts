@@ -1,9 +1,9 @@
-import type { EntityIdsList, ExternalOntologyMapping } from './common';
+import type { EntityIdsList, ExternalOntologyMapping, PropertyScoreRecordMap } from './common';
 import type { InputClass } from '../loading/input/input-class';
 import type { ModifierClassVisitor, ModifierVisitableClass } from '../post-loading/modifiers';
 import { WdEntity } from './wd-entity';
-import type { PropertyProbabilityHitList, PropertyProbabilityHitMap } from './recommendations';
-import { createPropertyProbabilityHitMap } from '../loading/load-property-recommendations';
+import { createPropertyScoreRecordMap } from '../loading/load-property-recommendations';
+import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave, emptyPropertyScoreRecordMapOrSave } from './empty-type-constants';
 
 export const ROOT_CLASS_ID = 35120;
 
@@ -16,18 +16,13 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
 
   readonly valueOfProperty: EntityIdsList;
-
   readonly subjectOfProperty: EntityIdsList;
-  readonly subjectOfProbabilities: PropertyProbabilityHitList;
-  readonly subjectOfProbabilitiesMap: PropertyProbabilityHitMap;
 
   readonly subjectOfPropertyStats: EntityIdsList;
-  readonly subjectOfPropertyStatsProbabilities: PropertyProbabilityHitList;
-  readonly subjectOfPropertyStatsProbabilitiesMap: PropertyProbabilityHitMap;
+  readonly subjectOfPropertyStatsScoresMap: PropertyScoreRecordMap;
 
   readonly valueOfPropertyStats: EntityIdsList;
-  readonly valueOfPropertyStatsProbabilities: PropertyProbabilityHitList;
-  readonly valueOfPropertyStatsProbabilitiesMap: PropertyProbabilityHitMap;
+  readonly valueOfPropertyStatsScoresMap: PropertyScoreRecordMap;
 
   static {
     super.entityURITypes.add(this.URIType);
@@ -35,25 +30,20 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
 
   constructor(inputClass: InputClass) {
     super(inputClass);
-    this.subclassOf = inputClass.subclassOf;
-    this.children = inputClass.children;
-    this.instances = inputClass.instances;
-    this.equivalentExternalOntologyClasses = inputClass.equivalentClass;
-    this.propertiesForThisType = inputClass.propertiesForThisType;
+    this.subclassOf = emptyEntitiesIdsListOrSave(inputClass.subclassOf);
+    this.children = emptyEntitiesIdsListOrSave(inputClass.children);
+    this.instances = emptyEntitiesIdsListOrSave(inputClass.instances);
+    this.equivalentExternalOntologyClasses = emptyExternalMappingsListOrSave(inputClass.equivalentClass);
+    this.propertiesForThisType = emptyEntitiesIdsListOrSave(inputClass.propertiesForThisType);
 
-    this.valueOfProperty = inputClass.valueOf;
+    this.valueOfProperty = emptyEntitiesIdsListOrSave(inputClass.valueOf);
+    this.subjectOfProperty = emptyEntitiesIdsListOrSave(inputClass.subjectOf);
 
-    this.subjectOfProperty = inputClass.subjectOf;
-    this.subjectOfProbabilities = inputClass.subjectOfProbs;
-    this.subjectOfProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.subjectOfProbs);
-
-    this.subjectOfPropertyStats = inputClass.subjectOfStats;
-    this.subjectOfPropertyStatsProbabilities = inputClass.subjectOfStatsProbs;
-    this.subjectOfPropertyStatsProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.subjectOfStatsProbs);
+    this.subjectOfPropertyStats = emptyEntitiesIdsListOrSave(inputClass.subjectOfStats);
+    this.subjectOfPropertyStatsScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.subjectOfStatsScores));
 
     this.valueOfPropertyStats = inputClass.valueOfStats;
-    this.valueOfPropertyStatsProbabilities = inputClass.valueOfStatsProbs;
-    this.valueOfPropertyStatsProbabilitiesMap = createPropertyProbabilityHitMap(inputClass.valueOfStatsProbs);
+    this.valueOfPropertyStatsScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.valueOfStatsScores));
   }
 
   accept(visitor: ModifierClassVisitor): void {

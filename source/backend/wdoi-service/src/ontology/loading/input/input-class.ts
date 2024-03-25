@@ -1,6 +1,19 @@
-import type { EntityIdsList, ExternalOntologyMapping } from '../../entities/common';
-import type { PropertyProbabilityHitList } from '../../entities/recommendations';
+import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common';
 import type { InputEntity } from './input-entity';
+
+export interface InputPropertyRangeScoreRecord {
+  class: EntityId;
+  score: number;
+}
+export type InputPropertyRangeScoreRecords = readonly InputPropertyRangeScoreRecord[];
+
+export interface InputPropertyScoreRecord {
+  readonly property: EntityId;
+  readonly score: number;
+  readonly rangeStats: EntityIdsList;
+  readonly rangeStatsScores: InputPropertyRangeScoreRecords;
+}
+export type InputPropertyScoreRecordList = readonly InputPropertyScoreRecord[];
 
 export interface InputClass extends InputEntity {
   readonly subclassOf: EntityIdsList;
@@ -8,11 +21,10 @@ export interface InputClass extends InputEntity {
   readonly equivalentClass: ExternalOntologyMapping;
   readonly children: EntityIdsList;
   readonly subjectOf: EntityIdsList;
-  readonly subjectOfProbs: PropertyProbabilityHitList;
   readonly valueOf: EntityIdsList;
   readonly subjectOfStats: EntityIdsList;
-  readonly subjectOfStatsProbs: PropertyProbabilityHitList;
+  readonly subjectOfStatsScores: InputPropertyScoreRecordList;
   readonly valueOfStats: EntityIdsList;
-  readonly valueOfStatsProbs: PropertyProbabilityHitList;
+  readonly valueOfStatsScores: InputPropertyScoreRecordList;
   readonly instances: EntityIdsList;
 }

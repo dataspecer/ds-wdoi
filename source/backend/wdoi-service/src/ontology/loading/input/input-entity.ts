@@ -1,9 +1,9 @@
-import type { EntityId, EntityIdsList, EntityIri, LanguageMap, LanugageArrayMap } from '../../entities/common';
+import type { EntityId, EntityIdsList, EntityIri, LanguageMap, LanguageArrayMap } from '../../entities/common';
 
 export interface InputEntity {
   readonly id: EntityId;
   readonly iri: EntityIri;
-  readonly aliases: LanugageArrayMap;
+  readonly aliases: LanguageArrayMap;
   readonly labels: LanguageMap;
   readonly descriptions: LanguageMap;
   readonly instanceOf: EntityIdsList;

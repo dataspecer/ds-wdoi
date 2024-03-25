@@ -1,11 +1,10 @@
-import type { EntityId, EntityIdsList } from '../../entities/common';
-import type { PropertyProbabilityHitMap } from '../../entities/recommendations';
+import type { EntityId, EntityIdsList, PropertyScoreRecord, PropertyScoreRecordMap } from '../../entities/common';
 import { type WdClass } from '../../entities/wd-class';
 import { type WdProperty } from '../../entities/wd-property';
 import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
 import * as Timsort from 'timsort';
 
-export type HierarchyWithPropertiesExtractorParts = 'constraints' | 'usage';
+export type HierarchyWithPropertiesExtractorParts = 'usage' | 'combined';
 
 export class HierarchyWithPropertiesReturnWrapper {
   startClass: EntityId;
@@ -94,14 +93,13 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
   protected processProperties(
     type: 'subject' | 'value',
     propertyIds: EntityIdsList,
-    localPropMap: PropertyProbabilityHitMap | null,
-    globalPropMap: PropertyProbabilityHitMap | null,
+    localPropMap: PropertyScoreRecordMap | null,
     propsMarker: Map<EntityId, number>,
     propsStorage: EntityId[],
     propsOppositeMarker: Map<EntityId, number>,
   ): void {
     for (const propertyId of propertyIds) {
-      const propertyProbValue = this.getPropertyProbValue(propertyId, localPropMap, globalPropMap);
+      const propertyProbValue = this.getPropertyProbValue(propertyId, localPropMap);
       if (!propsMarker.has(propertyId)) {
         propsMarker.set(propertyId, propertyProbValue);
         propsStorage.push(propertyId);
@@ -120,15 +118,10 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
     }
   }
 
-  private getPropertyProbValue(
-    propertyId: EntityId,
-    localPropMap: PropertyProbabilityHitMap | null,
-    globalProbMap: PropertyProbabilityHitMap | null,
-  ): number {
+  private getPropertyProbValue(propertyId: EntityId, localPropMap: PropertyScoreRecordMap | null): number {
     if (localPropMap != null && localPropMap.has(propertyId)) {
-      return localPropMap.get(propertyId) as number;
-    } else if (globalProbMap != null && globalProbMap.has(propertyId)) {
-      return globalProbMap.get(propertyId) as number;
+      const propertyScoreRecord = localPropMap.get(propertyId) as PropertyScoreRecord;
+      return propertyScoreRecord.score;
     } else {
       return 0;
     }
@@ -148,51 +141,12 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
   }
 }
 
-export class HierarchyWithPropertiesConstraintsExtractor extends HierarchyWithPropertiesExtractor {
-  protected readonly contextGlobalSubjectOfProbs: PropertyProbabilityHitMap;
-  protected readonly contextGlobalValueOfProbs: PropertyProbabilityHitMap;
-
-  constructor(
-    startClass: WdClass,
-    contextClasses: ReadonlyMap<EntityId, WdClass>,
-    contextProperties: ReadonlyMap<EntityId, WdProperty>,
-    contextGlobalSubjectOfProbs: PropertyProbabilityHitMap,
-    contextGlobalValueOfProbs: PropertyProbabilityHitMap,
-  ) {
-    super(startClass, contextClasses, contextProperties);
-    this.contextGlobalSubjectOfProbs = contextGlobalSubjectOfProbs;
-    this.contextGlobalValueOfProbs = contextGlobalValueOfProbs;
-  }
-
-  protected extract_internal(cls: WdClass): void {
-    this.processProperties(
-      'subject',
-      cls.subjectOfProperty,
-      cls.subjectOfProbabilitiesMap,
-      this.contextGlobalSubjectOfProbs,
-      this.subjectOfIdsMap,
-      this.subjectOfIds,
-      this.valueOfIdsMap,
-    );
-    this.processProperties(
-      'value',
-      cls.valueOfProperty,
-      null,
-      this.contextGlobalValueOfProbs,
-      this.valueOfIdsMap,
-      this.valueOfIds,
-      this.subjectOfIdsMap,
-    );
-  }
-}
-
 export class HierarchyWithPropertiesUsageStatisticsExtractor extends HierarchyWithPropertiesExtractor {
   protected extract_internal(cls: WdClass): void {
     this.processProperties(
       'subject',
       cls.subjectOfPropertyStats,
-      cls.subjectOfPropertyStatsProbabilitiesMap,
-      null,
+      cls.subjectOfPropertyStatsScoresMap,
       this.subjectOfIdsMap,
       this.subjectOfIds,
       this.valueOfIdsMap,
@@ -200,8 +154,7 @@ export class HierarchyWithPropertiesUsageStatisticsExtractor extends HierarchyWi
     this.processProperties(
       'value',
       cls.valueOfPropertyStats,
-      cls.valueOfPropertyStatsProbabilitiesMap,
-      null,
+      cls.valueOfPropertyStatsScoresMap,
       this.valueOfIdsMap,
       this.valueOfIds,
       this.subjectOfIdsMap,

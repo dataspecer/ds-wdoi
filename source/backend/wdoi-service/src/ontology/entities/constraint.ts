@@ -1,5 +1,6 @@
-import type { InputConstraints } from '../loading/input/input-property';
+import type { InputConstraints, InputItemTypeConstraints, InputSubjectValueTypeContraint } from '../loading/input/input-property';
 import type { EntityId, EntityIdsList } from './common';
+import { emptyEntitiesIdsListOrSave, emptyAllowanceMapOrSave } from './empty-type-constants';
 
 export enum PropertyScopeValue {
   AS_MAIN = 0,
@@ -18,11 +19,18 @@ export enum AllowedEntityTypesValue {
 
 export type StatementAllowanceMap = Record<string, EntityIdsList>;
 
-export interface SubjectValueTypeContraint {
+export class SubjectValueTypeConstraint {
   readonly subclassOf: EntityIdsList;
   readonly instanceOf: EntityIdsList;
   readonly subclassOfInstanceOf: EntityIdsList;
+
+  constructor(inputSubjectValueConst: InputSubjectValueTypeContraint) {
+    this.subclassOf = emptyEntitiesIdsListOrSave(inputSubjectValueConst.subclassOf);
+    this.instanceOf = emptyEntitiesIdsListOrSave(inputSubjectValueConst.instanceOf);
+    this.subclassOfInstanceOf = emptyEntitiesIdsListOrSave(inputSubjectValueConst.subclassOfInstanceOf);
+  }
 }
+
 export class GeneralConstraints {
   readonly propertyScope: readonly PropertyScopeValue[];
   readonly allowedEntityTypes: readonly AllowedEntityTypesValue[];
@@ -30,29 +38,39 @@ export class GeneralConstraints {
   readonly requiredQualifiers: EntityIdsList;
   readonly conflictsWith: StatementAllowanceMap;
   readonly itemRequiresStatement: StatementAllowanceMap;
-  readonly subjectType: SubjectValueTypeContraint;
+  readonly subjectType: SubjectValueTypeConstraint;
   readonly subjectTypeStats: EntityIdsList;
 
   constructor(inputConstraints: InputConstraints) {
     this.propertyScope = inputConstraints.propertyScope;
     this.allowedEntityTypes = inputConstraints.allowedEntityTypes;
-    this.allowedQualifiers = inputConstraints.allowedQualifiers;
-    this.requiredQualifiers = inputConstraints.requiredQualifiers;
-    this.conflictsWith = inputConstraints.conflictsWith;
-    this.itemRequiresStatement = inputConstraints.itemRequiresStatement;
-    this.subjectType = inputConstraints.subjectType;
-    this.subjectTypeStats = inputConstraints.subjectTypeStats;
+    this.allowedQualifiers = emptyEntitiesIdsListOrSave(inputConstraints.allowedQualifiers);
+    this.requiredQualifiers = emptyEntitiesIdsListOrSave(inputConstraints.requiredQualifiers);
+    this.conflictsWith = emptyAllowanceMapOrSave(inputConstraints.conflictsWith);
+    this.itemRequiresStatement = emptyAllowanceMapOrSave(inputConstraints.itemRequiresStatement);
+    this.subjectType = new SubjectValueTypeConstraint(inputConstraints.subjectType);
+    this.subjectTypeStats = emptyEntitiesIdsListOrSave(inputConstraints.subjectTypeStats);
   }
 }
 
-export interface ItemTypeConstraints {
-  readonly valueType: SubjectValueTypeContraint;
+export class ItemTypeConstraints {
+  readonly valueType: InputSubjectValueTypeContraint;
   readonly valueTypeStats: EntityIdsList;
   readonly valueRequiresStatement: StatementAllowanceMap;
   readonly isSymmetric: boolean;
   readonly oneOf: EntityIdsList;
   readonly noneOf: EntityIdsList;
   readonly inverse: null | EntityId;
+
+  constructor(inputItemConst: InputItemTypeConstraints) {
+    this.valueType = new SubjectValueTypeConstraint(inputItemConst.valueType);
+    this.valueTypeStats = emptyEntitiesIdsListOrSave(inputItemConst.valueTypeStats);
+    this.valueRequiresStatement = emptyAllowanceMapOrSave(inputItemConst.valueRequiresStatement);
+    this.isSymmetric = inputItemConst.isSymmetric;
+    this.oneOf = emptyEntitiesIdsListOrSave(inputItemConst.oneOf);
+    this.noneOf = emptyEntitiesIdsListOrSave(inputItemConst.noneOf);
+    this.inverse = inputItemConst.inverse;
+  }
 }
 
 export type EmptyTypeConstraint = null;
