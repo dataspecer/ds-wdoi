@@ -19,3 +19,8 @@ class ItemConstFields(StrEnum):
   ONE_OF = "oneOf"
   NONE_OF = "noneOf"
   INVERSE = "inverse"
+  
+class TypeConstFields(StrEnum):
+  INSTANCE_OF = "instanceOf"
+  SUBCLASS_OF = "subclassOf"
+  INSTANCE_OF_SUBCLASS_OF = "subclassOfInstanceOf"

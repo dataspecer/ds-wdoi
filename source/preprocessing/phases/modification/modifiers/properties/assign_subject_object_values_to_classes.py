@@ -5,8 +5,7 @@ from core.model_wikidata.constraints import *
 from core.model_wikidata.properties import *
 from core.model_simplified.classes import ClassFields
 from core.model_simplified.properties import PropertyFields
-from core.model_simplified.constraints import GenConstFields, ItemConstFields
-
+from core.model_simplified.constraints import GenConstFields, ItemConstFields, TypeConstFields
 
 class AssignSubjectValueToClasses(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
@@ -25,12 +24,12 @@ class AssignSubjectValueToClasses(ModifierPart):
                 self.assign_type_constraints(constraints[GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE.value], prop_id, ClassFields.VALUE_OF.value)
     
     def assign_type_constraints(self, type_constraints, prop_id, field: str):
-        self.assign_prop_to_classes_field(type_constraints["instanceOf"], prop_id, field)
-        self.assign_prop_to_classes_field(type_constraints["subclassOfInstanceOf"], prop_id, field)
+        self.assign_prop_to_classes_field(type_constraints[TypeConstFields.INSTANCE_OF.value], prop_id, field)
+        self.assign_prop_to_classes_field(type_constraints[TypeConstFields.INSTANCE_OF_SUBCLASS_OF.value], prop_id, field)
         
     def assign_prop_to_classes_field(self, classes_ids_list, prop_id, field: str):
         for class_id in classes_ids_list:
-            cls = self.context.class_map[class_id]
+            cls = self.context.classes_dict[class_id]
             cls[field].append(prop_id)
     
     def canBeUsedAsMainValue(self, constraints) -> bool:

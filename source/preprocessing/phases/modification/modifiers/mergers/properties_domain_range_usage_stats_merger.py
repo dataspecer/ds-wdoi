@@ -17,11 +17,11 @@ class PropertiesDomainRangeUsageStatsMerger(ModifierAll):
     
     def modify_all(self) -> None:
         self.logger.info("Starting loading of property domain and range statistics")
-        properties_domain_range_usage_stats: dict = decoding.load_entities_to_map(self.properties_domain_range_usage_stats_filename, self.logger, ul.PROPERTIES_PROGRESS_STEP)
+        properties_domain_range_usage_stats: dict = decoding.load_entities_to_dict(self.properties_domain_range_usage_stats_filename, self.logger, ul.PROPERTIES_PROGRESS_STEP)
         for idx, stats_property in enumerate(properties_domain_range_usage_stats.values()):
             property_id = stats_property[PropertyFields.ID.value]
-            if property_id in self.context.property_map:
-                wd_property = self.context.property_map[property_id]
+            if property_id in self.context.properties_dict:
+                wd_property = self.context.properties_dict[property_id]
                 wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value] = list(map(lambda x: x[ScoresFields.CLASS.value], stats_property[GenConstFields.SUBJECT_TYPE_STATS.value]))
                 if wd_property[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:
                     wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] = list(map(lambda x: x[ScoresFields.CLASS.value], stats_property[ItemConstFields.VALUE_TYPE_STATS.value]))

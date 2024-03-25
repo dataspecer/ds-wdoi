@@ -19,11 +19,11 @@ class ClassesPropertyUsageStatsMerger(ModifierAll):
     
     def modify_all(self) -> None:
         self.logger.info("Starting loading of classes property usage statistics")
-        classes_property_usage_stats: dict = decoding.load_entities_to_map(self.classes_property_usage_stats_filename, self.logger, ul.CLASSES_PROGRESS_STEP)
+        classes_property_usage_stats: dict = decoding.load_entities_to_dict(self.classes_property_usage_stats_filename, self.logger, ul.CLASSES_PROGRESS_STEP)
         for idx, stats_class in enumerate(classes_property_usage_stats.values()):
             cls_id = stats_class[ClassFields.ID.value]
-            if cls_id in self.context.class_map:
-                wd_class = self.context.class_map[cls_id]
+            if cls_id in self.context.classes_dict:
+                wd_class = self.context.classes_dict[cls_id]
                 wd_class[ClassFields.SUBJECT_OF_STATS_SCORES.value] = stats_class[ClassFields.SUBJECT_OF_STATS_SCORES.value]
                 wd_class[ClassFields.SUBJECT_OF_STATS.value] = list(map(lambda x: x[ScoresFields.PROPERTY.value], stats_class[ClassFields.SUBJECT_OF_STATS_SCORES.value]))
                 self.merge_inner_range(wd_class[ClassFields.SUBJECT_OF_STATS_SCORES.value])            

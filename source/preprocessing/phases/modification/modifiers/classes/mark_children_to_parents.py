@@ -12,8 +12,8 @@ class MarkChildrenToParents(ModifierPart):
     def __call__(self, wd_class) -> None:
         entityId = wd_class[ClassFields.ID.value]
         for parentId in wd_class[ClassFields.SUBCLASS_OF.value]:
-            if parentId in self.context.class_map:
-                parent = self.context.class_map[parentId]
+            if parentId in self.context.classes_dict:
+                parent = self.context.classes_dict[parentId]
                 self.add_field_if_missing(parent, ClassFields.CHILDREN.value)
                 parent[ClassFields.CHILDREN.value].append(entityId)
             else:

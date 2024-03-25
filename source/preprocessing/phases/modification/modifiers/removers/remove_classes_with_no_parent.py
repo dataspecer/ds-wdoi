@@ -17,11 +17,11 @@ class RemoveClassesWithNoParent(Remover):
     
     def modify_all(self) -> None:
         self._mark_for_removal()
-        self.remove(self.context.class_map, self.classes_marked_for_removal, self.classes_removed)
+        self.remove(self.context.classes_dict, self.classes_marked_for_removal, self.classes_removed)
         self.report_status()
         
     def _mark_for_removal(self):
-        for wd_class in self.context.class_map.values():
+        for wd_class in self.context.classes_dict.values():
             if len(wd_class[ClassFields.SUBCLASS_OF.value]) == 0 and wd_class[ClassFields.ID.value] != ROOT_ENTITY_ID_NUM:
                 self.classes_marked_for_removal.add(wd_class[ClassFields.ID.value])
                 if len(wd_class[ClassFields.CHILDREN.value]) == 0:
@@ -35,7 +35,7 @@ class RemoveClassesWithNoParent(Remover):
         while len(queue) != 0:
             children_ids = queue.pop()
             for child_id in children_ids:
-                child = self.context.class_map[child_id]
+                child = self.context.classes_dict[child_id]
                 if self._marked_parents_count(child[ClassFields.SUBCLASS_OF.value]) == len(child[ClassFields.SUBCLASS_OF.value]) and child_id != ROOT_ENTITY_ID_NUM:
                     self.classes_marked_for_removal.add(child[ClassFields.ID.value])
                     self.logger.info(f"Marked class for removal {child[ClassFields.ID.value]}")

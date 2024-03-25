@@ -15,14 +15,14 @@ class RemoveEntitiesWithNoLabel(Remover):
         self.logger.info(f"Properties Marked: {len(self.properties_marked_for_removal)} Removed {len(self.properties_removed)}")
     
     def modify_all(self) -> None:
-        self._mark_for_removal(self.context.class_map, self.classes_marked_for_removal)
-        self._mark_for_removal(self.context.property_map, self.properties_marked_for_removal)
-        self.remove(self.context.class_map, self.classes_marked_for_removal, self.classes_removed)
-        self.remove(self.context.property_map, self.properties_marked_for_removal, self.properties_removed)
+        self._mark_for_removal(self.context.classes_dict, self.classes_marked_for_removal)
+        self._mark_for_removal(self.context.properties_dict, self.properties_marked_for_removal)
+        self.remove(self.context.classes_dict, self.classes_marked_for_removal, self.classes_removed)
+        self.remove(self.context.properties_dict, self.properties_marked_for_removal, self.properties_removed)
         self.report_status()
         
-    def _mark_for_removal(self, entity_map: dict, mark_set: set):
-        for entity in entity_map.values():
+    def _mark_for_removal(self, entities_dict: dict, mark_set: set):
+        for entity in entities_dict.values():
             if len(entity['labels']) == 0:
                 mark_set.add(entity['id'])
                 self.logger.info(f'Marked for removal entity {entity['id']}.')

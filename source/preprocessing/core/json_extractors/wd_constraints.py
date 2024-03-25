@@ -3,6 +3,7 @@ import core.json_extractors.wd_statements as wd_json_stmts_ex
 from core.model_wikidata.constraints import *
 from core.model_wikidata.properties import Properties
 from core.model_wikidata.entity_json_fields import RootFields
+from core.model_simplified.constraints import TypeConstFields
 from typing import Literal
 
 def __contains_novalue(collection):
@@ -93,11 +94,11 @@ def __add_to_statement_relation_map(constraint_statement_relation_map, relations
         return
     rel = relations[0]
     if rel == SubjectValueRelationsValues.SUBCLASS_OF:
-        constraint_statement_relation_map["subclassOf"] += classes
+        constraint_statement_relation_map[TypeConstFields.SUBCLASS_OF.value] += classes
     elif rel == SubjectValueRelationsValues.SUBCLASS_OF_INSTANCE_OF:
-        constraint_statement_relation_map["subclassOfInstanceOf"] += classes
+        constraint_statement_relation_map[TypeConstFields.INSTANCE_OF_SUBCLASS_OF.value] += classes
     else:
-        constraint_statement_relation_map["instanceOf"] += classes
+        constraint_statement_relation_map[TypeConstFields.INSTANCE_OF.value] += classes
 
 def __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constraint, key_property: Properties, value_property: Properties, init_map: dict, process_func, values_include_novalue: bool):
     constraint_stmts = __extract_wd_constraint_statements(wd_entity_json, constraint)
@@ -165,9 +166,9 @@ def extract_wd_allowance_statement_values(wd_entity_json, constraint: Literal[Ge
 """    
 def extract_wd_subject_value_class_values(wd_entity_json, constraint: Literal[GeneralConstraints.SUBJECT_TYPE, ItemDatatypeConstraints.VALUE_TYPE]):
     init_map = {
-        "subclassOf": [],
-        "instanceOf": [],
-        "subclassOfInstanceOf": []
+        TypeConstFields.SUBCLASS_OF.value: [],
+        TypeConstFields.INSTANCE_OF.value: [],
+        TypeConstFields.INSTANCE_OF_SUBCLASS_OF.value: []
     }
     return __extract_constraint_values_for_statement_pairs_map(wd_entity_json, constraint, Properties.RELATION, Properties.CLASS, init_map, __add_to_statement_relation_map, False)
 

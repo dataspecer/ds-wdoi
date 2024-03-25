@@ -29,23 +29,23 @@ CLASSES_OUTPUT_FILE = 'classes-mod.json'
 PROPERTIES_OUTPUT_FILE = 'properties-mod.json'
 
 @timed(classes_logger)
-def __load_classes_to_map(json_file_path: pathlib.Path) -> dict:
-    return decoding.load_entities_to_map(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP)
+def __load_classes_to_dict(json_file_path: pathlib.Path) -> dict:
+    return decoding.load_entities_to_dict(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP)
 
 @timed(properties_logger)
-def __load_properties_to_map(json_file_path: pathlib.Path) -> dict:
-    return decoding.load_entities_to_map(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
+def __load_properties_to_dict(json_file_path: pathlib.Path) -> dict:
+    return decoding.load_entities_to_dict(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     
 @timed(classes_logger)
-def __write_classes_to_file(class_map: dict):
-    decoding.write_mapped_entities_to_file(class_map, CLASSES_OUTPUT_FILE)
+def __write_classes_to_file(classes_dict: dict):
+    decoding.write_mapped_entities_to_file(classes_dict, CLASSES_OUTPUT_FILE)
 
 @timed(properties_logger)
-def __write_properties_to_file(property_map: dict):
-    decoding.write_mapped_entities_to_file(property_map, PROPERTIES_OUTPUT_FILE)
+def __write_properties_to_file(properties_dict: dict):
+    decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE)
 
-def __modify_entities(modifiers, entity_map: dict, logger, logging_step):
-    for idx, entity in enumerate(entity_map.values()):
+def __modify_entities(modifiers, entities_dict: dict, logger, logging_step):
+    for idx, entity in enumerate(entities_dict.values()):
         for modifier_func in modifiers:
             modifier_func(entity)
         ul.try_log_progress(logger, idx, logging_step)
@@ -79,7 +79,7 @@ def __pre_unrooted_classes_removal(context: Context):
         MarkChildrenToParents(logger, context),
         MarkInstancesToParents(logger, context),
     ]
-    __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(classes_logger)
@@ -95,7 +95,7 @@ def __post_unrooted_classes_removal(context: Context):
         RemoveUnexistingReferencesClasses(logger, context),
         AllClassesAreRooted(logger, context) # as a check
     ]
-    __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(properties_logger)
@@ -108,7 +108,7 @@ def __modify_properties(context: Context):
         AssignSubjectValueToClasses(properties_logger, context),
         MarkSubpropertiesToParents(properties_logger, context)
     ]
-    __modify_entities(modifiers, context.property_map, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.properties_dict, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(classes_logger)
@@ -118,7 +118,7 @@ def __post_properties_mod_on_stats_references(context: Context):
         # As a final check on property usage statistics in case previous step removed properties
         RemoveUnexistingReferencesClasses(logger, context)
     ]
-    __modify_entities(modifiers, context.class_map, logger, ul.CLASSES_PROGRESS_STEP)
+    __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 
@@ -141,10 +141,10 @@ def __modify_context(context: Context, classes_property_usage_stats_filename: pa
 
 @timed(main_logger)
 def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
-    classes = __load_classes_to_map(classes_json_file_path)
-    properties = __load_properties_to_map(properties_json_file_path)
+    classes = __load_classes_to_dict(classes_json_file_path)
+    properties = __load_properties_to_dict(properties_json_file_path)
     context = Context(classes, properties)
     __modify_context(context, classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
-    __write_classes_to_file(context.class_map)
-    __write_properties_to_file(context.property_map)
+    __write_classes_to_file(context.classes_dict)
+    __write_properties_to_file(context.properties_dict)
     

@@ -1,4 +1,4 @@
 class Context:
-    def __init__(self, class_map: dict, property_map: dict) -> None:
-        self.class_map = class_map
-        self.property_map = property_map
+    def __init__(self, classes_dict: dict, properties_dict: dict) -> None:
+        self.classes_dict = classes_dict
+        self.properties_dict = properties_dict
