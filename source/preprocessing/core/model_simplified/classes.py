@@ -12,7 +12,6 @@ class ClassFields(StrEnum):
     EQUIVALENT_CLASS = "equivalentClass"
     CHILDREN = "children"
     SUBJECT_OF = "subjectOf"
-    SUBJECT_OF_PROBS = 'subjectOfProbs'
     VALUE_OF = "valueOf"
     SUBJECT_OF_STATS = "subjectOfStats"
     SUBJECT_OF_STATS_SCORES = "subjectOfStatsScores"

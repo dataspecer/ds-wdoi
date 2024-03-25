@@ -12,7 +12,7 @@ class Remover(ModifierAll):
     
     def remove(self, entities_dict: dict, mark_set: set, remove_set: set):
         for entity_id in mark_set:
-            if entities_dict in entities_dict:
+            if entity_id in entities_dict:
                 del entities_dict[entity_id]
                 remove_set.add(entity_id)
                 self.logger.info(f"Removed entity {entity_id}")

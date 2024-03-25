@@ -226,4 +226,17 @@ The first one is the mockup and the second one is the upgrade of the recommendat
       - There might be a problem with the number of range/domain values of properties. Depending on the usage in the ontology. Some propreties can probably have a lot of domain and range classes.
       - It is similar to the SchemaTree recommender, so maybe we could exclude it?
 2. I tackled the problem with the number of properties in range/domain by computing the statistics only for a class and not globally.
-3. TODO merg the results with domain and range constraints
+3. Mergin of the domain and range from usage statistics and constraints is done in backend node, since there is no need to preprocess it for all classes.
+  - One can simply extend the class with the properties from subjectOf/valueOf directly while sorting properties, and during the domain/range for properties upon a click, one gets to select the domain/range from constraints instead.
+4. I boosted the properties for this type to 1 for all classes, but found out many classes do not have the properties used by the constraints.
+  - So far I do not add the properties to the classes.
+
+- **My comments**
+  - Used Gzip instead of Bzip2 - cut the combined 1. and 2. phase from 1 day and 9 hours to just 10 hours.
+  - Shorter domains/ranges for properties.
+    - Computing statistics for domain/range per class.
+    - Takes more memory.
+  - Boosting of properties for this type.
+    - But a lot of them are missing from the statistics.
+  - Mergin of the constraints with usage statistics done in backend.
+    - Easier to implement.
