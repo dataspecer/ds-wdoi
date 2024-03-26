@@ -4,17 +4,6 @@ import { wdPropertySchema } from './wd-property-schema';
 
 // Surroundings with Recommendations
 
-export const getSurroundingsInputQueryStringSchema = {
-  type: 'object',
-  properties: {
-    part: {
-      enum: ['usage', 'combined'],
-    },
-  },
-  additionalProperties: false,
-  required: ['part'],
-} as const;
-
 export const surroundingsReplySchema = {
   type: 'object',
   properties: {
@@ -59,5 +48,4 @@ export const surroundingsReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetSurroundingsInputQueryStringType = FromSchema<typeof getSurroundingsInputQueryStringSchema>;
 export type SurroundingsWithRecsReplyType = FromSchema<typeof surroundingsReplySchema>;

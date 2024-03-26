@@ -4,8 +4,6 @@ import { type WdProperty } from '../../entities/wd-property';
 import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
 import * as Timsort from 'timsort';
 
-export type HierarchyWithPropertiesExtractorParts = 'usage' | 'combined';
-
 export class HierarchyWithPropertiesReturnWrapper {
   startClass: EntityId;
   parents: EntityIdsList;
@@ -141,23 +139,16 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
   }
 }
 
-export class HierarchyWithPropertiesUsageStatisticsExtractor extends HierarchyWithPropertiesExtractor {
+export class HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor extends HierarchyWithPropertiesExtractor {
   protected extract_internal(cls: WdClass): void {
     this.processProperties(
       'subject',
-      cls.subjectOfPropertyStats,
-      cls.subjectOfPropertyStatsScoresMap,
+      cls.subjectOfProperty,
+      cls.subjectOfPropertyScoresMap,
       this.subjectOfIdsMap,
       this.subjectOfIds,
       this.valueOfIdsMap,
     );
-    this.processProperties(
-      'value',
-      cls.valueOfPropertyStats,
-      cls.valueOfPropertyStatsScoresMap,
-      this.valueOfIdsMap,
-      this.valueOfIds,
-      this.subjectOfIdsMap,
-    );
+    this.processProperties('value', cls.valueOfProperty, cls.valueOfPropertyScoresMap, this.valueOfIdsMap, this.valueOfIds, this.subjectOfIdsMap);
   }
 }

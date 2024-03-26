@@ -10,10 +10,10 @@ export type EntityIriList = readonly EntityIri[];
 export type ExternalEntityId = string;
 export type ExternalOntologyMapping = readonly ExternalEntityId[];
 
-export type RangeStatsScoreMap = ReadonlyMap<EntityId, number>;
+export type RangeScoreMap = ReadonlyMap<EntityId, number>;
 export interface PropertyScoreRecord {
   readonly score: number;
-  readonly rangeStats: EntityIdsList;
-  readonly rangeStatsScoreMap: RangeStatsScoreMap;
+  readonly range: EntityIdsList;
+  readonly rangeScoreMap: RangeScoreMap;
 }
 export type PropertyScoreRecordMap = ReadonlyMap<EntityId, PropertyScoreRecord>;

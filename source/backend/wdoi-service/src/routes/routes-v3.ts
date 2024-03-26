@@ -3,7 +3,7 @@ import { getEntityInputParamsSchema, type GetEntityInputParamsType } from './sch
 import { type WdClass } from '../ontology/entities/wd-class';
 import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy';
 import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search';
-import { getSurroundingsInputQueryStringSchema, type GetSurroundingsInputQueryStringType, surroundingsReplySchema } from './schemas/get-surroundings';
+import { surroundingsReplySchema } from './schemas/get-surroundings';
 import { getClassWithSurroundingNamesReplySchema } from './schemas/get-class';
 import { getPropertyWithSurroundingNamesReplySchema } from './schemas/get-property';
 
@@ -104,12 +104,11 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
 
   // Surroundings
 
-  fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetSurroundingsInputQueryStringType }>(
+  fastify.get<{ Params: GetEntityInputParamsType }>(
     '/classes/:id/surroundings',
     {
       schema: {
         params: getEntityInputParamsSchema,
-        querystring: getSurroundingsInputQueryStringSchema,
         response: {
           '2xx': surroundingsReplySchema,
         },
@@ -118,12 +117,9 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     async (req, res) => {
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
-      const { part } = req.query;
       const cls = fastify.wdOntology.getClass(id) as WdClass;
-      if (part === 'usage') {
-        const results = fastify.wdOntology.getSurroundingsUsageStatistics(cls);
-        return { results };
-      } else throw fastify.httpErrors.badRequest();
+      const results = fastify.wdOntology.getSurroundingsCombinedUsageStatisticsAndConstraints(cls);
+      return { results };
     },
   );
 

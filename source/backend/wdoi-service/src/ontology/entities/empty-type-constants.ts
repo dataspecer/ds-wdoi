@@ -5,7 +5,7 @@ import type {
   EntityId,
   PropertyScoreRecord,
   PropertyScoreRecordMap,
-  RangeStatsScoreMap,
+  RangeScoreMap,
   LanguageMap,
 } from './common';
 import { type StatementAllowanceMap } from './constraint';
@@ -15,7 +15,7 @@ export const EMPTY_LANGUAGE_ARRAY_MAP: LanguageArrayMap = {};
 export const EMPTY_LANGUAGE_MAP: LanguageMap = {};
 export const EMPTY_EXTERNAL_ONTOLOGY_MAPPING: ExternalOntologyMapping = [];
 
-export const EMPTY_RANGE_STATS_SCORE_MAP: RangeStatsScoreMap = new Map<EntityId, number>();
+export const EMPTY_RANGE_SCORE_MAP: RangeScoreMap = new Map<EntityId, number>();
 export const EMPTY_PROPERTY_SCORE_RECORD_MAP: PropertyScoreRecordMap = new Map<EntityId, PropertyScoreRecord>();
 
 // Class
@@ -40,9 +40,9 @@ export function emptyLanguageMapOrSave(m: LanguageMap): LanguageMap {
   else return EMPTY_LANGUAGE_MAP;
 }
 
-export function emptyRangeStatsScoreMapOrSave(m: RangeStatsScoreMap): RangeStatsScoreMap {
+export function emptyRangeScoreMapOrSave(m: RangeScoreMap): RangeScoreMap {
   if (m.size !== 0) return m;
-  else return EMPTY_RANGE_STATS_SCORE_MAP;
+  else return EMPTY_RANGE_SCORE_MAP;
 }
 
 export function emptyPropertyScoreRecordMapOrSave(m: PropertyScoreRecordMap): PropertyScoreRecordMap {

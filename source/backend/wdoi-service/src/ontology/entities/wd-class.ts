@@ -15,14 +15,11 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
 
-  readonly valueOfProperty: EntityIdsList;
   readonly subjectOfProperty: EntityIdsList;
+  readonly subjectOfPropertyScoresMap: PropertyScoreRecordMap;
 
-  readonly subjectOfPropertyStats: EntityIdsList;
-  readonly subjectOfPropertyStatsScoresMap: PropertyScoreRecordMap;
-
-  readonly valueOfPropertyStats: EntityIdsList;
-  readonly valueOfPropertyStatsScoresMap: PropertyScoreRecordMap;
+  readonly valueOfProperty: EntityIdsList;
+  readonly valueOfPropertyScoresMap: PropertyScoreRecordMap;
 
   static {
     super.entityURITypes.add(this.URIType);
@@ -36,14 +33,11 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
     this.equivalentExternalOntologyClasses = emptyExternalMappingsListOrSave(inputClass.equivalentClass);
     this.propertiesForThisType = emptyEntitiesIdsListOrSave(inputClass.propertiesForThisType);
 
-    this.valueOfProperty = emptyEntitiesIdsListOrSave(inputClass.valueOf);
-    this.subjectOfProperty = emptyEntitiesIdsListOrSave(inputClass.subjectOf);
+    this.subjectOfProperty = emptyEntitiesIdsListOrSave(inputClass.subjectOfStats);
+    this.subjectOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.subjectOfStatsScores));
 
-    this.subjectOfPropertyStats = emptyEntitiesIdsListOrSave(inputClass.subjectOfStats);
-    this.subjectOfPropertyStatsScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.subjectOfStatsScores));
-
-    this.valueOfPropertyStats = inputClass.valueOfStats;
-    this.valueOfPropertyStatsScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.valueOfStatsScores));
+    this.valueOfProperty = emptyEntitiesIdsListOrSave(inputClass.valueOfStats);
+    this.valueOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.valueOfStatsScores));
   }
 
   accept(visitor: ModifierClassVisitor): void {

@@ -6,8 +6,8 @@ import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
 import { OntologySearch, type SearchResults } from './search/ontologySearch';
 import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
 import {
-  HierarchyWithPropertiesUsageStatisticsExtractor,
   type HierarchyWithPropertiesReturnWrapper,
+  HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor,
 } from './surroundings/hierarchy-with-properties/hierarchy-with-properties';
 import {
   ClassOneDistanceDocsExpander,
@@ -47,8 +47,8 @@ export class WdOntology {
     return this.hierarchyWalker.getHierarchy(startClass, parts);
   }
 
-  public getSurroundingsUsageStatistics(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
-    const extractor = new HierarchyWithPropertiesUsageStatisticsExtractor(startClass, this.classes, this.properties);
+  public getSurroundingsCombinedUsageStatisticsAndConstraints(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
+    const extractor = new HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor(startClass, this.classes, this.properties);
     this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
     return extractor.getResult();
   }
