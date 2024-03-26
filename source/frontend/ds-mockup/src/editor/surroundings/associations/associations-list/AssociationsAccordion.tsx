@@ -61,6 +61,7 @@ export function AssociationsAccordion({
             {propertyList.map((wdProperty) => {
               return (
                 <RenderProperty
+                  key={wdProperty.iri}
                   rootClass={rootClass}
                   rootSurroundings={rootSurroundings}
                   wdProperty={wdProperty}

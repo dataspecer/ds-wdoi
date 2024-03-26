@@ -4,6 +4,7 @@ import { SelectedProperty } from '../../selected-property';
 import { EntityIdsList } from '../../../../wikidata/entities/wd-entity';
 import { WdClass } from '../../../../wikidata/entities/wd-class';
 import {
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -15,6 +16,7 @@ import {
 } from '@mui/material';
 import { Datatype, WdProperty } from '../../../../wikidata/entities/wd-property';
 import { AssociationsAccordion } from './AssociationsAccordion';
+import { FilterByInstanceDialog } from './FilterByInstanceDialog';
 
 export type PropertyPartsSelectionInput = 'inherited' | 'own';
 
@@ -100,9 +102,10 @@ export function AssociationsList({
   rootSurroundings: ClassSurroundings;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
 }) {
-  console.log(rootSurroundings);
   const [propertyPartsSelection, setPropertyPartsSelection] =
     useState<PropertyPartsSelectionInput>('own');
+  const [filterDialogOpened, setFilterDialogOpened] = useState(false);
+  const [filter, setFilter] = useState<string | undefined>(undefined);
   const [searchTextInput, setSearchTextInput] = useState('');
   const [showAttributeProperties, setShowAttributeProperties] = useState<boolean>(true);
   const [showIdentifierProperties, setShowIdentifierProperties] = useState<boolean>(true);
@@ -146,8 +149,28 @@ export function AssociationsList({
     } else return [];
   }, [propertiesGroups, searchTextInput, showInItemProperties]);
 
+  console.log(filter);
+
   return (
     <div className='flex flex-col space-y-2'>
+      <div>
+        {filter == null ? (
+          <Button variant='contained' onClick={() => setFilterDialogOpened(true)}>
+            Filter By Instance
+          </Button>
+        ) : (
+          <Button
+            color='error'
+            variant='contained'
+            onClick={() => {
+              setFilter(undefined);
+              console.log('asdadads');
+            }}
+          >
+            Cancel Filter
+          </Button>
+        )}
+      </div>
       <div className='flex flex-row items-center space-x-2'>
         <div className='basis-5/10 flex-row'>
           <span>Show Properties:</span>
@@ -282,6 +305,11 @@ export function AssociationsList({
           <></>
         )}
       </div>
+      <FilterByInstanceDialog
+        handleSetInstanceFilter={(x: string) => setFilter(x)}
+        isOpen={filterDialogOpened}
+        onDialogClose={() => setFilterDialogOpened(false)}
+      />
     </div>
   );
 }
