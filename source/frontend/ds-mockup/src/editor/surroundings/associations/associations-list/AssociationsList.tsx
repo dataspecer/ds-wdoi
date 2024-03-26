@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ClassSurroundings, SurroundingsParts } from '../../../../wikidata/query/get-surroundings';
+import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
 import { SelectedProperty } from '../../selected-property';
 import { EntityIdsList } from '../../../../wikidata/entities/wd-entity';
 import { WdClass } from '../../../../wikidata/entities/wd-class';
@@ -16,7 +16,7 @@ import {
 import { Datatype, WdProperty } from '../../../../wikidata/entities/wd-property';
 import { AssociationsAccordion } from './AssociationsAccordion';
 
-type PropertyPartsSelectionInput = 'inherited' | 'own';
+export type PropertyPartsSelectionInput = 'inherited' | 'own';
 
 interface PropertiesGroups {
   attributeProperties: WdProperty[];
@@ -46,7 +46,6 @@ function materializeProperties(
 function retrieveInAndOutProperties(
   rootClass: WdClass,
   rootSurroundings: ClassSurroundings,
-  surroundingsParts: SurroundingsParts,
   propertyPartsSelection: PropertyPartsSelectionInput,
 ): InAndOutProperties {
   let outPropertiesIds: EntityIdsList = [];
@@ -55,14 +54,10 @@ function retrieveInAndOutProperties(
   if (propertyPartsSelection === 'inherited') {
     outPropertiesIds = rootSurroundings.subjectOfIds;
     inPropertiesIds = rootSurroundings.valueOfIds;
-  } else if (surroundingsParts === 'constraints') {
+  } else {
     outPropertiesIds = rootClass.subjectOfProperty;
     inPropertiesIds = rootClass.valueOfProperty;
-  } else {
-    outPropertiesIds = rootClass.subjectOfPropertyStats;
-    inPropertiesIds = rootClass.valueOfPropertyStats;
   }
-
   return {
     outProperties: materializeProperties(outPropertiesIds, rootSurroundings),
     inProperties: materializeProperties(inPropertiesIds, rootSurroundings),
@@ -75,10 +70,13 @@ function splitPropertiesIntoGroups(inAndOutProperties: InAndOutProperties): Prop
   const outProperties: WdProperty[] = [];
 
   inAndOutProperties.outProperties.forEach((wdProperty) => {
-    if (wdProperty.datatype === Datatype.ITEM) outProperties.push(wdProperty);
-    else if (wdProperty.datatype === Datatype.EXTERNAL_IDENTIFIER)
+    if (wdProperty.datatype === Datatype.ITEM) {
+      outProperties.push(wdProperty);
+    } else if (wdProperty.datatype === Datatype.EXTERNAL_IDENTIFIER) {
       identifierProperties.push(wdProperty);
-    else attributeProperties.push(wdProperty);
+    } else {
+      attributeProperties.push(wdProperty);
+    }
   });
 
   return {
@@ -98,14 +96,13 @@ function textFilter(wdProperties: WdProperty[], text: string): WdProperty[] {
 export function AssociationsList({
   rootSurroundings,
   setSelectedPropertiesUpper,
-  surroundingsPart,
 }: {
   rootSurroundings: ClassSurroundings;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
-  surroundingsPart: SurroundingsParts;
 }) {
   console.log(rootSurroundings);
-  const [propertySelection, setPropertySelection] = useState<PropertyPartsSelectionInput>('own');
+  const [propertyPartsSelection, setPropertyPartsSelection] =
+    useState<PropertyPartsSelectionInput>('own');
   const [searchTextInput, setSearchTextInput] = useState('');
   const [showAttributeProperties, setShowAttributeProperties] = useState<boolean>(true);
   const [showIdentifierProperties, setShowIdentifierProperties] = useState<boolean>(true);
@@ -120,11 +117,10 @@ export function AssociationsList({
     const inAndOutProperties: InAndOutProperties = retrieveInAndOutProperties(
       rootClass,
       rootSurroundings,
-      surroundingsPart,
-      propertySelection,
+      propertyPartsSelection,
     );
     return splitPropertiesIntoGroups(inAndOutProperties);
-  }, [rootClass, rootSurroundings, surroundingsPart, propertySelection]);
+  }, [rootClass, rootSurroundings, propertyPartsSelection]);
 
   const attributeProperties = useMemo<WdProperty[]>(() => {
     if (showAttributeProperties) {
@@ -217,13 +213,13 @@ export function AssociationsList({
             <Select
               labelId='property-selection-label'
               id='property-selection'
-              value={propertySelection}
+              value={propertyPartsSelection}
               label='Display'
               size='small'
               onChange={(e) => {
                 const value = e.target.value;
-                if (value !== 'inherited' && value !== 'own') setPropertySelection('own');
-                else setPropertySelection(value);
+                if (value !== 'inherited' && value !== 'own') setPropertyPartsSelection('own');
+                else setPropertyPartsSelection(value);
               }}
             >
               <MenuItem value={'own'}>Own</MenuItem>
@@ -240,8 +236,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={attributeProperties}
-            surroundingsPart={surroundingsPart}
             propertyAccordionType={'Attributes'}
+            propertyPartsSelection={propertyPartsSelection}
           />
         ) : (
           <></>
@@ -253,8 +249,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={identifierProperties}
-            surroundingsPart={surroundingsPart}
             propertyAccordionType={'Identifiers'}
+            propertyPartsSelection={propertyPartsSelection}
           />
         ) : (
           <></>
@@ -266,8 +262,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={outItemProperties}
-            surroundingsPart={surroundingsPart}
             propertyAccordionType={'Outwards'}
+            propertyPartsSelection={propertyPartsSelection}
           />
         ) : (
           <></>
@@ -279,8 +275,8 @@ export function AssociationsList({
             rootSurroundings={rootSurroundings}
             setSelectedPropertiesUpper={setSelectedPropertiesUpper}
             propertyList={inItemProperties}
-            surroundingsPart={surroundingsPart}
             propertyAccordionType={'Inwards'}
+            propertyPartsSelection={propertyPartsSelection}
           />
         ) : (
           <></>

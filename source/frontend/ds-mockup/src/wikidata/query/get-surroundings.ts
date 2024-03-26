@@ -26,13 +26,8 @@ export interface ClassSurroundings {
   propertiesMap: ReadonlyMap<EntityId, WdProperty>;
 }
 
-export type SurroundingsParts = 'constraints' | 'usage';
-
-export async function fetchClassSurroundings(
-  cls: WdClassDocsOnly,
-  part: SurroundingsParts,
-): Promise<ClassSurroundings> {
-  const reply = (await axios.get(`/api/v3/classes/${cls.id}/surroundings?part=${part}`))
+export async function fetchClassSurroundings(cls: WdClassDocsOnly): Promise<ClassSurroundings> {
+  const reply = (await axios.get(`/api/v3/classes/${cls.id}/surroundings`))
     .data as GetSurroundingsReply;
   const classesMap = buildEntityMap(reply.results.classes);
   const propertyMap = buildEntityMap(reply.results.properties);

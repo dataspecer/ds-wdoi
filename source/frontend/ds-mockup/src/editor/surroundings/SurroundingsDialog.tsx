@@ -18,12 +18,9 @@ export function SurroundingsDialog({
 }) {
   const [selectedParent, setSelectedParent] = useState<WdClass | undefined>(undefined);
   const [selectedProperties, setSelectedProperties] = useState<SelectedProperty[]>([]);
-  const { isLoading, isError, data } = useQuery(
-    ['surroundings', root.iri, 'constraints'],
-    async () => {
-      return await fetchClassSurroundings(root, 'constraints');
-    },
-  );
+  const { isLoading, isError, data } = useQuery(['surroundings', root.iri], async () => {
+    return await fetchClassSurroundings(root);
+  });
 
   const rootSurroundings = data as ClassSurroundings;
 
@@ -59,6 +56,7 @@ export function SurroundingsDialog({
                     : selectedParent
                 }
                 setSelectedPropertiesUpper={setSelectedProperties}
+                rootSurroundings={rootSurroundings}
               />
             </div>
           </div>

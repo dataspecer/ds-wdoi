@@ -10,9 +10,7 @@ export interface WdClass extends WdEntity {
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
 
   readonly subjectOfProperty: EntityIdsList;
-  readonly subjectOfPropertyStats: EntityIdsList;
   readonly valueOfProperty: EntityIdsList;
-  readonly valueOfPropertyStats: EntityIdsList;
 }
 
 export type WdClassDocsOnly = Pick<WdClass, 'id' | 'iri' | 'labels' | 'descriptions'>;

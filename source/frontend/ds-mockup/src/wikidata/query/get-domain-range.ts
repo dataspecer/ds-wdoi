@@ -1,25 +1,29 @@
 import axios from 'axios';
 import { WdClass } from '../entities/wd-class';
 import { WdProperty } from '../entities/wd-property';
-import { SurroundingsParts } from './get-surroundings';
 
-interface GetDomainOrRangeReplyResults {
+interface GetClassPropertyDomainRangeReplyResults {
   classes: WdClass[];
 }
 
-interface GetDomainOrRangeReply {
-  results: GetDomainOrRangeReplyResults;
+interface GetClassPropertyDomainRangeReply {
+  results: GetClassPropertyDomainRangeReplyResults;
 }
 
-export type DomainOrRange = 'domain' | 'range';
+export type DomainsOrRanges = 'domains' | 'ranges';
+export type OwnOrInherited = 'own' | 'inherited';
 
 export async function fetchDomainOrRange(
+  wdClass: WdClass,
   wdProperty: WdProperty,
-  domainOrRange: DomainOrRange,
-  part: SurroundingsParts,
+  domainsOrRanges: DomainsOrRanges,
+  part: OwnOrInherited,
 ): Promise<WdClass[]> {
   return (
-    (await axios.get(`/api/v3/properties/${wdProperty.id}/${domainOrRange}?part=${part}`))
-      .data as GetDomainOrRangeReply
+    (
+      await axios.get(
+        `/api/v3/classes/${wdClass.id}/property/${wdProperty.id}/${domainsOrRanges}?part=${part}`,
+      )
+    ).data as GetClassPropertyDomainRangeReply
   ).results.classes;
 }

@@ -1,30 +1,33 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useQuery } from 'react-query';
 import { WdProperty } from '../../../../../wikidata/entities/wd-property';
-import { SurroundingsParts } from '../../../../../wikidata/query/get-surroundings';
-import { fetchDomainOrRange } from '../../../../../wikidata/query/get-domain-range';
+import {
+  DomainsOrRanges,
+  fetchDomainOrRange,
+} from '../../../../../wikidata/query/get-domain-range';
 import { DomainOrRangeClassList } from './DomainOrRangeClassList';
 import { WdClass } from '../../../../../wikidata/entities/wd-class';
-
-type DomainOrRangeType = 'domain' | 'range';
+import { PropertyPartsSelectionInput } from '../AssociationsList';
 
 export function DomainAndRangeDialog({
+  wdClass,
   wdProperty,
   isOpen,
   onDialogClose,
-  surroundingsPart,
-  domainOrRange,
+  domainsOrRanges,
+  propertyPartsSelection,
 }: {
+  wdClass: WdClass;
   wdProperty: WdProperty;
   isOpen: boolean;
   onDialogClose: () => void;
-  surroundingsPart: SurroundingsParts;
-  domainOrRange: DomainOrRangeType;
+  domainsOrRanges: DomainsOrRanges;
+  propertyPartsSelection: PropertyPartsSelectionInput;
 }) {
   const { isLoading, isError, data } = useQuery(
-    [wdProperty.iri, domainOrRange, surroundingsPart],
+    [wdClass.id, wdProperty.iri, domainsOrRanges, propertyPartsSelection],
     async () => {
-      return await fetchDomainOrRange(wdProperty, domainOrRange, surroundingsPart);
+      return await fetchDomainOrRange(wdClass, wdProperty, domainsOrRanges, propertyPartsSelection);
     },
   );
 
@@ -36,7 +39,7 @@ export function DomainAndRangeDialog({
       fullWidth={true}
       PaperProps={{ sx: { height: '90%' } }}
     >
-      <DialogTitle>Select {domainOrRange}</DialogTitle>
+      <DialogTitle>Select {domainsOrRanges}</DialogTitle>
       <DialogContent className='bg-slate-100 px-0'>
         {isLoading || isError ? (
           isLoading ? (

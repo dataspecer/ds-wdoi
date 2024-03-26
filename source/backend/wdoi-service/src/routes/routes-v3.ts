@@ -139,7 +139,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
   // Domains
 
   fastify.get<{ Params: GetClassPropertyDomainRangeInputParamsType; Querystring: GetClassPropertyDomainRangeInputQueryStringType }>(
-    '/classes/:classId/property/:propertyId/domains',
+    '/classes/:classId/properties/:propertyId/domains',
     {
       schema: {
         params: getClassPropertyDomainRangeInputParamsSchema,
@@ -167,7 +167,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
   // Ranges
 
   fastify.get<{ Params: GetClassPropertyDomainRangeInputParamsType; Querystring: GetClassPropertyDomainRangeInputQueryStringType }>(
-    '/classes/:classId/property/:propertyId/ranges',
+    '/classes/:classId/properties/:propertyId/ranges',
     {
       schema: {
         params: getClassPropertyDomainRangeInputParamsSchema,

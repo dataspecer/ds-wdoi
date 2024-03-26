@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { WdClass } from '../../../../wikidata/entities/wd-class';
 import { WdEntityDocsOnly } from '../../../../wikidata/entities/wd-entity';
 import { WdProperty } from '../../../../wikidata/entities/wd-property';
-import { ClassSurroundings, SurroundingsParts } from '../../../../wikidata/query/get-surroundings';
+import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
 import { DetailListDialog } from '../../../entity-detail/DetailListDialog';
 import { SelectedProperty } from '../../selected-property';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { RenderProperty } from './RenderProperty';
+import { PropertyPartsSelectionInput } from './AssociationsList';
 
 export type PropertyAccordionType = 'Identifiers' | 'Attributes' | 'Inwards' | 'Outwards';
 
@@ -16,15 +17,15 @@ export function AssociationsAccordion({
   rootSurroundings,
   setSelectedPropertiesUpper,
   propertyList,
-  surroundingsPart,
   propertyAccordionType,
+  propertyPartsSelection,
 }: {
   rootClass: WdClass;
   rootSurroundings: ClassSurroundings;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
   propertyList: WdProperty[];
-  surroundingsPart: SurroundingsParts;
   propertyAccordionType: PropertyAccordionType;
+  propertyPartsSelection: PropertyPartsSelectionInput;
 }) {
   const [detailOpened, setDetailOpened] = useState(false);
   const [detailEntity, setDetailEntity] = useState<WdEntityDocsOnly | undefined>(undefined);
@@ -64,8 +65,8 @@ export function AssociationsAccordion({
                   rootSurroundings={rootSurroundings}
                   wdProperty={wdProperty}
                   handleOpenDetail={handleOpenDetail}
-                  surroundingsPart={surroundingsPart}
                   propertyAccordionType={propertyAccordionType}
+                  propertyPartsSelection={propertyPartsSelection}
                 />
               );
             })}

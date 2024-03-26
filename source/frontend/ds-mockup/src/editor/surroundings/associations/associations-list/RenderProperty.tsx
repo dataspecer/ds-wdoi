@@ -2,11 +2,12 @@ import { ListItem, IconButton, ListItemButton, Typography } from '@mui/material'
 import { WdClass } from '../../../../wikidata/entities/wd-class';
 import { WdEntityDocsOnly } from '../../../../wikidata/entities/wd-entity';
 import { WdProperty, UnderlyingType } from '../../../../wikidata/entities/wd-property';
-import { ClassSurroundings, SurroundingsParts } from '../../../../wikidata/query/get-surroundings';
+import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { PropertyAccordionType } from './AssociationsAccordion';
 import { useState } from 'react';
 import { DomainAndRangeDialog } from './domain-or-range-dialog/DomainAndRangeDialog';
+import { PropertyPartsSelectionInput } from './AssociationsList';
 
 function isValidDomainRangeAccordion(propertyAccordionType: PropertyAccordionType): boolean {
   return propertyAccordionType !== 'Attributes' && propertyAccordionType !== 'Identifiers';
@@ -17,15 +18,15 @@ export function RenderProperty({
   rootSurroundings,
   wdProperty,
   handleOpenDetail,
-  surroundingsPart,
   propertyAccordionType,
+  propertyPartsSelection,
 }: {
   rootClass: WdClass;
   rootSurroundings: ClassSurroundings;
   wdProperty: WdProperty;
   handleOpenDetail: (wdEntityDocs: WdEntityDocsOnly) => void;
-  surroundingsPart: SurroundingsParts;
   propertyAccordionType: PropertyAccordionType;
+  propertyPartsSelection: PropertyPartsSelectionInput;
 }) {
   const [domainOrRangeDialogOpened, setDomainOrRangeDialogOpened] = useState<boolean>(false);
 
@@ -70,11 +71,12 @@ export function RenderProperty({
       </ListItemButton>
       {domainOrRangeDialogOpened && isValidDomainRangeAccordion(propertyAccordionType) ? (
         <DomainAndRangeDialog
+          wdClass={rootClass}
           wdProperty={wdProperty}
           isOpen={domainOrRangeDialogOpened}
           onDialogClose={onDialogCloseHandle}
-          surroundingsPart={surroundingsPart}
-          domainOrRange={propertyAccordionType === 'Outwards' ? 'range' : 'domain'}
+          propertyPartsSelection={propertyPartsSelection}
+          domainsOrRanges={propertyAccordionType === 'Outwards' ? 'ranges' : 'domains'}
         />
       ) : (
         <></>
