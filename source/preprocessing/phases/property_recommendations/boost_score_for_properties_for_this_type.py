@@ -3,7 +3,7 @@ from core.model_simplified.scores import ScoresFields
 import logging
 import core.utils.logging as ul
 
-logger = logging.getLogger("recommendations").getChild("p5_property_recommendations")
+logger = logging.getLogger("recommendations").getChild("p5_property_recommendations").getChild("boosting")
 
 def boost_score_for_properties_for_this_type(classes_dict: dict):
     i = 0

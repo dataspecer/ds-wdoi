@@ -41,3 +41,17 @@ The server itself just loads the additional data and serves them as in previous 
     - should it be only for one selected class as a root or could user select classes from the hierarchy?
         - it could switch between the modes
     - how could the user find the instances? find with its own sparql - or just put there a search bar
+
+
+## Boosting properties for this type
+
+- Boost properties for this type in a way to push its scores to 1 and resort the property scores records.
+
+## Merge with constraints on subject type and value type
+
+- For literal it is easy.
+- For items it is difficult.
+    - I chose to merge only properties which have defined both subject and value type constraints.
+    - I tried to omit the global view that each domain class of a property (based on usage) should point to the value type constraint classes (the same for subject type constraint classes should point to range of a property (based on usage)). 
+    - Why? 
+        - It would lead again to an enourmous ranges/domains for properties (in thousands).

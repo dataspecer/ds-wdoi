@@ -4,6 +4,7 @@ import core.utils.logging as ul
 import core.utils.decoding as decoding
 from core.utils.timer import timed
 from phases.property_recommendations.boost_score_for_properties_for_this_type import boost_score_for_properties_for_this_type
+from phases.property_recommendations.merge_property_constraints_with_usage_statistics import merge_property_subject_object_type_constraints_with_usage_statistics
 
 main_logger = logging.getLogger("recommendations").getChild("p5_property_recommendations")
 
@@ -27,6 +28,10 @@ def __write_properties_to_file(properties_dict: dict):
     decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE)
 
 @timed(main_logger)
+def __merge_property_constraints_with_usage(classes_dict: dict, properties_dict: dict):
+    merge_property_subject_object_type_constraints_with_usage_statistics(classes_dict, properties_dict)
+
+@timed(main_logger)
 def __boost_properties_for_this_type(classes_dict: dict):
     boost_score_for_properties_for_this_type(classes_dict)
 
@@ -39,5 +44,6 @@ def __store_results(classes_dict: dict, properties_dict: dict):
 def compute_recommendations(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path):
     properties_dict = __load_properties_to_dict(properties_json_file_path)
     classes_dict = __load_classes_to_dict(classes_json_file_path)
+    __merge_property_constraints_with_usage(classes_dict, properties_dict)
     __boost_properties_for_this_type(classes_dict)
     __store_results(classes_dict, properties_dict)
