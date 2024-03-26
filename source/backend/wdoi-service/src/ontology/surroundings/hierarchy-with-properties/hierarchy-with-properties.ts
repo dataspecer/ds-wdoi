@@ -99,26 +99,26 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
     propsOppositeMarker: Map<EntityId, number>,
   ): void {
     for (const propertyId of propertyIds) {
-      const propertyProbValue = this.getPropertyProbValue(propertyId, localPropMap);
+      const propertyScore = this.getPropertyScoreValue(propertyId, localPropMap);
       if (!propsMarker.has(propertyId)) {
-        propsMarker.set(propertyId, propertyProbValue);
+        propsMarker.set(propertyId, propertyScore);
         propsStorage.push(propertyId);
         const property = this.contexProperties.get(propertyId) as WdProperty;
         if (!propsOppositeMarker.has(propertyId)) {
           this.properties.push(property);
         }
-      } else this.tryExchangeProbsInMarkers(propertyId, propertyProbValue, propsMarker);
+      } else this.tryExchangeScoreInMarkers(propertyId, propertyScore, propsMarker);
     }
   }
 
-  private tryExchangeProbsInMarkers(propertyId: EntityId, newProbValue: number, marker: Map<EntityId, number>): void {
-    const currentProbValue = marker.get(propertyId) as number;
-    if (currentProbValue < newProbValue) {
-      marker.set(propertyId, newProbValue);
+  private tryExchangeScoreInMarkers(propertyId: EntityId, newScore: number, marker: Map<EntityId, number>): void {
+    const currentScore = marker.get(propertyId) as number;
+    if (currentScore < newScore) {
+      marker.set(propertyId, newScore);
     }
   }
 
-  private getPropertyProbValue(propertyId: EntityId, localPropMap: PropertyScoreRecordMap | null): number {
+  private getPropertyScoreValue(propertyId: EntityId, localPropMap: PropertyScoreRecordMap | null): number {
     if (localPropMap != null && localPropMap.has(propertyId)) {
       const propertyScoreRecord = localPropMap.get(propertyId) as PropertyScoreRecord;
       return propertyScoreRecord.score;
