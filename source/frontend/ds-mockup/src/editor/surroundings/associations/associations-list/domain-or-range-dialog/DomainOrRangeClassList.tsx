@@ -33,6 +33,7 @@ export function DomainOrRangeClassList({
 
   return (
     <div className='m-2 flex flex-col space-y-1'>
+      <div>Classes: {filteredClasses.length}</div>
       <div>
         <TextField
           size='small'

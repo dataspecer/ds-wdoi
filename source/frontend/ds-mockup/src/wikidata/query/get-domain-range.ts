@@ -22,7 +22,7 @@ export async function fetchDomainOrRange(
   return (
     (
       await axios.get(
-        `/api/v3/classes/${wdClass.id}/property/${wdProperty.id}/${domainsOrRanges}?part=${part}`,
+        `/api/v3/classes/${wdClass.id}/properties/${wdProperty.id}/${domainsOrRanges}?part=${part}`,
       )
     ).data as GetClassPropertyDomainRangeReply
   ).results.classes;
