@@ -1,7 +1,7 @@
 import { type FromSchema } from 'json-schema-to-ts';
 import { wdClassSchema } from './wd-class-schema';
 
-export const getPropertyDomainRangeReplySchema = {
+export const getClassPropertyDomainRangeReplySchema = {
   type: 'object',
   properties: {
     results: {
@@ -20,4 +20,17 @@ export const getPropertyDomainRangeReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetPropertyDomainRangeReplyType = FromSchema<typeof getPropertyDomainRangeReplySchema>;
+export type GetClassPropertyDomainRangeReplyType = FromSchema<typeof getClassPropertyDomainRangeReplySchema>;
+
+export const getClassPropertyDomainRangeInputQueryStringSchema = {
+  type: 'object',
+  properties: {
+    part: {
+      enum: ['own', 'inherited'],
+    },
+  },
+  additionalProperties: false,
+  required: ['part'],
+} as const;
+
+export type GetClassPropertyDomainRangeInputQueryStringType = FromSchema<typeof getClassPropertyDomainRangeInputQueryStringSchema>;

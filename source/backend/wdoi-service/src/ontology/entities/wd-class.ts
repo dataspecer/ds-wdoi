@@ -1,9 +1,10 @@
-import type { EntityIdsList, ExternalOntologyMapping, PropertyScoreRecordMap } from './common';
+import type { EntityIdsList, ExternalOntologyMapping, PropertyScoreRecord, PropertyScoreRecordMap } from './common';
 import type { InputClass } from '../loading/input/input-class';
 import type { ModifierClassVisitor, ModifierVisitableClass } from '../post-loading/modifiers';
 import { WdEntity } from './wd-entity';
 import { createPropertyScoreRecordMap } from '../loading/load-property-recommendations';
 import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave, emptyPropertyScoreRecordMapOrSave } from './empty-type-constants';
+import { type WdProperty } from './wd-property';
 
 export const ROOT_CLASS_ID = 35120;
 
@@ -50,5 +51,29 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
 
   public static isURIType(entityType: string): boolean {
     return entityType === WdClass.URIType;
+  }
+
+  public getDomainsForProperty(property: WdProperty): EntityIdsList {
+    const propertyScoreRecord = this.valueOfPropertyScoresMap.get(property.id);
+    if (propertyScoreRecord != null) {
+      return propertyScoreRecord.range;
+    }
+    return [];
+  }
+
+  public getDomainsPropertyScoreRecord(property: WdProperty): PropertyScoreRecord | undefined {
+    return this.valueOfPropertyScoresMap.get(property.id);
+  }
+
+  public getRangesForProperty(property: WdProperty): EntityIdsList {
+    const propertyScoreRecord = this.subjectOfPropertyScoresMap.get(property.id);
+    if (propertyScoreRecord != null) {
+      return propertyScoreRecord.range;
+    }
+    return [];
+  }
+
+  public getRangesPropertyScoreRecord(property: WdProperty): PropertyScoreRecord | undefined {
+    return this.subjectOfPropertyScoresMap.get(property.id);
   }
 }

@@ -17,6 +17,12 @@ import {
   PropertyOneDistanceDocsExpander,
   type PropertyOneDistanceDocsReturnWrapper,
 } from './surroundings/one-distance-docs/property-one-distance-docs-expander';
+import {
+  ClassPropertyDomainsRangesResultWrapper,
+  InheritedClassPropertyDomainsExtractor,
+  InheritedClassPropertyRangesExtractor,
+} from './surroundings/domain-range/domain-range';
+import { materializeEntities } from './utils/materialize-entities';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -53,6 +59,28 @@ export class WdOntology {
     return extractor.getResult();
   }
 
+  public getOwnClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const domains = cls.getDomainsForProperty(property);
+    return new ClassPropertyDomainsRangesResultWrapper(materializeEntities(domains, this.classes));
+  }
+
+  public getOwnClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const ranges = cls.getRangesForProperty(property);
+    return new ClassPropertyDomainsRangesResultWrapper(materializeEntities(ranges, this.classes));
+  }
+
+  public getInheritedClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const extractor = new InheritedClassPropertyDomainsExtractor(cls, property, this.classes, this.properties);
+    this.hierarchyWalker.getParentHierarchyWithExtraction(cls, extractor);
+    return extractor.getResult();
+  }
+
+  public getInheritedClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const extractor = new InheritedClassPropertyRangesExtractor(cls, property, this.classes, this.properties);
+    this.hierarchyWalker.getParentHierarchyWithExtraction(cls, extractor);
+    return extractor.getResult();
+  }
+
   public getClass(classId: EntityId): WdClass | undefined {
     return this.classes.get(classId);
   }
@@ -61,17 +89,13 @@ export class WdOntology {
     return this.properties.get(propertyId);
   }
 
-  public getClassWithSurroundingNames(classId: EntityId): ClassOneDistanceDocsReturnWrapper {
-    const classOneDistanceDocsExpander = new ClassOneDistanceDocsExpander(this.classes.get(classId) as WdClass, this.classes, this.properties);
+  public getClassWithSurroundingNames(startClass: WdClass): ClassOneDistanceDocsReturnWrapper {
+    const classOneDistanceDocsExpander = new ClassOneDistanceDocsExpander(startClass, this.classes, this.properties);
     return classOneDistanceDocsExpander.getSurroundings();
   }
 
-  public getPropertyWithSurroundingNames(propertyId: EntityId): PropertyOneDistanceDocsReturnWrapper {
-    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDocsExpander(
-      this.properties.get(propertyId) as WdProperty,
-      this.classes,
-      this.properties,
-    );
+  public getPropertyWithSurroundingNames(startProperty: WdProperty): PropertyOneDistanceDocsReturnWrapper {
+    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDocsExpander(startProperty, this.classes, this.properties);
     return propertyOneDistanceDocsExpander.getSurroundings();
   }
 

@@ -1,11 +1,22 @@
 import { type FastifyPluginCallback } from 'fastify';
-import { getEntityInputParamsSchema, type GetEntityInputParamsType } from './schemas/input-params';
+import {
+  getClassPropertyDomainRangeInputParamsSchema,
+  type GetClassPropertyDomainRangeInputParamsType,
+  getEntityInputParamsSchema,
+  type GetEntityInputParamsType,
+} from './schemas/input-params';
 import { type WdClass } from '../ontology/entities/wd-class';
 import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy';
 import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search';
 import { surroundingsReplySchema } from './schemas/get-surroundings';
 import { getClassWithSurroundingNamesReplySchema } from './schemas/get-class';
 import { getPropertyWithSurroundingNamesReplySchema } from './schemas/get-property';
+import { type WdProperty } from '../ontology/entities/wd-property';
+import {
+  type GetClassPropertyDomainRangeInputQueryStringType,
+  getClassPropertyDomainRangeReplySchema,
+  getClassPropertyDomainRangeInputQueryStringSchema,
+} from './schemas/get-property-domain-range';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   // Search
@@ -42,7 +53,8 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     async (req, res) => {
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
-      const results = fastify.wdOntology.getClassWithSurroundingNames(id);
+      const startClass = fastify.wdOntology.getClass(id) as WdClass;
+      const results = fastify.wdOntology.getClassWithSurroundingNames(startClass);
       return {
         results: {
           classes: [results.startClass],
@@ -68,7 +80,8 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     async (req, res) => {
       const { id } = req.params;
       fastify.throwOnMissingPropertyId(id);
-      const results = fastify.wdOntology.getPropertyWithSurroundingNames(id);
+      const startProperty = fastify.wdOntology.getProperty(id) as WdProperty;
+      const results = fastify.wdOntology.getPropertyWithSurroundingNames(startProperty);
       return {
         results: {
           properties: [results.startProperty],
@@ -96,8 +109,8 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
       const { part } = req.query;
-      const cls = fastify.wdOntology.getClass(id) as WdClass;
-      const results = fastify.wdOntology.getHierarchy(cls, part);
+      const startClass = fastify.wdOntology.getClass(id) as WdClass;
+      const results = fastify.wdOntology.getHierarchy(startClass, part);
       return { results };
     },
   );
@@ -117,8 +130,64 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     async (req, res) => {
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
-      const cls = fastify.wdOntology.getClass(id) as WdClass;
-      const results = fastify.wdOntology.getSurroundingsCombinedUsageStatisticsAndConstraints(cls);
+      const startClass = fastify.wdOntology.getClass(id) as WdClass;
+      const results = fastify.wdOntology.getSurroundingsCombinedUsageStatisticsAndConstraints(startClass);
+      return { results };
+    },
+  );
+
+  // Domains
+
+  fastify.get<{ Params: GetClassPropertyDomainRangeInputParamsType; Querystring: GetClassPropertyDomainRangeInputQueryStringType }>(
+    '/classes/:classId/property/:propertyId/domains',
+    {
+      schema: {
+        params: getClassPropertyDomainRangeInputParamsSchema,
+        querystring: getClassPropertyDomainRangeInputQueryStringSchema,
+        response: {
+          '2xx': getClassPropertyDomainRangeReplySchema,
+        },
+      },
+    },
+    async (req, res) => {
+      const { classId, propertyId } = req.params;
+      const { part } = req.query;
+      fastify.throwOnMissingClassId(classId);
+      fastify.throwOnMissingPropertyId(propertyId);
+      const startClass = fastify.wdOntology.getClass(classId) as WdClass;
+      const property = fastify.wdOntology.getProperty(propertyId) as WdProperty;
+      const results =
+        part === 'inherited'
+          ? fastify.wdOntology.getInheritedClassPropertyDomains(startClass, property)
+          : fastify.wdOntology.getOwnClassPropertyDomains(startClass, property);
+      return { results };
+    },
+  );
+
+  // Ranges
+
+  fastify.get<{ Params: GetClassPropertyDomainRangeInputParamsType; Querystring: GetClassPropertyDomainRangeInputQueryStringType }>(
+    '/classes/:classId/property/:propertyId/ranges',
+    {
+      schema: {
+        params: getClassPropertyDomainRangeInputParamsSchema,
+        querystring: getClassPropertyDomainRangeInputQueryStringSchema,
+        response: {
+          '2xx': getClassPropertyDomainRangeReplySchema,
+        },
+      },
+    },
+    async (req, res) => {
+      const { classId, propertyId } = req.params;
+      const { part } = req.query;
+      fastify.throwOnMissingClassId(classId);
+      fastify.throwOnMissingPropertyId(propertyId);
+      const startClass = fastify.wdOntology.getClass(classId) as WdClass;
+      const property = fastify.wdOntology.getProperty(propertyId) as WdProperty;
+      const results =
+        part === 'inherited'
+          ? fastify.wdOntology.getInheritedClassPropertyRanges(startClass, property)
+          : fastify.wdOntology.getOwnClassPropertyRanges(startClass, property);
       return { results };
     },
   );
