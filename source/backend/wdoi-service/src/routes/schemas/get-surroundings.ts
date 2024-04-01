@@ -1,6 +1,6 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassSchema } from './wd-class-schema';
-import { wdPropertySchema } from './wd-property-schema';
+import { wdClassHierarchySurroundingsDescOnlySchema } from './wd-class-schema';
+import { wdPropertyDescOnlySchema } from './wd-property-schema';
 
 // Surroundings with Recommendations
 
@@ -33,11 +33,11 @@ export const surroundingsReplySchema = {
         },
         classes: {
           type: 'array',
-          items: wdClassSchema,
+          items: wdClassHierarchySurroundingsDescOnlySchema,
         },
         properties: {
           type: 'array',
-          items: wdPropertySchema,
+          items: wdPropertyDescOnlySchema,
         },
       },
       additionalProperties: false,

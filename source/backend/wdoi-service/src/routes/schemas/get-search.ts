@@ -1,8 +1,8 @@
 // Search
 
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassSchema } from './wd-class-schema';
-import { wdPropertySchema } from './wd-property-schema';
+import { wdClassDescOnlySchema } from './wd-class-schema';
+import { wdPropertyDescOnlySchema } from './wd-property-schema';
 
 export const searchInputQueryStringSchema = {
   type: 'object',
@@ -14,9 +14,6 @@ export const searchInputQueryStringSchema = {
       type: 'boolean',
     },
     searchProperties: {
-      type: 'boolean',
-    },
-    searchInstances: {
       type: 'boolean',
     },
     languagePriority: {
@@ -35,11 +32,11 @@ export const searchReplySchema = {
       properties: {
         classes: {
           type: 'array',
-          items: wdClassSchema,
+          items: wdClassDescOnlySchema,
         },
         properties: {
           type: 'array',
-          items: wdPropertySchema,
+          items: wdPropertyDescOnlySchema,
         },
       },
       additionalProperties: false,

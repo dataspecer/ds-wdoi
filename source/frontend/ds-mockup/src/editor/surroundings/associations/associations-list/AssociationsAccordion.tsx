@@ -1,8 +1,8 @@
 import { Typography, List, Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useState } from 'react';
-import { WdClass } from '../../../../wikidata/entities/wd-class';
-import { WdEntityDocsOnly } from '../../../../wikidata/entities/wd-entity';
-import { WdProperty } from '../../../../wikidata/entities/wd-property';
+import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
+import { WdEntityDescOnly } from '../../../../wikidata/entities/wd-entity';
+import { WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';
 import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
 import { DetailListDialog } from '../../../entity-detail/DetailListDialog';
 import { SelectedProperty } from '../../selected-property';
@@ -20,15 +20,15 @@ export function AssociationsAccordion({
   propertyAccordionType,
   propertyPartsSelection,
 }: {
-  rootClass: WdClass;
+  rootClass: WdClassHierarchySurroundingsDescOnly;
   rootSurroundings: ClassSurroundings;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
-  propertyList: WdProperty[];
+  propertyList: WdPropertyDescOnly[];
   propertyAccordionType: PropertyAccordionType;
   propertyPartsSelection: PropertyPartsSelectionInput;
 }) {
   const [detailOpened, setDetailOpened] = useState(false);
-  const [detailEntity, setDetailEntity] = useState<WdEntityDocsOnly | undefined>(undefined);
+  const [detailEntity, setDetailEntity] = useState<WdEntityDescOnly | undefined>(undefined);
   const [selectedProperties, setSelectedProperties] = useState<SelectedProperty[]>([]);
 
   function handleCloseDetail() {
@@ -36,7 +36,7 @@ export function AssociationsAccordion({
     setDetailOpened(false);
   }
 
-  function handleOpenDetail(wdEntityDocs: WdEntityDocsOnly) {
+  function handleOpenDetail(wdEntityDocs: WdEntityDescOnly) {
     setDetailOpened(true);
     setDetailEntity(wdEntityDocs);
   }
@@ -77,7 +77,7 @@ export function AssociationsAccordion({
       {detailOpened ? (
         <DetailListDialog
           detailOpened={detailOpened}
-          detailEntity={detailEntity as WdEntityDocsOnly}
+          detailEntity={detailEntity as WdEntityDescOnly}
           confirmButtonText='OK'
           onCloseHandle={handleCloseDetail}
           onConfirmHandle={handleCloseDetail}

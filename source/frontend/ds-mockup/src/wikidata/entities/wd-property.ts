@@ -64,7 +64,7 @@ export function getRangeClassesIds(prop: WdProperty): EntityIdsList {
     ];
 }
 
-export type WdPropertyDocsOnly = Pick<
+export type WdPropertyDescOnly = Pick<
   WdProperty,
   'id' | 'iri' | 'labels' | 'descriptions' | 'datatype' | 'underlyingType'
 >;

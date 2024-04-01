@@ -27,12 +27,6 @@ export const wdClassSchema = {
         type: 'number',
       },
     },
-    // children: {
-    //   type: 'array',
-    //   items: {
-    //     type: 'number',
-    //   },
-    // },
     instanceOf: {
       type: 'array',
       items: {
@@ -77,7 +71,6 @@ export const wdClassSchema = {
     'labels',
     'descriptions',
     'subclassOf',
-    // 'children',
     'instanceOf',
     'instances',
     'subjectOfProperty',
@@ -116,3 +109,83 @@ export const wdClassDescOnlySchema = {
 } as const;
 
 export type WdClassDescOnlySchemaType = FromSchema<typeof wdClassDescOnlySchema>;
+
+export const wdClassHierarchyDescOnlySchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'number',
+    },
+    iri: {
+      type: 'string',
+    },
+    labels: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    descriptions: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    subclassOf: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+  },
+  additionalProperties: false,
+  required: ['id', 'iri', 'labels', 'descriptions', 'subclassOf'],
+} as const;
+
+export type WdClassHierarchyDescOnlySchema = FromSchema<typeof wdClassHierarchyDescOnlySchema>;
+
+export const wdClassHierarchySurroundingsDescOnlySchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'number',
+    },
+    iri: {
+      type: 'string',
+    },
+    labels: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    descriptions: {
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+    },
+    subclassOf: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    subjectOfProperty: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    valueOfProperty: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+  },
+  additionalProperties: false,
+  required: ['id', 'iri', 'labels', 'descriptions', 'subclassOf', 'subjectOfProperty', 'valueOfProperty'],
+} as const;
+
+export type WdClassHierarchySurroundingsDescOnlySchemaType = FromSchema<typeof wdClassHierarchySurroundingsDescOnlySchema>;

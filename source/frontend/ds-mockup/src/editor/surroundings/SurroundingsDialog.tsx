@@ -1,5 +1,8 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { WdClass, WdClassDocsOnly } from '../../wikidata/entities/wd-class';
+import {
+  WdClassDescOnly,
+  WdClassHierarchySurroundingsDescOnly,
+} from '../../wikidata/entities/wd-class';
 import { SelectedProperty } from './selected-property';
 import { useQuery } from 'react-query';
 import { ClassSurroundings, fetchClassSurroundings } from '../../wikidata/query/get-surroundings';
@@ -12,11 +15,13 @@ export function SurroundingsDialog({
   isOpen,
   onPropertySelectionDialogClose,
 }: {
-  root: WdClassDocsOnly;
+  root: WdClassDescOnly;
   isOpen: boolean;
   onPropertySelectionDialogClose: (selectedProperties: SelectedProperty[]) => void;
 }) {
-  const [selectedParent, setSelectedParent] = useState<WdClass | undefined>(undefined);
+  const [selectedParent, setSelectedParent] = useState<
+    WdClassHierarchySurroundingsDescOnly | undefined
+  >(undefined);
   const [selectedProperties, setSelectedProperties] = useState<SelectedProperty[]>([]);
   const { isLoading, isError, data } = useQuery(['surroundings', root.iri], async () => {
     return await fetchClassSurroundings(root);
@@ -52,7 +57,9 @@ export function SurroundingsDialog({
               <AssociationsDisplay
                 selectedClass={
                   selectedParent == null
-                    ? (rootSurroundings.classesMap.get(rootSurroundings.startClassId) as WdClass)
+                    ? (rootSurroundings.classesMap.get(
+                        rootSurroundings.startClassId,
+                      ) as WdClassHierarchySurroundingsDescOnly)
                     : selectedParent
                 }
                 setSelectedPropertiesUpper={setSelectedProperties}

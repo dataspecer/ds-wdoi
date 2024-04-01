@@ -43,10 +43,9 @@ export class WdOntology {
     query: string,
     searchClasses: boolean | undefined,
     searchProperties: boolean | undefined,
-    searchInstances: boolean | undefined,
     languagePriority: string | undefined,
   ): Promise<SearchResults> {
-    return await this.ontologySearch.search(query, searchClasses, searchProperties, searchInstances, languagePriority);
+    return await this.ontologySearch.search(query, searchClasses, searchProperties, languagePriority);
   }
 
   public getHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {

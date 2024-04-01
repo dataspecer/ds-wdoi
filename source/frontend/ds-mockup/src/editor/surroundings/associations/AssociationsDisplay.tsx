@@ -1,4 +1,4 @@
-import { WdClass } from '../../../wikidata/entities/wd-class';
+import { WdClassHierarchySurroundingsDescOnly } from '../../../wikidata/entities/wd-class';
 import { SelectedProperty } from '../selected-property';
 import { LoadedAssociationsList } from './associations-list/LoadedAssociationsList';
 import { ClassSurroundings } from '../../../wikidata/query/get-surroundings';
@@ -9,7 +9,7 @@ export function AssociationsDisplay({
   setSelectedPropertiesUpper,
   rootSurroundings,
 }: {
-  selectedClass: WdClass;
+  selectedClass: WdClassHierarchySurroundingsDescOnly;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
   rootSurroundings: ClassSurroundings;
 }) {

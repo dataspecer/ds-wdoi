@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { WdClass, WdClassDocsOnly } from '../entities/wd-class';
+import { WdClassDescOnly, WdClassHierarchySurroundingsDescOnly } from '../entities/wd-class';
 import { EntityId, EntityIdsList } from '../entities/wd-entity';
-import { WdProperty } from '../entities/wd-property';
+import { WdPropertyDescOnly } from '../entities/wd-property';
 import { buildEntityMap } from '../../editor/utils/build-entity-map';
 
 interface GetSurroundingsReplyResults {
@@ -9,8 +9,8 @@ interface GetSurroundingsReplyResults {
   parents: EntityIdsList;
   subjectOf: EntityIdsList;
   valueOf: EntityIdsList;
-  classes: WdClass[];
-  properties: WdProperty[];
+  classes: WdClassHierarchySurroundingsDescOnly[];
+  properties: WdPropertyDescOnly[];
 }
 
 interface GetSurroundingsReply {
@@ -22,11 +22,11 @@ export interface ClassSurroundings {
   parentsIds: EntityIdsList;
   subjectOfIds: EntityIdsList;
   valueOfIds: EntityIdsList;
-  classesMap: ReadonlyMap<EntityId, WdClass>;
-  propertiesMap: ReadonlyMap<EntityId, WdProperty>;
+  classesMap: ReadonlyMap<EntityId, WdClassHierarchySurroundingsDescOnly>;
+  propertiesMap: ReadonlyMap<EntityId, WdPropertyDescOnly>;
 }
 
-export async function fetchClassSurroundings(cls: WdClassDocsOnly): Promise<ClassSurroundings> {
+export async function fetchClassSurroundings(cls: WdClassDescOnly): Promise<ClassSurroundings> {
   const reply = (await axios.get(`/api/v3/classes/${cls.id}/surroundings`))
     .data as GetSurroundingsReply;
   const classesMap = buildEntityMap(reply.results.classes);

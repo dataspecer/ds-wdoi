@@ -1,11 +1,11 @@
 import { List, ListItem, IconButton, ListItemButton, Typography, TextField } from '@mui/material';
-import { WdClass } from '../../../../../wikidata/entities/wd-class';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { DetailListDialog } from '../../../../entity-detail/DetailListDialog';
 import { useMemo, useState } from 'react';
-import { WdEntityDocsOnly } from '../../../../../wikidata/entities/wd-entity';
+import { WdClassDescOnly } from '../../../../../wikidata/entities/wd-class';
+import { WdEntityDescOnly } from '../../../../../wikidata/entities/wd-entity';
 
-function textFilter(wdClasses: WdClass[], text: string): WdClass[] {
+function textFilter(wdClasses: WdClassDescOnly[], text: string): WdClassDescOnly[] {
   if (text != null && text !== '') {
     return wdClasses.filter((cls) => cls.labels['en'].toLowerCase().includes(text));
   } else return wdClasses;
@@ -15,11 +15,11 @@ export function DomainOrRangeClassList({
   classes,
   closeDialog,
 }: {
-  classes: WdClass[];
+  classes: WdClassDescOnly[];
   closeDialog: () => void;
 }) {
   const [detailOpened, setDetailOpened] = useState(false);
-  const [detailEntity, setDetailEntity] = useState<WdEntityDocsOnly | undefined>(undefined);
+  const [detailEntity, setDetailEntity] = useState<WdEntityDescOnly | undefined>(undefined);
   const [searchTextInput, setSearchTextInput] = useState<string>('');
 
   function handleCloseDetail() {
@@ -27,7 +27,7 @@ export function DomainOrRangeClassList({
     setDetailOpened(false);
   }
 
-  const filteredClasses = useMemo<WdClass[]>(() => {
+  const filteredClasses = useMemo<WdClassDescOnly[]>(() => {
     return textFilter(classes, searchTextInput);
   }, [classes, searchTextInput]);
 

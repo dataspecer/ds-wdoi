@@ -1,7 +1,7 @@
 import { ListItem, IconButton, ListItemButton, Typography } from '@mui/material';
-import { WdClass } from '../../../../wikidata/entities/wd-class';
-import { WdEntityDocsOnly } from '../../../../wikidata/entities/wd-entity';
-import { WdProperty, UnderlyingType } from '../../../../wikidata/entities/wd-property';
+import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
+import { WdEntityDescOnly } from '../../../../wikidata/entities/wd-entity';
+import { UnderlyingType, WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';
 import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { PropertyAccordionType } from './AssociationsAccordion';
@@ -21,10 +21,10 @@ export function RenderProperty({
   propertyAccordionType,
   propertyPartsSelection,
 }: {
-  rootClass: WdClass;
+  rootClass: WdClassHierarchySurroundingsDescOnly;
   rootSurroundings: ClassSurroundings;
-  wdProperty: WdProperty;
-  handleOpenDetail: (wdEntityDocs: WdEntityDocsOnly) => void;
+  wdProperty: WdPropertyDescOnly;
+  handleOpenDetail: (wdEntityDocs: WdEntityDescOnly) => void;
   propertyAccordionType: PropertyAccordionType;
   propertyPartsSelection: PropertyPartsSelectionInput;
 }) {

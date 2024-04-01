@@ -248,3 +248,5 @@ The first one is the mockup and the second one is the upgrade of the recommendat
     - But only based for literals and items properties if they have both subject/value type constraints.
 
 
+- TODO Optimizations
+  - dont sort classes when own is selected

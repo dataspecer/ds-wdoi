@@ -252,3 +252,4 @@ Assuming we are on a current type:
 - I think some qualifiers can be anywhere.
 - On edges with only allowed qualifiers, I could do expansion?
 - So far I should not care.
+

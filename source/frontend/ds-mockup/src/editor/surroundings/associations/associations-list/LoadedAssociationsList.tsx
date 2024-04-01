@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { WdClass } from '../../../../wikidata/entities/wd-class';
+import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
 import {
   ClassSurroundings,
   fetchClassSurroundings,
@@ -11,7 +11,7 @@ export function LoadedAssociationsList({
   selectedClass,
   setSelectedPropertiesUpper,
 }: {
-  selectedClass: WdClass;
+  selectedClass: WdClassHierarchySurroundingsDescOnly;
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
 }) {
   const { isLoading, isError, data } = useQuery(['surroundings', selectedClass.iri], async () => {

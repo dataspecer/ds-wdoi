@@ -1,12 +1,15 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useQuery } from 'react-query';
-import { WdProperty } from '../../../../../wikidata/entities/wd-property';
+import { WdPropertyDescOnly } from '../../../../../wikidata/entities/wd-property';
 import {
   DomainsOrRanges,
   fetchDomainOrRange,
 } from '../../../../../wikidata/query/get-domain-range';
 import { DomainOrRangeClassList } from './DomainOrRangeClassList';
-import { WdClass } from '../../../../../wikidata/entities/wd-class';
+import {
+  WdClassDescOnly,
+  WdClassHierarchySurroundingsDescOnly,
+} from '../../../../../wikidata/entities/wd-class';
 import { PropertyPartsSelectionInput } from '../AssociationsList';
 
 export function DomainAndRangeDialog({
@@ -17,8 +20,8 @@ export function DomainAndRangeDialog({
   domainsOrRanges,
   propertyPartsSelection,
 }: {
-  wdClass: WdClass;
-  wdProperty: WdProperty;
+  wdClass: WdClassHierarchySurroundingsDescOnly;
+  wdProperty: WdPropertyDescOnly;
   isOpen: boolean;
   onDialogClose: () => void;
   domainsOrRanges: DomainsOrRanges;
@@ -48,7 +51,7 @@ export function DomainAndRangeDialog({
             'Error'
           )
         ) : (
-          <DomainOrRangeClassList classes={data as WdClass[]} closeDialog={onDialogClose} />
+          <DomainOrRangeClassList classes={data as WdClassDescOnly[]} closeDialog={onDialogClose} />
         )}
       </DialogContent>
       <DialogActions>

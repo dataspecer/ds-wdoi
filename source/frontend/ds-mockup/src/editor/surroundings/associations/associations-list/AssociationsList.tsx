@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
 import { SelectedProperty } from '../../selected-property';
 import { EntityIdsList } from '../../../../wikidata/entities/wd-entity';
-import { WdClass } from '../../../../wikidata/entities/wd-class';
+import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
 import {
   Button,
   Checkbox,
@@ -14,29 +14,29 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { Datatype, WdProperty } from '../../../../wikidata/entities/wd-property';
+import { Datatype, WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';
 import { AssociationsAccordion } from './AssociationsAccordion';
 import { FilterByInstanceDialog } from './FilterByInstanceDialog';
 
 export type PropertyPartsSelectionInput = 'inherited' | 'own';
 
 interface PropertiesGroups {
-  attributeProperties: WdProperty[];
-  identifierProperties: WdProperty[];
-  inItemProperties: WdProperty[];
-  outItemProperties: WdProperty[];
+  attributeProperties: WdPropertyDescOnly[];
+  identifierProperties: WdPropertyDescOnly[];
+  inItemProperties: WdPropertyDescOnly[];
+  outItemProperties: WdPropertyDescOnly[];
 }
 
 interface InAndOutProperties {
-  outProperties: WdProperty[];
-  inProperties: WdProperty[];
+  outProperties: WdPropertyDescOnly[];
+  inProperties: WdPropertyDescOnly[];
 }
 
 function materializeProperties(
   propertiesIds: EntityIdsList,
   rootSurroundings: ClassSurroundings,
-): WdProperty[] {
-  const results: WdProperty[] = [];
+): WdPropertyDescOnly[] {
+  const results: WdPropertyDescOnly[] = [];
   propertiesIds.forEach((propertyId) => {
     const wdProperty = rootSurroundings.propertiesMap.get(propertyId);
     if (wdProperty != null) results.push(wdProperty);
@@ -46,7 +46,7 @@ function materializeProperties(
 }
 
 function retrieveInAndOutProperties(
-  rootClass: WdClass,
+  rootClass: WdClassHierarchySurroundingsDescOnly,
   rootSurroundings: ClassSurroundings,
   propertyPartsSelection: PropertyPartsSelectionInput,
 ): InAndOutProperties {
@@ -67,9 +67,9 @@ function retrieveInAndOutProperties(
 }
 
 function splitPropertiesIntoGroups(inAndOutProperties: InAndOutProperties): PropertiesGroups {
-  const attributeProperties: WdProperty[] = [];
-  const identifierProperties: WdProperty[] = [];
-  const outProperties: WdProperty[] = [];
+  const attributeProperties: WdPropertyDescOnly[] = [];
+  const identifierProperties: WdPropertyDescOnly[] = [];
+  const outProperties: WdPropertyDescOnly[] = [];
 
   inAndOutProperties.outProperties.forEach((wdProperty) => {
     if (wdProperty.datatype === Datatype.ITEM) {
@@ -89,7 +89,7 @@ function splitPropertiesIntoGroups(inAndOutProperties: InAndOutProperties): Prop
   };
 }
 
-function textFilter(wdProperties: WdProperty[], text: string): WdProperty[] {
+function textFilter(wdProperties: WdPropertyDescOnly[], text: string): WdPropertyDescOnly[] {
   if (text != null && text !== '') {
     return wdProperties.filter((property) => property.labels['en'].toLowerCase().includes(text));
   } else return wdProperties;
@@ -112,8 +112,10 @@ export function AssociationsList({
   const [showOutItemProperties, setShowOutItemProperties] = useState<boolean>(true);
   const [showInItemProperties, setShowInItemProperties] = useState<boolean>(true);
 
-  const rootClass = useMemo<WdClass>(() => {
-    return rootSurroundings.classesMap.get(rootSurroundings.startClassId) as WdClass;
+  const rootClass = useMemo<WdClassHierarchySurroundingsDescOnly>(() => {
+    return rootSurroundings.classesMap.get(
+      rootSurroundings.startClassId,
+    ) as WdClassHierarchySurroundingsDescOnly;
   }, [rootSurroundings]);
 
   const propertiesGroups = useMemo<PropertiesGroups>(() => {
@@ -125,25 +127,25 @@ export function AssociationsList({
     return splitPropertiesIntoGroups(inAndOutProperties);
   }, [rootClass, rootSurroundings, propertyPartsSelection]);
 
-  const attributeProperties = useMemo<WdProperty[]>(() => {
+  const attributeProperties = useMemo<WdPropertyDescOnly[]>(() => {
     if (showAttributeProperties) {
       return textFilter(propertiesGroups.attributeProperties, searchTextInput);
     } else return [];
   }, [propertiesGroups, searchTextInput, showAttributeProperties]);
 
-  const identifierProperties = useMemo<WdProperty[]>(() => {
+  const identifierProperties = useMemo<WdPropertyDescOnly[]>(() => {
     if (showIdentifierProperties) {
       return textFilter(propertiesGroups.identifierProperties, searchTextInput);
     } else return [];
   }, [propertiesGroups, searchTextInput, showIdentifierProperties]);
 
-  const outItemProperties = useMemo<WdProperty[]>(() => {
+  const outItemProperties = useMemo<WdPropertyDescOnly[]>(() => {
     if (showOutItemProperties) {
       return textFilter(propertiesGroups.outItemProperties, searchTextInput);
     } else return [];
   }, [propertiesGroups, searchTextInput, showOutItemProperties]);
 
-  const inItemProperties = useMemo<WdProperty[]>(() => {
+  const inItemProperties = useMemo<WdPropertyDescOnly[]>(() => {
     if (showInItemProperties) {
       return textFilter(propertiesGroups.inItemProperties, searchTextInput);
     } else return [];

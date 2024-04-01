@@ -1,5 +1,5 @@
-import { WdClassDocsOnly } from './wd-class';
-import { WdPropertyDocsOnly } from './wd-property';
+import { WdClassDescOnly } from './wd-class';
+import { WdPropertyDescOnly } from './wd-property';
 
 export type LanguageMap = Record<string, string>;
 
@@ -21,12 +21,12 @@ export interface WdEntity {
   readonly instanceOf: EntityIdsList;
 }
 
-export function isEntityPropertyDocs(entity: WdEntityDocsOnly): entity is WdPropertyDocsOnly {
+export function isEntityPropertyDocs(entity: WdEntityDescOnly): entity is WdPropertyDescOnly {
   return 'datatype' in entity;
 }
 
-export function isEntityClassDocs(entity: WdEntityDocsOnly): entity is WdClassDocsOnly {
+export function isEntityClassDocs(entity: WdEntityDescOnly): entity is WdClassDescOnly {
   return !('datatype' in entity);
 }
 
-export type WdEntityDocsOnly = Pick<WdEntity, 'id' | 'iri' | 'labels' | 'descriptions'>;
+export type WdEntityDescOnly = Pick<WdEntity, 'id' | 'iri' | 'labels' | 'descriptions'>;

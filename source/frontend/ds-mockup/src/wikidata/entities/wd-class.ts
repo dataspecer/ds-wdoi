@@ -4,7 +4,6 @@ export const ROOT_CLASS_ID = 35120;
 
 export interface WdClass extends WdEntity {
   readonly subclassOf: EntityIdsList;
-  readonly children?: EntityIdsList;
   readonly instances: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
@@ -13,4 +12,12 @@ export interface WdClass extends WdEntity {
   readonly valueOfProperty: EntityIdsList;
 }
 
-export type WdClassDocsOnly = Pick<WdClass, 'id' | 'iri' | 'labels' | 'descriptions'>;
+export type WdClassDescOnly = Pick<WdClass, 'id' | 'iri' | 'labels' | 'descriptions'>;
+export type WdClassHierarchyDescOnly = Pick<
+  WdClass,
+  'id' | 'iri' | 'labels' | 'descriptions' | 'subclassOf'
+>;
+export type WdClassHierarchySurroundingsDescOnly = Pick<
+  WdClass,
+  'id' | 'iri' | 'labels' | 'descriptions' | 'subclassOf' | 'subjectOfProperty' | 'valueOfProperty'
+>;

@@ -1,5 +1,5 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassSchema } from './wd-class-schema';
+import { wdClassDescOnlySchema } from './wd-class-schema';
 
 export const getClassPropertyDomainRangeReplySchema = {
   type: 'object',
@@ -9,7 +9,7 @@ export const getClassPropertyDomainRangeReplySchema = {
       properties: {
         classes: {
           type: 'array',
-          items: wdClassSchema,
+          items: wdClassDescOnlySchema,
         },
       },
       additionalProperties: false,

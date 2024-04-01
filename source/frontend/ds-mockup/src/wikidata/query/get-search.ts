@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { WdClass } from '../entities/wd-class';
+import { WdClassDescOnly } from '../entities/wd-class';
 
 export interface GetSearchReplyResults {
-  classes: WdClass[];
+  classes: WdClassDescOnly[];
 }
 
 export interface GetSearchReply {

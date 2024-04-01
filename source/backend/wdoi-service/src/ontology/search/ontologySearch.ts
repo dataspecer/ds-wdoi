@@ -63,7 +63,6 @@ export class OntologySearch {
     query: string,
     searchClasses: boolean | undefined,
     searchProperties: boolean | undefined,
-    searchInstances: boolean | undefined,
     languagePriority: string | undefined,
   ): Promise<SearchResults> {
     if (OntologySearch.URI_REGEXP.test(query)) {

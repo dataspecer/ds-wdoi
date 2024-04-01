@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { WdClass, WdClassDocsOnly } from '../../wikidata/entities/wd-class';
+import { WdClassHierarchySurroundingsDescOnly } from '../../wikidata/entities/wd-class';
 import { ClassSurroundings } from '../../wikidata/query/get-surroundings';
 import React from 'react';
-import { EntityId, EntityIdsList } from '../../wikidata/entities/wd-entity';
+import { EntityId, EntityIdsList, WdEntityDescOnly } from '../../wikidata/entities/wd-entity';
 import {
   Accordion,
   AccordionSummary,
@@ -25,12 +25,16 @@ export function AncestorsDisplay({
   setSelectedParentUpper,
 }: {
   rootSurroundings: ClassSurroundings;
-  setSelectedParentUpper: React.Dispatch<React.SetStateAction<WdClass | undefined>>;
+  setSelectedParentUpper: React.Dispatch<
+    React.SetStateAction<WdClassHierarchySurroundingsDescOnly | undefined>
+  >;
 }) {
-  const [selectedParentLocal, setSelectedParentLocal] = useState<WdClass | undefined>(undefined);
+  const [selectedParentLocal, setSelectedParentLocal] = useState<
+    WdClassHierarchySurroundingsDescOnly | undefined
+  >(undefined);
   const [searchTextInput, setSearchTextInput] = useState('');
   const [detailOpened, setDetailOpened] = useState(false);
-  const [detailEntity, setDetailEntity] = useState<WdClass | undefined>(undefined);
+  const [detailEntity, setDetailEntity] = useState<WdEntityDescOnly | undefined>(undefined);
 
   function handleCloseDetail() {
     setDetailEntity(undefined);
@@ -42,7 +46,7 @@ export function AncestorsDisplay({
     if (searchTextInput === '') return classes;
     else {
       return classes.filter((id) => {
-        const cls = rootSurroundings.classesMap.get(id) as WdClass;
+        const cls = rootSurroundings.classesMap.get(id) as WdClassHierarchySurroundingsDescOnly;
         return cls.labels['en'].toLowerCase().includes(searchTextInput);
       });
     }
@@ -78,7 +82,9 @@ export function AncestorsDisplay({
       </div>
       <div>
         {classesToDisplay.map((clsId) => {
-          const cls = rootSurroundings.classesMap.get(clsId) as WdClass;
+          const cls = rootSurroundings.classesMap.get(
+            clsId,
+          ) as WdClassHierarchySurroundingsDescOnly;
           const isSelected =
             (selectedParentLocal != null && selectedParentLocal.id === cls.id) ||
             (rootSurroundings.startClassId === cls.id && selectedParentLocal == null);
@@ -117,7 +123,9 @@ export function AncestorsDisplay({
                   <Typography>Parents</Typography>
                   <List>
                     {cls.subclassOf.map((subclassId) => {
-                      const subclass = rootSurroundings.classesMap.get(subclassId) as WdClass;
+                      const subclass = rootSurroundings.classesMap.get(
+                        subclassId,
+                      ) as WdClassHierarchySurroundingsDescOnly;
                       const isSubclassSelected =
                         (selectedParentLocal != null && selectedParentLocal.id === subclass.id) ||
                         (rootSurroundings.startClassId === subclass.id &&
@@ -160,7 +168,7 @@ export function AncestorsDisplay({
       {detailOpened ? (
         <DetailListDialog
           detailOpened={detailOpened}
-          detailEntity={detailEntity as WdClassDocsOnly}
+          detailEntity={detailEntity}
           confirmButtonText='OK'
           onCloseHandle={handleCloseDetail}
           onConfirmHandle={() => {

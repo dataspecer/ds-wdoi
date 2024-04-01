@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import { WdClassDocsOnly } from '../../wikidata/entities/wd-class';
+import { WdClassDescOnly } from '../../wikidata/entities/wd-class';
 import { SearchList } from './SearchList';
 
 export function RootSelectionDialog({
@@ -7,7 +7,7 @@ export function RootSelectionDialog({
   isOpen,
   onCloseHandle,
 }: {
-  setNewRootHandle: (newRoot: WdClassDocsOnly) => void;
+  setNewRootHandle: (newRoot: WdClassDescOnly) => void;
   isOpen: boolean;
   onCloseHandle: () => void;
 }) {

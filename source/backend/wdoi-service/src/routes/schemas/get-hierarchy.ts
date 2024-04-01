@@ -1,5 +1,5 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassSchema } from './wd-class-schema';
+import { wdClassHierarchyDescOnlySchema } from './wd-class-schema';
 
 export const getHierarchyInputQueryStringSchema = {
   type: 'object',
@@ -18,14 +18,14 @@ export const hierarchyReplySchema = {
     results: {
       type: 'object',
       properties: {
-        startClass: wdClassSchema,
+        startClass: wdClassHierarchyDescOnlySchema,
         parents: {
           type: 'array',
-          items: wdClassSchema,
+          items: wdClassHierarchyDescOnlySchema,
         },
         children: {
           type: 'array',
-          items: wdClassSchema,
+          items: wdClassHierarchyDescOnlySchema,
         },
       },
       additionalProperties: false,

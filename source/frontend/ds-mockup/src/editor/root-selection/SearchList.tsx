@@ -8,27 +8,22 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { WdClassDocsOnly } from '../../wikidata/entities/wd-class';
+import { WdClassDescOnly } from '../../wikidata/entities/wd-class';
 import { useQuery } from 'react-query';
 import { useState, useEffect } from 'react';
 import { fetchSearch } from '../../wikidata/query/get-search';
-import {
-  WdEntity,
-  WdEntityDocsOnly,
-  isEntityPropertyDocs,
-} from '../../wikidata/entities/wd-entity';
+import { WdEntityDescOnly, isEntityPropertyDocs } from '../../wikidata/entities/wd-entity';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { DetailListDialog } from '../entity-detail/DetailListDialog';
 
 export function SearchList({
   setNewRootHandle,
 }: {
-  setNewRootHandle: (newRoot: WdClassDocsOnly) => void;
+  setNewRootHandle: (newRoot: WdClassDescOnly) => void;
 }) {
   const [detailOpened, setDetailOpened] = useState(false);
-  const [detailEntity, setDetailEntity] = useState<WdEntityDocsOnly | undefined>(undefined);
+  const [detailEntity, setDetailEntity] = useState<WdEntityDescOnly | undefined>(undefined);
   const [textInput, setTextInput] = useState<string>('');
-  // const [displayingClasses, setDisplayingClasses] = useState(true);
   const { data, refetch, isError, isRefetching } = useQuery(
     ['search', textInput],
     async () => {
@@ -44,12 +39,9 @@ export function SearchList({
   }, [textInput, refetch]);
 
   let classesCount = 0;
-  //let propertiesCount = 0;
-  let itemsToRender: WdEntity[] = [];
+  let itemsToRender: WdClassDescOnly[] = [];
   if (!isRefetching && data != null && textInput !== '') {
     classesCount = data.results.classes.length;
-    //propertiesCount = data.results.properties.length;
-    //displayingClasses ? data.results.classes : data.results.properties;
     itemsToRender = data.results.classes;
   }
 
@@ -66,20 +58,7 @@ export function SearchList({
           ></TextField>
         </div>
         <Stack spacing={10} direction='row' justifyContent='center' alignItems='center'>
-          <Button
-            variant={'outlined'}
-
-            //variant={displayingClasses ? 'outlined' : 'text'}
-            //onClick={() => setDisplayingClasses(true)}
-          >
-            Classes ({classesCount})
-          </Button>
-          {/* <Button
-            variant={displayingClasses ? 'text' : 'outlined'}
-            onClick={() => setDisplayingClasses(false)}
-          >
-            Properties ({propertiesCount})
-          </Button> */}
+          <Button variant={'outlined'}>Classes ({classesCount})</Button>
         </Stack>
         <List>
           {itemsToRender.map((value, index) => {
@@ -101,27 +80,14 @@ export function SearchList({
                 disablePadding
               >
                 <ListItemButton
-                  onClick={
-                    () => {
-                      setNewRootHandle(value as WdClassDocsOnly);
-                    }
-                    // displayingClasses
-                    //   ? () => {
-                    //       setNewRootHandle(value as WdClassDocsOnly);
-                    //     }
-                    //   : () => {}
-                  }
+                  onClick={() => {
+                    setNewRootHandle(value as WdClassDescOnly);
+                  }}
                 >
                   <div className='flex flex-col'>
                     <div className='flex flex-row space-x-2'>
                       <Typography className='font-bold'>{value.labels['en']} </Typography>
-                      <Typography>
-                        {
-                          'Q' + value.id.toString()
-                          /* ({displayingClasses ? 'Q' + value.id.toString() : 'P' + value.id.toString()}
-                        ) */
-                        }
-                      </Typography>
+                      <Typography>{'Q' + value.id.toString()}</Typography>
                     </div>
                     <Typography>{value.descriptions['en'] ?? ''}</Typography>
                   </div>
@@ -139,13 +105,13 @@ export function SearchList({
             setDetailOpened(false);
             setDetailEntity(undefined);
           }}
-          onConfirmHandle={(newRoot: WdEntityDocsOnly) => {
+          onConfirmHandle={(newRoot: WdClassDescOnly) => {
             setDetailOpened(false);
             setDetailEntity(undefined);
             // Assuming it is never activated with invalid condition.
-            setNewRootHandle(newRoot as WdClassDocsOnly);
+            setNewRootHandle(newRoot as WdClassDescOnly);
           }}
-          disableConfirmOn={(wdEntityDocs: WdEntityDocsOnly) => {
+          disableConfirmOn={(wdEntityDocs: WdEntityDescOnly) => {
             return isEntityPropertyDocs(wdEntityDocs);
           }}
           confirmButtonText='Select as root'
