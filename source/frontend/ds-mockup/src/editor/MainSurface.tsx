@@ -1,17 +1,17 @@
 import { Button, IconButton, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
-import { WdClassDocsOnly } from '../wikidata/entities/wd-class';
+import { WdClassDescOnly } from '../wikidata/entities/wd-class';
 import { RootSelectionDialog } from './root-selection/RootSelectionDialog';
 import { SelectedProperty } from './surroundings/selected-property';
 import { SurroundingsDialog } from './surroundings/SurroundingsDialog';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
 export function MainSurface() {
-  const [root, setRoot] = useState<WdClassDocsOnly | undefined>(undefined);
+  const [root, setRoot] = useState<WdClassDescOnly | undefined>(undefined);
   const [rootDialogOpened, setRootDialogOpened] = useState<boolean>(false);
   const [propertySelectionDialogOpened, setPropertySelectionDialogOpened] = useState(false);
 
-  function setNewRootHandle(newRoot: WdClassDocsOnly): void {
+  function setNewRootHandle(newRoot: WdClassDescOnly): void {
     setRoot(newRoot);
     setRootDialogOpened(false);
   }

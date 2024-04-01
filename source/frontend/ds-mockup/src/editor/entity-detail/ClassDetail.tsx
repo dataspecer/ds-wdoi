@@ -1,9 +1,9 @@
-import { WdEntityDocsOnly } from '../../wikidata/entities/wd-entity';
+import { WdEntityDescOnly } from '../../wikidata/entities/wd-entity';
 import {
   ClassWithSurroundingDocs,
   fetchClassWithSurroundingsDocs,
 } from '../../wikidata/query/get-entity';
-import { WdClassDocsOnly } from '../../wikidata/entities/wd-class';
+import { WdClassDescOnly } from '../../wikidata/entities/wd-class';
 import { useQuery } from 'react-query';
 import { Stack } from '@mui/material';
 import { EntityDocsList } from './EntityDocsList';
@@ -12,8 +12,8 @@ export function ClassDetail({
   entity,
   onNewDetailHandle,
 }: {
-  entity: WdClassDocsOnly;
-  onNewDetailHandle: (wdEntityDocsOnly: WdEntityDocsOnly) => void;
+  entity: WdClassDescOnly;
+  onNewDetailHandle: (wdEntityDocsOnly: WdEntityDescOnly) => void;
 }) {
   const { isLoading, isError, data, error } = useQuery(['detail', entity.iri], async () => {
     return await fetchClassWithSurroundingsDocs(entity);

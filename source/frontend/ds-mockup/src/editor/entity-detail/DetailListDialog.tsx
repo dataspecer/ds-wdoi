@@ -6,10 +6,10 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import { WdClassDocsOnly } from '../../wikidata/entities/wd-class';
-import { WdEntityDocsOnly, isEntityPropertyDocs } from '../../wikidata/entities/wd-entity';
+import { WdClassDescOnly } from '../../wikidata/entities/wd-class';
+import { WdEntityDescOnly, isEntityPropertyDocs } from '../../wikidata/entities/wd-entity';
 import { useState } from 'react';
-import { WdPropertyDocsOnly } from '../../wikidata/entities/wd-property';
+import { WdPropertyDescOnly } from '../../wikidata/entities/wd-property';
 import { ClassDetail } from './ClassDetail';
 import { PropertyDetail } from './PropertyDetail';
 
@@ -22,21 +22,21 @@ export function DetailListDialog({
   confirmButtonText,
 }: {
   detailOpened: boolean;
-  detailEntity: WdEntityDocsOnly | undefined;
+  detailEntity: WdEntityDescOnly | undefined;
   onCloseHandle: () => void;
-  onConfirmHandle: (newRoot: WdEntityDocsOnly) => void;
-  disableConfirmOn: (wdEntityDocs: WdEntityDocsOnly) => boolean;
+  onConfirmHandle: (newRoot: WdEntityDescOnly) => void;
+  disableConfirmOn: (wdEntityDocs: WdEntityDescOnly) => boolean;
   confirmButtonText: string;
 }) {
-  const [entitiesList, setEntitiesList] = useState<WdEntityDocsOnly[]>([]);
+  const [entitiesList, setEntitiesList] = useState<WdEntityDescOnly[]>([]);
 
-  let currentEntity = detailEntity as WdEntityDocsOnly;
+  let currentEntity = detailEntity as WdEntityDescOnly;
   if (entitiesList.length !== 0) {
     currentEntity = entitiesList[entitiesList.length - 1];
   }
   const currentEntityIsPropertyDocs = isEntityPropertyDocs(currentEntity);
 
-  function onNewDetailHandle(wdEntityDocs: WdEntityDocsOnly) {
+  function onNewDetailHandle(wdEntityDocs: WdEntityDescOnly) {
     setEntitiesList([...entitiesList, wdEntityDocs]);
   }
 
@@ -61,12 +61,12 @@ export function DetailListDialog({
         </div>
         {currentEntityIsPropertyDocs ? (
           <PropertyDetail
-            entity={currentEntity as WdPropertyDocsOnly}
+            entity={currentEntity as WdPropertyDescOnly}
             onNewDetailHandle={onNewDetailHandle}
           />
         ) : (
           <ClassDetail
-            entity={currentEntity as WdClassDocsOnly}
+            entity={currentEntity as WdClassDescOnly}
             onNewDetailHandle={onNewDetailHandle}
           />
         )}

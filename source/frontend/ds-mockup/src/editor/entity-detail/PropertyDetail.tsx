@@ -1,5 +1,5 @@
-import { WdEntityDocsOnly } from '../../wikidata/entities/wd-entity';
-import { WdPropertyDocsOnly } from '../../wikidata/entities/wd-property';
+import { WdEntityDescOnly } from '../../wikidata/entities/wd-entity';
+import { WdPropertyDescOnly } from '../../wikidata/entities/wd-property';
 import {
   PropertyWithSurroundingDocs,
   fetchPropertyWithSurroundingsNames,
@@ -12,8 +12,8 @@ export function PropertyDetail({
   entity,
   onNewDetailHandle,
 }: {
-  entity: WdPropertyDocsOnly;
-  onNewDetailHandle: (wdEntityDocsOnly: WdEntityDocsOnly) => void;
+  entity: WdPropertyDescOnly;
+  onNewDetailHandle: (wdEntityDocsOnly: WdEntityDescOnly) => void;
 }) {
   const { isLoading, isError, data, error } = useQuery(['detail', entity.iri], async () => {
     return await fetchPropertyWithSurroundingsNames(entity);
@@ -35,15 +35,6 @@ export function PropertyDetail({
         name='Subproperties'
         idsList={results.entity.subproperties}
         entityMap={results.propertyDocsMap}
-        onNewDetailHandle={onNewDetailHandle}
-      />
-      <EntityDocsList
-        name='Domain'
-        idsList={[
-          ...results.entity.generalConstraints.subjectType.instanceOf,
-          ...results.entity.generalConstraints.subjectType.subclassOfInstanceOf,
-        ]}
-        entityMap={results.classesDocsMap}
         onNewDetailHandle={onNewDetailHandle}
       />
     </Stack>

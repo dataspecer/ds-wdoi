@@ -1,6 +1,6 @@
-import { WdEntityDocsOnly, EntityId } from '../../wikidata/entities/wd-entity';
+import { WdEntityDescOnly, EntityId } from '../../wikidata/entities/wd-entity';
 
-export function buildEntityMap<T extends WdEntityDocsOnly>(docsList: T[]): Map<EntityId, T> {
+export function buildEntityMap<T extends WdEntityDescOnly>(docsList: T[]): Map<EntityId, T> {
   const retMap = new Map<EntityId, T>();
   docsList.forEach((doc) => {
     if (!retMap.has(doc.id)) {
