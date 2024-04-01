@@ -43,7 +43,7 @@ export function DomainAndRangeDialog({
       PaperProps={{ sx: { height: '90%' } }}
     >
       <DialogTitle>Select {domainsOrRanges}</DialogTitle>
-      <DialogContent className='bg-slate-100 px-0'>
+      <DialogContent className='bg-slate-100 px-0' id='scrollableDivvvv'>
         {isLoading || isError ? (
           isLoading ? (
             'Loading'

@@ -151,8 +151,6 @@ export function AssociationsList({
     } else return [];
   }, [propertiesGroups, searchTextInput, showInItemProperties]);
 
-  console.log(filter);
-
   return (
     <div className='flex flex-col space-y-2'>
       <div>
@@ -166,7 +164,6 @@ export function AssociationsList({
             variant='contained'
             onClick={() => {
               setFilter(undefined);
-              console.log('asdadads');
             }}
           >
             Cancel Filter
