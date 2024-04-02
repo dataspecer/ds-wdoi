@@ -204,7 +204,6 @@ The first one is the mockup and the second one is the upgrade of the recommendat
     - I split the properties into 4 cathegories: attributes, identifiers, outward, and inward properties.
     - All the lists are made out of accordion and the default way is not displaying anything, just a number.
     - Domain and ranges are diaplayed upon click on item property, to reduce the amount of data sent to the user.
-    - TODO add the api for new domain and range
     - TODO add possibility of using restriction with instance
 
 ### A new way to assign properties to classes
@@ -226,6 +225,8 @@ The first one is the mockup and the second one is the upgrade of the recommendat
       - There might be a problem with the number of range/domain values of properties. Depending on the usage in the ontology. Some propreties can probably have a lot of domain and range classes.
       - It is similar to the SchemaTree recommender, so maybe we could exclude it?
 2. I tackled the problem with the number of properties in range/domain by computing the statistics only for a class and not globally.
+  - Now I have a solution that can deal with the high number of classes using inifinite scroll.
+  - Should I maybe return to the previous solution?
 3. Mergin of the domain and range from usage statistics and constraints is done in preprocessing.
   - I extended all classes with literal properties based on subjectType constraints on literal properties.
   - I extended all classes for item properties, that define subject and value type constraints.
@@ -241,12 +242,16 @@ The first one is the mockup and the second one is the upgrade of the recommendat
   - Shorter domains/ranges for properties.
     - Computing statistics for domain/range per class.
     - Takes more memory.
+    - I have created new solution with the front end that could now display all of the properties.
+      - Question is, should I return to the previous solution?
+      - With that, I could do the merge.
   - Boosting of properties for this type.
     - But a lot of them are missing from the statistics.
   - Mergin of the constraints with usage statistics done in preprocessing phase.
     - Easier to implement.
     - But only based for literals and items properties if they have both subject/value type constraints.
 
-
-- TODO Optimizations
-  - dont sort classes when own is selected
+- TODO
+  - ask necasky about the return of the solution displaying all domains and ranges.
+  - now i could do the merge
+  
