@@ -3,7 +3,7 @@ import phases.search_engine_loading.elastic_search_config as es
 import pprint
 import core.utils.logging as ul
 
-logger = ul.root_logger.getChild("es-helpers")
+logger = ul.root_logger.getChild("es_helpers")
 pp = pprint.PrettyPrinter(indent=2)
 
 def __create_dynamic_mapping(language_shortcut: str, analyzer: str):

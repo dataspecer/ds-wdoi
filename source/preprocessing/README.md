@@ -18,7 +18,8 @@ The preprocessing is done in six phases:
 4. Modification
    - semantic and structural modifications are done on the simplified data model
 5. Property Recommendations
-   - precomputation of property recommendations with SchemaTree
+   - merging of recommendations from property usage statistics with property constraints
+   - boosting "properties for this type" properties
 6. Loading to ElasticSearch
    - load labels and aliases into ElasticSearch service
 
@@ -27,17 +28,22 @@ The preprocessing is done in six phases:
 > 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
 > 3. I consider only the unique values from extracted properties.
 
+- **Logging**:
+  - Everything is logged into `log.log` file and console (`std_out`).
+  - Errors also logged separately into `log_errors.log`.
+  - Each phase is prefixed with a string identifier.
+
 ## Identification and separation with statistics (1. and 2. phase)
 
 The part contains 1. and 2. phase with computation of property usage statistics.
 The statistics is run during the phases to reduce time of the statistics computation.
-The main script is `1_2_identification_separation.py`
+The main script is `p_identification_separation.py`
 
 - input:
   - a path to the wikidata json dump in `.gz` format
   - Example of running:
     
-        $> python 1_2_identification_separation.py latest-all.json.gz
+        $> python p_identification_separation.py latest-all.json.gz
 
 - output:
   - separated classes and propeties
@@ -58,8 +64,7 @@ The main script is `1_2_identification_separation.py`
     - `properties-domain-range-usage.json`
       - contains domain and range statistics for each property without probabilities
 
-- logging:
-  - the logging takes place into `info_id_sep.log` file 
+- logging prefix: `identification_separation`
 
 ### Identification and separation comments
 
@@ -88,7 +93,7 @@ For the summaries for properties, the domain and range do not contain probabilit
 The part contain 3. phase which is conducted in two steps - class extraction and property extraction.
 The phase extracts the data from the Wikidata model into a simplified data model.
 The simplified model is simply a flattening of the hierarchical Wikidata model. 
-The main script is `3_extraction.py`.
+The main script is `p_extraction.py`.
 
 - input:
   - optional argument for languages extracration
@@ -105,11 +110,11 @@ The main script is `3_extraction.py`.
       - for both extractions - use `both`
   - required paths to `classes.json.gz` and `properties.json.gz` from previous phase, in the given order
 
-        $> python 3_extraction.py both classes.json.gz properties.json.gz
+        $> python p_extraction.py both classes.json.gz properties.json.gz
 
         or
 
-        $> python 3_extraction.py --langs en -- both classes.json.gz properties.json.gz
+        $> python p_extraction.py --langs en -- both classes.json.gz properties.json.gz
 
 
 - output:
@@ -117,8 +122,7 @@ The main script is `3_extraction.py`.
   - `properties-ex.json`
   - the files are in the same format as in phase 1. 2. except there are not compressed
 
-- logging:
-  - the logging takes place into `info_ex.log` file 
+- logging prefix: `separation`
 
 
 ### Extraction comments
@@ -164,32 +168,24 @@ The main script is `3_extraction.py`.
         - string: (empty)
         - quantity: (empty)
         - time: (empty)
-- What might be a good idea to add?
-  - exact match (external ontology mapping)
-  - external subproperty of (external ontology mapping)
-  - external superproperty of (external ontology mapping)
-  - part of / has parts?
-  - facet of
-  - constraints for other types than item
 
 ## Modification (4. phase)
 
 The phase loads all the data in the new model into memory and does a semantic and structural checking and modification to the entities.
 Subsequently it saves them to two files.
 This phase was moved here from server, because this part also takes quite a bit of time (which was unexpected at first).
-The main script is `4_modification.py`
+The main script is `p_modification.py`
 
 - input:
   - required paths to `classes-ex.json`, `properties-ex.json`, `classes-property-usage.json` and `properties-domain-range-usage.json` in the given order, from the 3. phase
 
-        $> python 4_modification.py classes-ex.json properties-ex.json classes-property-usage.json properties-domain-range-usage.json
+        $> python p_modification.py classes-ex.json properties-ex.json classes-property-usage.json properties-domain-range-usage.json
 
 - output:
   - `classes-mod.json`
   - `properties-mod.json`
 
-- logging:
-  - the logging takes place into `info_mod.log` file
+- logging prefix: `modification`
 
 ### Modification comments
 
@@ -224,21 +220,21 @@ The iteration over ontology is done multiple times, but still the time is uncomp
 ## Precomputing recommendations (5. phase)
 
 A phase that enables to change property orderings on classes.
-So far only boosting of propeerties from properties_for_this_type field.
+So far only boosting of properties from properties_for_this_type field and merging property constraints to property usage statistics.
+The largest part of the recommendation phase is done in the 2. phase when finilazing property usage statistics.
 
-The main script is `5_property_recommendations.py`.
+The main script is `p_property_recommendations.py`.
 
 - input:
   - required paths to `classes-mod.json` and `properties-mod.json` in the given order from the fourth phase
 
-        $> python 5_property_recommendations.py classes-mod.json properties-mod.json
+        $> python p_property_recommendations.py classes-mod.json properties-mod.json
 
 - output:
   - `classes-recs.json`
   - `properties-recs.json`
 
-- logging:
-  - the logging takes place into `info_recs.log` file
+- logging prefix: `property_recommendations`
 
 ## Comments
 
@@ -248,7 +244,7 @@ There is a lot of classes that do not contain the properties - I do not add them
 ## Loading into search service (6. phase)
 
 The phase loads labels and aliases into a search service - elastic search. Assuming the Elastic search runs on client from `utils.elastic_search.py`.
-The main script is `6_loading.py`
+The main script is `p_loading.py`
 
 - inputs:
   - optional argument for languages extracration
@@ -261,17 +257,16 @@ The main script is `6_loading.py`
     - it should be the same value as was given in the previous phase.
   - paths to the two files generated in the previous step - `classes-recs.json` and `properties-recs.json`
 
-        $> python loading.py classes-recs.json properties-recs.json
+        $> python p_loading.py classes-recs.json properties-recs.json
 
 - outputs:
   - none
 
-- logging:
-  - the logging takes place into `info_load.log` file 
+- logging prefix: `loading`
 
 ### Helper scripts
 
-This phase contains helper scipt `loading_es_helpers.py`
+This phase contains helper scipt `p_loading_es_helpers.py`
 It either creates, refreshes or deletes classes and properties indices.
 
 - Usage:
@@ -294,6 +289,7 @@ It either creates, refreshes or deletes classes and properties indices.
       # List mappings of indices
       &> python loading_es_helpers.py mappings
 
+- logging prefix: `es_helpers`
 
 ### Loading comments
 
