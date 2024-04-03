@@ -1,5 +1,5 @@
 import pathlib
-import logging 
+import sys 
 import core.utils.decoding as decoding
 import core.utils.logging as ul
 from core.utils.timer import timed
@@ -21,9 +21,9 @@ from phases.modification.modifiers.classes.add_fields import *
 from phases.modification.modifiers.removers.remove_entities_with_no_label import *
 from phases.modification.modifiers.removers.remove_classes_with_no_parent import *
 
-main_logger = logging.getLogger("modification")
-classes_logger = main_logger.getChild("p4_modify_classes")
-properties_logger = main_logger.getChild("p4_modify_properties")
+main_logger = ul.root_logger.getChild("modification")
+classes_logger = main_logger.getChild("classes")
+properties_logger = main_logger.getChild("properties")
 
 CLASSES_OUTPUT_FILE = 'classes-mod.json'
 PROPERTIES_OUTPUT_FILE = 'properties-mod.json'
@@ -140,7 +140,7 @@ def __modify_context(context: Context, classes_property_usage_stats_filename: pa
     __post_properties_mod_on_stats_references(context)
 
 @timed(main_logger)
-def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
+def __modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
     classes = __load_classes_to_dict(classes_json_file_path)
     properties = __load_properties_to_dict(properties_json_file_path)
     context = Context(classes, properties)
@@ -148,3 +148,11 @@ def modify(classes_json_file_path: pathlib.Path, properties_json_file_path: path
     __write_classes_to_file(context.classes_dict)
     __write_properties_to_file(context.properties_dict)
     
+@timed(main_logger)
+def main_modification(classes_json_file: pathlib.Path, properties_json_file: pathlib.Path, classes_property_stats_json_file: pathlib.Path, properties_stats_json_file: pathlib.Path):
+    try:
+        __modify(classes_json_file, properties_json_file, classes_property_stats_json_file, properties_stats_json_file)
+    except Exception as e:
+        main_logger.exception("There was an error that cannot be handled")
+        main_logger.error("Exiting...")
+        sys.exit(1)

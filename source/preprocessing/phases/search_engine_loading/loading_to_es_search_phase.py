@@ -1,5 +1,5 @@
 import pathlib
-import logging 
+import sys 
 import core.utils.decoding as decoding
 import core.json_extractors.wd_fields as wd_json_fields_ex
 from core.model_wikidata.entity_json_fields import RootFields
@@ -7,9 +7,9 @@ import phases.search_engine_loading.elastic_search_config as es
 import core.utils.logging as ul
 from core.utils.timer import timed
 
-main_logger = logging.getLogger("loading")
-classes_logger = main_logger.getChild("p6_load_classes")
-properties_logger = main_logger.getChild("p6_load_properties")
+main_logger = ul.root_logger.getChild("loading")
+classes_logger = main_logger.getChild("classes")
+properties_logger = main_logger.getChild("properties")
 
 def __construct_field_lang_key(field: RootFields, lang: str):
     return str(field) + "_" + lang
@@ -49,10 +49,19 @@ def __load_entities(json_file_path: pathlib.Path, logger, logging_step, language
         es.client.indices.refresh(index=elastic_index_name)
 
 @timed(classes_logger)
-def load_classes(json_file_path: pathlib.Path, languages):
+def __load_classes(json_file_path: pathlib.Path, languages):
     __load_entities(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP, languages, es.CLASSES_ELASTIC_INDEX_NAME)
 
 @timed(properties_logger)
-def load_properties(json_file_path: pathlib.Path, languages):
+def __load_properties(json_file_path: pathlib.Path, languages):
     __load_entities(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages, es.PROPERTIES_ELASTIC_INDEX_NAME)
     
+@timed(main_logger)
+def main_loading(properties_json_file: pathlib.Path, classes_json_file: pathlib.Path, lang):
+    try:
+        __load_properties(properties_json_file, lang)
+        __load_classes(classes_json_file, lang)
+    except Exception as e:
+        main_logger.exception("There was an error that cannot be handled")
+        main_logger.error("Exiting...")
+        sys.exit(1)

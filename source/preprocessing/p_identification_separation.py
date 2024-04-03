@@ -1,30 +1,8 @@
-import sys
 import argparse
 import pathlib
-import logging
-import core.utils.timer as timer
-from core.statistics.property_usage import PropertyUsageStatistics
-import phases.identification_separation.identification_phase as identification
-import phases.identification_separation.separation_phase as separation
-
-LOG_FILE = "info_id_sep.log"
-logger = logging.getLogger("identification-separation")
-
-@timer.timed(logger)
-def __main(args):
-    try:
-        property_statistics = PropertyUsageStatistics(logger)
-        wd_classes_ids_set, wd_properties_ids_dict = identification.identify_classes_properties(args.gzipDumpFile, property_statistics)
-        property_statistics.first_pass_finished(wd_classes_ids_set, wd_properties_ids_dict)
-        separation.separate_to_files(args.gzipDumpFile, wd_classes_ids_set, wd_properties_ids_dict, property_statistics)
-        property_statistics.finalize_statistics()
-    except Exception as e:
-        logger.exception("There was an error that cannot be handled")
-        logger.critical("Exiting...")
-        sys.exit(1)
+from phases.identification_separation.identification_separation_phase import main_identification_separation
 
 if __name__ == "__main__":
-    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(name)s : %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     parser = argparse.ArgumentParser(
                 prog="Wikidata class and properties identification and separation",
                 description="""The script identifies and separates classes and properties from the wikidata .gz json dump to two new files.
@@ -42,5 +20,5 @@ if __name__ == "__main__":
                         help="A path to the Wikidata .gz json dump file.")
     args = parser.parse_args()
     
-    __main(args)
+    main_identification_separation(args.gzipDumpFile)
       

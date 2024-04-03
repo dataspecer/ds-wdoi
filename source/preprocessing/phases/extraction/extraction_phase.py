@@ -1,17 +1,17 @@
 import gzip
+import sys
 import pathlib
-import logging
 import core.json_extractors.wd_fields as wd_fields_ex
 import core.model_wikidata.entity_types as wd_entity_types
-from phases.extraction.entity_extractors.wd_class import extract_wd_class
-from phases.extraction.entity_extractors.wd_property import extract_wd_property
 import core.utils.logging as ul
 import core.utils.decoding as decoding
 from core.utils.timer import timed
+from phases.extraction.entity_extractors.wd_class import extract_wd_class
+from phases.extraction.entity_extractors.wd_property import extract_wd_property
 
-main_logger = logging.getLogger("extraction")
-classes_logger = main_logger.getChild("p3_extract_classes")
-properties_logger = main_logger.getChild("p3_extract_properties")
+main_logger = ul.root_logger.getChild("extraction")
+classes_logger = main_logger.getChild("extract_classes")
+properties_logger = main_logger.getChild("extract_properties")
 
 CLASSES_OUTPUT_FILE = "classes-ex.json"
 PROPERTIES_OUTPUT_FILE = 'properties-ex.json'
@@ -37,10 +37,21 @@ def __extract_entities(gzip_file_path: pathlib.Path, output_file_name, transform
             decoding.close_json_array_in_files([output_file])
 
 @timed(classes_logger)
-def extract_classes(gzip_file_path: pathlib.Path, languages):
+def __extract_classes(gzip_file_path: pathlib.Path, languages):
     __extract_entities(gzip_file_path, CLASSES_OUTPUT_FILE, extract_wd_class, wd_entity_types.is_wd_entity_item, classes_logger, ul.CLASSES_PROGRESS_STEP, languages)
 
 @timed(properties_logger)
-def extract_properties(gzip_file_path: pathlib.Path, languages):
+def __extract_properties(gzip_file_path: pathlib.Path, languages):
     __extract_entities(gzip_file_path, PROPERTIES_OUTPUT_FILE, extract_wd_property, wd_entity_types.is_wd_entity_property, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages)
     
+@timed(main_logger)    
+def main_extraction(phase, lang, classes_gzip_file_path, properties_gzip_file_path):
+    try:
+        if phase in ["both", "cls"]:
+            __extract_classes(classes_gzip_file_path, lang)
+        if phase in ["both", "props"]:
+            __extract_properties(properties_gzip_file_path, lang)
+    except Exception as e:
+        main_logger.exception("There was an error that cannot be handled")
+        main_logger.error("Exiting...")
+        sys.exit(1)

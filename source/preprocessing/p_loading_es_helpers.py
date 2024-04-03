@@ -1,10 +1,9 @@
 import argparse
 import phases.search_engine_loading.elastic_search_config as es
-import logging
 import pprint
+import core.utils.logging as ul
 
-logger = logging.getLogger("es-helpers")
-logging.basicConfig(level=20)
+logger = ul.root_logger.getChild("es-helpers")
 pp = pprint.PrettyPrinter(indent=2)
 
 def __create_dynamic_mapping(language_shortcut: str, analyzer: str):

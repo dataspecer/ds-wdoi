@@ -1,26 +1,9 @@
-import sys
 import argparse
 import pathlib
-import logging
-import core.utils.timer as timer
-import phases.search_engine_loading.loading_to_es_search_phase as loading
+from phases.search_engine_loading.loading_to_es_search_phase import main_loading
 from core.default_languages import DEFAULT_LANGUAGES
 
-LOG_FILE = "info_load.log"
-logger = logging.getLogger("loading")
-
-@timer.timed(logger)
-def __main(args):
-    try:
-        loading.load_properties(args.propertiesJsonFile, args.lang)
-        loading.load_classes(args.classesJsonFile, args.lang)
-    except Exception as e:
-        logger.exception("There was an error that cannot be handled")
-        logger.error("Exiting...")
-        sys.exit(1)
-
 if __name__ == "__main__":
-    logging.basicConfig(level=20, handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)], format='%(asctime)s %(levelname)-8s %(name)s : %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     parser = argparse.ArgumentParser(
                 prog="Loads aliases and labels into the search service (Elastic search)",
                 description="""The script loads aliases and labels into the search service (Elastic search).
@@ -46,5 +29,5 @@ if __name__ == "__main__":
                         help="A path to the transformed properties json file.")
     args = parser.parse_args()
     
-    __main(args)
+    main_loading(args.propertiesJsonFile, args.classesJsonFile, args.lang)
       

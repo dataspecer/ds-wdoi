@@ -11,8 +11,9 @@ from core.statistics.property_usage import PropertyUsageStatistics
 import core.utils.decoding as decoding
 import core.utils.logging as ul
 from core.utils.timer import timed
+from phases.identification_separation.identification_separation_phase import main_logger
 
-logger = logging.getLogger("identification-separation").getChild("p1_identify_classes_properties")
+logger = main_logger.getChild("identification")
 
 WD_PARENT_CLASS_ID = "Q16889133"
 
