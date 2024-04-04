@@ -4,7 +4,7 @@ import logging.config
 log_config = {
     "version":1,
     "root":{
-        "handlers" : ["console", "file"],
+        "handlers" : ["console", "all_file", "errors_file"],
         "level": "INFO"
     },
     "handlers":{
@@ -14,18 +14,28 @@ log_config = {
             "level": "INFO",
             "stream": "ext://sys.stdout"
         },
-        "file":{
+        "all_file":{
             "class": "logging.handlers.RotatingFileHandler",
             "level":"INFO",
             "filename":"log.log",
             "maxBytes": 2147483648, # 2 GiB
             "backupCount": 1,
-            "encoding": "utf8"
+            "encoding": "utf8",
+            "formatter": "basic_formatter"
+        },
+        "errors_file":{
+            "class": "logging.handlers.RotatingFileHandler",
+            "level":"WARNING",
+            "filename":"log_errors.log",
+            "maxBytes": 2147483648, # 2 GiB
+            "backupCount": 1,
+            "encoding": "utf8",
+            "formatter": "basic_formatter"
         }
     },
     "formatters":{
         "basic_formatter": {
-            "format": "%(asctime)s %(levelname)-8s %(name)s : %(message)s",
+            "format": "%(asctime)s %(levelname)s %(name)s : %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S"
         }
     },
