@@ -14,7 +14,12 @@ def __create_dynamic_mapping(language_shortcut: str, analyzer: str):
         "mapping": {
             "type": "text",
             "analyzer": analyzer,
-            'fields': {'keyword': {'type': 'keyword', 'ignore_above': 256}},
+            'fields': {'keyword': {
+                'type': 'keyword',
+                "normalizer": "lowercase",
+                'ignore_above': 256
+                }
+            },
         }
     }
     return { template_name: template_value } 
@@ -26,6 +31,9 @@ def __create_language_mappings():
         for shortcut in language_shortcuts:
             dynamic_templates.append(__create_dynamic_mapping(shortcut, analyzer))
     return {
+        "_source": {
+            "enabled": False
+        },
         "dynamic": True,
         "dynamic_templates": dynamic_templates,
     }
@@ -196,9 +204,7 @@ def search(search_string, search_classes: bool = True):
         resp = es.client.search(index=search_index, query=query_obj)
         logger.info("Got %d Hits for %s:" % (resp['hits']['total']['value'], search_index))
         for hit in resp['hits']['hits']:
-            print(hit["_id"])
-            pp.pprint(hit["_source"])
-            print()
+            print("id: " + hit["_id"] + " score: " + str(hit["_score"]))
    
     logger.info("Searching ended")
     
