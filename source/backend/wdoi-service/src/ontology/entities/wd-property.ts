@@ -1,5 +1,4 @@
 import type { InputProperty } from '../loading/input/input-property';
-import type { ModifierPropertyVisitor, ModifierVisitableProperty } from '../post-loading/modifiers';
 import type { EntityIdsList, ExternalOntologyMapping } from './common';
 import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint';
 import { WdEntity } from './wd-entity';
@@ -33,7 +32,7 @@ export enum Datatype {
   GEOGRAPHIC_COORDINATES = 16,
 }
 
-export abstract class WdProperty extends WdEntity implements ModifierVisitableProperty {
+export abstract class WdProperty extends WdEntity {
   private static readonly URIType = 'P';
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
@@ -79,7 +78,6 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
       throw new Error('Missing constructor for a property type.');
     }
   }
-  abstract accept(visitor: ModifierPropertyVisitor): void;
 
   canBeUsedAsMainValue(): boolean {
     return this.generalConstraints.propertyScope.includes(PropertyScopeValue.AS_MAIN);
@@ -102,7 +100,7 @@ export abstract class WdProperty extends WdEntity implements ModifierVisitablePr
   }
 
   public getDomainClassIdsByUsage(): EntityIdsList {
-    return this.generalConstraints.subjectTypeStats.slice(0, 1_000);
+    return this.generalConstraints.subjectTypeStats;
   }
 
   public getDomainClassIdsByConstraints(): EntityIdsList {
@@ -126,16 +124,12 @@ export class ItemProperty extends WdProperty {
     this.itemConstraints = new ItemTypeConstraints(inputProperty.constraints.typeDependent as ItemTypeConstraints);
   }
 
-  accept(visitor: ModifierPropertyVisitor): void {
-    visitor.visitItemProperty(this);
-  }
-
   public getRangeClassIdsByConstraints(): EntityIdsList {
     return this.itemConstraints.valueType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
   }
 
   public getRangeClassIdsByUsage(): EntityIdsList {
-    return this.itemConstraints.valueTypeStats.slice(0, 1_000);
+    return this.itemConstraints.valueTypeStats;
   }
 }
 
@@ -146,10 +140,6 @@ export class StringProperty extends WdProperty {
     super(inputProperty);
     this.stringConstraints = null;
   }
-
-  accept(visitor: ModifierPropertyVisitor): void {
-    visitor.visitStringProperty(this);
-  }
 }
 
 export class QuantityProperty extends WdProperty {
@@ -158,10 +148,6 @@ export class QuantityProperty extends WdProperty {
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
     this.quantityConstraints = null;
-  }
-
-  accept(visitor: ModifierPropertyVisitor): void {
-    visitor.visitQuantityProperty(this);
   }
 }
 
@@ -172,10 +158,6 @@ export class TimeProperty extends WdProperty {
     super(inputProperty);
     this.timeConstraints = null;
   }
-
-  accept(visitor: ModifierPropertyVisitor): void {
-    visitor.visitTimeProperty(this);
-  }
 }
 
 export class CoordinatesProperty extends WdProperty {
@@ -184,9 +166,5 @@ export class CoordinatesProperty extends WdProperty {
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
     this.coordinatesConstraints = null;
-  }
-
-  accept(visitor: ModifierPropertyVisitor): void {
-    visitor.visitCoordinateProperty(this);
   }
 }

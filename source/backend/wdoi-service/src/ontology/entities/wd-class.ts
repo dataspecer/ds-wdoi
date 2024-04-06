@@ -1,6 +1,5 @@
 import type { EntityIdsList, ExternalOntologyMapping, PropertyScoreRecord, PropertyScoreRecordMap } from './common';
 import type { InputClass } from '../loading/input/input-class';
-import type { ModifierClassVisitor, ModifierVisitableClass } from '../post-loading/modifiers';
 import { WdEntity } from './wd-entity';
 import { createPropertyScoreRecordMap } from '../loading/load-property-recommendations';
 import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave, emptyPropertyScoreRecordMapOrSave } from './empty-type-constants';
@@ -8,7 +7,7 @@ import { type WdProperty } from './wd-property';
 
 export const ROOT_CLASS_ID = 35120;
 
-export class WdClass extends WdEntity implements ModifierVisitableClass {
+export class WdClass extends WdEntity {
   private static readonly URIType = 'Q';
   readonly subclassOf: EntityIdsList;
   readonly children: EntityIdsList;
@@ -39,10 +38,6 @@ export class WdClass extends WdEntity implements ModifierVisitableClass {
 
     this.valueOfProperty = emptyEntitiesIdsListOrSave(inputClass.valueOfStats);
     this.valueOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.valueOfStatsScores));
-  }
-
-  accept(visitor: ModifierClassVisitor): void {
-    visitor.visitWdClass(this);
   }
 
   static isRootClass(cls: WdClass): boolean {
