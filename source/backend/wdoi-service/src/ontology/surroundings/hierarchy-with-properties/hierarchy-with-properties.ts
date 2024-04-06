@@ -126,8 +126,7 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
   }
 
   public getResult(): HierarchyWithPropertiesReturnWrapper {
-    Timsort.sort(this.subjectOfIds, (a, b) => (this.subjectOfIdsMap.get(b) as number) - (this.subjectOfIdsMap.get(a) as number));
-    Timsort.sort(this.valueOfIds, (a, b) => (this.valueOfIdsMap.get(b) as number) - (this.valueOfIdsMap.get(a) as number));
+    this.finalize_results();
     return new HierarchyWithPropertiesReturnWrapper(
       this.startClass.id,
       this.parentsIds,
@@ -136,6 +135,11 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
       this.classes,
       this.properties,
     );
+  }
+
+  protected finalize_results(): void {
+    Timsort.sort(this.subjectOfIds, (a, b) => (this.subjectOfIdsMap.get(b) as number) - (this.subjectOfIdsMap.get(a) as number));
+    Timsort.sort(this.valueOfIds, (a, b) => (this.valueOfIdsMap.get(b) as number) - (this.valueOfIdsMap.get(a) as number));
   }
 }
 

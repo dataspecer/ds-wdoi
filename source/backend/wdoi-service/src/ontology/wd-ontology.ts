@@ -21,6 +21,8 @@ import {
   ClassPropertyDomainsRangesResultWrapper,
   InheritedClassPropertyDomainsExtractor,
   InheritedClassPropertyRangesExtractor,
+  expandWithPropertyDomains,
+  expandWithPropertyRanges,
 } from './surroundings/domain-range/domain-range';
 import { materializeEntities } from './utils/materialize-entities';
 
@@ -59,25 +61,39 @@ export class WdOntology {
   }
 
   public getOwnClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
-    const domains = cls.getDomainsForProperty(property);
-    return new ClassPropertyDomainsRangesResultWrapper(materializeEntities(domains, this.classes));
-  }
-
-  public getOwnClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
-    const ranges = cls.getRangesForProperty(property);
-    return new ClassPropertyDomainsRangesResultWrapper(materializeEntities(ranges, this.classes));
+    const domainsPropertyRecord = cls.getDomainsPropertyScoreRecord(property);
+    let domainsResult: WdClass[] = [];
+    if (domainsPropertyRecord != null) {
+      domainsResult = materializeEntities(domainsPropertyRecord.range, this.classes);
+      expandWithPropertyDomains(domainsResult, domainsPropertyRecord.rangeScoreMap, property, this.classes);
+    }
+    return new ClassPropertyDomainsRangesResultWrapper(domainsResult);
   }
 
   public getInheritedClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
     const extractor = new InheritedClassPropertyDomainsExtractor(cls, property, this.classes, this.properties);
     this.hierarchyWalker.getParentHierarchyWithExtraction(cls, extractor);
-    return extractor.getResult();
+    const [classesPresent, resultWrapper] = extractor.getResult();
+    expandWithPropertyDomains(resultWrapper.classes, classesPresent, property, this.classes);
+    return resultWrapper;
+  }
+
+  public getOwnClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const rangesPropertyRecord = cls.getRangesPropertyScoreRecord(property);
+    let rangesResult: WdClass[] = [];
+    if (rangesPropertyRecord != null) {
+      rangesResult = materializeEntities(rangesPropertyRecord.range, this.classes);
+      expandWithPropertyRanges(rangesResult, rangesPropertyRecord.rangeScoreMap, property, this.classes);
+    }
+    return new ClassPropertyDomainsRangesResultWrapper(rangesResult);
   }
 
   public getInheritedClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
     const extractor = new InheritedClassPropertyRangesExtractor(cls, property, this.classes, this.properties);
     this.hierarchyWalker.getParentHierarchyWithExtraction(cls, extractor);
-    return extractor.getResult();
+    const [classesPresent, resultWrapper] = extractor.getResult();
+    expandWithPropertyRanges(resultWrapper.classes, classesPresent, property, this.classes);
+    return resultWrapper;
   }
 
   public getClass(classId: EntityId): WdClass | undefined {

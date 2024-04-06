@@ -48,24 +48,8 @@ export class WdClass extends WdEntity {
     return entityType === WdClass.URIType;
   }
 
-  public getDomainsForProperty(property: WdProperty): EntityIdsList {
-    const propertyScoreRecord = this.valueOfPropertyScoresMap.get(property.id);
-    if (propertyScoreRecord != null) {
-      return propertyScoreRecord.range;
-    }
-    return [];
-  }
-
   public getDomainsPropertyScoreRecord(property: WdProperty): PropertyScoreRecord | undefined {
     return this.valueOfPropertyScoresMap.get(property.id);
-  }
-
-  public getRangesForProperty(property: WdProperty): EntityIdsList {
-    const propertyScoreRecord = this.subjectOfPropertyScoresMap.get(property.id);
-    if (propertyScoreRecord != null) {
-      return propertyScoreRecord.range;
-    }
-    return [];
   }
 
   public getRangesPropertyScoreRecord(property: WdProperty): PropertyScoreRecord | undefined {

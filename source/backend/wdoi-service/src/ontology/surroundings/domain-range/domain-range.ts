@@ -1,4 +1,4 @@
-import type { PropertyScoreRecord, EntityId } from '../../entities/common';
+import type { PropertyScoreRecord, EntityId, EntityIdsList } from '../../entities/common';
 import { type WdClass } from '../../entities/wd-class';
 import { type WdProperty } from '../../entities/wd-property';
 import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
@@ -12,6 +12,40 @@ export class ClassPropertyDomainsRangesResultWrapper {
   constructor(classes: WdClass[]) {
     this.classes = classes;
   }
+}
+
+export function expandWithPropertyDomains(
+  classes: WdClass[],
+  classesPresent: ReadonlyMap<EntityId, any>,
+  property: WdProperty,
+  contextClasses: ReadonlyMap<EntityId, WdClass>,
+): void {
+  const propertyDomains = property.getDomainClassIdsByUsage();
+  addClassesIfMissing(classes, classesPresent, propertyDomains, contextClasses);
+}
+
+export function expandWithPropertyRanges(
+  classes: WdClass[],
+  classesPresent: ReadonlyMap<EntityId, any>,
+  property: WdProperty,
+  contextClasses: ReadonlyMap<EntityId, WdClass>,
+): void {
+  const propertyRanges = property.getRangeClassIdsByUsage();
+  addClassesIfMissing(classes, classesPresent, propertyRanges, contextClasses);
+}
+
+function addClassesIfMissing(
+  classes: WdClass[],
+  classesPresent: ReadonlyMap<EntityId, any>,
+  classesIdsToAdd: EntityIdsList,
+  contextClasses: ReadonlyMap<EntityId, WdClass>,
+): void {
+  classesIdsToAdd.forEach((clsId) => {
+    if (!classesPresent.has(clsId)) {
+      const cls = contextClasses.get(clsId) as WdClass;
+      classes.push(cls);
+    }
+  });
 }
 
 export abstract class InheritedClassPropertyDomainsRangesExtractor extends Extractor {
@@ -68,9 +102,13 @@ export abstract class InheritedClassPropertyDomainsRangesExtractor extends Extra
     }
   }
 
-  public getResult(): ClassPropertyDomainsRangesResultWrapper {
+  public getResult(): [ReadonlyMap<EntityId, any>, ClassPropertyDomainsRangesResultWrapper] {
+    this.finalize_results();
+    return [this.classesIdsMap, new ClassPropertyDomainsRangesResultWrapper(this.classes)];
+  }
+
+  protected finalize_results(): void {
     Timsort.sort(this.classes, (a, b) => (this.classesIdsMap.get(b.id) as number) - (this.classesIdsMap.get(a.id) as number));
-    return new ClassPropertyDomainsRangesResultWrapper(this.classes);
   }
 }
 
