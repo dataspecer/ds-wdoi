@@ -7,7 +7,7 @@ This should be run after removing unexisting references, self cycles and assigme
 class MarkChildrenToParents(ModifierPart):
     
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("mark-children-to-parents"), context)
+        super().__init__(logger.getChild("mark_children_to_parents"), context)
         
     def __call__(self, wd_class) -> None:
         entityId = wd_class[ClassFields.ID.value]

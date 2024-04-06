@@ -11,7 +11,7 @@ from core.model_simplified.scores import ScoresFields
 class PropertiesDomainRangeUsageStatsMerger(ModifierAll):
     
     def __init__(self, logger, context: Context, properties_domain_range_usage_stats_filename: pathlib.Path) -> None:
-        super().__init__(logger.getChild("properties-domain-range-stats-merger"), context)
+        super().__init__(logger.getChild("properties_domain_range_stats_merger"), context)
         self.properties_domain_range_usage_stats_filename = properties_domain_range_usage_stats_filename
         self.missing_properties = set()
     

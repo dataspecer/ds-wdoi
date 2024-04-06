@@ -11,12 +11,12 @@ from summaries.summaries import main_logger
 import pathlib
 import json
 
-logger = main_logger.getChild("domains_ranges_per_property")
+logger = main_logger.getChild("domains_ranges_per_property_stats")
 
-DOMAINS_OUTPUT_FILE = "domains_ranges_per_property_sorted_domains.json"
-RANGES_OUTPUT_FILE = "domains_ranges_per_property_sorted_ranges.json"
+DOMAINS_OUTPUT_FILE = "domains_ranges_stats_per_property_sorted_domains.json"
+RANGES_OUTPUT_FILE = "domains_ranges_stats_per_property_sorted_ranges.json"
 
-def __get_value_of_list(property):
+def __get_value_of_consts_list(property):
     if property[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:
         return property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] 
     else:
@@ -29,18 +29,18 @@ def main_domains_ranges_per_class(properties_json_file_path: pathlib.Path):
         results = []
         for prop in properties_list:
             results.append({
-                "domain_count": len(prop[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value]),
-                "range_count": len(__get_value_of_list(prop)),
+                "domain_count_stats": len(prop[PropertyFields.CONSTRAINTS.value][GenConstFields.SUBJECT_TYPE_STATS.value]),
+                "range_count_stats": len(__get_value_of_consts_list(prop)),
                 "id": prop[PropertyFields.ID],
                 "label": prop[PropertyFields.LABELS.value]["en"],
             })
             
-        results.sort(reverse=True, key=lambda x: x["domain_count"])
+        results.sort(reverse=True, key=lambda x: x["domain_count_stats"])
         with open(DOMAINS_OUTPUT_FILE, "wb") as o:
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
 
-        results.sort(reverse=True, key=lambda x: x["range_count"])
+        results.sort(reverse=True, key=lambda x: x["range_count_stats"])
         with open(RANGES_OUTPUT_FILE, "wb") as o:
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)

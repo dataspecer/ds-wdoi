@@ -9,7 +9,7 @@ import core.json_extractors.wd_fields as wd_json_fields_ex
 import core.model_wikidata.entity_types as wd_entity_types
 from core.model_wikidata.entity_json_fields import RootFields
 from core.statistics.property_usage import PropertyUsageStatistics
-from phases.identification_separation.identification_separation_phase import main_logger
+from phases.identification_separation.main_logger import main_logger
 
 logger = main_logger.getChild("separation")
 

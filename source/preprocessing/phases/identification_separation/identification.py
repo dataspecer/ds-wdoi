@@ -11,7 +11,7 @@ from core.statistics.property_usage import PropertyUsageStatistics
 import core.utils.decoding as decoding
 import core.utils.logging as ul
 from core.utils.timer import timed
-from phases.identification_separation.identification_separation_phase import main_logger
+from phases.identification_separation.main_logger import main_logger
 
 logger = main_logger.getChild("identification")
 

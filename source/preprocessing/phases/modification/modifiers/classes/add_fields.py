@@ -10,12 +10,12 @@ The fields here are for the main modification phase.
 """
 class AddFields(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("add-fields"), context)
+        super().__init__(logger.getChild("add_fields"), context)
 
     def __call__(self, wd_class) -> None:
         self.add_field_if_missing(wd_class, ClassFields.CHILDREN.value)
-        self.add_field_if_missing(wd_class, ClassFields.SUBJECT_OF.value)
-        self.add_field_if_missing(wd_class, ClassFields.VALUE_OF.value)
+        self.add_field_if_missing(wd_class, ClassFields.SUBJECT_OF_CONSTS.value)
+        self.add_field_if_missing(wd_class, ClassFields.VALUE_OF_CONSTS.value)
         self.add_field_if_missing(wd_class, ClassFields.INSTANCES.value)
     
     def report_status(self) -> None:

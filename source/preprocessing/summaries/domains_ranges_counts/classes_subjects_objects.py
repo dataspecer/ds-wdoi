@@ -13,20 +13,20 @@ def main_classes_subjects_objects(classes_json_file_path: pathlib.Path):
         results = []
         for cls in decoding.entities_generator(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
             results.append({
-                "subject_of_count": len(cls[ClassFields.SUBJECT_OF.value]),
-                "value_of_count": len(cls[ClassFields.VALUE_OF.value]),
+                "subject_of_count_consts": len(cls[ClassFields.SUBJECT_OF_CONSTS.value]),
+                "value_of_count_consts": len(cls[ClassFields.VALUE_OF_CONSTS.value]),
                 "subject_of_count_stats": len(cls[ClassFields.SUBJECT_OF_STATS.value]),
                 "value_of_count_stats": len(cls[ClassFields.VALUE_OF_STATS.value]),
                 "id": cls[ClassFields.ID.value],
                 "label": cls[ClassFields.LABELS.value]["en"],
             })
 
-        results.sort(reverse=True, key=lambda x: x['subject_of_count'])    
+        results.sort(reverse=True, key=lambda x: x['subject_of_count_consts'])    
         with open("classes_subjects_objects_sorted_subjects.json", "wb") as o:
             for cls in results:
                 decoding.write_wd_entity_to_file(cls, o)
         
-        results.sort(reverse=True, key=lambda x: x['value_of_count'])    
+        results.sort(reverse=True, key=lambda x: x['value_of_count_consts'])    
         with open("classes_subjects_objects_sorted_objects.json", "wb") as o:
             for cls in results:
                 decoding.write_wd_entity_to_file(cls, o)

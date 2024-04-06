@@ -6,7 +6,7 @@ from core.model_simplified.constraints import GenConstFields, ItemConstFields, T
 
 class RemoveUnexistingReferencesItemConstraintsProperties(ModifierPart):
     def __init__(self, logger,  context: Context) -> None:
-        super().__init__(logger.getChild("rer-properties-item-constraints"), context)
+        super().__init__(logger.getChild("rer_properties_item_constraints"), context)
     
     def __call__(self, wd_property) -> None:
         if wd_property[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:

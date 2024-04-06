@@ -1,12 +1,10 @@
 import sys
-import core.utils.logging as ul
 import core.utils.timer as timer
-from core.utils import timer
-from core.statistics.property_usage import PropertyUsageStatistics
 import phases.identification_separation.identification as identification
 import phases.identification_separation.separation as separation
-
-main_logger = ul.root_logger.getChild("identification_separation")
+from core.utils import timer
+from core.statistics.property_usage import PropertyUsageStatistics
+from phases.identification_separation.main_logger import main_logger
 
 @timer.timed(main_logger)
 def main_identification_separation(gzip_dump_file_path):

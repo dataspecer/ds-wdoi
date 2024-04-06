@@ -71,7 +71,7 @@ def __remove_entities_with_empty_labels(context: Context):
 
 @timed(classes_logger)
 def __pre_unrooted_classes_removal(context: Context):
-    logger = classes_logger.getChild("pre-unrooted-classes-removal")
+    logger = classes_logger.getChild("pre_unrooted_classes_removal")
     modifiers = [
         AddFields(logger, context), 
         RemoveUnexistingReferencesClasses(logger, context), 
@@ -84,13 +84,13 @@ def __pre_unrooted_classes_removal(context: Context):
 
 @timed(classes_logger)
 def __remove_unrooted_classes(context: Context):
-    logger = classes_logger.getChild("unrooted-classes-removal")
+    logger = classes_logger.getChild("unrooted_classes_removal")
     remover = RemoveClassesWithNoParent(logger, context)
     remover.modify_all()
     
 @timed(classes_logger)
 def __post_unrooted_classes_removal(context: Context):
-    logger = classes_logger.getChild("post-unrooted-classes-removal")
+    logger = classes_logger.getChild("post_unrooted_classes_removal")
     modifiers = [
         RemoveUnexistingReferencesClasses(logger, context),
         AllClassesAreRooted(logger, context) # as a check
@@ -105,7 +105,7 @@ def __modify_properties(context: Context):
         RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger, context),
         RemoveUnexistingReferencesItemConstraintsProperties(properties_logger, context),
         RemoveSelfCyclesProperty(properties_logger, context),
-        AssignSubjectValueToClasses(properties_logger, context),
+        AssignSubjectValueConstsToClasses(properties_logger, context),
         MarkSubpropertiesToParents(properties_logger, context)
     ]
     __modify_entities(modifiers, context.properties_dict, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
@@ -113,7 +113,7 @@ def __modify_properties(context: Context):
 
 @timed(classes_logger)
 def __post_properties_mod_on_stats_references(context: Context):
-    logger = classes_logger.getChild("post-properties_mod_on_stats_references")
+    logger = classes_logger.getChild("post_properties_mod_on_stats_references")
     modifiers = [
         # As a final check on property usage statistics in case previous step removed properties
         RemoveUnexistingReferencesClasses(logger, context)

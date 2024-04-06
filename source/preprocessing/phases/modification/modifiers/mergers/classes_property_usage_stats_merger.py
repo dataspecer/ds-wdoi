@@ -9,7 +9,7 @@ import core.utils.decoding as decoding
 class ClassesPropertyUsageStatsMerger(ModifierAll):
     
     def __init__(self, logger, context: Context, classes_property_usage_stats_filename: pathlib.Path) -> None:
-        super().__init__(logger.getChild("classes-property-usage-merger"), context)
+        super().__init__(logger.getChild("classes_property_usage_merger"), context)
         self.classes_property_usage_stats_filename = classes_property_usage_stats_filename
         self.missing_classes = set()
     

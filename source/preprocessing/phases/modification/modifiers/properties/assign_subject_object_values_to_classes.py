@@ -7,9 +7,9 @@ from core.model_simplified.classes import ClassFields
 from core.model_simplified.properties import PropertyFields
 from core.model_simplified.constraints import GenConstFields, ItemConstFields, TypeConstFields
 
-class AssignSubjectValueToClasses(ModifierPart):
+class AssignSubjectValueConstsToClasses(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("assign-subject-object"), context)
+        super().__init__(logger.getChild("assign_subject_consts_object"), context)
         self.object_assignment = set()
 
     def __call__(self, wd_property) -> None:
@@ -17,11 +17,11 @@ class AssignSubjectValueToClasses(ModifierPart):
         constraints = wd_property[PropertyFields.CONSTRAINTS.value]
         if self.canBeUsedAsMainValue(constraints) and self.canBeUsedOnItems(constraints) and self.isAllowedDatatype(wd_property):
             self.marker_set.add(prop_id)
-            self.assign_type_constraints(constraints[GenConstFields.SUBJECT_TYPE.value], prop_id, ClassFields.SUBJECT_OF.value)
+            self.assign_type_constraints(constraints[GenConstFields.SUBJECT_TYPE.value], prop_id, ClassFields.SUBJECT_OF_CONSTS.value)
             
             if self.isItemProperty(constraints):
                 self.object_assignment.add(prop_id)
-                self.assign_type_constraints(constraints[GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE.value], prop_id, ClassFields.VALUE_OF.value)
+                self.assign_type_constraints(constraints[GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE.value], prop_id, ClassFields.VALUE_OF_CONSTS.value)
     
     def assign_type_constraints(self, type_constraints, prop_id, field: str):
         self.assign_prop_to_classes_field(type_constraints[TypeConstFields.INSTANCE_OF.value], prop_id, field)

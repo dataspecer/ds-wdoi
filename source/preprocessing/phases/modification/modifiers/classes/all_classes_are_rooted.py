@@ -5,7 +5,7 @@ from core.model_simplified.classes import ClassFields
 
 class AllClassesAreRooted(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("all-classes-are-rooted"), context)
+        super().__init__(logger.getChild("all_classes_are_rooted"), context)
         self.found_root = False
     
     def __call__(self, wd_class) -> None:

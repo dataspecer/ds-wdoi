@@ -24,7 +24,7 @@ In the second phase, it marks all the property usage to classes and properties i
 class PropertyUsageStatistics:
     
     def __init__(self, logger) -> None:
-        self.logger = logger.getChild("property-usage-statistics")
+        self.logger = logger.getChild("property_usage_statistics")
         self.classes_ids_set = None
         self.properties_ids_to_datatype_dict = None
         self.entity_to_instance_of_dict = dict()

@@ -9,7 +9,7 @@ This should be run after removing unexisting references, self cycles and assigme
 class MarkSubpropertiesToParents(ModifierPart):
     
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("mark-subproperties-to-parents"), context)
+        super().__init__(logger.getChild("mark_subproperties_to_parents"), context)
         
     def __call__(self, wd_property) -> None:
         entityId = wd_property[PropertyFields.ID.value]

@@ -8,7 +8,7 @@ These classes usually means they carry no semantic meaning (such as: empty wikid
 """
 class RemoveEntitiesWithNoLabel(Remover):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("remove-entities-with-no-label"), context)
+        super().__init__(logger.getChild("remove_entities_with_no_label"), context)
     
     def report_status(self) -> None:
         self.logger.info(f"Classes Marked: {len(self.classes_marked_for_removal)} Removed {len(self.classes_removed)}")

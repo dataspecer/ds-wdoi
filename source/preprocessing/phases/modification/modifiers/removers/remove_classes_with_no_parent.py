@@ -10,7 +10,7 @@ In case the removed class is their only parent or all parents are already marked
 """
 class RemoveClassesWithNoParent(Remover):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("remove-classes-with-no-parent"), context)
+        super().__init__(logger.getChild("remove_classes_with_no_parent"), context)
     
     def report_status(self) -> None:
         self.logger.info(f"Classes Marked: {len(self.classes_marked_for_removal)} Removed {len(self.classes_removed)}")

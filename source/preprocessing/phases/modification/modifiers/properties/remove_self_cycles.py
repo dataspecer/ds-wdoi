@@ -8,7 +8,7 @@ This should be run before removing unexisitng references or marking children.
 """
 class RemoveSelfCyclesProperty(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("remove-self-cycles-property"), context)
+        super().__init__(logger.getChild("remove_self_cycles_property"), context)
         
     def __call__(self, wd_property) -> None:
         self.remove_self_cycle(wd_property, PropertyFields.SUBPROPERTY_OF.value, isClass=False)
