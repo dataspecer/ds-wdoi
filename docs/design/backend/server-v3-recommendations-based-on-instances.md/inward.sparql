@@ -1,10 +1,9 @@
 # Properties with no class either mean it is a literal property or that the value pointed to was not an instance of a class.
-
-SELECT ?item ?propertyId ?classId
+SELECT ?instanceOfId ?propertyId
 WHERE
 {
   ?item ?p wd:Q42 ;
-        wdt:P31 ?itemClass .
+        wdt:P31 ?instanceOfValue .
   
   # Get only properties pointing from items directly while skipping statement nodes.
   FILTER(STRSTARTS(STR(?p), CONCAT(STR(wdt:), "P")))
@@ -12,6 +11,6 @@ WHERE
   # Filter out properties and other types, except items.
   FILTER(STRSTARTS(STR(?item), CONCAT(STR(wd:), "Q")))
   
+  BIND(STRDT(STRAFTER(STR(?instanceOfValue), CONCAT(STR(wd:), "Q")), xsd:integer) as ?instanceOfId)
   BIND(STRDT(STRAFTER(STR(?p), CONCAT(STR(wdt:), "P")), xsd:integer) as ?propertyId)
-  BIND(STRDT(STRAFTER(STR(?itemClass), CONCAT(STR(wd:), "Q")), xsd:integer) as ?classId)
 }

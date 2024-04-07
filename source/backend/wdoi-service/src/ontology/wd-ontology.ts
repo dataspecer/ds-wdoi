@@ -23,7 +23,7 @@ import {
   InheritedClassPropertyRangesExtractor,
   expandWithPropertyDomains,
   expandWithPropertyRanges,
-} from './surroundings/domain-range/domain-range';
+} from './surroundings/domains-ranges/domains-ranges';
 import { materializeEntities } from './utils/materialize-entities';
 
 export class WdOntology {
@@ -37,8 +37,8 @@ export class WdOntology {
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
-    this.ontologySearch = new OntologySearch(this.rootClass, this.classes, this.properties);
-    this.hierarchyWalker = new ClassHierarchyWalker(this.rootClass, this.classes, this.properties);
+    this.ontologySearch = new OntologySearch(this.classes, this.properties);
+    this.hierarchyWalker = new ClassHierarchyWalker(this.classes, this.properties);
   }
 
   public async search(

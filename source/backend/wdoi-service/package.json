@@ -44,6 +44,7 @@
     "fastify": "^4.24.3",
     "fastify-plugin": "^4.5.1",
     "json-schema-to-ts": "^2.9.2",
+    "sparql-http-client": "^3.0.0",
     "timsort": "^0.3.0"
   }
 }

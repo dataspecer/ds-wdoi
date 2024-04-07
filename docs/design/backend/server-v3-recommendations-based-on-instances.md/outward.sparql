@@ -1,22 +1,19 @@
-# Properties with no class either mean it is a literal property or that the value pointed to was not an instance of a class.
-
-SELECT ?propertyId ?classId
+# Properties with no class either mean it is a literal property or that the value pointed to was not an instance of a class, which needs to be checked.
+SELECT ?instanceOfId ?propertyId ?classId
 WHERE
 {
-  wd:Q42 ?p ?statement .
+  wd:Q42 ?p ?value ;
+    wdt:P31 ?instanceOfValue .
   
-  # Get only properties pointing to statement nodes. 
-  FILTER(STRSTARTS(STR(?p), CONCAT(STR(p:), "P")))
+  # Get only properties pointing to statement nodes values extracted directly in the entity. 
+  FILTER(STRSTARTS(STR(?p), CONCAT(STR(wdt:), "P")))
   
-  ?statement ?ps ?statementValue .
-  
-  # Get only values of statements  (with ps: property prefix)
-  FILTER(STRSTARTS(STR(?ps), CONCAT(STR(ps:), "P")))
-  
+  # The property can point to an entity which can be instance of a class.
   OPTIONAL {
-    ?statementValue wdt:P31 ?class . 
+    ?value wdt:P31 ?class . 
   } 
- 
-  BIND(STRDT(STRAFTER(STR(?p), CONCAT(STR(p:), "P")), xsd:integer) as ?propertyId)
+   
+  BIND(STRDT(STRAFTER(STR(?instanceOfValue), CONCAT(STR(wd:), "Q")), xsd:integer) as ?instanceOfId)
+  BIND(STRDT(STRAFTER(STR(?p), CONCAT(STR(wdt:), "P")), xsd:integer) as ?propertyId)
   BIND(STRDT(STRAFTER(STR(?class), CONCAT(STR(wd:), "Q")), xsd:integer) as ?classId)
 }

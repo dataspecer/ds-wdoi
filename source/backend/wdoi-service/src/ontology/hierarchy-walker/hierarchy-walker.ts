@@ -22,12 +22,10 @@ export abstract class Extractor {
 }
 
 export class ClassHierarchyWalker {
-  protected readonly rootClass: WdClass;
   protected readonly classes: ReadonlyMap<EntityId, WdClass>;
   protected readonly properties: ReadonlyMap<EntityId, WdProperty>;
 
-  constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
-    this.rootClass = rootClass;
+  constructor(classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     this.classes = classes;
     this.properties = properties;
   }

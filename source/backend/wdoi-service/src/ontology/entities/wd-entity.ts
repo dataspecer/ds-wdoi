@@ -4,6 +4,7 @@ import { emptyEntitiesIdsListOrSave, emptyLanguageMapOrSave } from './empty-type
 
 export abstract class WdEntity {
   public static entityURITypes: Set<string> = new Set<string>();
+  public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity|wiki)/[QP][1-9][0-9]*$');
 
   readonly id: EntityId;
   readonly iri: string;
@@ -21,5 +22,19 @@ export abstract class WdEntity {
 
   public static isValidURIType(entityType: string): boolean {
     return WdEntity.entityURITypes.has(entityType);
+  }
+
+  public static parseEntityURI(uri: string): [string | null, number | null] {
+    try {
+      const entityStrId = uri.split('/').pop();
+      if (entityStrId != null) {
+        const entityType = entityStrId[0];
+        const entityNumId = Number(entityStrId.slice(1));
+        if (entityNumId != null && WdEntity.isValidURIType(entityType)) {
+          return [entityType, entityNumId];
+        }
+      }
+    } catch (_) {}
+    return [null, null];
   }
 }

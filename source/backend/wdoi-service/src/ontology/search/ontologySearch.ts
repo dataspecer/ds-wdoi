@@ -20,25 +20,11 @@ export class OntologySearch {
   static readonly DEFAULT_LANGUAGE_PRIORITY = 'en';
   private readonly esSearch: EsSearch;
   private readonly wdSearch: WdSearch;
-  private readonly rootClass: WdClass;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
-  private static readonly URI_REGEXP = new RegExp('^http://www.wikidata.org/entity/[QP][1-9][0-9]*$');
-
-  private parseEntityURI(uri: string): [string | null, number | null] {
-    const entityStrId = uri.split('/').pop();
-    if (entityStrId != null) {
-      const entityType = entityStrId[0];
-      const entityNumId = Number(entityStrId.slice(1));
-      if (entityNumId != null && WdEntity.isValidURIType(entityType)) {
-        return [entityType, entityNumId];
-      }
-    }
-    return [null, null];
-  }
 
   private searchBasedOnURI(uri: string): SearchResults {
-    const [entityType, entityNumId] = this.parseEntityURI(uri);
+    const [entityType, entityNumId] = WdEntity.parseEntityURI(uri);
     if (entityType != null && entityNumId != null) {
       if (WdClass.isURIType(entityType)) {
         const cls = this.classes.get(entityNumId);
@@ -51,8 +37,7 @@ export class OntologySearch {
     return new SearchResults([], []);
   }
 
-  constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
-    this.rootClass = rootClass;
+  constructor(classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     this.classes = classes;
     this.properties = properties;
     this.esSearch = new EsSearch(OntologySearch.DEFAULT_LANGUAGE_PRIORITY);
@@ -65,7 +50,7 @@ export class OntologySearch {
     searchProperties: boolean | undefined,
     languagePriority: string | undefined,
   ): Promise<SearchResults> {
-    if (OntologySearch.URI_REGEXP.test(query)) {
+    if (WdEntity.URI_REGEXP.test(query)) {
       return this.searchBasedOnURI(query);
     }
 
