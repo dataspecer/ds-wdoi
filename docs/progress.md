@@ -20,7 +20,7 @@ The adapter is a specialization of adapter class that is used for all CIMs in th
   - I followed subject and object constraints on the properties.
   - It was pretty slow.
 
-- Issues:
+- **Issues**:
   - slow
     - working with entire wikidata
     - multiple queries for simple use cases
@@ -53,10 +53,10 @@ To the next iteration I should prepare the backend and connect it again to the D
      - This is the first pass of the dump file.
      - runs ~ 12 hours
   2. the second phase - to file separation 
-    - Using the bz2 file handle again, I was separating classes and properties into two bz2 files - one for properties and one for classes.
-    - This is the second pass of the dump file.
-    - In this step I exluded `sitelinks` from entities, since there is no usefullness in them for the ontology.
-    - runs ~ 14 hours and produces ~ 3M classes and ~ 11K properties
+      - Using the bz2 file handle again, I was separating classes and properties into two bz2 files - one for properties and one for classes.
+      - This is the second pass of the dump file.
+      - In this step I exluded `sitelinks` from entities, since there is no usefullness in them for the ontology.
+      - runs ~ 14 hours and produces ~ 3M classes and ~ 11K properties
   3. the third phase - extraction    
      - Iteratig over the produced files from previous step I extraction the entities from wikidata model into a more usefull json format (flattening statements, qualifiers, constraints).
      - It outputs again two files - one for classes and one for properties, this time in `.json` format.
@@ -81,12 +81,12 @@ To the next iteration I should prepare the backend and connect it again to the D
         - This behaviour can be easily removed.
         - Based on supervisors, this should be kept as an issue.
   5. the fifth phase - loading into elastic search
-    - Based on the selected languages in the 3. phase, it loads elastic search with the data.
-    - The data are formatted that all languages belong to one object  
-    - it uses only aliases and labels (based on the php search from wikidata)
-    - I use language analyzers for language fields from Wikidata.
-    - runs ~ 14 mins
-  - Comments:
+      - Based on the selected languages in the 3. phase, it loads elastic search with the data.
+        - The data are formatted that all languages belong to one object  
+        - it uses only aliases and labels (based on the php search from wikidata)
+        - I use language analyzers for language fields from Wikidata.
+        - runs ~ 14 mins
+  - **Comments**:
     - The preprocessing does exclude `sitelinks` from entities.
     - Extracting values from statements always returns only unique values.
     - The values it self are not check since wikidata does not allow to intput data in different types into a statement. 
@@ -108,15 +108,14 @@ To the next iteration I should prepare the backend and connect it again to the D
     - For hierarchy and properties it walks through the hierarchy.
 - Dataspecer v2
   - I implemented Dataspecer core v1 api.
-  - The new appi is waiting when stepan tells me.
 
-- Pros from previous solution:
+- **Pros from previous solution**:
   - It is easier to maintain.
   - The view on ontology can be changed and we have pipeline.
   - It is much faster.
   - We have the ontology under control.
 
-- Issues
+- **Issues**:
   - We still use only subject and value constraints + we use hierarchy to show properties
   - Maybe do not remove any classes.
   - Still no qualifiers, and general properties.
@@ -146,7 +145,8 @@ What I used is the SchemaTree recommender.
   - The last sort is ment to sort all the available properties for the class.
   - Since we stored the local recommendations in each class directly, they can be then accessed when holding a class instance.
 
-- Issues with recommendations:
+- **Issues**:
+  - We are dependent on the schema tree.
   - The recommender is able to recommend only used properties.
   - For the missing entities we assign probability zero.
   - We are contraint by subject type and value type constraints.
@@ -208,7 +208,7 @@ The first one is the mockup and the second one is the upgrade of the recommendat
 
 ### A new way to assign properties to classes
   
-1.  There was an idea to try include more information from instances of clases to the surroundings.
+1. There was an idea to try include more information from instances of clases to the surroundings.
     - This means that I had to compute usage statistics of properties.
     - I had to reimplement 1. phase and 2. phase of the pipeline to be able to include statistics.
     - There were several problems: 
@@ -224,34 +224,46 @@ The first one is the mockup and the second one is the upgrade of the recommendat
     - **Thoughts**:
       - There might be a problem with the number of range/domain values of properties. Depending on the usage in the ontology. Some propreties can probably have a lot of domain and range classes.
       - It is similar to the SchemaTree recommender, so maybe we could exclude it?
-2. I tackled the problem with the number of properties in range/domain by computing the statistics only for a class and not globally.
-  - Now I have a solution that can deal with the high number of classes using inifinite scroll.
-  - Should I maybe return to the previous solution?
+2. Dealing with the number of domains and ranges.
+    1. I tackled the problem with the number of properties in range/domain by computing the statistics only for a class and not globally per property.
+        - This included changing the preprocessing phase on the 1. and 2. phase in the computation of the usage statistics.
+        - Then I had to change the backend to deal with the new format - storing ranges of properties per class.
+        - Also, changed the domains/ranges api to be on classes and not for a property.
+        - The number of properties reduced, but there were still properties with a large number of domains/ranges.
+    2. I tested the usage of domains and ranges, and realized, the problem was not the amount of data sent, but displaying them in the frontend.
+        - I modified the APIs to send only the neccessary data to the front end.
+        - And on the frontend I implemented infinite list.
+        - Now it works fine.
+        - Subsequent question was whether to return the the previous solution where I displayed all ranges/domains from a property disregarding the class.
+  3. I returned to the previous solution displaying all domains/ranges per property.
+      - To not put the previous efforts in vain, I use the per class domains/ranges as priority when displaying the domains/ranges.
 3. Mergin of the domain and range from usage statistics and constraints is done in preprocessing.
-  - I extended all classes with literal properties based on subjectType constraints on literal properties.
-  - I extended all classes for item properties, that define subject and value type constraints.
-    - To exclude no ranges or no domains on item properties.
-    - There was also a way to extend them globally:
-      - For each class in domain/range of a property assign it either value/subject types and do the reverse as well.
-      - But that would lead to enourmous domains/ranges for properties, which I tried to reduce in this phase.
+    - Literal properties:
+      - I extended all classes with literal properties based on subjectType constraints.
+    - Item properties:
+      - I extended the subject/value types from usage statistics with the constraint classes.
+        - For each property I included domains/ranges iff the property could point somewhere.
+        - For the classes I just added usage of the property, but did not added the ranges for those properties.
+          - The idea was that, if the property is not used on the class, there should be no additional priority.
+    - Good thing is that now there is no property with empty domain/range.  
 4. I boosted the properties for this type to 1 for all classes, but found out many classes do not have the properties used by the constraints.
-  - So far I do not add the properties to the classes.
+    - So far I do not add the properties to the classes.
 
-- **Main points**
+
+- **Pros from previous solutions** :
   - Used Gzip instead of Bzip2 - cut the combined 1. and 2. phase from 1 day and 9 hours to just 10 hours.
-  - Shorter domains/ranges for properties.
-    - Computing statistics for domain/range per class.
-    - Takes more memory.
-    - I have created new solution with the front end that could now display all of the properties.
-      - Question is, should I return to the previous solution?
-      - With that, I could do the merge.
+  - Removed dependency on schema tree.
+  - Better recommendations of properties.
+    - Computing statistics on property usage per class.
+    - Computing statistics of a property domains/ranges per class.
+    - We have local recommendations for a class.
   - Boosting of properties for this type.
-    - But a lot of them are missing from the statistics.
-  - Mergin of the constraints with usage statistics done in preprocessing phase.
-    - Easier to implement.
-    - But only based for literals and items properties if they have both subject/value type constraints.
+  - Merging of the constraints with usage statistics done in preprocessing phase.
 
-- TODO
-  - ask necasky about the return of the solution displaying all domains and ranges.
-  - now i could do the merge
-  
+- **Issues**:
+  - Merging of the constraints with usage statistics done in preprocessing phase.
+    - Not including proproprty constraints, iff the property do not point somewhere.
+    - It means that the property was never used, and does not provide both subject/value types, but only one side.
+  - Boosting of properties for this type.
+    - I do not include properties for this type if the property is not used on the class.
+   
