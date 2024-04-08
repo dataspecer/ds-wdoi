@@ -1,6 +1,6 @@
-import { type EntityId } from '../../entities/common';
-import { type WdClass } from '../../entities/wd-class';
-import { type WdProperty } from '../../entities/wd-property';
+import { type EntityId } from '../../entities/common.js';
+import { type WdClass } from '../../entities/wd-class.js';
+import { type WdProperty } from '../../entities/wd-property.js';
 
 export class OneDistanceDocsExpander {
   protected readonly classes: ReadonlyMap<EntityId, WdClass>;

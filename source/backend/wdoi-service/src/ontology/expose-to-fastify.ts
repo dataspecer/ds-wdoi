@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin';
 import { type FastifyPluginAsync } from 'fastify';
-import { WdOntology } from './wd-ontology';
-import { envVars } from '../enviroment';
-import { type EntityId } from './entities/common';
+import { WdOntology } from './wd-ontology.js';
+import { envVars } from '../enviroment.js';
+import { type EntityId } from './entities/common.js';
 
 const fastifyPluginLoadOntology: FastifyPluginAsync = async function (fastify) {
   const wdOntology = await WdOntology.create(envVars.CLASSES_PATH, envVars.PROPERTIES_PATH);

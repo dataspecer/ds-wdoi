@@ -1,10 +1,10 @@
 import fs from 'fs';
 import readline from 'readline';
-import { WdClass } from '../entities/wd-class';
-import { WdProperty } from '../entities/wd-property';
-import type { EntityId } from '../entities/common';
+import { WdClass } from '../entities/wd-class.js';
+import { WdProperty } from '../entities/wd-property.js';
+import type { EntityId } from '../entities/common.js';
 
-import { tryLog, log } from '../../logging/log';
+import { tryLog, log } from '../../logging/log.js';
 
 function processLine(line: string, processEntityFunc: (jsonEntity: any) => void): void {
   const decodedLine = line.trim();

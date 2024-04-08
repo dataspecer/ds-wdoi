@@ -1,10 +1,10 @@
-import { envVars } from './enviroment';
+import { envVars } from './enviroment.js';
 import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import mapAllRoutes from '@fastify/routes';
-import loadOntology from './ontology/expose-to-fastify';
-import { envToLogger, log } from './logging/log';
-import { ontologyRoutes } from './routes/routes-v3';
+import loadOntology from './ontology/expose-to-fastify.js';
+import { envToLogger, log } from './logging/log.js';
+import { ontologyRoutes } from './routes/routes-v3.js';
 import fastifySensible from '@fastify/sensible';
 
 const fastify: FastifyInstance = Fastify({

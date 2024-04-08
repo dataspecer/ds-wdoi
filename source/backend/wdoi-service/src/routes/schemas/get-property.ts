@@ -1,6 +1,6 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassDescOnlySchema } from './wd-class-schema';
-import { wdPropertySchema, wdPropertyDescOnlySchema } from './wd-property-schema';
+import { wdClassDescOnlySchema } from './wd-class-schema.js';
+import { wdPropertySchema, wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
 export const getPropertyWithSurroundingNamesReplySchema = {
   type: 'object',

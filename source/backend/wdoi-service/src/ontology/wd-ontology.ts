@@ -1,30 +1,30 @@
-import type { EntityId } from './entities/common';
-import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class';
-import { type WdProperty } from './entities/wd-property';
-import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology';
-import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log';
-import { OntologySearch, type SearchResults } from './search/ontologySearch';
-import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker';
+import type { EntityId } from './entities/common.js';
+import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class.js';
+import { type WdProperty } from './entities/wd-property.js';
+import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology.js';
+import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log.js';
+import { OntologySearch, type SearchResults } from './search/ontologySearch.js';
+import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker.js';
 import {
   type HierarchyWithPropertiesReturnWrapper,
   HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor,
-} from './surroundings/hierarchy-with-properties/hierarchy-with-properties';
+} from './surroundings/hierarchy-with-properties/hierarchy-with-properties.js';
 import {
   ClassOneDistanceDocsExpander,
   type ClassOneDistanceDocsReturnWrapper,
-} from './surroundings/one-distance-docs/class-one-distance-docs-expander';
+} from './surroundings/one-distance-docs/class-one-distance-docs-expander.js';
 import {
   PropertyOneDistanceDocsExpander,
   type PropertyOneDistanceDocsReturnWrapper,
-} from './surroundings/one-distance-docs/property-one-distance-docs-expander';
+} from './surroundings/one-distance-docs/property-one-distance-docs-expander.js';
 import {
   ClassPropertyDomainsRangesResultWrapper,
   InheritedClassPropertyDomainsExtractor,
   InheritedClassPropertyRangesExtractor,
   expandWithPropertyDomains,
   expandWithPropertyRanges,
-} from './surroundings/domains-ranges/domains-ranges';
-import { materializeEntities } from './utils/materialize-entities';
+} from './surroundings/domains-ranges/domains-ranges.js';
+import { materializeEntities } from './utils/materialize-entities.js';
 
 export class WdOntology {
   private readonly rootClass: WdClass;

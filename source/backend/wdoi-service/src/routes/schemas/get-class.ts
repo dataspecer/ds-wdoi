@@ -1,6 +1,6 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassDescOnlySchema, wdClassSchema } from './wd-class-schema';
-import { wdPropertyDescOnlySchema } from './wd-property-schema';
+import { wdClassDescOnlySchema, wdClassSchema } from './wd-class-schema.js';
+import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
 // Get class with names of surroundings only
 

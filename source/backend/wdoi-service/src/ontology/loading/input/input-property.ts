@@ -1,7 +1,7 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common';
-import type { AllowedEntityTypesValue, EmptyTypeConstraint, PropertyScopeValue, StatementAllowanceMap } from '../../entities/constraint';
-import type { Datatype, UnderlyingType } from '../../entities/wd-property';
-import type { InputEntity } from './input-entity';
+import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common.js';
+import type { AllowedEntityTypesValue, EmptyTypeConstraint, PropertyScopeValue, StatementAllowanceMap } from '../../entities/constraint.js';
+import type { Datatype, UnderlyingType } from '../../entities/wd-property.js';
+import type { InputEntity } from './input-entity.js';
 
 export interface InputItemTypeConstraints {
   readonly valueType: InputSubjectValueTypeContraint;

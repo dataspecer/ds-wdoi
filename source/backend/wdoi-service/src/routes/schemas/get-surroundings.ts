@@ -1,6 +1,6 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassHierarchySurroundingsDescOnlySchema } from './wd-class-schema';
-import { wdPropertyDescOnlySchema } from './wd-property-schema';
+import { wdClassHierarchySurroundingsDescOnlySchema } from './wd-class-schema.js';
+import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
 // Surroundings with Recommendations
 

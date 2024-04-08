@@ -7,8 +7,8 @@ import type {
   PropertyScoreRecordMap,
   RangeScoreMap,
   LanguageMap,
-} from './common';
-import { type StatementAllowanceMap } from './constraint';
+} from './common.js';
+import { type StatementAllowanceMap } from './constraint.js';
 
 export const EMPTY_ENTITY_IDS_LIST: EntityIdsList = [];
 export const EMPTY_LANGUAGE_ARRAY_MAP: LanguageArrayMap = {};

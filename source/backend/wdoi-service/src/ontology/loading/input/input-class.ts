@@ -1,5 +1,5 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common';
-import type { InputEntity } from './input-entity';
+import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common.js';
+import type { InputEntity } from './input-entity.js';
 
 export interface InputPropertyRangeScoreRecord {
   class: EntityId;

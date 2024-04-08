@@ -1,4 +1,4 @@
-import { type EntityIdsList } from '../../entities/common';
+import { type EntityIdsList } from '../../entities/common.js';
 
 export abstract class Searcher {
   protected readonly defaultLanguagePriority: string;

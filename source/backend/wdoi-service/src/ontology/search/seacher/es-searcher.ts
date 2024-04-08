@@ -1,8 +1,8 @@
 import { Client } from '@elastic/elasticsearch';
-import { type EntityId, type EntityIdsList } from '../../entities/common';
-import { type SearchHit } from '@elastic/elasticsearch/lib/api/types';
-import { Searcher } from './searcher';
-import { envVars } from '../../../enviroment';
+import { type EntityId, type EntityIdsList } from '../../entities/common.js';
+import { type SearchHit } from '@elastic/elasticsearch/lib/api/types.js';
+import { Searcher } from './searcher.js';
+import { envVars } from '../../../enviroment.js';
 
 export class EsSearch extends Searcher {
   private readonly client: Client;

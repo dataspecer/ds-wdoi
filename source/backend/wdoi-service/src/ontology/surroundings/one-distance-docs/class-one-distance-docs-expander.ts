@@ -1,8 +1,8 @@
-import { type EntityId } from '../../entities/common';
-import { type WdClass } from '../../entities/wd-class';
-import { type WdProperty } from '../../entities/wd-property';
-import { materializeEntitiesWithContext } from '../../utils/materialize-entities';
-import { OneDistanceDocsExpander } from './one-distance-docs-expander';
+import { type EntityId } from '../../entities/common.js';
+import { type WdClass } from '../../entities/wd-class.js';
+import { type WdProperty } from '../../entities/wd-property.js';
+import { materializeEntitiesWithContext } from '../../utils/materialize-entities.js';
+import { OneDistanceDocsExpander } from './one-distance-docs-expander.js';
 
 export class ClassOneDistanceDocsReturnWrapper {
   startClass: WdClass;

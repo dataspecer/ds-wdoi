@@ -1,7 +1,7 @@
-import type { EntityId, EntityIdsList, PropertyScoreRecord, PropertyScoreRecordMap } from '../../entities/common';
-import { type WdClass } from '../../entities/wd-class';
-import { type WdProperty } from '../../entities/wd-property';
-import { Extractor } from '../../hierarchy-walker/hierarchy-walker';
+import type { EntityId, EntityIdsList, PropertyScoreRecord, PropertyScoreRecordMap } from '../../entities/common.js';
+import { type WdClass } from '../../entities/wd-class.js';
+import { type WdProperty } from '../../entities/wd-property.js';
+import { Extractor } from '../../hierarchy-walker/hierarchy-walker.js';
 import * as Timsort from 'timsort';
 
 export class HierarchyWithPropertiesReturnWrapper {

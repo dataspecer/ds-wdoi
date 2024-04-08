@@ -1,10 +1,10 @@
-import { type EntityId, type EntityIdsList } from '../entities/common';
-import { WdClass } from '../entities/wd-class';
-import { WdEntity } from '../entities/wd-entity';
-import { WdProperty } from '../entities/wd-property';
-import { materializeEntities } from '../utils/materialize-entities';
-import { EsSearch } from './seacher/es-searcher';
-import { WdSearch } from './seacher/wd-searcher';
+import { type EntityId, type EntityIdsList } from '../entities/common.js';
+import { WdClass } from '../entities/wd-class.js';
+import { WdEntity } from '../entities/wd-entity.js';
+import { WdProperty } from '../entities/wd-property.js';
+import { materializeEntities } from '../utils/materialize-entities.js';
+import { EsSearch } from './seacher/es-searcher.js';
+import { WdSearch } from './seacher/wd-searcher.js';
 
 export class SearchResults {
   classes: WdClass[];

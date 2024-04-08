@@ -1,7 +1,7 @@
-import { Queue } from '../utils/queue';
-import { type EntityIdsList, type EntityId } from '../entities/common';
-import { type WdClass } from '../entities/wd-class';
-import { type WdProperty } from '../entities/wd-property';
+import { Queue } from '../utils/queue.js';
+import { type EntityIdsList, type EntityId } from '../entities/common.js';
+import { type WdClass } from '../entities/wd-class.js';
+import { type WdProperty } from '../entities/wd-property.js';
 
 export type ClassHierarchyWalkerParts = 'full' | 'parents' | 'children';
 

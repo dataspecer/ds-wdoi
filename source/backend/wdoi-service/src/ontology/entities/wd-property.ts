@@ -1,8 +1,8 @@
-import type { InputProperty } from '../loading/input/input-property';
-import type { EntityIdsList, ExternalOntologyMapping } from './common';
-import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint';
-import { WdEntity } from './wd-entity';
-import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave } from './empty-type-constants';
+import type { InputProperty } from '../loading/input/input-property.js';
+import type { EntityIdsList, ExternalOntologyMapping } from './common.js';
+import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint.js';
+import { WdEntity } from './wd-entity.js';
+import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave } from './empty-type-constants.js';
 
 export enum UnderlyingType {
   ENTITY = 0,

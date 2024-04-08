@@ -1,5 +1,5 @@
-import { type EntityId, type EntityIdsList } from '../../entities/common';
-import { Searcher } from './searcher';
+import { type EntityId, type EntityIdsList } from '../../entities/common.js';
+import { Searcher } from './searcher.js';
 
 interface SearchInfo {
   search: string;

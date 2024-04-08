@@ -4,19 +4,19 @@ import {
   type GetClassPropertyDomainRangeInputParamsType,
   getEntityInputParamsSchema,
   type GetEntityInputParamsType,
-} from './schemas/input-params';
-import { type WdClass } from '../ontology/entities/wd-class';
-import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy';
-import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search';
-import { surroundingsReplySchema } from './schemas/get-surroundings';
-import { getClassWithSurroundingNamesReplySchema } from './schemas/get-class';
-import { getPropertyWithSurroundingNamesReplySchema } from './schemas/get-property';
-import { type WdProperty } from '../ontology/entities/wd-property';
+} from './schemas/input-params.js';
+import { type WdClass } from '../ontology/entities/wd-class.js';
+import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy.js';
+import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search.js';
+import { surroundingsReplySchema } from './schemas/get-surroundings.js';
+import { getClassWithSurroundingNamesReplySchema } from './schemas/get-class.js';
+import { getPropertyWithSurroundingNamesReplySchema } from './schemas/get-property.js';
+import { type WdProperty } from '../ontology/entities/wd-property.js';
 import {
   type GetClassPropertyDomainRangeInputQueryStringType,
   getClassPropertyDomainRangeReplySchema,
   getClassPropertyDomainRangeInputQueryStringSchema,
-} from './schemas/get-property-domain-range';
+} from './schemas/get-property-domain-range.js';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   // Search

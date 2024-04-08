@@ -1,6 +1,6 @@
-import type { InputEntity } from '../loading/input/input-entity';
-import type { EntityId, EntityIdsList, LanguageMap } from './common';
-import { emptyEntitiesIdsListOrSave, emptyLanguageMapOrSave } from './empty-type-constants';
+import type { InputEntity } from '../loading/input/input-entity.js';
+import type { EntityId, EntityIdsList, LanguageMap } from './common.js';
+import { emptyEntitiesIdsListOrSave, emptyLanguageMapOrSave } from './empty-type-constants.js';
 
 export abstract class WdEntity {
   public static entityURITypes: Set<string> = new Set<string>();

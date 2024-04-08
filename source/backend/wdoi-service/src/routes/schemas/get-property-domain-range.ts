@@ -1,5 +1,5 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassDescOnlySchema } from './wd-class-schema';
+import { wdClassDescOnlySchema } from './wd-class-schema.js';
 
 export const getClassPropertyDomainRangeReplySchema = {
   type: 'object',

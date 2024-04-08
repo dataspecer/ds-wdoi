@@ -1,7 +1,24 @@
-import type { EntityId, EntityIdsList } from '../../entities/common';
-import { WdClass } from '../../entities/wd-class';
-import { WdEntity } from '../../entities/wd-entity';
-import type { WdProperty } from '../../entities/wd-property';
+import type { EntityId, EntityIdsList } from '../../entities/common.js';
+import { WdClass } from '../../entities/wd-class.js';
+import { WdEntity } from '../../entities/wd-entity.js';
+import type { WdProperty } from '../../entities/wd-property.js';
+// import SparqlClient from 'sparql-http-client';
+
+// interface SparqlSelectRowItem {
+//   value: string;
+//   language: string;
+// }
+
+// interface SparqlSelectInwardRow {
+//   instanceOfId?: SparqlSelectRowItem;
+//   propertyId?: SparqlSelectRowItem;
+// }
+
+// interface SparqlSelectOutwardRow {
+//   instanceOfId?: SparqlSelectRowItem;
+//   propertyId?: SparqlSelectRowItem;
+//   classId?: SparqlSelectRowItem;
+// }
 
 export class FilterPropertyRecord {
   readonly propertyId: EntityId;
