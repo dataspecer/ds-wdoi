@@ -48,22 +48,6 @@ export interface WdProperty extends WdEntity {
   readonly coordinatesConstraints?: EmptyTypeConstraint;
 }
 
-export function getDomainClassesIds(prop: WdProperty): EntityIdsList {
-  return [
-    ...prop.generalConstraints.subjectType.instanceOf,
-    ...prop.generalConstraints.subjectType.subclassOfInstanceOf,
-  ];
-}
-
-export function getRangeClassesIds(prop: WdProperty): EntityIdsList {
-  if (!('itemConstraints' in prop)) return [];
-  else
-    return [
-      ...(prop.itemConstraints?.valueType.instanceOf ?? []),
-      ...(prop.itemConstraints?.valueType.subclassOfInstanceOf ?? []),
-    ];
-}
-
 export type WdPropertyDescOnly = Pick<
   WdProperty,
   'id' | 'iri' | 'labels' | 'descriptions' | 'datatype' | 'underlyingType'

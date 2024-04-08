@@ -17,6 +17,10 @@ import {
 import { Datatype, WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';
 import { AssociationsAccordion } from './AssociationsAccordion';
 import { FilterByInstanceDialog } from './FilterByInstanceDialog';
+import {
+  GetFilterByInstanceReply,
+  GetFilterByInstanceResults,
+} from '../../../../wikidata/query/get-filter-by-instance';
 
 export type PropertyPartsSelectionInput = 'inherited' | 'own';
 
@@ -105,7 +109,7 @@ export function AssociationsList({
   const [propertyPartsSelection, setPropertyPartsSelection] =
     useState<PropertyPartsSelectionInput>('own');
   const [filterDialogOpened, setFilterDialogOpened] = useState(false);
-  const [filter, setFilter] = useState<string | undefined>(undefined);
+  const [filter, setFilter] = useState<GetFilterByInstanceResults | undefined>(undefined);
   const [searchTextInput, setSearchTextInput] = useState('');
   const [showAttributeProperties, setShowAttributeProperties] = useState<boolean>(true);
   const [showIdentifierProperties, setShowIdentifierProperties] = useState<boolean>(true);
@@ -304,11 +308,13 @@ export function AssociationsList({
           <></>
         )}
       </div>
-      <FilterByInstanceDialog
-        handleSetInstanceFilter={(x: string) => setFilter(x)}
-        isOpen={filterDialogOpened}
-        onDialogClose={() => setFilterDialogOpened(false)}
-      />
+      {filterDialogOpened && (
+        <FilterByInstanceDialog
+          handleSetInstanceFilter={(f: GetFilterByInstanceResults) => setFilter(f)}
+          isOpen={filterDialogOpened}
+          onDialogClose={() => setFilterDialogOpened(false)}
+        />
+      )}
     </div>
   );
 }

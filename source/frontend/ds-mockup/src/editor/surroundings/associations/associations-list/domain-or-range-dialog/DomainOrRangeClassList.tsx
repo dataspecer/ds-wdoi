@@ -61,7 +61,7 @@ export function DomainOrRangeClassList({
             setListLength(newListLength);
           }}
           hasMore={true}
-          scrollableTarget='scrollableDivvvv'
+          scrollableTarget='scrollableDivId'
           loader={<p>Loading...</p>}
         >
           {filteredClasses.slice(0, len).map((value, index) => {
@@ -96,7 +96,7 @@ export function DomainOrRangeClassList({
           })}
         </InfiniteScroll>
       </List>
-      {detailOpened ? (
+      {detailOpened && (
         <DetailListDialog
           detailOpened={detailOpened}
           detailEntity={detailEntity}
@@ -105,8 +105,6 @@ export function DomainOrRangeClassList({
           disableConfirmOn={() => false}
           confirmButtonText='OK'
         />
-      ) : (
-        <></>
       )}
     </div>
   );

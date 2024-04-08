@@ -100,7 +100,9 @@ export class FilterByInstance {
     const instanceId = this.tryExtractUri(instanceUri);
     if (instanceId != null) {
       try {
-        return await this.createFilterInternal(instanceId);
+        if (!this.classes.has(instanceId)) {
+          return await this.createFilterInternal(instanceId);
+        }
       } catch (_) {}
     }
     return new FilterByInstanceReturnWrapper([], [], []);

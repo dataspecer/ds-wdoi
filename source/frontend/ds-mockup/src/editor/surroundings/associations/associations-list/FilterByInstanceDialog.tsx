@@ -8,35 +8,43 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { fetchClassWithSurroundingsDocs } from '../../../../wikidata/query/get-entity';
-import { WdClass } from '../../../../wikidata/entities/wd-class';
+import {
+  GetFilterByInstanceResults,
+  fetchFilterByInstance,
+} from '../../../../wikidata/query/get-filter-by-instance';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function FilterByInstanceDialog({
   handleSetInstanceFilter,
   isOpen,
   onDialogClose,
 }: {
-  handleSetInstanceFilter: (x: string) => void;
+  handleSetInstanceFilter: (f: GetFilterByInstanceResults) => void;
   isOpen: boolean;
   onDialogClose: () => void;
 }) {
   const [text, setText] = useState<string>('');
+  const [wasApplied, setWasApplied] = useState(false);
   const { isLoading, isError, data, refetch } = useQuery(
     ['instanceFilter', text],
     async () => {
-      const _ = await fetchClassWithSurroundingsDocs({ id: 0 } as WdClass);
-      return 'ok';
+      return await fetchFilterByInstance(text);
     },
     { refetchOnWindowFocus: false, enabled: false },
   );
 
   useEffect(() => {
-    if (data != null && data !== '' && !isLoading && !isError) {
-      setText('');
-      handleSetInstanceFilter(data);
-      onDialogClose();
+    if (data != null && !isLoading && !isError) {
+      if (data.instanceOfIds.length !== 0) {
+        setText('');
+        handleSetInstanceFilter(data);
+        onDialogClose();
+      }
     }
   }, [data, handleSetInstanceFilter, onDialogClose, isLoading, isError]);
+
+  const wasError =
+    (wasApplied && isError) || (wasApplied && data != null && data.instanceOfIds.length === 0);
 
   return (
     <Dialog
@@ -47,18 +55,25 @@ export function FilterByInstanceDialog({
       PaperProps={{ sx: { height: 300 } }}
     >
       <DialogTitle>Input instance URL</DialogTitle>
-      <DialogContent className='bg-slate-100 px-0'>
-        <div className='m-2 flex flex-col space-y-1'>
-          <TextField
-            size='small'
-            label='Instance URL'
-            variant='standard'
-            fullWidth
-            disabled={isLoading}
-            error={isError}
-            helperText={isError ? 'Invalid instance, input different one.' : ''}
-            onChange={(e) => setText(e.target.value)}
-          ></TextField>
+      <DialogContent className='flex h-screen justify-center bg-slate-100 px-1'>
+        <div className='m-auto flex w-9/12 justify-center'>
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <TextField
+              size='small'
+              label='Paste or type instance URL'
+              variant='standard'
+              fullWidth
+              disabled={isLoading}
+              error={wasError}
+              helperText={
+                wasError &&
+                'Invalid instance: instance does not exists, or the class is not part of the ontology, or it lacks instance of property.'
+              }
+              onChange={(e) => setText(e.target.value)}
+            ></TextField>
+          )}
         </div>
       </DialogContent>
       <DialogActions>
@@ -67,6 +82,7 @@ export function FilterByInstanceDialog({
           disabled={isLoading}
           onClick={() => {
             refetch();
+            setWasApplied(true);
           }}
         >
           Apply

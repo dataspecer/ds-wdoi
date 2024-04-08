@@ -53,23 +53,19 @@ export function MainSurface() {
         )}
       </div>
       <>
-        {rootDialogOpened ? (
+        {rootDialogOpened && (
           <RootSelectionDialog
             setNewRootHandle={setNewRootHandle}
             isOpen={rootDialogOpened}
             onCloseHandle={onSearchDialogCloseHandle}
           />
-        ) : (
-          <></>
         )}
-        {propertySelectionDialogOpened && root != null ? (
+        {propertySelectionDialogOpened && root != null && (
           <SurroundingsDialog
             root={root}
             isOpen={propertySelectionDialogOpened}
             onPropertySelectionDialogClose={onPropertySelectionDialogClose}
           />
-        ) : (
-          <></>
         )}
       </>
     </Stack>

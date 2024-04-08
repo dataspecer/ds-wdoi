@@ -11,6 +11,7 @@ import {
   WdClassHierarchySurroundingsDescOnly,
 } from '../../../../../wikidata/entities/wd-class';
 import { PropertyPartsSelectionInput } from '../AssociationsList';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function DomainAndRangeDialog({
   wdClass,
@@ -40,13 +41,13 @@ export function DomainAndRangeDialog({
       onClose={onDialogClose}
       maxWidth='md'
       fullWidth={true}
-      PaperProps={{ sx: { height: '90%' } }}
+      PaperProps={{ sx: { height: '90%', width: '80%' } }}
     >
       <DialogTitle>Select {domainsOrRanges}</DialogTitle>
-      <DialogContent className='bg-slate-100 px-0' id='scrollableDivvvv'>
+      <DialogContent className='bg-slate-100 px-0' id='scrollableDivId'>
         {isLoading || isError ? (
           isLoading ? (
-            'Loading'
+            <CircularProgress />
           ) : (
             'Error'
           )

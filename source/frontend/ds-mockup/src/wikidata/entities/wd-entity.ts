@@ -18,7 +18,6 @@ export interface WdEntity {
   readonly iri: string;
   readonly labels: LanguageMap;
   readonly descriptions: LanguageMap;
-  readonly instanceOf: EntityIdsList;
 }
 
 export function isEntityPropertyDocs(entity: WdEntityDescOnly): entity is WdPropertyDescOnly {

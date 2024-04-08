@@ -32,12 +32,6 @@ export function ClassDetail({
         onNewDetailHandle={onNewDetailHandle}
       />
       <EntityDocsList
-        name='Instance of'
-        idsList={results.entity.instanceOf}
-        entityMap={results.classesDocsMap}
-        onNewDetailHandle={onNewDetailHandle}
-      />
-      <EntityDocsList
         name='Domain of'
         idsList={results.entity.subjectOfProperty}
         entityMap={results.propertyDocsMap}

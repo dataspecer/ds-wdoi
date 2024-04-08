@@ -165,7 +165,7 @@ export function AncestorsDisplay({
           );
         })}
       </div>
-      {detailOpened ? (
+      {detailOpened && (
         <DetailListDialog
           detailOpened={detailOpened}
           detailEntity={detailEntity}
@@ -176,8 +176,6 @@ export function AncestorsDisplay({
           }}
           disableConfirmOn={() => false}
         ></DetailListDialog>
-      ) : (
-        <></>
       )}
     </div>
   );

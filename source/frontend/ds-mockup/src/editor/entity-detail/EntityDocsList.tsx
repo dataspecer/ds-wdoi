@@ -16,7 +16,7 @@ export function EntityDocsList({
     <div>
       <h3>{name}</h3>
       <List>
-        {idsList.map((entityId, index) => {
+        {idsList.slice(0, 100).map((entityId, index) => {
           const docsEntity = entityMap.get(entityId) as WdEntityDescOnly;
           return (
             <ListItem key={docsEntity.iri} disablePadding>

@@ -74,7 +74,7 @@ export function AssociationsAccordion({
           </List>
         </AccordionDetails>
       </Accordion>
-      {detailOpened ? (
+      {detailOpened && (
         <DetailListDialog
           detailOpened={detailOpened}
           detailEntity={detailEntity as WdEntityDescOnly}
@@ -83,8 +83,6 @@ export function AssociationsAccordion({
           onConfirmHandle={handleCloseDetail}
           disableConfirmOn={() => false}
         ></DetailListDialog>
-      ) : (
-        <></>
       )}
     </div>
   );
