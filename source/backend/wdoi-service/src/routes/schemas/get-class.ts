@@ -2,7 +2,7 @@ import { type FromSchema } from 'json-schema-to-ts';
 import { wdClassDescOnlySchema, wdClassSchema } from './wd-class-schema.js';
 import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
-// Get class with names of surroundings only
+// Get class with names of surroundings only reply
 
 export const getClassWithSurroundingNamesReplySchema = {
   type: 'object',

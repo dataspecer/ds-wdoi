@@ -1,24 +1,25 @@
+import type internal from 'stream';
 import type { EntityId, EntityIdsList } from '../../entities/common.js';
 import { WdClass } from '../../entities/wd-class.js';
 import { WdEntity } from '../../entities/wd-entity.js';
-import type { WdProperty } from '../../entities/wd-property.js';
-// import SparqlClient from 'sparql-http-client';
+import { WdProperty } from '../../entities/wd-property.js';
+import SparqlClient from 'sparql-http-client';
 
-// interface SparqlSelectRowItem {
-//   value: string;
-//   language: string;
-// }
+interface SparqlSelectRowItem {
+  value: string;
+  language: string;
+}
 
-// interface SparqlSelectInwardRow {
-//   instanceOfId?: SparqlSelectRowItem;
-//   propertyId?: SparqlSelectRowItem;
-// }
+interface SparqlSelectInwardRow {
+  instanceOfId?: SparqlSelectRowItem;
+  propertyId?: SparqlSelectRowItem;
+}
 
-// interface SparqlSelectOutwardRow {
-//   instanceOfId?: SparqlSelectRowItem;
-//   propertyId?: SparqlSelectRowItem;
-//   classId?: SparqlSelectRowItem;
-// }
+interface SparqlSelectOutwardRow {
+  instanceOfId?: SparqlSelectRowItem;
+  propertyId?: SparqlSelectRowItem;
+  classId?: SparqlSelectRowItem;
+}
 
 export class FilterPropertyRecord {
   readonly propertyId: EntityId;
@@ -29,7 +30,7 @@ export class FilterPropertyRecord {
   }
 }
 
-export class InstanceFilterReturnWrapper {
+export class FilterByInstanceReturnWrapper {
   readonly instanceOfIds: EntityIdsList;
   readonly subjectOfFilterRecords: FilterPropertyRecord[];
   readonly valueOfFilterRecords: FilterPropertyRecord[];
@@ -44,6 +45,13 @@ export class InstanceFilterReturnWrapper {
 export class FilterByInstance {
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
+  private readonly WIKIDATA_SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
+  private readonly wikidataSparqlClient = new SparqlClient({ endpointUrl: this.WIKIDATA_SPARQL_ENDPOINT });
+
+  constructor(classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+    this.classes = classes;
+    this.properties = properties;
+  }
 
   private static buildQueryOutward(instanceId: number): string {
     return `
@@ -88,17 +96,14 @@ export class FilterByInstance {
     }`;
   }
 
-  constructor(classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
-    this.classes = classes;
-    this.properties = properties;
-  }
-
-  public async createFilter(instanceUri: string): Promise<[EntityId | null, InstanceFilterReturnWrapper]> {
+  public async createFilter(instanceUri: string): Promise<FilterByInstanceReturnWrapper> {
     const instanceId = this.tryExtractUri(instanceUri);
     if (instanceId != null) {
-      return [instanceId, await this.createFilterInternal(instanceId)];
+      try {
+        return await this.createFilterInternal(instanceId);
+      } catch (_) {}
     }
-    return [null, new InstanceFilterReturnWrapper([], [], [])];
+    return new FilterByInstanceReturnWrapper([], [], []);
   }
 
   private tryExtractUri(instanceUri: string): EntityId | null {
@@ -111,7 +116,104 @@ export class FilterByInstance {
     return null;
   }
 
-  private async createFilterInternal(instanceId: EntityId): Promise<InstanceFilterReturnWrapper> {
-    return new InstanceFilterReturnWrapper([], [], []);
+  private async createFilterInternal(instanceId: EntityId): Promise<FilterByInstanceReturnWrapper> {
+    const outwardsResponse = this.wikidataSparqlClient.query.select(FilterByInstance.buildQueryOutward(instanceId));
+    const inwardsResponse = this.wikidataSparqlClient.query.select(FilterByInstance.buildQueryInward(instanceId));
+
+    const instanceOfIds: EntityId[] = [];
+    const outwardFilterRecords = new Map<EntityId, FilterPropertyRecord>();
+    const inwardFilterRecords = new Map<EntityId, FilterPropertyRecord>();
+
+    await this.parseOutwardsResponse(outwardsResponse, outwardFilterRecords, instanceOfIds);
+    await this.parseInwardsResponse(inwardsResponse, inwardFilterRecords);
+
+    if (instanceOfIds.length !== 0) {
+      return new FilterByInstanceReturnWrapper(instanceOfIds, [...outwardFilterRecords.values()], [...inwardFilterRecords.values()]);
+    } else {
+      return new FilterByInstanceReturnWrapper([], [], []);
+    }
+  }
+
+  private parseOutwardResponseRow(row: SparqlSelectOutwardRow): [EntityId | undefined, EntityId | undefined, EntityId | undefined] {
+    const instanceOfId = this.parseIdFromString(row.instanceOfId?.value);
+    const propertyId = this.parseIdFromString(row.propertyId?.value);
+    const classId = this.parseIdFromString(row.classId?.value);
+    return [instanceOfId, propertyId, classId];
+  }
+
+  private parseInwardResponseRow(row: SparqlSelectInwardRow): [EntityId | undefined, EntityId | undefined] {
+    const instanceOfId = this.parseIdFromString(row.instanceOfId?.value);
+    const propertyId = this.parseIdFromString(row.propertyId?.value);
+    return [instanceOfId, propertyId];
+  }
+
+  private parseIdFromString(value: any): number | undefined {
+    if (typeof value === 'string') {
+      const parsedId = Number(value);
+      if (!Number.isNaN(parsedId)) return parsedId;
+    }
+    return undefined;
+  }
+
+  private addToFilterRecordsIfMissing(
+    propertyId: number,
+    filterRecords: Map<EntityId, FilterPropertyRecord>,
+    classId: number | undefined = undefined,
+  ): void {
+    const record = filterRecords.get(propertyId);
+    if (record == null) {
+      const newRecord: FilterPropertyRecord = { rangeIds: classId != null ? [classId] : [], propertyId };
+      filterRecords.set(propertyId, newRecord);
+    } else if (classId != null && !record.rangeIds.includes(classId)) {
+      record.rangeIds.push(classId);
+    }
+  }
+
+  private addToInstanceOfIdsIfMissing(instanceOfId: number, instanceOfIds: EntityId[]): void {
+    if (!instanceOfIds.includes(instanceOfId)) {
+      instanceOfIds.push(instanceOfId);
+    }
+  }
+
+  private isValidClassId(classId: number | undefined): boolean {
+    if (classId != null && this.classes.has(classId)) return true;
+    else return false;
+  }
+
+  private isValidPropertyId(propertyId: number | undefined): boolean {
+    if (propertyId != null && this.properties.has(propertyId)) return true;
+    else return false;
+  }
+
+  private async parseOutwardsResponse(
+    responseStream: internal.Readable,
+    filterRecords: Map<EntityId, FilterPropertyRecord>,
+    instanceOfIds: EntityId[],
+  ): Promise<void> {
+    for await (const row of responseStream) {
+      const [instanceOfId, propertyId, classId] = this.parseOutwardResponseRow(row);
+      if (this.isValidClassId(instanceOfId) && this.isValidPropertyId(propertyId)) {
+        const property = this.properties.get(propertyId as number) as WdProperty;
+        if (!WdProperty.isItemProperty(property)) {
+          this.addToInstanceOfIdsIfMissing(instanceOfId as number, instanceOfIds);
+          this.addToFilterRecordsIfMissing(propertyId as number, filterRecords);
+        } else if (this.isValidClassId(classId)) {
+          this.addToInstanceOfIdsIfMissing(instanceOfId as number, instanceOfIds);
+          this.addToFilterRecordsIfMissing(propertyId as number, filterRecords, classId as number);
+        }
+      }
+    }
+  }
+
+  private async parseInwardsResponse(responseStream: internal.Readable, filterRecords: Map<EntityId, FilterPropertyRecord>): Promise<void> {
+    for await (const row of responseStream) {
+      const [instanceOfId, propertyId] = this.parseInwardResponseRow(row);
+      if (this.isValidClassId(instanceOfId) && this.isValidPropertyId(propertyId)) {
+        const property = this.properties.get(propertyId as number) as WdProperty;
+        if (WdProperty.isItemProperty(property)) {
+          this.addToFilterRecordsIfMissing(propertyId as number, filterRecords, instanceOfId as number);
+        }
+      }
+    }
   }
 }

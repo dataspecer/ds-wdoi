@@ -57,12 +57,14 @@ export class OntologySearch {
     let classesSearchResult: WdClass[] = [];
     let propertiesSearchResult: WdProperty[] = [];
 
-    if (searchClasses != null && searchClasses) {
-      classesSearchResult = await this.searchClasses(query, languagePriority);
-    }
-    if (searchProperties != null && searchProperties) {
-      propertiesSearchResult = await this.searchProperties(query, languagePriority);
-    }
+    try {
+      if (searchClasses != null && searchClasses) {
+        classesSearchResult = await this.searchClasses(query, languagePriority);
+      }
+      if (searchProperties != null && searchProperties) {
+        propertiesSearchResult = await this.searchProperties(query, languagePriority);
+      }
+    } catch (_) {}
     return new SearchResults(classesSearchResult, propertiesSearchResult);
   }
 

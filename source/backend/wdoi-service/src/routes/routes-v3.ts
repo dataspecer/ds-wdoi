@@ -17,6 +17,11 @@ import {
   getClassPropertyDomainRangeReplySchema,
   getClassPropertyDomainRangeInputQueryStringSchema,
 } from './schemas/get-property-domain-range.js';
+import {
+  type GetFilterBySchemaQueryStringType,
+  getFilterByInstanceReplySchema,
+  getFilterBySchemaQueryStringSchema,
+} from './schemas/get-filter-by-instance.js';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   // Search
@@ -188,6 +193,25 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         part === 'inherited'
           ? fastify.wdOntology.getInheritedClassPropertyRanges(startClass, property)
           : fastify.wdOntology.getOwnClassPropertyRanges(startClass, property);
+      return { results };
+    },
+  );
+
+  // Filter by instance
+
+  fastify.get<{ Querystring: GetFilterBySchemaQueryStringType }>(
+    '/filter-by-instance',
+    {
+      schema: {
+        querystring: getFilterBySchemaQueryStringSchema,
+        response: {
+          '2xx': getFilterByInstanceReplySchema,
+        },
+      },
+    },
+    async (req, res) => {
+      const { url } = req.query;
+      const results = await fastify.wdOntology.getFilterByInstance(url);
       return { results };
     },
   );

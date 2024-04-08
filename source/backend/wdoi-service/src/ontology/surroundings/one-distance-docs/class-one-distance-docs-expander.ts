@@ -33,7 +33,6 @@ export class ClassOneDistanceDocsExpander extends OneDistanceDocsExpander {
     // Classes
     materializeEntitiesWithContext(this.startClass.instanceOf, this.classes, classesPresent, surroundingClasses);
     materializeEntitiesWithContext(this.startClass.subclassOf, this.classes, classesPresent, surroundingClasses);
-    // materializeEntitiesWithContext(this.startClass.instances, this.classes, classesPresent, surroundingClasses);
 
     // Properties
     materializeEntitiesWithContext(this.startClass.subjectOfProperty, this.properties, propertiesPresent, surroundingProperties);

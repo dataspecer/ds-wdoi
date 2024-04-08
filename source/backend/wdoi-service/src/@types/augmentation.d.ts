@@ -1,5 +1,5 @@
-import { type EntityId } from '../ontology/entities/common';
-import type { WdOntology } from '../ontology/wd-ontology';
+import { type EntityId } from '../ontology/entities/common.js';
+import type { WdOntology } from '../ontology/wd-ontology.js';
 
 declare module 'fastify' {
   export interface FastifyInstance {

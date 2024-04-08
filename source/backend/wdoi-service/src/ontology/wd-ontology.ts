@@ -25,6 +25,7 @@ import {
   expandWithPropertyRanges,
 } from './surroundings/domains-ranges/domains-ranges.js';
 import { materializeEntities } from './utils/materialize-entities.js';
+import { FilterByInstance, type FilterByInstanceReturnWrapper } from './surroundings/filter-by-instance/filter-by-instance.js';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -32,6 +33,7 @@ export class WdOntology {
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly ontologySearch: OntologySearch;
   private readonly hierarchyWalker: ClassHierarchyWalker;
+  private readonly filterByInstance: FilterByInstance;
 
   private constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
     this.rootClass = rootClass;
@@ -39,6 +41,7 @@ export class WdOntology {
     this.properties = properties;
     this.ontologySearch = new OntologySearch(this.classes, this.properties);
     this.hierarchyWalker = new ClassHierarchyWalker(this.classes, this.properties);
+    this.filterByInstance = new FilterByInstance(this.classes, this.properties);
   }
 
   public async search(
@@ -120,6 +123,10 @@ export class WdOntology {
 
   public containsProperty(propertyId: EntityId): boolean {
     return this.properties.has(propertyId);
+  }
+
+  public async getFilterByInstance(url: string): Promise<FilterByInstanceReturnWrapper> {
+    return await this.filterByInstance.createFilter(url);
   }
 
   static async create(classesJsonFilePath: string, propertiesJsonFilePath: string): Promise<WdOntology | never> {
