@@ -11,9 +11,10 @@ export class WdClass extends WdEntity {
   private static readonly URIType = 'Q';
   readonly subclassOf: EntityIdsList;
   readonly children: EntityIdsList;
-  readonly instances: EntityIdsList;
-  readonly propertiesForThisType: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
+
+  // readonly instances: EntityIdsList;
+  // readonly propertiesForThisType: EntityIdsList;
 
   readonly subjectOfProperty: EntityIdsList;
   readonly subjectOfPropertyScoresMap: PropertyScoreRecordMap;
@@ -29,9 +30,10 @@ export class WdClass extends WdEntity {
     super(inputClass);
     this.subclassOf = emptyEntitiesIdsListOrSave(inputClass.subclassOf);
     this.children = emptyEntitiesIdsListOrSave(inputClass.children);
-    this.instances = emptyEntitiesIdsListOrSave(inputClass.instances);
     this.equivalentExternalOntologyClasses = emptyExternalMappingsListOrSave(inputClass.equivalentClass);
-    this.propertiesForThisType = emptyEntitiesIdsListOrSave(inputClass.propertiesForThisType);
+
+    // this.instances = emptyEntitiesIdsListOrSave(inputClass.instances);
+    // this.propertiesForThisType = emptyEntitiesIdsListOrSave(inputClass.propertiesForThisType);
 
     this.subjectOfProperty = emptyEntitiesIdsListOrSave(inputClass.subjectOfStats);
     this.subjectOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.subjectOfStatsScores));

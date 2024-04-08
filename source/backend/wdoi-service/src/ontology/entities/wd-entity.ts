@@ -1,6 +1,6 @@
 import type { InputEntity } from '../loading/input/input-entity.js';
-import type { EntityId, EntityIdsList, LanguageMap } from './common.js';
-import { emptyEntitiesIdsListOrSave, emptyLanguageMapOrSave } from './empty-type-constants.js';
+import type { EntityId, LanguageMap } from './common.js';
+import { emptyLanguageMapOrSave } from './empty-type-constants.js';
 
 export abstract class WdEntity {
   public static entityURITypes: Set<string> = new Set<string>();
@@ -10,14 +10,14 @@ export abstract class WdEntity {
   readonly iri: string;
   readonly labels: LanguageMap;
   readonly descriptions: LanguageMap;
-  readonly instanceOf: EntityIdsList;
+  // readonly instanceOf: EntityIdsList;
 
   constructor(inputEntity: InputEntity) {
     this.id = inputEntity.id;
     this.iri = inputEntity.iri;
     this.labels = inputEntity.labels; // Never empty
     this.descriptions = emptyLanguageMapOrSave(inputEntity.descriptions);
-    this.instanceOf = emptyEntitiesIdsListOrSave(inputEntity.instanceOf);
+    // this.instanceOf = emptyEntitiesIdsListOrSave(inputEntity.instanceOf);
   }
 
   public static isValidURIType(entityType: string): boolean {

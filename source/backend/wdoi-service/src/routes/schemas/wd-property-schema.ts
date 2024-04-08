@@ -1,127 +1,123 @@
 import { type FromSchema } from 'json-schema-to-ts';
 
-export const subjectObjectConstraintSchema = {
-  type: 'object',
-  properties: {
-    subclassOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    instanceOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    subclassOfInstanceOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-  },
-  additionalProperties: false,
-  required: ['subclassOf', 'instanceOf', 'subclassOfInstanceOf'],
-} as const;
+// export const subjectObjectConstraintSchema = {
+//   type: 'object',
+//   properties: {
+//     subclassOf: {
+//       type: 'array',
+//       items: {
+//         type: 'number',
+//       },
+//     },
+//     instanceOf: {
+//       type: 'array',
+//       items: {
+//         type: 'number',
+//       },
+//     },
+//     subclassOfInstanceOf: {
+//       type: 'array',
+//       items: {
+//         type: 'number',
+//       },
+//     },
+//   },
+//   additionalProperties: false,
+//   required: ['subclassOf', 'instanceOf', 'subclassOfInstanceOf'],
+// } as const;
 
 export const generalConstraintsSchema = {
   type: 'object',
   properties: {
-    propertyScope: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    allowedEntityTypes: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    allowedQualifiers: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    requiredQualifiers: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    conflictsWith: {
-      type: 'object',
-      additionalProperties: true,
-    },
-    itemRequiresStatement: {
-      type: 'object',
-      additionalProperties: true,
-    },
-    subjectType: subjectObjectConstraintSchema,
-    // subjectTypeStats: {
+    // propertyScope: {
     //   type: 'array',
     //   items: {
     //     type: 'number',
     //   },
-    //   minItems: 0,
-    //   maxItems: 1_000,
     // },
+    // allowedEntityTypes: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // allowedQualifiers: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // requiredQualifiers: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // conflictsWith: {
+    //   type: 'object',
+    //   additionalProperties: true,
+    // },
+    // itemRequiresStatement: {
+    //   type: 'object',
+    //   additionalProperties: true,
+    // },
+    // subjectType: subjectObjectConstraintSchema,
+    subjectTypeStats: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
   },
   additionalProperties: false,
   required: [
-    'propertyScope',
-    'allowedEntityTypes',
-    'allowedQualifiers',
-    'requiredQualifiers',
-    'conflictsWith',
-    'itemRequiresStatement',
-    'subjectType',
-    // 'subjectTypeStats',
+    // 'propertyScope',
+    // 'allowedEntityTypes',
+    // 'allowedQualifiers',
+    // 'requiredQualifiers',
+    // 'conflictsWith',
+    // 'itemRequiresStatement',
+    // 'subjectType',
+    'subjectTypeStats',
   ],
 } as const;
 
 export const itemConstraintsSchema = {
   type: 'object',
   properties: {
-    valueType: subjectObjectConstraintSchema,
-    // valueTypeStats: {
+    // valueType: subjectObjectConstraintSchema,
+    valueTypeStats: {
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+    },
+    // valueRequiresStatement: {
+    //   type: 'object',
+    //   additionalProperties: true,
+    // },
+    // isSymmetric: {
+    //   type: 'boolean',
+    // },
+    // oneOf: {
     //   type: 'array',
     //   items: {
     //     type: 'number',
     //   },
-    //   minItems: 0,
-    //   maxItems: 1_000,
     // },
-    valueRequiresStatement: {
-      type: 'object',
-      additionalProperties: true,
-    },
-    isSymmetric: {
-      type: 'boolean',
-    },
-    oneOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    noneOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    inverse: {
-      type: 'number',
-      nullable: true,
-    },
+    // noneOf: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // inverse: {
+    //   type: 'number',
+    //   nullable: true,
+    // },
   },
   additionalProperties: false,
-  required: ['valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse' /*, 'valueTypeStats' */],
+  required: [/* 'valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse', */ 'valueTypeStats'],
 } as const;
 
 export const emptyConstraintsSchema = {
@@ -156,12 +152,12 @@ export const wdPropertySchema = {
         type: 'string',
       },
     },
-    instanceOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
+    // instanceOf: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
     subpropertyOf: {
       type: 'array',
       items: {

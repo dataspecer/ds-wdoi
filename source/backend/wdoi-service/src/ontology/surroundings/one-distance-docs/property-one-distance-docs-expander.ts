@@ -30,19 +30,12 @@ export class PropertyOneDistanceDocsExpander extends OneDistanceDocsExpander {
     const classesPresent = new Set<EntityId>();
     const propertiesPresent = new Set<EntityId>();
 
-    // Classes
-    materializeEntitiesWithContext(this.startProperty.instanceOf, this.classes, classesPresent, surroundingClasses);
-
     // Subject constraints
-    const subjectTypeConstraints = this.startProperty.generalConstraints.subjectType;
-    materializeEntitiesWithContext(subjectTypeConstraints.instanceOf, this.classes, classesPresent, surroundingClasses);
-    materializeEntitiesWithContext(subjectTypeConstraints.subclassOfInstanceOf, this.classes, classesPresent, surroundingClasses);
+    materializeEntitiesWithContext(this.startProperty.generalConstraints.subjectTypeStats, this.classes, classesPresent, surroundingClasses);
 
     // Value constraints
     if (WdProperty.isItemProperty(this.startProperty)) {
-      const valueTypeConstraints = this.startProperty.itemConstraints.valueType;
-      materializeEntitiesWithContext(valueTypeConstraints.instanceOf, this.classes, classesPresent, surroundingClasses);
-      materializeEntitiesWithContext(valueTypeConstraints.subclassOfInstanceOf, this.classes, classesPresent, surroundingClasses);
+      materializeEntitiesWithContext(this.startProperty.itemConstraints.valueTypeStats, this.classes, classesPresent, surroundingClasses);
     }
 
     // Properties

@@ -1,6 +1,6 @@
-import type { InputProperty } from '../loading/input/input-property.js';
+import type { InputItemTypeConstraints, InputProperty } from '../loading/input/input-property.js';
 import type { EntityIdsList, ExternalOntologyMapping } from './common.js';
-import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints, PropertyScopeValue, AllowedEntityTypesValue } from './constraint.js';
+import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints } from './constraint.js';
 import { WdEntity } from './wd-entity.js';
 import { emptyEntitiesIdsListOrSave, emptyExternalMappingsListOrSave } from './empty-type-constants.js';
 
@@ -79,13 +79,13 @@ export abstract class WdProperty extends WdEntity {
     }
   }
 
-  canBeUsedAsMainValue(): boolean {
-    return this.generalConstraints.propertyScope.includes(PropertyScopeValue.AS_MAIN);
-  }
+  // canBeUsedAsMainValue(): boolean {
+  //   return this.generalConstraints.propertyScope.includes(PropertyScopeValue.AS_MAIN);
+  // }
 
-  canBeUsedOnItems(): boolean {
-    return this.generalConstraints.allowedEntityTypes.includes(AllowedEntityTypesValue.ITEM);
-  }
+  // canBeUsedOnItems(): boolean {
+  //   return this.generalConstraints.allowedEntityTypes.includes(AllowedEntityTypesValue.ITEM);
+  // }
 
   datatypeIsNotLexicographic(): boolean {
     return this.datatype !== Datatype.LEXEME && this.datatype !== Datatype.FORM && this.datatype !== Datatype.SENSE;
@@ -103,13 +103,9 @@ export abstract class WdProperty extends WdEntity {
     return this.generalConstraints.subjectTypeStats;
   }
 
-  public getDomainClassIdsByConstraints(): EntityIdsList {
-    return this.generalConstraints.subjectType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
-  }
-
-  public getRangeClassIdsByConstraints(): EntityIdsList {
-    return [];
-  }
+  // public getDomainClassIdsByConstraints(): EntityIdsList {
+  //   return this.generalConstraints.subjectType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
+  // }
 
   public getRangeClassIdsByUsage(): EntityIdsList {
     return [];
@@ -121,12 +117,12 @@ export class ItemProperty extends WdProperty {
 
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
-    this.itemConstraints = new ItemTypeConstraints(inputProperty.constraints.typeDependent as ItemTypeConstraints);
+    this.itemConstraints = new ItemTypeConstraints(inputProperty.constraints.typeDependent as InputItemTypeConstraints);
   }
 
-  public getRangeClassIdsByConstraints(): EntityIdsList {
-    return this.itemConstraints.valueType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
-  }
+  // public getRangeClassIdsByConstraints(): EntityIdsList {
+  //   return this.itemConstraints.valueType.instanceOf.concat(this.generalConstraints.subjectType.subclassOfInstanceOf);
+  // }
 
   public getRangeClassIdsByUsage(): EntityIdsList {
     return this.itemConstraints.valueTypeStats;

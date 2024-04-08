@@ -31,7 +31,6 @@ export class ClassOneDistanceDocsExpander extends OneDistanceDocsExpander {
     const propertiesPresent = new Set<EntityId>();
 
     // Classes
-    materializeEntitiesWithContext(this.startClass.instanceOf, this.classes, classesPresent, surroundingClasses);
     materializeEntitiesWithContext(this.startClass.subclassOf, this.classes, classesPresent, surroundingClasses);
 
     // Properties

@@ -27,18 +27,18 @@ export const wdClassSchema = {
         type: 'number',
       },
     },
-    instanceOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    instances: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
+    // instanceOf: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // instances: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
     subjectOfProperty: {
       type: 'array',
       items: {
@@ -57,12 +57,12 @@ export const wdClassSchema = {
         type: 'string',
       },
     },
-    propertiesForThisType: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
+    // propertiesForThisType: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
   },
   additionalProperties: false,
   required: [
@@ -71,12 +71,12 @@ export const wdClassSchema = {
     'labels',
     'descriptions',
     'subclassOf',
-    'instanceOf',
-    'instances',
+    // 'instanceOf',
+    // 'instances',
     'subjectOfProperty',
     'valueOfProperty',
     'equivalentExternalOntologyClasses',
-    'propertiesForThisType',
+    // 'propertiesForThisType',
   ],
 } as const;
 
