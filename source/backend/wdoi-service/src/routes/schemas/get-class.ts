@@ -14,17 +14,17 @@ export const getClassWithSurroundingNamesReplySchema = {
           type: 'array',
           items: wdClassSchema,
         },
-        surroundingClassNames: {
+        surroundingClassesDecs: {
           type: 'array',
           items: wdClassDescOnlySchema,
         },
-        surroundingPropertyNames: {
+        surroundingPropertiesDecs: {
           type: 'array',
           items: wdPropertyDescOnlySchema,
         },
       },
       additionalProperties: false,
-      required: ['classes', 'surroundingClassNames', 'surroundingPropertyNames'],
+      required: ['classes', 'surroundingClassesDecs', 'surroundingPropertiesDecs'],
     },
   },
   additionalProperties: false,

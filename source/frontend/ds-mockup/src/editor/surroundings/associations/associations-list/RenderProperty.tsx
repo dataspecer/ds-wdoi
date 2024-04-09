@@ -2,10 +2,10 @@ import { ListItem, IconButton, ListItemButton, Typography } from '@mui/material'
 import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
 import { WdEntityDescOnly } from '../../../../wikidata/entities/wd-entity';
 import { UnderlyingType, WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';
-import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
+import { ClassSurroundings } from '../../../../wikidata/query/get-class-surroundings';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { PropertyAccordionType } from './AssociationsAccordion';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { DomainAndRangeDialog } from './domain-or-range-dialog/DomainAndRangeDialog';
 import { PropertyPartsSelectionInput } from './AssociationsList';
 
@@ -30,13 +30,13 @@ export function RenderProperty({
 }) {
   const [domainOrRangeDialogOpened, setDomainOrRangeDialogOpened] = useState<boolean>(false);
 
-  function onDialogCloseHandle() {
+  const onDialogCloseHandleCallback = useCallback(() => {
     setDomainOrRangeDialogOpened(false);
-  }
+  }, [setDomainOrRangeDialogOpened]);
 
-  function onDialogOpenHandle() {
+  const onDialogOpenHandleCallback = useCallback(() => {
     setDomainOrRangeDialogOpened(true);
-  }
+  }, [setDomainOrRangeDialogOpened]);
 
   return (
     <ListItem
@@ -55,7 +55,9 @@ export function RenderProperty({
       }
     >
       <ListItemButton
-        onClick={isValidDomainRangeAccordion(propertyAccordionType) ? onDialogOpenHandle : () => {}}
+        onClick={
+          isValidDomainRangeAccordion(propertyAccordionType) ? onDialogOpenHandleCallback : () => {}
+        }
       >
         <div className='flex flex-col'>
           <div className='flex flex-row items-center space-x-2'>
@@ -74,7 +76,7 @@ export function RenderProperty({
           wdClass={rootClass}
           wdProperty={wdProperty}
           isOpen={domainOrRangeDialogOpened}
-          onDialogClose={onDialogCloseHandle}
+          onDialogClose={onDialogCloseHandleCallback}
           propertyPartsSelection={propertyPartsSelection}
           domainsOrRanges={propertyAccordionType === 'Outwards' ? 'ranges' : 'domains'}
         />

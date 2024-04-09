@@ -1,23 +1,46 @@
 import axios from 'axios';
 import { EntityId, EntityIdsList } from '../entities/wd-entity';
 
-export interface FilterPropertyRecord {
+interface FilterPropertyRecordResults {
   readonly propertyId: EntityId;
-  readonly rangeIds: EntityId[];
+  readonly rangeIds: EntityIdsList;
 }
 
-export interface GetFilterByInstanceResults {
+interface GetFilterByInstanceResults {
   readonly instanceOfIds: EntityIdsList;
-  readonly subjectOfFilterRecords: FilterPropertyRecord[];
-  readonly valueOfFilterRecords: FilterPropertyRecord[];
+  readonly subjectOfFilterRecords: FilterPropertyRecordResults[];
+  readonly valueOfFilterRecords: FilterPropertyRecordResults[];
 }
 
-export interface GetFilterByInstanceReply {
+interface GetFilterByInstanceReply {
   results: GetFilterByInstanceResults;
 }
 
-export async function fetchFilterByInstance(url: string): Promise<GetFilterByInstanceResults> {
-  return (
+export interface FilterByInstance {
+  readonly instanceOfIds: EntityIdsList;
+  readonly subjectOfFilterRecordsMap: ReadonlyMap<EntityId, EntityIdsList>;
+  readonly valueOfFilterRecordsMap: ReadonlyMap<EntityId, EntityIdsList>;
+}
+
+function buildFilterPropertyRecordsMap(
+  filterByInstaceRecords: FilterPropertyRecordResults[],
+): ReadonlyMap<EntityId, EntityIdsList> {
+  const newMap = new Map<EntityId, EntityIdsList>();
+  filterByInstaceRecords.forEach((record) => {
+    if (!newMap.has(record.propertyId)) {
+      newMap.set(record.propertyId, record.rangeIds);
+    }
+  });
+  return newMap;
+}
+
+export async function fetchFilterByInstance(url: string): Promise<FilterByInstance> {
+  const results = (
     (await axios.get(`/api/v3/filter-by-instance?url=${url}`)).data as GetFilterByInstanceReply
   ).results;
+  return {
+    instanceOfIds: results.instanceOfIds,
+    subjectOfFilterRecordsMap: buildFilterPropertyRecordsMap(results.subjectOfFilterRecords),
+    valueOfFilterRecordsMap: buildFilterPropertyRecordsMap(results.subjectOfFilterRecords),
+  };
 }

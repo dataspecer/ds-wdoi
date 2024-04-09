@@ -4,7 +4,7 @@ import { WdPropertyDescOnly } from '../../../../../wikidata/entities/wd-property
 import {
   DomainsOrRanges,
   fetchDomainOrRange,
-} from '../../../../../wikidata/query/get-domain-range';
+} from '../../../../../wikidata/query/get-property-domain-range';
 import { DomainOrRangeClassList } from './DomainOrRangeClassList';
 import {
   WdClassDescOnly,
@@ -47,7 +47,11 @@ export function DomainAndRangeDialog({
       <DialogContent className='bg-slate-100 px-0' id='scrollableDivId'>
         {isLoading || isError ? (
           isLoading ? (
-            <CircularProgress />
+            <div className='flex h-screen justify-center'>
+              <div className='m-auto'>
+                <CircularProgress />
+              </div>
+            </div>
           ) : (
             'Error'
           )

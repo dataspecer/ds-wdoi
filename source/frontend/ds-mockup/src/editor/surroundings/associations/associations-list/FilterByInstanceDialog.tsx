@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import {
-  GetFilterByInstanceResults,
+  FilterByInstance,
   fetchFilterByInstance,
 } from '../../../../wikidata/query/get-filter-by-instance';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,14 +19,14 @@ export function FilterByInstanceDialog({
   isOpen,
   onDialogClose,
 }: {
-  handleSetInstanceFilter: (f: GetFilterByInstanceResults) => void;
+  handleSetInstanceFilter: (f: FilterByInstance) => void;
   isOpen: boolean;
   onDialogClose: () => void;
 }) {
   const [text, setText] = useState<string>('');
   const [wasApplied, setWasApplied] = useState(false);
   const { isLoading, isError, data, refetch } = useQuery(
-    ['instanceFilter', text],
+    ['filterByInstance', text],
     async () => {
       return await fetchFilterByInstance(text);
     },

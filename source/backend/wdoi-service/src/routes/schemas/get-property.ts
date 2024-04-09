@@ -12,17 +12,17 @@ export const getPropertyWithSurroundingNamesReplySchema = {
           type: 'array',
           items: wdPropertySchema,
         },
-        surroundingClassNames: {
+        surroundingClassesDecs: {
           type: 'array',
           items: wdClassDescOnlySchema,
         },
-        surroundingPropertyNames: {
+        surroundingPropertiesDecs: {
           type: 'array',
           items: wdPropertyDescOnlySchema,
         },
       },
       additionalProperties: false,
-      required: ['properties', 'surroundingClassNames', 'surroundingPropertyNames'],
+      required: ['properties', 'surroundingClassesDecs', 'surroundingPropertiesDecs'],
     },
   },
   additionalProperties: false,

@@ -3,9 +3,10 @@ import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entit
 import {
   ClassSurroundings,
   fetchClassSurroundings,
-} from '../../../../wikidata/query/get-surroundings';
+} from '../../../../wikidata/query/get-class-surroundings';
 import { SelectedProperty } from '../../selected-property';
 import { AssociationsList } from './AssociationsList';
+import { CircularProgress } from '@mui/material';
 
 export function LoadedAssociationsList({
   selectedClass,
@@ -18,7 +19,14 @@ export function LoadedAssociationsList({
     return await fetchClassSurroundings(selectedClass);
   });
 
-  if (isLoading) return <>Is loading</>;
+  if (isLoading)
+    return (
+      <div className='flex h-screen justify-center bg-slate-100 px-1'>
+        <div className='m-auto flex w-9/12 justify-center'>
+          <CircularProgress />
+        </div>
+      </div>
+    );
   if (isError) return <>Error</>;
   const rootSurroundings = data as ClassSurroundings;
 

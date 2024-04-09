@@ -12,7 +12,7 @@ function textFilter(wdClasses: WdClassDescOnly[], text: string): WdClassDescOnly
   } else return wdClasses;
 }
 
-const CLASSES_PER_PAGE = 30;
+const CLASSES_PER_PAGE = 50;
 
 export function DomainOrRangeClassList({
   classes,

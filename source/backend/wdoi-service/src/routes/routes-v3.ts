@@ -59,12 +59,12 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
       const startClass = fastify.wdOntology.getClass(id) as WdClass;
-      const results = fastify.wdOntology.getClassWithSurroundingNames(startClass);
+      const results = fastify.wdOntology.getClassWithSurroundingDesc(startClass);
       return {
         results: {
           classes: [results.startClass],
-          surroundingClassNames: results.surroundingClassNames,
-          surroundingPropertyNames: results.surroundingPropertyNames,
+          surroundingClassesDecs: results.surroundingClassesDecs,
+          surroundingPropertiesDecs: results.surroundingPropertiesDecs,
         },
       };
     },
@@ -86,12 +86,12 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { id } = req.params;
       fastify.throwOnMissingPropertyId(id);
       const startProperty = fastify.wdOntology.getProperty(id) as WdProperty;
-      const results = fastify.wdOntology.getPropertyWithSurroundingNames(startProperty);
+      const results = fastify.wdOntology.getPropertyWithSurroundingDesc(startProperty);
       return {
         results: {
           properties: [results.startProperty],
-          surroundingClassNames: results.surroundingClassNames,
-          surroundingPropertyNames: results.surroundingPropertyNames,
+          surroundingClassesDecs: results.surroundingClassesDecs,
+          surroundingPropertiesDecs: results.surroundingPropertiesDecs,
         },
       };
     },

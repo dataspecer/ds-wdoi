@@ -2,7 +2,7 @@ import axios from 'axios';
 import { WdClassDescOnly, WdClassHierarchySurroundingsDescOnly } from '../entities/wd-class';
 import { EntityId, EntityIdsList } from '../entities/wd-entity';
 import { WdPropertyDescOnly } from '../entities/wd-property';
-import { buildEntityMap } from '../../editor/utils/build-entity-map';
+import { buildEntityMap } from '../utils/build-entity-map';
 
 interface GetSurroundingsReplyResults {
   startClass: EntityId;

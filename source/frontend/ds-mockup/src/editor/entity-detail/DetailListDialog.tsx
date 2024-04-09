@@ -61,12 +61,12 @@ export function DetailListDialog({
         </div>
         {currentEntityIsPropertyDocs ? (
           <PropertyDetail
-            entity={currentEntity as WdPropertyDescOnly}
+            prop={currentEntity as WdPropertyDescOnly}
             onNewDetailHandle={onNewDetailHandle}
           />
         ) : (
           <ClassDetail
-            entity={currentEntity as WdClassDescOnly}
+            cls={currentEntity as WdClassDescOnly}
             onNewDetailHandle={onNewDetailHandle}
           />
         )}

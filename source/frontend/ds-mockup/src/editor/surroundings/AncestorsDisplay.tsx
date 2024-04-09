@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { WdClassHierarchySurroundingsDescOnly } from '../../wikidata/entities/wd-class';
-import { ClassSurroundings } from '../../wikidata/query/get-surroundings';
+import { ClassSurroundings } from '../../wikidata/query/get-class-surroundings';
 import React from 'react';
 import { EntityId, EntityIdsList, WdEntityDescOnly } from '../../wikidata/entities/wd-entity';
 import {
@@ -36,10 +36,10 @@ export function AncestorsDisplay({
   const [detailOpened, setDetailOpened] = useState(false);
   const [detailEntity, setDetailEntity] = useState<WdEntityDescOnly | undefined>(undefined);
 
-  function handleCloseDetail() {
+  const handleCloseDetailCallback = useCallback(() => {
     setDetailEntity(undefined);
     setDetailOpened(false);
-  }
+  }, [setDetailEntity, setDetailOpened]);
 
   const classesToDisplay = useMemo<EntityIdsList>(() => {
     const classes = [rootSurroundings.startClassId, ...rootSurroundings.parentsIds];
@@ -170,10 +170,8 @@ export function AncestorsDisplay({
           detailOpened={detailOpened}
           detailEntity={detailEntity}
           confirmButtonText='OK'
-          onCloseHandle={handleCloseDetail}
-          onConfirmHandle={() => {
-            handleCloseDetail();
-          }}
+          onCloseHandle={handleCloseDetailCallback}
+          onConfirmHandle={handleCloseDetailCallback}
           disableConfirmOn={() => false}
         ></DetailListDialog>
       )}

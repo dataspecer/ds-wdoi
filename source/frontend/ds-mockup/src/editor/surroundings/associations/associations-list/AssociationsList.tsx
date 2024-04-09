@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { ClassSurroundings } from '../../../../wikidata/query/get-surroundings';
+import { ClassSurroundings } from '../../../../wikidata/query/get-class-surroundings';
 import { SelectedProperty } from '../../selected-property';
-import { EntityIdsList } from '../../../../wikidata/entities/wd-entity';
+import { EntityId, EntityIdsList } from '../../../../wikidata/entities/wd-entity';
 import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
 import {
   Button,
@@ -17,10 +17,7 @@ import {
 import { Datatype, WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';
 import { AssociationsAccordion } from './AssociationsAccordion';
 import { FilterByInstanceDialog } from './FilterByInstanceDialog';
-import {
-  GetFilterByInstanceReply,
-  GetFilterByInstanceResults,
-} from '../../../../wikidata/query/get-filter-by-instance';
+import { FilterByInstance } from '../../../../wikidata/query/get-filter-by-instance';
 
 export type PropertyPartsSelectionInput = 'inherited' | 'own';
 
@@ -39,12 +36,17 @@ interface InAndOutProperties {
 function materializeProperties(
   propertiesIds: EntityIdsList,
   rootSurroundings: ClassSurroundings,
+  filterRecordsMap: ReadonlyMap<EntityId, EntityIdsList> | undefined,
 ): WdPropertyDescOnly[] {
   const results: WdPropertyDescOnly[] = [];
   propertiesIds.forEach((propertyId) => {
     const wdProperty = rootSurroundings.propertiesMap.get(propertyId);
-    if (wdProperty != null) results.push(wdProperty);
-    else console.log(`Missing property ${propertyId}`);
+    if (wdProperty != null) {
+      if (filterRecordsMap == null) results.push(wdProperty);
+      else if (filterRecordsMap != null && filterRecordsMap.has(wdProperty.id)) {
+        results.push(wdProperty);
+      }
+    }
   });
   return results;
 }
@@ -53,6 +55,7 @@ function retrieveInAndOutProperties(
   rootClass: WdClassHierarchySurroundingsDescOnly,
   rootSurroundings: ClassSurroundings,
   propertyPartsSelection: PropertyPartsSelectionInput,
+  filterByInstance: FilterByInstance | undefined,
 ): InAndOutProperties {
   let outPropertiesIds: EntityIdsList = [];
   let inPropertiesIds: EntityIdsList = [];
@@ -65,8 +68,16 @@ function retrieveInAndOutProperties(
     inPropertiesIds = rootClass.valueOfProperty;
   }
   return {
-    outProperties: materializeProperties(outPropertiesIds, rootSurroundings),
-    inProperties: materializeProperties(inPropertiesIds, rootSurroundings),
+    outProperties: materializeProperties(
+      outPropertiesIds,
+      rootSurroundings,
+      filterByInstance?.subjectOfFilterRecordsMap,
+    ),
+    inProperties: materializeProperties(
+      inPropertiesIds,
+      rootSurroundings,
+      filterByInstance?.valueOfFilterRecordsMap,
+    ),
   };
 }
 
@@ -93,6 +104,16 @@ function splitPropertiesIntoGroups(inAndOutProperties: InAndOutProperties): Prop
   };
 }
 
+function conditionalTextFilter(
+  condition: boolean,
+  wdProperties: WdPropertyDescOnly[],
+  text: string,
+) {
+  if (condition) {
+    return textFilter(wdProperties, text);
+  } else return [];
+}
+
 function textFilter(wdProperties: WdPropertyDescOnly[], text: string): WdPropertyDescOnly[] {
   if (text != null && text !== '') {
     return wdProperties.filter((property) => property.labels['en'].toLowerCase().includes(text));
@@ -109,7 +130,7 @@ export function AssociationsList({
   const [propertyPartsSelection, setPropertyPartsSelection] =
     useState<PropertyPartsSelectionInput>('own');
   const [filterDialogOpened, setFilterDialogOpened] = useState(false);
-  const [filter, setFilter] = useState<GetFilterByInstanceResults | undefined>(undefined);
+  const [filterByInstance, setFilterByInstance] = useState<FilterByInstance | undefined>(undefined);
   const [searchTextInput, setSearchTextInput] = useState('');
   const [showAttributeProperties, setShowAttributeProperties] = useState<boolean>(true);
   const [showIdentifierProperties, setShowIdentifierProperties] = useState<boolean>(true);
@@ -127,38 +148,47 @@ export function AssociationsList({
       rootClass,
       rootSurroundings,
       propertyPartsSelection,
+      filterByInstance,
     );
     return splitPropertiesIntoGroups(inAndOutProperties);
-  }, [rootClass, rootSurroundings, propertyPartsSelection]);
+  }, [rootClass, rootSurroundings, propertyPartsSelection, filterByInstance]);
 
   const attributeProperties = useMemo<WdPropertyDescOnly[]>(() => {
-    if (showAttributeProperties) {
-      return textFilter(propertiesGroups.attributeProperties, searchTextInput);
-    } else return [];
+    return conditionalTextFilter(
+      showAttributeProperties,
+      propertiesGroups.attributeProperties,
+      searchTextInput,
+    );
   }, [propertiesGroups, searchTextInput, showAttributeProperties]);
 
   const identifierProperties = useMemo<WdPropertyDescOnly[]>(() => {
-    if (showIdentifierProperties) {
-      return textFilter(propertiesGroups.identifierProperties, searchTextInput);
-    } else return [];
+    return conditionalTextFilter(
+      showIdentifierProperties,
+      propertiesGroups.identifierProperties,
+      searchTextInput,
+    );
   }, [propertiesGroups, searchTextInput, showIdentifierProperties]);
 
   const outItemProperties = useMemo<WdPropertyDescOnly[]>(() => {
-    if (showOutItemProperties) {
-      return textFilter(propertiesGroups.outItemProperties, searchTextInput);
-    } else return [];
+    return conditionalTextFilter(
+      showOutItemProperties,
+      propertiesGroups.outItemProperties,
+      searchTextInput,
+    );
   }, [propertiesGroups, searchTextInput, showOutItemProperties]);
 
   const inItemProperties = useMemo<WdPropertyDescOnly[]>(() => {
-    if (showInItemProperties) {
-      return textFilter(propertiesGroups.inItemProperties, searchTextInput);
-    } else return [];
+    return conditionalTextFilter(
+      showInItemProperties,
+      propertiesGroups.inItemProperties,
+      searchTextInput,
+    );
   }, [propertiesGroups, searchTextInput, showInItemProperties]);
 
   return (
     <div className='flex flex-col space-y-2'>
       <div>
-        {filter == null ? (
+        {filterByInstance == null ? (
           <Button variant='contained' onClick={() => setFilterDialogOpened(true)}>
             Filter By Instance
           </Button>
@@ -167,7 +197,7 @@ export function AssociationsList({
             color='error'
             variant='contained'
             onClick={() => {
-              setFilter(undefined);
+              setFilterByInstance(undefined);
             }}
           >
             Cancel Filter
@@ -310,7 +340,7 @@ export function AssociationsList({
       </div>
       {filterDialogOpened && (
         <FilterByInstanceDialog
-          handleSetInstanceFilter={(f: GetFilterByInstanceResults) => setFilter(f)}
+          handleSetInstanceFilter={(f: FilterByInstance) => setFilterByInstance(f)}
           isOpen={filterDialogOpened}
           onDialogClose={() => setFilterDialogOpened(false)}
         />

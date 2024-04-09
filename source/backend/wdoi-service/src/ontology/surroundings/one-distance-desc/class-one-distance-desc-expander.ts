@@ -2,21 +2,21 @@ import { type EntityId } from '../../entities/common.js';
 import { type WdClass } from '../../entities/wd-class.js';
 import { type WdProperty } from '../../entities/wd-property.js';
 import { materializeEntitiesWithContext } from '../../utils/materialize-entities.js';
-import { OneDistanceDocsExpander } from './one-distance-docs-expander.js';
+import { OneDistanceDescExpander } from './one-distance-desc-expander.js';
 
-export class ClassOneDistanceDocsReturnWrapper {
+export class ClassOneDistanceDescReturnWrapper {
   startClass: WdClass;
-  surroundingClassNames: WdClass[];
-  surroundingPropertyNames: WdProperty[];
+  surroundingClassesDecs: WdClass[];
+  surroundingPropertiesDecs: WdProperty[];
 
-  constructor(startClass: WdClass, surroundingClassNames: WdClass[], surroundingPropertyNames: WdProperty[]) {
+  constructor(startClass: WdClass, surroundingClassesDecs: WdClass[], surroundingPropertiesDecs: WdProperty[]) {
     this.startClass = startClass;
-    this.surroundingClassNames = surroundingClassNames;
-    this.surroundingPropertyNames = surroundingPropertyNames;
+    this.surroundingClassesDecs = surroundingClassesDecs;
+    this.surroundingPropertiesDecs = surroundingPropertiesDecs;
   }
 }
 
-export class ClassOneDistanceDocsExpander extends OneDistanceDocsExpander {
+export class ClassOneDistanceDescExpander extends OneDistanceDescExpander {
   protected readonly startClass: WdClass;
 
   constructor(startClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
@@ -40,8 +40,8 @@ export class ClassOneDistanceDocsExpander extends OneDistanceDocsExpander {
     return [surroundingClasses, surroundingProperties];
   }
 
-  public getSurroundings(): ClassOneDistanceDocsReturnWrapper {
+  public getSurroundings(): ClassOneDistanceDescReturnWrapper {
     const [surroundingClassNames, surroundingPropertyNames] = this.getOneDistanceDocsSurroundings();
-    return new ClassOneDistanceDocsReturnWrapper(this.startClass, surroundingClassNames, surroundingPropertyNames);
+    return new ClassOneDistanceDescReturnWrapper(this.startClass, surroundingClassNames, surroundingPropertyNames);
   }
 }

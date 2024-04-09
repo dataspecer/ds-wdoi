@@ -215,7 +215,7 @@ export const wdPropertySchema = {
     'underlyingType',
     'labels',
     'descriptions',
-    'instanceOf',
+    // 'instanceOf',
     'subpropertyOf',
     'subproperties',
     'relatedProperty',

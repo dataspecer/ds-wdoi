@@ -41,8 +41,8 @@ export function SearchList({
   let classesCount = 0;
   let itemsToRender: WdClassDescOnly[] = [];
   if (!isRefetching && data != null && textInput !== '') {
-    classesCount = data.results.classes.length;
-    itemsToRender = data.results.classes;
+    classesCount = data.classes.length;
+    itemsToRender = data.classes;
   }
 
   return (

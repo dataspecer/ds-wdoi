@@ -10,13 +10,13 @@ import {
   HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor,
 } from './surroundings/hierarchy-with-properties/hierarchy-with-properties.js';
 import {
-  ClassOneDistanceDocsExpander,
-  type ClassOneDistanceDocsReturnWrapper,
-} from './surroundings/one-distance-docs/class-one-distance-docs-expander.js';
+  ClassOneDistanceDescExpander,
+  type ClassOneDistanceDescReturnWrapper,
+} from './surroundings/one-distance-desc/class-one-distance-desc-expander.js';
 import {
-  PropertyOneDistanceDocsExpander,
-  type PropertyOneDistanceDocsReturnWrapper,
-} from './surroundings/one-distance-docs/property-one-distance-docs-expander.js';
+  PropertyOneDistanceDescExpander,
+  type PropertyOneDistanceDescReturnWrapper,
+} from './surroundings/one-distance-desc/property-one-distance-desc-expander.js';
 import {
   ClassPropertyDomainsRangesResultWrapper,
   InheritedClassPropertyDomainsExtractor,
@@ -107,13 +107,13 @@ export class WdOntology {
     return this.properties.get(propertyId);
   }
 
-  public getClassWithSurroundingNames(startClass: WdClass): ClassOneDistanceDocsReturnWrapper {
-    const classOneDistanceDocsExpander = new ClassOneDistanceDocsExpander(startClass, this.classes, this.properties);
+  public getClassWithSurroundingDesc(startClass: WdClass): ClassOneDistanceDescReturnWrapper {
+    const classOneDistanceDocsExpander = new ClassOneDistanceDescExpander(startClass, this.classes, this.properties);
     return classOneDistanceDocsExpander.getSurroundings();
   }
 
-  public getPropertyWithSurroundingNames(startProperty: WdProperty): PropertyOneDistanceDocsReturnWrapper {
-    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDocsExpander(startProperty, this.classes, this.properties);
+  public getPropertyWithSurroundingDesc(startProperty: WdProperty): PropertyOneDistanceDescReturnWrapper {
+    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDescExpander(startProperty, this.classes, this.properties);
     return propertyOneDistanceDocsExpander.getSurroundings();
   }
 

@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { WdClassDescOnly } from '../entities/wd-class';
 
-export interface GetSearchReplyResults {
+export interface GetSearchResults {
   classes: WdClassDescOnly[];
 }
 
 export interface GetSearchReply {
-  results: GetSearchReplyResults;
+  results: GetSearchResults;
 }
 
-export async function fetchSearch(query: string): Promise<GetSearchReply> {
-  return (await axios.get(`/api/v3/search?query=${query}&searchClasses=true`))
-    .data as GetSearchReply;
+export async function fetchSearch(query: string): Promise<GetSearchResults> {
+  return (
+    (await axios.get(`/api/v3/search?query=${query}&searchClasses=true`)).data as GetSearchReply
+  ).results;
 }

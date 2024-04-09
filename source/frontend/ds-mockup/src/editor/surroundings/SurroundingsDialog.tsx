@@ -1,11 +1,21 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  CircularProgress,
+} from '@mui/material';
 import {
   WdClassDescOnly,
   WdClassHierarchySurroundingsDescOnly,
 } from '../../wikidata/entities/wd-class';
 import { SelectedProperty } from './selected-property';
 import { useQuery } from 'react-query';
-import { ClassSurroundings, fetchClassSurroundings } from '../../wikidata/query/get-surroundings';
+import {
+  ClassSurroundings,
+  fetchClassSurroundings,
+} from '../../wikidata/query/get-class-surroundings';
 import { useState } from 'react';
 import { AncestorsDisplay } from './AncestorsDisplay';
 import { AssociationsDisplay } from './associations/AssociationsDisplay';
@@ -41,7 +51,11 @@ export function SurroundingsDialog({
       <DialogContent className='bg-slate-100 px-0'>
         {isLoading || isError ? (
           isLoading ? (
-            'Loading'
+            <div className='flex h-screen justify-center bg-slate-100 px-1'>
+              <div className='m-auto flex w-9/12 justify-center'>
+                <CircularProgress />
+              </div>
+            </div>
           ) : (
             'Error'
           )
