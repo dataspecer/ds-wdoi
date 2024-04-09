@@ -7,11 +7,21 @@ import {
 } from '../../../../../wikidata/query/get-property-domain-range';
 import { DomainOrRangeClassList } from './DomainOrRangeClassList';
 import {
+  WdClass,
   WdClassDescOnly,
   WdClassHierarchySurroundingsDescOnly,
 } from '../../../../../wikidata/entities/wd-class';
 import { PropertyPartsSelectionInput } from '../AssociationsList';
 import CircularProgress from '@mui/material/CircularProgress';
+import { EntityIdsList } from '../../../../../wikidata/entities/wd-entity';
+
+function filterClasses(
+  classes: WdClassDescOnly[],
+  allowedClasses: EntityIdsList | undefined,
+): WdClassDescOnly[] {
+  if (allowedClasses != null) return classes.filter((cls) => allowedClasses.includes(cls.id));
+  else return classes;
+}
 
 export function DomainAndRangeDialog({
   wdClass,
@@ -20,6 +30,7 @@ export function DomainAndRangeDialog({
   onDialogClose,
   domainsOrRanges,
   propertyPartsSelection,
+  filterByInstanceClasses,
 }: {
   wdClass: WdClassHierarchySurroundingsDescOnly;
   wdProperty: WdPropertyDescOnly;
@@ -27,6 +38,7 @@ export function DomainAndRangeDialog({
   onDialogClose: () => void;
   domainsOrRanges: DomainsOrRanges;
   propertyPartsSelection: PropertyPartsSelectionInput;
+  filterByInstanceClasses: EntityIdsList | undefined;
 }) {
   const { isLoading, isError, data } = useQuery(
     [wdClass.id, wdProperty.iri, domainsOrRanges, propertyPartsSelection],
@@ -56,7 +68,10 @@ export function DomainAndRangeDialog({
             'Error'
           )
         ) : (
-          <DomainOrRangeClassList classes={data as WdClassDescOnly[]} closeDialog={onDialogClose} />
+          <DomainOrRangeClassList
+            classes={filterClasses(data as WdClassDescOnly[], filterByInstanceClasses)}
+            closeDialog={onDialogClose}
+          />
         )}
       </DialogContent>
       <DialogActions>

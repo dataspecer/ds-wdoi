@@ -1,12 +1,5 @@
-import {
-  Typography,
-  List,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  useMediaQuery,
-} from '@mui/material';
-import { useCallback, useMemo, useState } from 'react';
+import { Typography, List, Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { useCallback, useState } from 'react';
 import { WdClassHierarchySurroundingsDescOnly } from '../../../../wikidata/entities/wd-class';
 import { WdEntityDescOnly } from '../../../../wikidata/entities/wd-entity';
 import { WdPropertyDescOnly } from '../../../../wikidata/entities/wd-property';

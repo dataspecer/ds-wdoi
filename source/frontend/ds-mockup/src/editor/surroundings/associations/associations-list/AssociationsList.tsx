@@ -18,6 +18,7 @@ import { Datatype, WdPropertyDescOnly } from '../../../../wikidata/entities/wd-p
 import { AssociationsAccordion } from './AssociationsAccordion';
 import { FilterByInstanceDialog } from './FilterByInstanceDialog';
 import { FilterByInstance } from '../../../../wikidata/query/get-filter-by-instance';
+import { FilterByInstanceContext } from './FilterByInstanceContext';
 
 export type PropertyPartsSelectionInput = 'inherited' | 'own';
 
@@ -186,165 +187,167 @@ export function AssociationsList({
   }, [propertiesGroups, searchTextInput, showInItemProperties]);
 
   return (
-    <div className='flex flex-col space-y-2'>
-      <div>
-        {filterByInstance == null ? (
-          <Button variant='contained' onClick={() => setFilterDialogOpened(true)}>
-            Filter By Instance
-          </Button>
-        ) : (
-          <Button
-            color='error'
-            variant='contained'
-            onClick={() => {
-              setFilterByInstance(undefined);
-            }}
-          >
-            Cancel Filter
-          </Button>
-        )}
-      </div>
-      <div className='flex flex-row items-center space-x-2'>
-        <div className='basis-5/10 flex-row'>
-          <span>Show Properties:</span>
-          <FormGroup row>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showAttributeProperties}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setShowAttributeProperties(event.target.checked);
-                  }}
-                />
-              }
-              label='Attributes'
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showIdentifierProperties}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setShowIdentifierProperties(event.target.checked);
-                  }}
-                />
-              }
-              label='Identifiers'
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showOutItemProperties}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setShowOutItemProperties(event.target.checked);
-                  }}
-                />
-              }
-              label='Ouwards'
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showInItemProperties}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setShowInItemProperties(event.target.checked);
-                  }}
-                />
-              }
-              label='Inwards'
-            />
-          </FormGroup>
-        </div>
-        <div className='basis-3/10'>
-          <TextField
-            size='small'
-            label='Type to search'
-            variant='standard'
-            fullWidth
-            onChange={(e) => setSearchTextInput(e.target.value)}
-          ></TextField>
-        </div>
-        <div className='basis-2/10'>
-          <FormControl>
-            <InputLabel id='property-selection-label'>Display</InputLabel>
-            <Select
-              labelId='property-selection-label'
-              id='property-selection'
-              value={propertyPartsSelection}
-              label='Display'
-              size='small'
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value !== 'inherited' && value !== 'own') setPropertyPartsSelection('own');
-                else setPropertyPartsSelection(value);
+    <FilterByInstanceContext.Provider value={filterByInstance}>
+      <div className='flex flex-col space-y-2'>
+        <div>
+          {filterByInstance == null ? (
+            <Button variant='contained' onClick={() => setFilterDialogOpened(true)}>
+              Filter By Instance
+            </Button>
+          ) : (
+            <Button
+              color='error'
+              variant='contained'
+              onClick={() => {
+                setFilterByInstance(undefined);
               }}
             >
-              <MenuItem value={'own'}>Own</MenuItem>
-              <MenuItem value={'inherited'}>Inherited</MenuItem>
-            </Select>
-          </FormControl>
+              Cancel Filter
+            </Button>
+          )}
         </div>
+        <div className='flex flex-row items-center space-x-2'>
+          <div className='basis-5/10 flex-row'>
+            <span>Show Properties:</span>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showAttributeProperties}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setShowAttributeProperties(event.target.checked);
+                    }}
+                  />
+                }
+                label='Attributes'
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showIdentifierProperties}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setShowIdentifierProperties(event.target.checked);
+                    }}
+                  />
+                }
+                label='Identifiers'
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showOutItemProperties}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setShowOutItemProperties(event.target.checked);
+                    }}
+                  />
+                }
+                label='Ouwards'
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showInItemProperties}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setShowInItemProperties(event.target.checked);
+                    }}
+                  />
+                }
+                label='Inwards'
+              />
+            </FormGroup>
+          </div>
+          <div className='basis-3/10'>
+            <TextField
+              size='small'
+              label='Type to search'
+              variant='standard'
+              fullWidth
+              onChange={(e) => setSearchTextInput(e.target.value)}
+            ></TextField>
+          </div>
+          <div className='basis-2/10'>
+            <FormControl>
+              <InputLabel id='property-selection-label'>Display</InputLabel>
+              <Select
+                labelId='property-selection-label'
+                id='property-selection'
+                value={propertyPartsSelection}
+                label='Display'
+                size='small'
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value !== 'inherited' && value !== 'own') setPropertyPartsSelection('own');
+                  else setPropertyPartsSelection(value);
+                }}
+              >
+                <MenuItem value={'own'}>Own</MenuItem>
+                <MenuItem value={'inherited'}>Inherited</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+        <div>
+          {showAttributeProperties ? (
+            <AssociationsAccordion
+              key={1}
+              rootClass={rootClass}
+              rootSurroundings={rootSurroundings}
+              setSelectedPropertiesUpper={setSelectedPropertiesUpper}
+              propertyList={attributeProperties}
+              propertyAccordionType={'Attributes'}
+              propertyPartsSelection={propertyPartsSelection}
+            />
+          ) : (
+            <></>
+          )}
+          {showIdentifierProperties ? (
+            <AssociationsAccordion
+              key={2}
+              rootClass={rootClass}
+              rootSurroundings={rootSurroundings}
+              setSelectedPropertiesUpper={setSelectedPropertiesUpper}
+              propertyList={identifierProperties}
+              propertyAccordionType={'Identifiers'}
+              propertyPartsSelection={propertyPartsSelection}
+            />
+          ) : (
+            <></>
+          )}
+          {showOutItemProperties ? (
+            <AssociationsAccordion
+              key={3}
+              rootClass={rootClass}
+              rootSurroundings={rootSurroundings}
+              setSelectedPropertiesUpper={setSelectedPropertiesUpper}
+              propertyList={outItemProperties}
+              propertyAccordionType={'Outwards'}
+              propertyPartsSelection={propertyPartsSelection}
+            />
+          ) : (
+            <></>
+          )}
+          {showInItemProperties ? (
+            <AssociationsAccordion
+              key={4}
+              rootClass={rootClass}
+              rootSurroundings={rootSurroundings}
+              setSelectedPropertiesUpper={setSelectedPropertiesUpper}
+              propertyList={inItemProperties}
+              propertyAccordionType={'Inwards'}
+              propertyPartsSelection={propertyPartsSelection}
+            />
+          ) : (
+            <></>
+          )}
+        </div>
+        {filterDialogOpened && (
+          <FilterByInstanceDialog
+            handleSetInstanceFilter={(f: FilterByInstance) => setFilterByInstance(f)}
+            isOpen={filterDialogOpened}
+            onDialogClose={() => setFilterDialogOpened(false)}
+          />
+        )}
       </div>
-      <div>
-        {showAttributeProperties ? (
-          <AssociationsAccordion
-            key={1}
-            rootClass={rootClass}
-            rootSurroundings={rootSurroundings}
-            setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-            propertyList={attributeProperties}
-            propertyAccordionType={'Attributes'}
-            propertyPartsSelection={propertyPartsSelection}
-          />
-        ) : (
-          <></>
-        )}
-        {showIdentifierProperties ? (
-          <AssociationsAccordion
-            key={2}
-            rootClass={rootClass}
-            rootSurroundings={rootSurroundings}
-            setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-            propertyList={identifierProperties}
-            propertyAccordionType={'Identifiers'}
-            propertyPartsSelection={propertyPartsSelection}
-          />
-        ) : (
-          <></>
-        )}
-        {showOutItemProperties ? (
-          <AssociationsAccordion
-            key={3}
-            rootClass={rootClass}
-            rootSurroundings={rootSurroundings}
-            setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-            propertyList={outItemProperties}
-            propertyAccordionType={'Outwards'}
-            propertyPartsSelection={propertyPartsSelection}
-          />
-        ) : (
-          <></>
-        )}
-        {showInItemProperties ? (
-          <AssociationsAccordion
-            key={4}
-            rootClass={rootClass}
-            rootSurroundings={rootSurroundings}
-            setSelectedPropertiesUpper={setSelectedPropertiesUpper}
-            propertyList={inItemProperties}
-            propertyAccordionType={'Inwards'}
-            propertyPartsSelection={propertyPartsSelection}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
-      {filterDialogOpened && (
-        <FilterByInstanceDialog
-          handleSetInstanceFilter={(f: FilterByInstance) => setFilterByInstance(f)}
-          isOpen={filterDialogOpened}
-          onDialogClose={() => setFilterDialogOpened(false)}
-        />
-      )}
-    </div>
+    </FilterByInstanceContext.Provider>
   );
 }

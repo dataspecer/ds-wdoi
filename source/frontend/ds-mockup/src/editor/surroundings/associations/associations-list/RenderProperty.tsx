@@ -5,9 +5,10 @@ import { UnderlyingType, WdPropertyDescOnly } from '../../../../wikidata/entitie
 import { ClassSurroundings } from '../../../../wikidata/query/get-class-surroundings';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { PropertyAccordionType } from './AssociationsAccordion';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { DomainAndRangeDialog } from './domain-or-range-dialog/DomainAndRangeDialog';
 import { PropertyPartsSelectionInput } from './AssociationsList';
+import { FilterByInstanceContext } from './FilterByInstanceContext';
 
 function isValidDomainRangeAccordion(propertyAccordionType: PropertyAccordionType): boolean {
   return propertyAccordionType !== 'Attributes' && propertyAccordionType !== 'Identifiers';
@@ -29,6 +30,7 @@ export function RenderProperty({
   propertyPartsSelection: PropertyPartsSelectionInput;
 }) {
   const [domainOrRangeDialogOpened, setDomainOrRangeDialogOpened] = useState<boolean>(false);
+  const filterByInstance = useContext(FilterByInstanceContext);
 
   const onDialogCloseHandleCallback = useCallback(() => {
     setDomainOrRangeDialogOpened(false);
@@ -78,6 +80,11 @@ export function RenderProperty({
           isOpen={domainOrRangeDialogOpened}
           onDialogClose={onDialogCloseHandleCallback}
           propertyPartsSelection={propertyPartsSelection}
+          filterByInstanceClasses={
+            propertyAccordionType === 'Outwards'
+              ? filterByInstance?.subjectOfFilterRecordsMap.get(wdProperty.id)
+              : filterByInstance?.valueOfFilterRecordsMap.get(wdProperty.id)
+          }
           domainsOrRanges={propertyAccordionType === 'Outwards' ? 'ranges' : 'domains'}
         />
       ) : (
