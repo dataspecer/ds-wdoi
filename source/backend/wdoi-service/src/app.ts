@@ -6,6 +6,7 @@ import loadOntology from './ontology/expose-to-fastify.js';
 import { envToLogger, log } from './logging/log.js';
 import { ontologyRoutes } from './routes/routes-v3.js';
 import fastifySensible from '@fastify/sensible';
+import process from 'process';
 
 const fastify: FastifyInstance = Fastify({
   logger: envToLogger[envVars.ENVIROMENT] ?? true,
@@ -24,6 +25,7 @@ const startFastify = async (): Promise<void> => {
   try {
     await fastify.listen({ port: 3042 });
     log(fastify.routes);
+    log(process.memoryUsage());
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
