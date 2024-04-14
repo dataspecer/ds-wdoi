@@ -1,7 +1,7 @@
 import { type FromSchema } from 'json-schema-to-ts';
 import { wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
 
-export const getHierarchyInputQueryStringSchema = {
+export const getClassHierarchyInputQueryStringSchema = {
   type: 'object',
   properties: {
     part: {
@@ -12,7 +12,7 @@ export const getHierarchyInputQueryStringSchema = {
   required: ['part'],
 } as const;
 
-export const hierarchyReplySchema = {
+export const classHierarchyReplySchema = {
   type: 'object',
   properties: {
     results: {
@@ -36,5 +36,5 @@ export const hierarchyReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetHierarchyInputQueryStringType = FromSchema<typeof getHierarchyInputQueryStringSchema>;
-export type HierarchyReplyType = FromSchema<typeof hierarchyReplySchema>;
+export type GetClassHierarchyInputQueryStringType = FromSchema<typeof getClassHierarchyInputQueryStringSchema>;
+export type HierarchyReplyType = FromSchema<typeof classHierarchyReplySchema>;

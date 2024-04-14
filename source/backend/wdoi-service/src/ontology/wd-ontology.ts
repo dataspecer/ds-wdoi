@@ -53,11 +53,11 @@ export class WdOntology {
     return await this.ontologySearch.search(query, searchClasses, searchProperties, languagePriority);
   }
 
-  public getHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
+  public getClassHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
     return this.hierarchyWalker.getHierarchy(startClass, parts);
   }
 
-  public getSurroundingsCombinedUsageStatisticsAndConstraints(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
+  public getClassSurroundingsCombinedUsageStatisticsAndConstraints(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
     const extractor = new HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor(startClass, this.classes, this.properties);
     this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
     return extractor.getResult();

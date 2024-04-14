@@ -15,7 +15,7 @@ export const getEntityInputParamsSchema = {
 
 export type GetEntityInputParamsType = FromSchema<typeof getEntityInputParamsSchema>;
 
-export const getClassPropertyDomainRangeInputParamsSchema = {
+export const getClassPropertyEndpointsInputParamsSchema = {
   type: 'object',
   properties: {
     classId: {
@@ -29,4 +29,4 @@ export const getClassPropertyDomainRangeInputParamsSchema = {
   required: ['classId', 'propertyId'],
 } as const;
 
-export type GetClassPropertyDomainRangeInputParamsType = FromSchema<typeof getClassPropertyDomainRangeInputParamsSchema>;
+export type GetClassPropertyEndpointsInputParamsType = FromSchema<typeof getClassPropertyEndpointsInputParamsSchema>;

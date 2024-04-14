@@ -10,22 +10,22 @@ export const surroundingsReplySchema = {
     results: {
       type: 'object',
       properties: {
-        startClass: {
+        startClassId: {
           type: 'number',
         },
-        parents: {
+        parentsIds: {
           type: 'array',
           items: {
             type: 'number',
           },
         },
-        subjectOf: {
+        subjectOfIds: {
           type: 'array',
           items: {
             type: 'number',
           },
         },
-        valueOf: {
+        valueOfIds: {
           type: 'array',
           items: {
             type: 'number',
@@ -41,7 +41,7 @@ export const surroundingsReplySchema = {
         },
       },
       additionalProperties: false,
-      required: ['startClass', 'parents', 'subjectOf', 'valueOf', 'classes', 'properties'],
+      required: ['startClassId', 'parentsIds', 'subjectOfIds', 'valueOfIds', 'classes', 'properties'],
     },
   },
   additionalProperties: false,

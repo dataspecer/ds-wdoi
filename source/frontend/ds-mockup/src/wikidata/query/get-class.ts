@@ -5,9 +5,9 @@ import { WdPropertyDescOnly } from '../entities/wd-property';
 import { buildEntityMap } from '../utils/build-entity-map';
 
 interface GetClassWithSurroundingNamesReplyResults {
-  classes: WdClass[];
-  surroundingClassesDecs: WdClassDescOnly[];
-  surroundingPropertiesDecs: WdPropertyDescOnly[];
+  class: WdClass;
+  surroundingClassesDesc: WdClassDescOnly[];
+  surroundingPropertiesDesc: WdPropertyDescOnly[];
 }
 
 interface GetClassWithSurroundingNamesReply {
@@ -16,8 +16,8 @@ interface GetClassWithSurroundingNamesReply {
 
 export interface ClassWithSurroundingsDesc {
   class: WdClass;
-  surroundingClassesDecsMap: Map<EntityId, WdClassDescOnly>;
-  surroundingPropertiesDecsMap: Map<EntityId, WdPropertyDescOnly>;
+  surroundingClassesDescMap: Map<EntityId, WdClassDescOnly>;
+  surroundingPropertiesDescMap: Map<EntityId, WdPropertyDescOnly>;
 }
 
 export async function fetchClassWithSurroundingsDecs(
@@ -25,11 +25,11 @@ export async function fetchClassWithSurroundingsDecs(
 ): Promise<ClassWithSurroundingsDesc> {
   const reply = (await axios.get(`/api/v3/classes/${cls.id}`))
     .data as GetClassWithSurroundingNamesReply;
-  const surroundingClassesDecsMap = buildEntityMap(reply.results.surroundingClassesDecs);
-  const surroundingPropertiesDecsMap = buildEntityMap(reply.results.surroundingPropertiesDecs);
+  const surroundingClassesDescMap = buildEntityMap(reply.results.surroundingClassesDesc);
+  const surroundingPropertiesDescMap = buildEntityMap(reply.results.surroundingPropertiesDesc);
   return {
-    class: reply.results.classes[0],
-    surroundingClassesDecsMap,
-    surroundingPropertiesDecsMap,
+    class: reply.results.class,
+    surroundingClassesDescMap,
+    surroundingPropertiesDescMap,
   };
 }

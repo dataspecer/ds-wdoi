@@ -1,22 +1,26 @@
 import { type FastifyPluginCallback } from 'fastify';
 import {
-  getClassPropertyDomainRangeInputParamsSchema,
-  type GetClassPropertyDomainRangeInputParamsType,
   getEntityInputParamsSchema,
   type GetEntityInputParamsType,
+  type GetClassPropertyEndpointsInputParamsType,
+  getClassPropertyEndpointsInputParamsSchema,
 } from './schemas/input-params.js';
 import { type WdClass } from '../ontology/entities/wd-class.js';
-import { type GetHierarchyInputQueryStringType, getHierarchyInputQueryStringSchema, hierarchyReplySchema } from './schemas/get-hierarchy.js';
+import {
+  type GetClassHierarchyInputQueryStringType,
+  classHierarchyReplySchema,
+  getClassHierarchyInputQueryStringSchema,
+} from './schemas/get-class-hierarchy.js';
 import { type SearchInputQueryStringType, searchInputQueryStringSchema, searchReplySchema } from './schemas/get-search.js';
-import { surroundingsReplySchema } from './schemas/get-surroundings.js';
-import { getClassWithSurroundingNamesReplySchema } from './schemas/get-class.js';
-import { getPropertyWithSurroundingNamesReplySchema } from './schemas/get-property.js';
+import { surroundingsReplySchema } from './schemas/get-class-surroundings.js';
+import { getClassWithSurroundingDescReplySchema } from './schemas/get-class.js';
+import { getPropertyWithSurroundingDescReplySchema } from './schemas/get-property.js';
 import { type WdProperty } from '../ontology/entities/wd-property.js';
 import {
-  type GetClassPropertyDomainRangeInputQueryStringType,
-  getClassPropertyDomainRangeReplySchema,
-  getClassPropertyDomainRangeInputQueryStringSchema,
-} from './schemas/get-property-domain-range.js';
+  type GetClassPropertyEndpointsInputQueryStringType,
+  getClassPropertyEndpointsInputQueryStringSchema,
+  getClassPropertyEndpointsReplySchema,
+} from './schemas/get-class-property-endpoints.js';
 import {
   type GetFilterBySchemaQueryStringType,
   getFilterByInstanceReplySchema,
@@ -51,7 +55,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       schema: {
         params: getEntityInputParamsSchema,
         response: {
-          '2xx': getClassWithSurroundingNamesReplySchema,
+          '2xx': getClassWithSurroundingDescReplySchema,
         },
       },
     },
@@ -62,9 +66,9 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const results = fastify.wdOntology.getClassWithSurroundingDesc(startClass);
       return {
         results: {
-          classes: [results.startClass],
-          surroundingClassesDecs: results.surroundingClassesDecs,
-          surroundingPropertiesDecs: results.surroundingPropertiesDecs,
+          class: results.startClass,
+          surroundingClassesDesc: results.surroundingClassesDesc,
+          surroundingPropertiesDesc: results.surroundingPropertiesDesc,
         },
       };
     },
@@ -78,7 +82,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       schema: {
         params: getEntityInputParamsSchema,
         response: {
-          '2xx': getPropertyWithSurroundingNamesReplySchema,
+          '2xx': getPropertyWithSurroundingDescReplySchema,
         },
       },
     },
@@ -89,9 +93,9 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const results = fastify.wdOntology.getPropertyWithSurroundingDesc(startProperty);
       return {
         results: {
-          properties: [results.startProperty],
-          surroundingClassesDecs: results.surroundingClassesDecs,
-          surroundingPropertiesDecs: results.surroundingPropertiesDecs,
+          property: results.startProperty,
+          surroundingClassesDecs: results.surroundingClassesDesc,
+          surroundingPropertiesDecs: results.surroundingPropertiesDesc,
         },
       };
     },
@@ -99,14 +103,14 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
 
   // Hierarchy
 
-  fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetHierarchyInputQueryStringType }>(
+  fastify.get<{ Params: GetEntityInputParamsType; Querystring: GetClassHierarchyInputQueryStringType }>(
     '/classes/:id/hierarchy',
     {
       schema: {
         params: getEntityInputParamsSchema,
-        querystring: getHierarchyInputQueryStringSchema,
+        querystring: getClassHierarchyInputQueryStringSchema,
         response: {
-          '2xx': hierarchyReplySchema,
+          '2xx': classHierarchyReplySchema,
         },
       },
     },
@@ -115,7 +119,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       fastify.throwOnMissingClassId(id);
       const { part } = req.query;
       const startClass = fastify.wdOntology.getClass(id) as WdClass;
-      const results = fastify.wdOntology.getHierarchy(startClass, part);
+      const results = fastify.wdOntology.getClassHierarchy(startClass, part);
       return { results };
     },
   );
@@ -136,21 +140,21 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { id } = req.params;
       fastify.throwOnMissingClassId(id);
       const startClass = fastify.wdOntology.getClass(id) as WdClass;
-      const results = fastify.wdOntology.getSurroundingsCombinedUsageStatisticsAndConstraints(startClass);
+      const results = fastify.wdOntology.getClassSurroundingsCombinedUsageStatisticsAndConstraints(startClass);
       return { results };
     },
   );
 
   // Domains
 
-  fastify.get<{ Params: GetClassPropertyDomainRangeInputParamsType; Querystring: GetClassPropertyDomainRangeInputQueryStringType }>(
+  fastify.get<{ Params: GetClassPropertyEndpointsInputParamsType; Querystring: GetClassPropertyEndpointsInputQueryStringType }>(
     '/classes/:classId/properties/:propertyId/domains',
     {
       schema: {
-        params: getClassPropertyDomainRangeInputParamsSchema,
-        querystring: getClassPropertyDomainRangeInputQueryStringSchema,
+        params: getClassPropertyEndpointsInputParamsSchema,
+        querystring: getClassPropertyEndpointsInputQueryStringSchema,
         response: {
-          '2xx': getClassPropertyDomainRangeReplySchema,
+          '2xx': getClassPropertyEndpointsReplySchema,
         },
       },
     },
@@ -171,14 +175,14 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
 
   // Ranges
 
-  fastify.get<{ Params: GetClassPropertyDomainRangeInputParamsType; Querystring: GetClassPropertyDomainRangeInputQueryStringType }>(
+  fastify.get<{ Params: GetClassPropertyEndpointsInputParamsType; Querystring: GetClassPropertyEndpointsInputQueryStringType }>(
     '/classes/:classId/properties/:propertyId/ranges',
     {
       schema: {
-        params: getClassPropertyDomainRangeInputParamsSchema,
-        querystring: getClassPropertyDomainRangeInputQueryStringSchema,
+        params: getClassPropertyEndpointsInputParamsSchema,
+        querystring: getClassPropertyEndpointsInputQueryStringSchema,
         response: {
-          '2xx': getClassPropertyDomainRangeReplySchema,
+          '2xx': getClassPropertyEndpointsReplySchema,
         },
       },
     },

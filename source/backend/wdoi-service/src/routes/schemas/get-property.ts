@@ -2,31 +2,28 @@ import { type FromSchema } from 'json-schema-to-ts';
 import { wdClassDescOnlySchema } from './wd-class-schema.js';
 import { wdPropertySchema, wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
-export const getPropertyWithSurroundingNamesReplySchema = {
+export const getPropertyWithSurroundingDescReplySchema = {
   type: 'object',
   properties: {
     results: {
       type: 'object',
       properties: {
-        properties: {
-          type: 'array',
-          items: wdPropertySchema,
-        },
-        surroundingClassesDecs: {
+        property: wdPropertySchema,
+        surroundingClassesDesc: {
           type: 'array',
           items: wdClassDescOnlySchema,
         },
-        surroundingPropertiesDecs: {
+        surroundingPropertiesDesc: {
           type: 'array',
           items: wdPropertyDescOnlySchema,
         },
       },
       additionalProperties: false,
-      required: ['properties', 'surroundingClassesDecs', 'surroundingPropertiesDecs'],
+      required: ['property', 'surroundingClassesDesc', 'surroundingPropertiesDesc'],
     },
   },
   additionalProperties: false,
   required: ['results'],
 } as const;
 
-export type GetPropertyWithSurroundingNamesReplyType = FromSchema<typeof getPropertyWithSurroundingNamesReplySchema>;
+export type GetPropertyWithSurroundingDescReplyType = FromSchema<typeof getPropertyWithSurroundingDescReplySchema>;

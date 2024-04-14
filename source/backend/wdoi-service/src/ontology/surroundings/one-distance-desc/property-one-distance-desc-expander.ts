@@ -6,13 +6,13 @@ import { OneDistanceDescExpander } from './one-distance-desc-expander.js';
 
 export class PropertyOneDistanceDescReturnWrapper {
   startProperty: WdProperty;
-  surroundingClassesDecs: WdClass[];
-  surroundingPropertiesDecs: WdProperty[];
+  surroundingClassesDesc: WdClass[];
+  surroundingPropertiesDesc: WdProperty[];
 
-  constructor(startProperty: WdProperty, surroundingClassesDecs: WdClass[], surroundingPropertiesDecs: WdProperty[]) {
+  constructor(startProperty: WdProperty, surroundingClassesDesc: WdClass[], surroundingPropertiesDesc: WdProperty[]) {
     this.startProperty = startProperty;
-    this.surroundingClassesDecs = surroundingClassesDecs;
-    this.surroundingPropertiesDecs = surroundingPropertiesDecs;
+    this.surroundingClassesDesc = surroundingClassesDesc;
+    this.surroundingPropertiesDesc = surroundingPropertiesDesc;
   }
 }
 

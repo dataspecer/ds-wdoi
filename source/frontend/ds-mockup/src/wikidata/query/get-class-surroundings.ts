@@ -5,10 +5,10 @@ import { WdPropertyDescOnly } from '../entities/wd-property';
 import { buildEntityMap } from '../utils/build-entity-map';
 
 interface GetSurroundingsReplyResults {
-  startClass: EntityId;
-  parents: EntityIdsList;
-  subjectOf: EntityIdsList;
-  valueOf: EntityIdsList;
+  startClassId: EntityId;
+  parentsIds: EntityIdsList;
+  subjectOfIds: EntityIdsList;
+  valueOfIds: EntityIdsList;
   classes: WdClassHierarchySurroundingsDescOnly[];
   properties: WdPropertyDescOnly[];
 }
@@ -32,10 +32,10 @@ export async function fetchClassSurroundings(cls: WdClassDescOnly): Promise<Clas
   const classesMap = buildEntityMap(reply.results.classes);
   const propertyMap = buildEntityMap(reply.results.properties);
   return {
-    startClassId: reply.results.startClass,
-    parentsIds: reply.results.parents,
-    subjectOfIds: reply.results.subjectOf,
-    valueOfIds: reply.results.valueOf,
+    startClassId: reply.results.startClassId,
+    parentsIds: reply.results.parentsIds,
+    subjectOfIds: reply.results.subjectOfIds,
+    valueOfIds: reply.results.valueOfIds,
     classesMap: classesMap,
     propertiesMap: propertyMap,
   };

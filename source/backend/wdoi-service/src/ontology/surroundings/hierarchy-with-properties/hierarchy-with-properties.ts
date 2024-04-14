@@ -5,25 +5,25 @@ import { Extractor } from '../../hierarchy-walker/hierarchy-walker.js';
 import * as Timsort from 'timsort';
 
 export class HierarchyWithPropertiesReturnWrapper {
-  startClass: EntityId;
-  parents: EntityIdsList;
-  subjectOf: EntityIdsList;
-  valueOf: EntityIdsList;
+  startClassId: EntityId;
+  parentsIds: EntityIdsList;
+  subjectOfIds: EntityIdsList;
+  valueOfIds: EntityIdsList;
   classes: WdClass[];
   properties: WdProperty[];
 
   constructor(
-    startClass: EntityId,
-    parents: EntityIdsList,
-    subjectOf: EntityIdsList,
-    valueOf: EntityIdsList,
+    startClassId: EntityId,
+    parentsIds: EntityIdsList,
+    subjectOfIds: EntityIdsList,
+    valueOfIds: EntityIdsList,
     classes: WdClass[],
     properties: WdProperty[],
   ) {
-    this.startClass = startClass;
-    this.parents = parents;
-    this.subjectOf = subjectOf;
-    this.valueOf = valueOf;
+    this.startClassId = startClassId;
+    this.parentsIds = parentsIds;
+    this.subjectOfIds = subjectOfIds;
+    this.valueOfIds = valueOfIds;
     this.classes = classes;
     this.properties = properties;
   }

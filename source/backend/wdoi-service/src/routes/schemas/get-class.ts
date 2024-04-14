@@ -4,31 +4,28 @@ import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
 // Get class with names of surroundings only reply
 
-export const getClassWithSurroundingNamesReplySchema = {
+export const getClassWithSurroundingDescReplySchema = {
   type: 'object',
   properties: {
     results: {
       type: 'object',
       properties: {
-        classes: {
-          type: 'array',
-          items: wdClassSchema,
-        },
-        surroundingClassesDecs: {
+        class: wdClassSchema,
+        surroundingClassesDesc: {
           type: 'array',
           items: wdClassDescOnlySchema,
         },
-        surroundingPropertiesDecs: {
+        surroundingPropertiesDesc: {
           type: 'array',
           items: wdPropertyDescOnlySchema,
         },
       },
       additionalProperties: false,
-      required: ['classes', 'surroundingClassesDecs', 'surroundingPropertiesDecs'],
+      required: ['class', 'surroundingClassesDesc', 'surroundingPropertiesDesc'],
     },
   },
   additionalProperties: false,
   required: ['results'],
 } as const;
 
-export type GetClassWithSurroundingNamesReplyType = FromSchema<typeof getClassWithSurroundingNamesReplySchema>;
+export type GetClassWithSurroundingDescReplyType = FromSchema<typeof getClassWithSurroundingDescReplySchema>;
