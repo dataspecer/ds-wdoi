@@ -21,10 +21,10 @@ def main_domains_ranges_per_class(classes_json_file_path: pathlib.Path, field: L
             for property_record in entity[field.value]:
                 if len(property_record[ScoresFields.RANGE.value]) != 0:
                         cls_property_counts.append({ "range_count": len(property_record[ScoresFields.RANGE.value]), "property_id": property_record[ScoresFields.PROPERTY.value], "class_id": entity['id']}) 
-            cls_property_counts.sort(reverse=True, key=lambda x: x["c"])
+            cls_property_counts.sort(reverse=True, key=lambda x: x["range_count"])
             if len(cls_property_counts) != 0:
                 results.append(cls_property_counts)
-        results.sort(reverse=True, key=lambda x: x[0]["c"])            
+        results.sort(reverse=True, key=lambda x: x[0]["range_count"])            
 
         output_file_name = DOMAINS_OUTPUT_FILE
         if field.value == ClassFields.SUBJECT_OF_STATS.value:

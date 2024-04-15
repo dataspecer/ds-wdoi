@@ -1,12 +1,8 @@
-from typing import Literal
 import core.utils.decoding as decoding
-import core.utils.logging as ul
 from core.utils.timer import timed
-from core.model_simplified.classes import ClassFields
-from core.model_simplified.scores import ScoresFields
-from source.preprocessing.core.model_simplified.constraints import GenConstFields, ItemConstFields
-from source.preprocessing.core.model_simplified.properties import PropertyFields
-from source.preprocessing.core.model_wikidata.properties import UnderlyingTypes
+from core.model_simplified.constraints import GenConstFields, ItemConstFields
+from core.model_simplified.properties import PropertyFields
+from core.model_wikidata.properties import UnderlyingTypes
 from summaries.summaries import main_logger
 import pathlib
 import json
