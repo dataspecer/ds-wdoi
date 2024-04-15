@@ -110,7 +110,9 @@ export class ClassHierarchyWalker {
 
     if (part === 'parents' || part === 'full') {
       parentsIds = this.walkParentHierarchy(startClass, hierarchyClassesExtractor);
-    } else if (part === 'children' || part === 'full') {
+    }
+
+    if (part === 'children' || part === 'full') {
       childrenIds = this.walkChildrenHierarchy(startClass, hierarchyClassesExtractor);
     }
     return new ClassHierarchyReturnWrapper(startClass.id, parentsIds, childrenIds, hierarchyClassesExtractor.getResults());
