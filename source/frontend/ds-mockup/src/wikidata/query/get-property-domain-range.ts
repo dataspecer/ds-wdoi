@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { WdClassDescOnly } from '../entities/wd-class';
+import { WdClassHierarchyDescOnly } from '../entities/wd-class';
 import { WdPropertyDescOnly } from '../entities/wd-property';
 
 interface GetClassPropertyDomainRangeReplyResults {
-  classes: WdClassDescOnly[];
+  classes: WdClassHierarchyDescOnly[];
 }
 
 interface GetClassPropertyDomainRangeReply {
@@ -14,11 +14,11 @@ export type DomainsOrRanges = 'domains' | 'ranges';
 export type OwnOrInherited = 'own' | 'inherited';
 
 export async function fetchDomainOrRange(
-  wdClass: WdClassDescOnly,
+  wdClass: WdClassHierarchyDescOnly,
   wdProperty: WdPropertyDescOnly,
   domainsOrRanges: DomainsOrRanges,
   part: OwnOrInherited,
-): Promise<WdClassDescOnly[]> {
+): Promise<WdClassHierarchyDescOnly[]> {
   return (
     (
       await axios.get(

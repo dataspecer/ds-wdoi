@@ -1,7 +1,7 @@
 // Search
 
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassDescOnlySchema } from './wd-class-schema.js';
+import { wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
 import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
 export const searchInputQueryStringSchema = {
@@ -32,7 +32,7 @@ export const searchReplySchema = {
       properties: {
         classes: {
           type: 'array',
-          items: wdClassDescOnlySchema,
+          items: wdClassHierarchyDescOnlySchema,
         },
         properties: {
           type: 'array',

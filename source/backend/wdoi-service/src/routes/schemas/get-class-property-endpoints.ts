@@ -1,5 +1,5 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassDescOnlySchema } from './wd-class-schema.js';
+import { wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
 
 export const getClassPropertyEndpointsReplySchema = {
   type: 'object',
@@ -9,7 +9,7 @@ export const getClassPropertyEndpointsReplySchema = {
       properties: {
         classes: {
           type: 'array',
-          items: wdClassDescOnlySchema,
+          items: wdClassHierarchyDescOnlySchema,
         },
       },
       additionalProperties: false,
