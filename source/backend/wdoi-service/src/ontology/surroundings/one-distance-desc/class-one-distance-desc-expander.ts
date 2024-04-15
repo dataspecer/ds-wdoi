@@ -31,11 +31,11 @@ export class ClassOneDistanceDescExpander extends OneDistanceDescExpander {
     const propertiesPresent = new Set<EntityId>();
 
     // Classes
-    materializeEntitiesWithContext(this.startClass.subclassOf, this.classes, classesPresent, surroundingClasses);
+    materializeEntitiesWithContext(this.startClass.subclassOf, this.contextClasses, classesPresent, surroundingClasses);
 
     // Properties
-    materializeEntitiesWithContext(this.startClass.subjectOfProperty, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startClass.valueOfProperty, this.properties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startClass.subjectOfProperty, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startClass.valueOfProperty, this.contextProperties, propertiesPresent, surroundingProperties);
 
     return [surroundingClasses, surroundingProperties];
   }

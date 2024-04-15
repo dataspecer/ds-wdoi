@@ -4,7 +4,7 @@ import { type WdProperty } from './entities/wd-property.js';
 import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology.js';
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log.js';
 import { OntologySearch, type SearchResults } from './search/ontologySearch.js';
-import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/hierarchy-walker.js';
+import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/class-hierarchy-walker.js';
 import {
   type HierarchyWithPropertiesReturnWrapper,
   HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor,
@@ -59,7 +59,7 @@ export class WdOntology {
 
   public getClassSurroundingsCombinedUsageStatisticsAndConstraints(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
     const extractor = new HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor(startClass, this.classes, this.properties);
-    this.hierarchyWalker.getParentHierarchyWithExtraction(startClass, extractor);
+    this.hierarchyWalker.walkParentHierarchyExtractionOnly(startClass, extractor);
     return extractor.getResult();
   }
 
@@ -75,7 +75,7 @@ export class WdOntology {
 
   public getInheritedClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
     const extractor = new InheritedClassPropertyDomainsExtractor(cls, property, this.classes, this.properties);
-    this.hierarchyWalker.getParentHierarchyWithExtraction(cls, extractor);
+    this.hierarchyWalker.walkParentHierarchyExtractionOnly(cls, extractor);
     const [classesPresent, resultWrapper] = extractor.getResult();
     expandWithPropertyDomains(resultWrapper.classes, classesPresent, property, this.classes);
     return resultWrapper;
@@ -93,7 +93,7 @@ export class WdOntology {
 
   public getInheritedClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
     const extractor = new InheritedClassPropertyRangesExtractor(cls, property, this.classes, this.properties);
-    this.hierarchyWalker.getParentHierarchyWithExtraction(cls, extractor);
+    this.hierarchyWalker.walkParentHierarchyExtractionOnly(cls, extractor);
     const [classesPresent, resultWrapper] = extractor.getResult();
     expandWithPropertyRanges(resultWrapper.classes, classesPresent, property, this.classes);
     return resultWrapper;

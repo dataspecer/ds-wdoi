@@ -18,18 +18,28 @@ export const classHierarchyReplySchema = {
     results: {
       type: 'object',
       properties: {
-        startClass: wdClassHierarchyDescOnlySchema,
-        parents: {
-          type: 'array',
-          items: wdClassHierarchyDescOnlySchema,
+        startClassId: {
+          type: 'number',
         },
-        children: {
+        parentsIds: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        childrenIds: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        classes: {
           type: 'array',
           items: wdClassHierarchyDescOnlySchema,
         },
       },
       additionalProperties: false,
-      required: ['startClass', 'parents', 'children'],
+      required: ['startClassId', 'parentsIds', 'childrenIds', 'classes'],
     },
   },
   additionalProperties: false,

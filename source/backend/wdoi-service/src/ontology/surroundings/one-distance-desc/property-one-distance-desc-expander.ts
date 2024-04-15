@@ -31,21 +31,21 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
     const propertiesPresent = new Set<EntityId>();
 
     // Subject constraints
-    materializeEntitiesWithContext(this.startProperty.generalConstraints.subjectTypeStats, this.classes, classesPresent, surroundingClasses);
+    materializeEntitiesWithContext(this.startProperty.generalConstraints.subjectTypeStats, this.contextClasses, classesPresent, surroundingClasses);
 
     // Value constraints
     if (WdProperty.isItemProperty(this.startProperty)) {
-      materializeEntitiesWithContext(this.startProperty.itemConstraints.valueTypeStats, this.classes, classesPresent, surroundingClasses);
+      materializeEntitiesWithContext(this.startProperty.itemConstraints.valueTypeStats, this.contextClasses, classesPresent, surroundingClasses);
     }
 
     // Properties
-    materializeEntitiesWithContext(this.startProperty.subpropertyOf, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.subproperties, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.relatedProperty, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.complementaryProperty, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.relatedProperty, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.inverseProperty, this.properties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.negatesProperty, this.properties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.subpropertyOf, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.subproperties, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.relatedProperty, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.complementaryProperty, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.relatedProperty, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.inverseProperty, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(this.startProperty.negatesProperty, this.contextProperties, propertiesPresent, surroundingProperties);
 
     return [surroundingClasses, surroundingProperties];
   }
