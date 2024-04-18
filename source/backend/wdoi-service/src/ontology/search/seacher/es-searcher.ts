@@ -3,6 +3,7 @@ import { type EntityId, type EntityIdsList } from '../../entities/common.js';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types.js';
 import { Searcher } from './searcher.js';
 import { envVars } from '../../../enviroment.js';
+import * as fs from 'fs';
 
 export class EsSearch extends Searcher {
   private readonly client: Client;
@@ -14,9 +15,9 @@ export class EsSearch extends Searcher {
     this.client = new Client({
       node: envVars.ES_NODE,
       auth: { username: 'elastic', password: envVars.ES_PASSWD },
-      caFingerprint: envVars.ES_CA_FINGERPRINT,
+      // caFingerprint: envVars.ES_CA_FINGERPRINT,
       tls: {
-        // ca: fs.readFileSync(envVars.ES_CERT_PATH),
+        ca: fs.readFileSync(envVars.ES_CERT_PATH),
         rejectUnauthorized: false,
       },
     });
