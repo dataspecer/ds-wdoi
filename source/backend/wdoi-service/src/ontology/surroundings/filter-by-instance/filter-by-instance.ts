@@ -109,7 +109,7 @@ export class FilterByInstance {
   }
 
   private tryExtractUri(instanceUri: string): EntityId | null {
-    if (WdEntity.URI_REGEXP.test(instanceUri)) {
+    if (WdClass.URI_REGEXP.test(instanceUri)) {
       const [entityType, entityId] = WdEntity.parseEntityURI(instanceUri);
       if (entityType != null && WdClass.isURIType(entityType) && entityId != null) {
         return entityId;

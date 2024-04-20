@@ -34,6 +34,7 @@ export enum Datatype {
 
 export abstract class WdProperty extends WdEntity {
   private static readonly URIType = 'P';
+  public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity/P|wiki/Property:P)[1-9][0-9]*$');
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
   readonly subpropertyOf: EntityIdsList;

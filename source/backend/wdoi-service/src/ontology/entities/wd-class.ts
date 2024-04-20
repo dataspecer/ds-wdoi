@@ -9,6 +9,7 @@ export const ROOT_CLASS_ID = 35120;
 
 export class WdClass extends WdEntity {
   private static readonly URIType = 'Q';
+  public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity|wiki)/[Q][1-9][0-9]*$');
   readonly subclassOf: EntityIdsList;
   readonly children: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMapping;
