@@ -7,7 +7,6 @@ import {
 } from '../../../../../wikidata/query/get-property-domain-range';
 import { DomainOrRangeClassList } from './DomainOrRangeClassList';
 import {
-  WdClass,
   WdClassDescOnly,
   WdClassHierarchySurroundingsDescOnly,
 } from '../../../../../wikidata/entities/wd-class';

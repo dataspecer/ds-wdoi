@@ -25,12 +25,12 @@ export type GetClassPropertyEndpointsReplyType = FromSchema<typeof getClassPrope
 export const getClassPropertyEndpointsInputQueryStringSchema = {
   type: 'object',
   properties: {
-    part: {
-      enum: ['own', 'inherited'],
+    order: {
+      enum: ['base', 'inherit'],
     },
   },
   additionalProperties: false,
-  required: ['part'],
+  required: ['order'],
 } as const;
 
 export type GetClassPropertyEndpointsInputQueryStringType = FromSchema<typeof getClassPropertyEndpointsInputQueryStringSchema>;

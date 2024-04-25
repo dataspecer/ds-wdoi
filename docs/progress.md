@@ -204,7 +204,12 @@ The first one is the mockup and the second one is the upgrade of the recommendat
     - I split the properties into 4 cathegories: attributes, identifiers, outward, and inward properties.
     - All the lists are made out of accordion and the default way is not displaying anything, just a number.
     - Domain and ranges are diaplayed upon click on item property, to reduce the amount of data sent to the user.
-    - TODO add possibility of using restriction with instance
+3. Filter by instance
+  - added new api on backend to obtain properties with ranges/domains from an instance
+  - added dialog to input instance uri and filterin the properties and domains/ranges
+  - TODO
+    - either add checking
+    - or search bar
 
 ### A new way to assign properties to classes
   
@@ -249,7 +254,6 @@ The first one is the mockup and the second one is the upgrade of the recommendat
 4. I boosted the properties for this type to 1 for all classes, but found out many classes do not have the properties used by the constraints.
     - So far I do not add the properties to the classes.
 
-
 - **Pros from previous solutions** :
   - Used Gzip instead of Bzip2 - cut the combined 1. and 2. phase from 1 day and 9 hours to just 10 hours.
   - Removed dependency on schema tree.
@@ -267,3 +271,13 @@ The first one is the mockup and the second one is the upgrade of the recommendat
   - Boosting of properties for this type.
     - I do not include properties for this type if the property is not used on the class.
    
+
+## 5. iteration
+
+Creating a new adapter and a surroundings dialog to Dataspecer.
+
+- New adapter
+  - Queries to the backend
+- Surroundings dialog
+  - Removed navigation for parents since i could not make it work
+  - Added stepper for selection of parents and ranges

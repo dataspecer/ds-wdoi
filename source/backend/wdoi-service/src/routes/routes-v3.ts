@@ -160,15 +160,15 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
     async (req, res) => {
       const { classId, propertyId } = req.params;
-      const { part } = req.query;
+      const { order } = req.query;
       fastify.throwOnMissingClassId(classId);
       fastify.throwOnMissingPropertyId(propertyId);
       const startClass = fastify.wdOntology.getClass(classId) as WdClass;
       const property = fastify.wdOntology.getProperty(propertyId) as WdProperty;
       const results =
-        part === 'inherited'
-          ? fastify.wdOntology.getInheritedClassPropertyDomains(startClass, property)
-          : fastify.wdOntology.getOwnClassPropertyDomains(startClass, property);
+        order === 'inherit'
+          ? fastify.wdOntology.getClassPropertyDomainsInheritOrder(startClass, property)
+          : fastify.wdOntology.getClassPropertyDomainsBaseOrder(startClass, property);
       return { results };
     },
   );
@@ -188,15 +188,15 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
     async (req, res) => {
       const { classId, propertyId } = req.params;
-      const { part } = req.query;
+      const { order } = req.query;
       fastify.throwOnMissingClassId(classId);
       fastify.throwOnMissingPropertyId(propertyId);
       const startClass = fastify.wdOntology.getClass(classId) as WdClass;
       const property = fastify.wdOntology.getProperty(propertyId) as WdProperty;
       const results =
-        part === 'inherited'
-          ? fastify.wdOntology.getInheritedClassPropertyRanges(startClass, property)
-          : fastify.wdOntology.getOwnClassPropertyRanges(startClass, property);
+        order === 'inherit'
+          ? fastify.wdOntology.getClassPropertyRangesInheritOrder(startClass, property)
+          : fastify.wdOntology.getClassPropertyRangesBaseOrder(startClass, property);
       return { results };
     },
   );

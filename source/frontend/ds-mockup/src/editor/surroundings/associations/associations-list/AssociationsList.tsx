@@ -20,7 +20,7 @@ import { FilterByInstanceDialog } from './FilterByInstanceDialog';
 import { FilterByInstance } from '../../../../wikidata/query/get-filter-by-instance';
 import { FilterByInstanceContext } from './FilterByInstanceContext';
 
-export type PropertyPartsSelectionInput = 'inherited' | 'own';
+export type PropertyPartsSelectionInput = 'inherit' | 'base';
 
 interface PropertiesGroups {
   attributeProperties: WdPropertyDescOnly[];
@@ -61,7 +61,7 @@ function retrieveInAndOutProperties(
   let outPropertiesIds: EntityIdsList = [];
   let inPropertiesIds: EntityIdsList = [];
 
-  if (propertyPartsSelection === 'inherited') {
+  if (propertyPartsSelection === 'inherit') {
     outPropertiesIds = rootSurroundings.subjectOfIds;
     inPropertiesIds = rootSurroundings.valueOfIds;
   } else {
@@ -129,7 +129,7 @@ export function AssociationsList({
   setSelectedPropertiesUpper: React.Dispatch<React.SetStateAction<SelectedProperty[]>>;
 }) {
   const [propertyPartsSelection, setPropertyPartsSelection] =
-    useState<PropertyPartsSelectionInput>('own');
+    useState<PropertyPartsSelectionInput>('base');
   const [filterDialogOpened, setFilterDialogOpened] = useState(false);
   const [filterByInstance, setFilterByInstance] = useState<FilterByInstance | undefined>(undefined);
   const [searchTextInput, setSearchTextInput] = useState('');
@@ -276,12 +276,12 @@ export function AssociationsList({
                 size='small'
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value !== 'inherited' && value !== 'own') setPropertyPartsSelection('own');
+                  if (value !== 'inherit' && value !== 'base') setPropertyPartsSelection('base');
                   else setPropertyPartsSelection(value);
                 }}
               >
-                <MenuItem value={'own'}>Own</MenuItem>
-                <MenuItem value={'inherited'}>Inherited</MenuItem>
+                <MenuItem value={'base'}>Own</MenuItem>
+                <MenuItem value={'inherit'}>Inherited</MenuItem>
               </Select>
             </FormControl>
           </div>

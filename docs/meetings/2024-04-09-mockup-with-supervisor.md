@@ -1,6 +1,5 @@
 # The 13. meeting
 
-
 - Technicke detaily prace:
     - Jak ma vypadat finalni produkt k odevzdani.
     - Bude nekde bezet?

@@ -18,9 +18,9 @@ import {
   type PropertyOneDistanceDescReturnWrapper,
 } from './surroundings/one-distance-desc/property-one-distance-desc-expander.js';
 import {
+  ClassPropertyDomainsInheritOrderExtractor,
   ClassPropertyDomainsRangesResultWrapper,
-  InheritedClassPropertyDomainsExtractor,
-  InheritedClassPropertyRangesExtractor,
+  ClassPropertyRangesInheritOrderExtractor,
   expandWithPropertyDomains,
   expandWithPropertyRanges,
 } from './surroundings/domains-ranges/domains-ranges.js';
@@ -63,7 +63,7 @@ export class WdOntology {
     return extractor.getResult();
   }
 
-  public getOwnClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+  public getClassPropertyDomainsBaseOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
     const domainsPropertyRecord = cls.getDomainsPropertyScoreRecord(property);
     let domainsResult: WdClass[] = [];
     if (domainsPropertyRecord != null) {
@@ -73,15 +73,15 @@ export class WdOntology {
     return new ClassPropertyDomainsRangesResultWrapper(domainsResult);
   }
 
-  public getInheritedClassPropertyDomains(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
-    const extractor = new InheritedClassPropertyDomainsExtractor(cls, property, this.classes, this.properties);
+  public getClassPropertyDomainsInheritOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const extractor = new ClassPropertyDomainsInheritOrderExtractor(cls, property, this.classes, this.properties);
     this.hierarchyWalker.walkParentHierarchyExtractionOnly(cls, extractor);
     const [classesPresent, resultWrapper] = extractor.getResult();
     expandWithPropertyDomains(resultWrapper.classes, classesPresent, property, this.classes);
     return resultWrapper;
   }
 
-  public getOwnClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+  public getClassPropertyRangesBaseOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
     const rangesPropertyRecord = cls.getRangesPropertyScoreRecord(property);
     let rangesResult: WdClass[] = [];
     if (rangesPropertyRecord != null) {
@@ -91,8 +91,8 @@ export class WdOntology {
     return new ClassPropertyDomainsRangesResultWrapper(rangesResult);
   }
 
-  public getInheritedClassPropertyRanges(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
-    const extractor = new InheritedClassPropertyRangesExtractor(cls, property, this.classes, this.properties);
+  public getClassPropertyRangesInheritOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+    const extractor = new ClassPropertyRangesInheritOrderExtractor(cls, property, this.classes, this.properties);
     this.hierarchyWalker.walkParentHierarchyExtractionOnly(cls, extractor);
     const [classesPresent, resultWrapper] = extractor.getResult();
     expandWithPropertyRanges(resultWrapper.classes, classesPresent, property, this.classes);

@@ -11,18 +11,18 @@ interface GetClassPropertyDomainRangeReply {
 }
 
 export type DomainsOrRanges = 'domains' | 'ranges';
-export type OwnOrInherited = 'own' | 'inherited';
+export type BaseOrInherit = 'base' | 'inherit';
 
 export async function fetchDomainOrRange(
   wdClass: WdClassHierarchyDescOnly,
   wdProperty: WdPropertyDescOnly,
   domainsOrRanges: DomainsOrRanges,
-  part: OwnOrInherited,
+  order: BaseOrInherit,
 ): Promise<WdClassHierarchyDescOnly[]> {
   return (
     (
       await axios.get(
-        `/api/v3/classes/${wdClass.id}/properties/${wdProperty.id}/${domainsOrRanges}?part=${part}`,
+        `/api/v3/classes/${wdClass.id}/properties/${wdProperty.id}/${domainsOrRanges}?order=${order}`,
       )
     ).data as GetClassPropertyDomainRangeReply
   ).results.classes;

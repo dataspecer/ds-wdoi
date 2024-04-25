@@ -3,7 +3,7 @@ import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import { DetailListDialog } from '../../../../entity-detail/DetailListDialog';
 import { useMemo, useState } from 'react';
 import { WdClassDescOnly } from '../../../../../wikidata/entities/wd-class';
-import { EntityId, WdEntityDescOnly } from '../../../../../wikidata/entities/wd-entity';
+import { WdEntityDescOnly } from '../../../../../wikidata/entities/wd-entity';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function textFilter(wdClasses: WdClassDescOnly[], text: string): WdClassDescOnly[] {

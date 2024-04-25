@@ -4,7 +4,7 @@ import { type WdProperty } from '../../entities/wd-property.js';
 import { Extractor } from '../../hierarchy-walker/class-hierarchy-walker.js';
 import * as Timsort from 'timsort';
 
-export type ClassPropertyDomainsRangesParts = 'own' | 'inherited';
+export type ClassPropertyDomainsRangesOrder = 'base' | 'inherit';
 
 export class ClassPropertyDomainsRangesResultWrapper {
   readonly classes: WdClass[];
@@ -48,7 +48,7 @@ function addClassesIfMissing(
   });
 }
 
-export abstract class InheritedClassPropertyDomainsRangesExtractor extends Extractor {
+export abstract class ClassPropertyDomainsRangesInheritOrderExtractor extends Extractor {
   // Context
   protected readonly contextClasses: ReadonlyMap<EntityId, WdClass>;
   protected readonly contexProperties: ReadonlyMap<EntityId, WdProperty>;
@@ -112,13 +112,13 @@ export abstract class InheritedClassPropertyDomainsRangesExtractor extends Extra
   }
 }
 
-export class InheritedClassPropertyDomainsExtractor extends InheritedClassPropertyDomainsRangesExtractor {
+export class ClassPropertyDomainsInheritOrderExtractor extends ClassPropertyDomainsRangesInheritOrderExtractor {
   protected getPropertyScoreRecord(cls: WdClass, property: WdProperty): PropertyScoreRecord | undefined {
     return cls.getDomainsPropertyScoreRecord(property);
   }
 }
 
-export class InheritedClassPropertyRangesExtractor extends InheritedClassPropertyDomainsRangesExtractor {
+export class ClassPropertyRangesInheritOrderExtractor extends ClassPropertyDomainsRangesInheritOrderExtractor {
   protected getPropertyScoreRecord(cls: WdClass, property: WdProperty): PropertyScoreRecord | undefined {
     return cls.getRangesPropertyScoreRecord(property);
   }
