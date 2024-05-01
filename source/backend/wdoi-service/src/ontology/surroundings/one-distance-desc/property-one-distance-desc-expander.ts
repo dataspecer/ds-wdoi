@@ -28,7 +28,6 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
     const surroundingClasses: WdClass[] = [];
     const surroundingProperties: WdProperty[] = [];
     const classesPresent = new Set<EntityId>();
-    const propertiesPresent = new Set<EntityId>();
 
     // Subject constraints
     materializeEntitiesWithContext(this.startProperty.generalConstraints.subjectTypeStats, this.contextClasses, classesPresent, surroundingClasses);
@@ -37,15 +36,6 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
     if (WdProperty.isItemProperty(this.startProperty)) {
       materializeEntitiesWithContext(this.startProperty.itemConstraints.valueTypeStats, this.contextClasses, classesPresent, surroundingClasses);
     }
-
-    // Properties
-    materializeEntitiesWithContext(this.startProperty.subpropertyOf, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.subproperties, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.relatedProperty, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.complementaryProperty, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.relatedProperty, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.inverseProperty, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startProperty.negatesProperty, this.contextProperties, propertiesPresent, surroundingProperties);
 
     return [surroundingClasses, surroundingProperties];
   }

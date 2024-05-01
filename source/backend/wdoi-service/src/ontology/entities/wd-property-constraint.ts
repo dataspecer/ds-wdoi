@@ -32,6 +32,7 @@ export class SubjectValueTypeConstraint {
 }
 
 export class GeneralConstraints {
+  readonly subjectTypeStats: EntityIdsList;
   // readonly propertyScope: readonly PropertyScopeValue[];
   // readonly allowedEntityTypes: readonly AllowedEntityTypesValue[];
   // readonly allowedQualifiers: EntityIdsList;
@@ -39,9 +40,9 @@ export class GeneralConstraints {
   // readonly conflictsWith: StatementAllowanceMap;
   // readonly itemRequiresStatement: StatementAllowanceMap;
   // readonly subjectType: SubjectValueTypeConstraint;
-  readonly subjectTypeStats: EntityIdsList;
 
   constructor(inputConstraints: InputConstraints) {
+    this.subjectTypeStats = emptyEntitiesIdsListOrSave(inputConstraints.subjectTypeStats);
     // this.propertyScope = inputConstraints.propertyScope;
     // this.allowedEntityTypes = inputConstraints.allowedEntityTypes;
     // this.allowedQualifiers = emptyEntitiesIdsListOrSave(inputConstraints.allowedQualifiers);
@@ -49,13 +50,12 @@ export class GeneralConstraints {
     // this.conflictsWith = emptyAllowanceMapOrSave(inputConstraints.conflictsWith);
     // this.itemRequiresStatement = emptyAllowanceMapOrSave(inputConstraints.itemRequiresStatement);
     // this.subjectType = new SubjectValueTypeConstraint(inputConstraints.subjectType);
-    this.subjectTypeStats = emptyEntitiesIdsListOrSave(inputConstraints.subjectTypeStats);
   }
 }
 
 export class ItemTypeConstraints {
-  // readonly valueType: InputSubjectValueTypeContraint;
   readonly valueTypeStats: EntityIdsList;
+  // readonly valueType: InputSubjectValueTypeContraint;
   // readonly valueRequiresStatement: StatementAllowanceMap;
   // readonly isSymmetric: boolean;
   // readonly oneOf: EntityIdsList;
@@ -63,8 +63,8 @@ export class ItemTypeConstraints {
   // readonly inverse: null | EntityId;
 
   constructor(inputItemConst: InputItemTypeConstraints) {
-    // this.valueType = new SubjectValueTypeConstraint(inputItemConst.valueType);
     this.valueTypeStats = emptyEntitiesIdsListOrSave(inputItemConst.valueTypeStats);
+    // this.valueType = new SubjectValueTypeConstraint(inputItemConst.valueType);
     // this.valueRequiresStatement = emptyAllowanceMapOrSave(inputItemConst.valueRequiresStatement);
     // this.isSymmetric = inputItemConst.isSymmetric;
     // this.oneOf = emptyEntitiesIdsListOrSave(inputItemConst.oneOf);

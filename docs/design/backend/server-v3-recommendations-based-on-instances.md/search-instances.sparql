@@ -1,0 +1,13 @@
+SELECT ?instance
+WHERE
+{
+  { 
+    wd:Q8502 ^wdt:P279*/^wdt:P31 ?instance . 
+  } 
+  union
+  {
+    ?instance wdt:P31 ?ancestor .
+    ?ancestor ^wdt:P279+ wd:Q8502 .
+  }
+  filter(strstarts(str(?instance), str(wd:)))
+} limit 5

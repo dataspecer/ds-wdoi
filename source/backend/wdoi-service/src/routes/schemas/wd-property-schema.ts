@@ -158,42 +158,42 @@ export const wdPropertySchema = {
     //     type: 'number',
     //   },
     // },
-    subpropertyOf: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    subproperties: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    inverseProperty: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    complementaryProperty: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    negatesProperty: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
-    relatedProperty: {
-      type: 'array',
-      items: {
-        type: 'number',
-      },
-    },
+    // subpropertyOf: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // subproperties: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // inverseProperty: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // complementaryProperty: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // negatesProperty: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
+    // relatedProperty: {
+    //   type: 'array',
+    //   items: {
+    //     type: 'number',
+    //   },
+    // },
     equivalentExternalOntologyProperties: {
       type: 'array',
       items: {
@@ -216,12 +216,12 @@ export const wdPropertySchema = {
     'labels',
     'descriptions',
     // 'instanceOf',
-    'subpropertyOf',
-    'subproperties',
-    'relatedProperty',
-    'inverseProperty',
-    'complementaryProperty',
-    'negatesProperty',
+    // 'subpropertyOf',
+    // 'subproperties',
+    // 'relatedProperty',
+    // 'inverseProperty',
+    // 'complementaryProperty',
+    // 'negatesProperty',
     'equivalentExternalOntologyProperties',
     'generalConstraints',
   ],
