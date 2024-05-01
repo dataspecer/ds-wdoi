@@ -94,8 +94,8 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       return {
         results: {
           property: results.startProperty,
-          surroundingClassesDecs: results.surroundingClassesDesc,
-          surroundingPropertiesDecs: results.surroundingPropertiesDesc,
+          surroundingClassesDesc: results.surroundingClassesDesc,
+          surroundingPropertiesDesc: results.surroundingPropertiesDesc,
         },
       };
     },

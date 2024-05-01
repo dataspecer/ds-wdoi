@@ -1,7 +1,7 @@
 import type {
   EntityIdsList,
   LanguageArrayMap,
-  ExternalOntologyMapping,
+  ExternalOntologyMappings,
   EntityId,
   PropertyScoreRecord,
   PropertyScoreRecordMap,
@@ -13,7 +13,7 @@ import { type StatementAllowanceMap } from './wd-property-constraint.js';
 export const EMPTY_ENTITY_IDS_LIST: EntityIdsList = [];
 export const EMPTY_LANGUAGE_ARRAY_MAP: LanguageArrayMap = {};
 export const EMPTY_LANGUAGE_MAP: LanguageMap = {};
-export const EMPTY_EXTERNAL_ONTOLOGY_MAPPING: ExternalOntologyMapping = [];
+export const EMPTY_EXTERNAL_ONTOLOGY_MAPPINGS: ExternalOntologyMappings = [];
 
 export const EMPTY_RANGE_SCORE_MAP: RangeScoreMap = new Map<EntityId, number>();
 export const EMPTY_PROPERTY_SCORE_RECORD_MAP: PropertyScoreRecordMap = new Map<EntityId, PropertyScoreRecord>();
@@ -25,9 +25,9 @@ export function emptyEntitiesIdsListOrSave(l: EntityIdsList): EntityIdsList {
   else return EMPTY_ENTITY_IDS_LIST;
 }
 
-export function emptyExternalMappingsListOrSave(l: ExternalOntologyMapping): ExternalOntologyMapping {
+export function emptyExternalMappingsListOrSave(l: ExternalOntologyMappings): ExternalOntologyMappings {
   if (l.length !== 0) return l;
-  else return EMPTY_EXTERNAL_ONTOLOGY_MAPPING;
+  else return EMPTY_EXTERNAL_ONTOLOGY_MAPPINGS;
 }
 
 export function emptyLanguageArrayMapOrSave(m: LanguageArrayMap): LanguageArrayMap {

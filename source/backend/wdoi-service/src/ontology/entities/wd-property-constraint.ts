@@ -1,6 +1,6 @@
 import type { InputConstraints, InputItemTypeConstraints, InputSubjectValueTypeContraint } from '../loading/input/input-property.js';
 import type { EntityIdsList } from './common.js';
-import { emptyEntitiesIdsListOrSave } from './empty-type-constants.js';
+import { emptyEntitiesIdsListOrSave } from './wd-property-empty-type-constants.js';
 
 export enum PropertyScopeValue {
   AS_MAIN = 0,

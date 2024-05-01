@@ -8,7 +8,7 @@ export type EntityIdsList = readonly EntityId[];
 export type EntityIriList = readonly EntityIri[];
 
 export type ExternalEntityId = string;
-export type ExternalOntologyMapping = readonly ExternalEntityId[];
+export type ExternalOntologyMappings = readonly ExternalEntityId[];
 
 export type RangeScoreMap = ReadonlyMap<EntityId, number>;
 export interface PropertyScoreRecord {

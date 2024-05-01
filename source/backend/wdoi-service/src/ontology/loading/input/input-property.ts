@@ -1,4 +1,4 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common.js';
+import type { EntityId, EntityIdsList, ExternalOntologyMappings } from '../../entities/common.js';
 import type {
   AllowedEntityTypesValue,
   EmptyTypeConstraint,
@@ -33,7 +33,7 @@ export interface InputProperty extends InputEntity {
   readonly complementaryProperty: EntityIdsList;
   readonly negatesProperty: EntityIdsList;
   readonly subproperties: EntityIdsList;
-  readonly equivalentProperty: ExternalOntologyMapping;
+  readonly equivalentProperty: ExternalOntologyMappings;
   readonly constraints: InputConstraints;
 }
 

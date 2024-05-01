@@ -1,4 +1,4 @@
-import type { EntityId, EntityIdsList, ExternalOntologyMapping } from '../../entities/common.js';
+import type { EntityId, EntityIdsList, ExternalOntologyMappings } from '../../entities/common.js';
 import type { InputEntity } from './input-entity.js';
 
 export interface InputPropertyRangeScoreRecord {
@@ -18,7 +18,7 @@ export type InputPropertyScoreRecordList = readonly InputPropertyScoreRecord[];
 export interface InputClass extends InputEntity {
   readonly subclassOf: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
-  readonly equivalentClass: ExternalOntologyMapping;
+  readonly equivalentClass: ExternalOntologyMappings;
   readonly children: EntityIdsList;
   readonly subjectOf: EntityIdsList;
   readonly valueOf: EntityIdsList;

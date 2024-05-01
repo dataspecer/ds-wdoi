@@ -1,5 +1,5 @@
 import type { EntityId, PropertyScoreRecord, PropertyScoreRecordMap, RangeScoreMap } from '../entities/common.js';
-import { emptyEntitiesIdsListOrSave, emptyRangeScoreMapOrSave } from '../entities/empty-type-constants.js';
+import { emptyEntitiesIdsListOrSave, emptyRangeScoreMapOrSave } from '../entities/wd-property-empty-type-constants.js';
 import { type InputPropertyRangeScoreRecords, type InputPropertyScoreRecordList } from './input/input-class.js';
 
 export function createPropertyScoreRecordMap(propertyScoreRecordList: InputPropertyScoreRecordList): PropertyScoreRecordMap {

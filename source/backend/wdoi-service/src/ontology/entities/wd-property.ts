@@ -1,8 +1,8 @@
 import type { InputItemTypeConstraints, InputProperty } from '../loading/input/input-property.js';
-import type { EntityIdsList, ExternalOntologyMapping } from './common.js';
+import type { EntityIdsList, ExternalOntologyMappings } from './common.js';
 import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints } from './wd-property-constraint.js';
 import { WdEntity } from './wd-entity.js';
-import { emptyExternalMappingsListOrSave } from './empty-type-constants.js';
+import { emptyExternalMappingsListOrSave } from './wd-property-empty-type-constants.js';
 
 export enum UnderlyingType {
   ENTITY = 0,
@@ -37,7 +37,7 @@ export abstract class WdProperty extends WdEntity {
   public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity/P|wiki/Property:P)[1-9][0-9]*$');
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
-  readonly equivalentExternalOntologyProperties: ExternalOntologyMapping;
+  readonly equivalentExternalOntologyProperties: ExternalOntologyMappings;
   readonly generalConstraints: GeneralConstraints;
   // readonly subpropertyOf: EntityIdsList;
   // readonly relatedProperty: EntityIdsList;
