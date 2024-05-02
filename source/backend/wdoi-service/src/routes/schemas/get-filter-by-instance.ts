@@ -12,7 +12,9 @@ export const getFilterBySchemaQueryStringSchema = {
   required: ['url'],
 } as const;
 
-export type GetFilterBySchemaQueryStringType = FromSchema<typeof getFilterBySchemaQueryStringSchema>;
+export type GetFilterBySchemaQueryStringType = FromSchema<
+  typeof getFilterBySchemaQueryStringSchema
+>;
 
 export const filterPropertyRecordSchema = {
   type: 'object',

@@ -46,5 +46,7 @@ export const classHierarchyReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetClassHierarchyInputQueryStringType = FromSchema<typeof getClassHierarchyInputQueryStringSchema>;
+export type GetClassHierarchyInputQueryStringType = FromSchema<
+  typeof getClassHierarchyInputQueryStringSchema
+>;
 export type HierarchyReplyType = FromSchema<typeof classHierarchyReplySchema>;

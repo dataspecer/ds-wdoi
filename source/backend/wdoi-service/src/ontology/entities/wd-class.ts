@@ -1,4 +1,9 @@
-import type { EntityIdsList, ExternalOntologyMappings, PropertyScoreRecord, PropertyScoreRecordMap } from './common.js';
+import type {
+  EntityIdsList,
+  ExternalOntologyMappings,
+  PropertyScoreRecord,
+  PropertyScoreRecordMap,
+} from './common.js';
 import type { InputClass } from '../loading/input/input-class.js';
 import { WdEntity } from './wd-entity.js';
 import { createPropertyScoreRecordMap } from '../loading/load-property-recommendations.js';
@@ -13,7 +18,10 @@ export const ROOT_CLASS_ID = 35120;
 
 export class WdClass extends WdEntity {
   private static readonly URIType = 'Q';
-  public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity|wiki)/Q[1-9][0-9]*$');
+  public static readonly URI_REGEXP = new RegExp(
+    '^https?://www.wikidata.org/(entity|wiki)/Q[1-9][0-9]*$',
+  );
+
   readonly subclassOf: EntityIdsList;
   readonly children: EntityIdsList;
   readonly equivalentExternalOntologyClasses: ExternalOntologyMappings;
@@ -35,16 +43,22 @@ export class WdClass extends WdEntity {
     super(inputClass);
     this.subclassOf = emptyEntitiesIdsListOrSave(inputClass.subclassOf);
     this.children = emptyEntitiesIdsListOrSave(inputClass.children);
-    this.equivalentExternalOntologyClasses = emptyExternalMappingsListOrSave(inputClass.equivalentClass);
+    this.equivalentExternalOntologyClasses = emptyExternalMappingsListOrSave(
+      inputClass.equivalentClass,
+    );
 
     // this.instances = emptyEntitiesIdsListOrSave(inputClass.instances);
     // this.propertiesForThisType = emptyEntitiesIdsListOrSave(inputClass.propertiesForThisType);
 
     this.subjectOfProperty = emptyEntitiesIdsListOrSave(inputClass.subjectOfStats);
-    this.subjectOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.subjectOfStatsScores));
+    this.subjectOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(
+      createPropertyScoreRecordMap(inputClass.subjectOfStatsScores),
+    );
 
     this.valueOfProperty = emptyEntitiesIdsListOrSave(inputClass.valueOfStats);
-    this.valueOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(createPropertyScoreRecordMap(inputClass.valueOfStatsScores));
+    this.valueOfPropertyScoresMap = emptyPropertyScoreRecordMapOrSave(
+      createPropertyScoreRecordMap(inputClass.valueOfStatsScores),
+    );
   }
 
   static isRootClass(cls: WdClass): boolean {

@@ -7,9 +7,15 @@ export abstract class Searcher {
     this.defaultLanguagePriority = defaultLanguagePriority;
   }
 
-  public abstract searchClasses(query: string, languagePriority: string | undefined): Promise<EntityIdsList>;
+  public abstract searchClasses(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList>;
 
-  public abstract searchProperties(query: string, languagePriority: string | undefined): Promise<EntityIdsList>;
+  public abstract searchProperties(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList>;
 
   protected interleaveArrays(arr: any[][]): any[] {
     return Array.from(

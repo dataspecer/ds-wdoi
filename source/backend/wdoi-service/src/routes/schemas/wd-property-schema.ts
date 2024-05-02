@@ -117,7 +117,9 @@ export const itemConstraintsSchema = {
     // },
   },
   additionalProperties: false,
-  required: [/* 'valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse', */ 'valueTypeStats'],
+  required: [
+    /* 'valueType', 'valueRequiresStatement', 'isSymmetric', 'oneOf', 'noneOf', 'inverse', */ 'valueTypeStats',
+  ],
 } as const;
 
 export const emptyConstraintsSchema = {

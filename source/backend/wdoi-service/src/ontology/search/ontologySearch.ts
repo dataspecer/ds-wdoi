@@ -37,7 +37,10 @@ export class OntologySearch {
     return new SearchResults([], []);
   }
 
-  constructor(classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(
+    classes: ReadonlyMap<EntityId, WdClass>,
+    properties: ReadonlyMap<EntityId, WdProperty>,
+  ) {
     this.classes = classes;
     this.properties = properties;
     this.esSearch = new EsSearch(OntologySearch.DEFAULT_LANGUAGE_PRIORITY);
@@ -68,16 +71,28 @@ export class OntologySearch {
     return new SearchResults(classesSearchResult, propertiesSearchResult);
   }
 
-  private async searchClasses(query: string, languagePriority: string | undefined): Promise<WdClass[]> {
+  private async searchClasses(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<WdClass[]> {
     const wdClassesIds = this.wdSearch.searchClasses(query, languagePriority);
     const esClassesIds = this.esSearch.searchClasses(query, languagePriority);
-    return materializeEntities(this.makeUniqueWithKeptOrder([...(await wdClassesIds), ...(await esClassesIds)]), this.classes);
+    return materializeEntities(
+      this.makeUniqueWithKeptOrder([...(await wdClassesIds), ...(await esClassesIds)]),
+      this.classes,
+    );
   }
 
-  private async searchProperties(query: string, languagePriority: string | undefined): Promise<WdProperty[]> {
+  private async searchProperties(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<WdProperty[]> {
     const wdPropertiesIds = this.wdSearch.searchProperties(query, languagePriority);
     const esPropertiesIds = this.esSearch.searchProperties(query, languagePriority);
-    return materializeEntities(this.makeUniqueWithKeptOrder([...(await wdPropertiesIds), ...(await esPropertiesIds)]), this.properties);
+    return materializeEntities(
+      this.makeUniqueWithKeptOrder([...(await wdPropertiesIds), ...(await esPropertiesIds)]),
+      this.properties,
+    );
   }
 
   private makeUniqueWithKeptOrder(entityIds: EntityIdsList): EntityIdsList {

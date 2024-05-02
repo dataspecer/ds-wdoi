@@ -1,4 +1,9 @@
-import type { EntityId, EntityIdsList, PropertyScoreRecord, PropertyScoreRecordMap } from '../../entities/common.js';
+import type {
+  EntityId,
+  EntityIdsList,
+  PropertyScoreRecord,
+  PropertyScoreRecordMap,
+} from '../../entities/common.js';
 import { type WdClass } from '../../entities/wd-class.js';
 import { type WdProperty } from '../../entities/wd-property.js';
 import { Extractor } from '../../hierarchy-walker/class-hierarchy-walker.js';
@@ -49,7 +54,11 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
   private readonly parentsIdsSet: Set<EntityId> = new Set<EntityId>();
   private readonly classesIdsSet: Set<EntityId> = new Set<EntityId>();
 
-  constructor(startClass: WdClass, contextClasses: ReadonlyMap<EntityId, WdClass>, contextProperties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(
+    startClass: WdClass,
+    contextClasses: ReadonlyMap<EntityId, WdClass>,
+    contextProperties: ReadonlyMap<EntityId, WdProperty>,
+  ) {
     super();
     this.startClass = startClass;
     this.contextClasses = contextClasses;
@@ -109,14 +118,21 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
     }
   }
 
-  private tryExchangeScoreInMarkers(propertyId: EntityId, newScore: number, marker: Map<EntityId, number>): void {
+  private tryExchangeScoreInMarkers(
+    propertyId: EntityId,
+    newScore: number,
+    marker: Map<EntityId, number>,
+  ): void {
     const currentScore = marker.get(propertyId) as number;
     if (currentScore < newScore) {
       marker.set(propertyId, newScore);
     }
   }
 
-  private getPropertyScoreValue(propertyId: EntityId, localPropMap: PropertyScoreRecordMap | null): number {
+  private getPropertyScoreValue(
+    propertyId: EntityId,
+    localPropMap: PropertyScoreRecordMap | null,
+  ): number {
     if (localPropMap != null && localPropMap.has(propertyId)) {
       const propertyScoreRecord = localPropMap.get(propertyId) as PropertyScoreRecord;
       return propertyScoreRecord.score;
@@ -138,8 +154,14 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
   }
 
   protected finalize_results(): void {
-    Timsort.sort(this.subjectOfIds, (a, b) => (this.subjectOfIdsMap.get(b) as number) - (this.subjectOfIdsMap.get(a) as number));
-    Timsort.sort(this.valueOfIds, (a, b) => (this.valueOfIdsMap.get(b) as number) - (this.valueOfIdsMap.get(a) as number));
+    Timsort.sort(
+      this.subjectOfIds,
+      (a, b) => (this.subjectOfIdsMap.get(b) as number) - (this.subjectOfIdsMap.get(a) as number),
+    );
+    Timsort.sort(
+      this.valueOfIds,
+      (a, b) => (this.valueOfIdsMap.get(b) as number) - (this.valueOfIdsMap.get(a) as number),
+    );
   }
 }
 
@@ -153,6 +175,13 @@ export class HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtract
       this.subjectOfIds,
       this.valueOfIdsMap,
     );
-    this.processProperties('value', cls.valueOfProperty, cls.valueOfPropertyScoresMap, this.valueOfIdsMap, this.valueOfIds, this.subjectOfIdsMap);
+    this.processProperties(
+      'value',
+      cls.valueOfProperty,
+      cls.valueOfPropertyScoresMap,
+      this.valueOfIdsMap,
+      this.valueOfIds,
+      this.subjectOfIdsMap,
+    );
   }
 }

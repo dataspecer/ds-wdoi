@@ -4,7 +4,9 @@ import { emptyLanguageMapOrSave } from './wd-property-empty-type-constants.js';
 
 export abstract class WdEntity {
   public static entityURITypes: Set<string> = new Set<string>();
-  public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity/Q|entity/P|wiki/Q|wiki/Property:P)[1-9][0-9]*$');
+  public static readonly URI_REGEXP = new RegExp(
+    '^https?://www.wikidata.org/(entity/Q|entity/P|wiki/Q|wiki/Property:P)[1-9][0-9]*$',
+  );
 
   readonly id: EntityId;
   readonly iri: string;

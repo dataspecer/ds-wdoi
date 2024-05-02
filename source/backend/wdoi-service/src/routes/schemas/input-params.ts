@@ -29,4 +29,6 @@ export const getClassPropertyEndpointsInputParamsSchema = {
   required: ['classId', 'propertyId'],
 } as const;
 
-export type GetClassPropertyEndpointsInputParamsType = FromSchema<typeof getClassPropertyEndpointsInputParamsSchema>;
+export type GetClassPropertyEndpointsInputParamsType = FromSchema<
+  typeof getClassPropertyEndpointsInputParamsSchema
+>;

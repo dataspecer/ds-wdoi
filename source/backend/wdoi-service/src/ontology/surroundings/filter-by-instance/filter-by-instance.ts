@@ -4,6 +4,7 @@ import { WdClass } from '../../entities/wd-class.js';
 import { WdEntity } from '../../entities/wd-entity.js';
 import { WdProperty } from '../../entities/wd-property.js';
 import SparqlClient from 'sparql-http-client';
+import { type ClassHierarchyWalker } from '../../hierarchy-walker/class-hierarchy-walker.js';
 
 interface SparqlSelectRowItem {
   value: string;
@@ -34,23 +35,38 @@ export class FilterByInstanceReturnWrapper {
   readonly instanceOfIds: EntityIdsList;
   readonly subjectOfFilterRecords: FilterPropertyRecord[];
   readonly valueOfFilterRecords: FilterPropertyRecord[];
+  readonly parentsIdsHierarchy: EntityIdsList;
 
-  constructor(instanceOfIds: EntityIdsList, subjectOfFilterRecords: FilterPropertyRecord[], valueOfFilterRecords: FilterPropertyRecord[]) {
+  constructor(
+    instanceOfIds: EntityIdsList,
+    subjectOfFilterRecords: FilterPropertyRecord[],
+    valueOfFilterRecords: FilterPropertyRecord[],
+    parentsIdsHierarchy: EntityIdsList,
+  ) {
     this.instanceOfIds = instanceOfIds;
     this.subjectOfFilterRecords = subjectOfFilterRecords;
     this.valueOfFilterRecords = valueOfFilterRecords;
+    this.parentsIdsHierarchy = parentsIdsHierarchy;
   }
 }
 
 export class FilterByInstance {
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
+  private readonly hierarchyWalker: ClassHierarchyWalker;
   private readonly WIKIDATA_SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
-  private readonly wikidataSparqlClient = new SparqlClient({ endpointUrl: this.WIKIDATA_SPARQL_ENDPOINT });
+  private readonly wikidataSparqlClient = new SparqlClient({
+    endpointUrl: this.WIKIDATA_SPARQL_ENDPOINT,
+  });
 
-  constructor(classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(
+    classes: ReadonlyMap<EntityId, WdClass>,
+    properties: ReadonlyMap<EntityId, WdProperty>,
+    hierarchyWalker: ClassHierarchyWalker,
+  ) {
     this.classes = classes;
     this.properties = properties;
+    this.hierarchyWalker = hierarchyWalker;
   }
 
   private static buildQueryOutward(instanceId: number): string {
@@ -105,7 +121,7 @@ export class FilterByInstance {
         }
       } catch (_) {}
     }
-    return new FilterByInstanceReturnWrapper([], [], []);
+    return new FilterByInstanceReturnWrapper([], [], [], []);
   }
 
   private tryExtractUri(instanceUri: string): EntityId | null {
@@ -119,8 +135,12 @@ export class FilterByInstance {
   }
 
   private async createFilterInternal(instanceId: EntityId): Promise<FilterByInstanceReturnWrapper> {
-    const outwardsResponse = this.wikidataSparqlClient.query.select(FilterByInstance.buildQueryOutward(instanceId));
-    const inwardsResponse = this.wikidataSparqlClient.query.select(FilterByInstance.buildQueryInward(instanceId));
+    const outwardsResponse = this.wikidataSparqlClient.query.select(
+      FilterByInstance.buildQueryOutward(instanceId),
+    );
+    const inwardsResponse = this.wikidataSparqlClient.query.select(
+      FilterByInstance.buildQueryInward(instanceId),
+    );
 
     const instanceOfIds: EntityId[] = [];
     const outwardFilterRecords = new Map<EntityId, FilterPropertyRecord>();
@@ -128,22 +148,43 @@ export class FilterByInstance {
 
     await this.parseOutwardsResponse(outwardsResponse, outwardFilterRecords, instanceOfIds);
     await this.parseInwardsResponse(inwardsResponse, inwardFilterRecords);
+    const parentsIdsHierarchy = this.getParentsIdsHierarchy(instanceOfIds);
 
     if (instanceOfIds.length !== 0) {
-      return new FilterByInstanceReturnWrapper(instanceOfIds, [...outwardFilterRecords.values()], [...inwardFilterRecords.values()]);
+      return new FilterByInstanceReturnWrapper(
+        instanceOfIds,
+        [...outwardFilterRecords.values()],
+        [...inwardFilterRecords.values()],
+        parentsIdsHierarchy,
+      );
     } else {
-      return new FilterByInstanceReturnWrapper([], [], []);
+      return new FilterByInstanceReturnWrapper([], [], [], []);
     }
   }
 
-  private parseOutwardResponseRow(row: SparqlSelectOutwardRow): [EntityId | undefined, EntityId | undefined, EntityId | undefined] {
+  private getParentsIdsHierarchy(instanceOfIds: EntityIdsList): EntityIdsList {
+    const parentsIds: EntityId[] = [];
+    instanceOfIds.forEach((clsId) => {
+      const cls = this.classes.get(clsId) as WdClass;
+      const hierarchyResultsWrapper = this.hierarchyWalker.getHierarchy(cls, 'parents');
+      parentsIds.push(hierarchyResultsWrapper.startClassId, ...hierarchyResultsWrapper.parentsIds);
+    });
+
+    return [];
+  }
+
+  private parseOutwardResponseRow(
+    row: SparqlSelectOutwardRow,
+  ): [EntityId | undefined, EntityId | undefined, EntityId | undefined] {
     const instanceOfId = this.parseIdFromString(row.instanceOfId?.value);
     const propertyId = this.parseIdFromString(row.propertyId?.value);
     const classId = this.parseIdFromString(row.classId?.value);
     return [instanceOfId, propertyId, classId];
   }
 
-  private parseInwardResponseRow(row: SparqlSelectInwardRow): [EntityId | undefined, EntityId | undefined] {
+  private parseInwardResponseRow(
+    row: SparqlSelectInwardRow,
+  ): [EntityId | undefined, EntityId | undefined] {
     const instanceOfId = this.parseIdFromString(row.instanceOfId?.value);
     const propertyId = this.parseIdFromString(row.propertyId?.value);
     return [instanceOfId, propertyId];
@@ -164,7 +205,10 @@ export class FilterByInstance {
   ): void {
     const record = filterRecords.get(propertyId);
     if (record == null) {
-      const newRecord: FilterPropertyRecord = { rangeIds: classId != null ? [classId] : [], propertyId };
+      const newRecord: FilterPropertyRecord = {
+        rangeIds: classId != null ? [classId] : [],
+        propertyId,
+      };
       filterRecords.set(propertyId, newRecord);
     } else if (classId != null && !record.rangeIds.includes(classId)) {
       record.rangeIds.push(classId);
@@ -207,13 +251,20 @@ export class FilterByInstance {
     }
   }
 
-  private async parseInwardsResponse(responseStream: internal.Readable, filterRecords: Map<EntityId, FilterPropertyRecord>): Promise<void> {
+  private async parseInwardsResponse(
+    responseStream: internal.Readable,
+    filterRecords: Map<EntityId, FilterPropertyRecord>,
+  ): Promise<void> {
     for await (const row of responseStream) {
       const [instanceOfId, propertyId] = this.parseInwardResponseRow(row);
       if (this.isValidClassId(instanceOfId) && this.isValidPropertyId(propertyId)) {
         const property = this.properties.get(propertyId as number) as WdProperty;
         if (WdProperty.isItemProperty(property)) {
-          this.addToFilterRecordsIfMissing(propertyId as number, filterRecords, instanceOfId as number);
+          this.addToFilterRecordsIfMissing(
+            propertyId as number,
+            filterRecords,
+            instanceOfId as number,
+          );
         }
       }
     }

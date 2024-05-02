@@ -26,4 +26,6 @@ export const getPropertyWithSurroundingDescReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetPropertyWithSurroundingDescReplyType = FromSchema<typeof getPropertyWithSurroundingDescReplySchema>;
+export type GetPropertyWithSurroundingDescReplyType = FromSchema<
+  typeof getPropertyWithSurroundingDescReplySchema
+>;

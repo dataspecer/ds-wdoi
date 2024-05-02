@@ -1,4 +1,10 @@
-import type { EntityId, EntityIdsList, EntityIri, LanguageMap, LanguageArrayMap } from '../../entities/common.js';
+import type {
+  EntityId,
+  EntityIdsList,
+  EntityIri,
+  LanguageMap,
+  LanguageArrayMap,
+} from '../../entities/common.js';
 
 export interface InputEntity {
   readonly id: EntityId;

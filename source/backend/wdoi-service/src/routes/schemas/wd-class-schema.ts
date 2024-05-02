@@ -185,7 +185,17 @@ export const wdClassHierarchySurroundingsDescOnlySchema = {
     },
   },
   additionalProperties: false,
-  required: ['id', 'iri', 'labels', 'descriptions', 'subclassOf', 'subjectOfProperty', 'valueOfProperty'],
+  required: [
+    'id',
+    'iri',
+    'labels',
+    'descriptions',
+    'subclassOf',
+    'subjectOfProperty',
+    'valueOfProperty',
+  ],
 } as const;
 
-export type WdClassHierarchySurroundingsDescOnlySchemaType = FromSchema<typeof wdClassHierarchySurroundingsDescOnlySchema>;
+export type WdClassHierarchySurroundingsDescOnlySchemaType = FromSchema<
+  typeof wdClassHierarchySurroundingsDescOnlySchema
+>;

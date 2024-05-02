@@ -11,7 +11,12 @@ export class ClassHierarchyReturnWrapper {
   public readonly childrenIds: EntityIdsList;
   public readonly classes: WdClass[];
 
-  constructor(startClassId: EntityId, parentsIds: EntityIdsList, childrenIds: EntityIdsList, classes: WdClass[]) {
+  constructor(
+    startClassId: EntityId,
+    parentsIds: EntityIdsList,
+    childrenIds: EntityIdsList,
+    classes: WdClass[],
+  ) {
     this.startClassId = startClassId;
     this.parentsIds = parentsIds;
     this.childrenIds = childrenIds;
@@ -49,7 +54,10 @@ export class ClassHierarchyWalker {
   protected readonly contextClasses: ReadonlyMap<EntityId, WdClass>;
   protected readonly contextProperties: ReadonlyMap<EntityId, WdProperty>;
 
-  constructor(contextClasses: ReadonlyMap<EntityId, WdClass>, contextProperties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(
+    contextClasses: ReadonlyMap<EntityId, WdClass>,
+    contextProperties: ReadonlyMap<EntityId, WdProperty>,
+  ) {
     this.contextClasses = contextClasses;
     this.contextProperties = contextProperties;
   }
@@ -95,15 +103,24 @@ export class ClassHierarchyWalker {
     return returnClassesIds;
   }
 
-  protected walkParentHierarchy(startClass: WdClass, publicExtractor: Extractor | undefined = undefined): EntityIdsList {
+  protected walkParentHierarchy(
+    startClass: WdClass,
+    publicExtractor: Extractor | undefined = undefined,
+  ): EntityIdsList {
     return this.walkHierarchy(startClass, this.getParentsExtractor, publicExtractor);
   }
 
-  protected walkChildrenHierarchy(startClass: WdClass, publicExtractor: Extractor | undefined = undefined): EntityIdsList {
+  protected walkChildrenHierarchy(
+    startClass: WdClass,
+    publicExtractor: Extractor | undefined = undefined,
+  ): EntityIdsList {
     return this.walkHierarchy(startClass, this.getChildrenExtractor, publicExtractor);
   }
 
-  public getHierarchy(startClass: WdClass, part: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
+  public getHierarchy(
+    startClass: WdClass,
+    part: ClassHierarchyWalkerParts,
+  ): ClassHierarchyReturnWrapper {
     const hierarchyClassesExtractor = new HierarchyClassesExtractor(startClass);
     let parentsIds: EntityIdsList = [];
     let childrenIds: EntityIdsList = [];
@@ -115,7 +132,12 @@ export class ClassHierarchyWalker {
     if (part === 'children' || part === 'full') {
       childrenIds = this.walkChildrenHierarchy(startClass, hierarchyClassesExtractor);
     }
-    return new ClassHierarchyReturnWrapper(startClass.id, parentsIds, childrenIds, hierarchyClassesExtractor.getResults());
+    return new ClassHierarchyReturnWrapper(
+      startClass.id,
+      parentsIds,
+      childrenIds,
+      hierarchyClassesExtractor.getResults(),
+    );
   }
 
   public walkParentHierarchyExtractionOnly(startClass: WdClass, publicExtractor: Extractor): void {

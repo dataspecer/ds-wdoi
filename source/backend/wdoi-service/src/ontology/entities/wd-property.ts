@@ -1,6 +1,10 @@
 import type { InputItemTypeConstraints, InputProperty } from '../loading/input/input-property.js';
 import type { EntityIdsList, ExternalOntologyMappings } from './common.js';
-import { type EmptyTypeConstraint, GeneralConstraints, ItemTypeConstraints } from './wd-property-constraint.js';
+import {
+  type EmptyTypeConstraint,
+  GeneralConstraints,
+  ItemTypeConstraints,
+} from './wd-property-constraint.js';
 import { WdEntity } from './wd-entity.js';
 import { emptyExternalMappingsListOrSave } from './wd-property-empty-type-constants.js';
 
@@ -34,7 +38,10 @@ export enum Datatype {
 
 export abstract class WdProperty extends WdEntity {
   private static readonly URIType = 'P';
-  public static readonly URI_REGEXP = new RegExp('^https?://www.wikidata.org/(entity/P|wiki/Property:P)[1-9][0-9]*$');
+  public static readonly URI_REGEXP = new RegExp(
+    '^https?://www.wikidata.org/(entity/P|wiki/Property:P)[1-9][0-9]*$',
+  );
+
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
   readonly equivalentExternalOntologyProperties: ExternalOntologyMappings;
@@ -54,7 +61,9 @@ export abstract class WdProperty extends WdEntity {
     super(inputProperty);
     this.datatype = inputProperty.datatype;
     this.underlyingType = inputProperty.underlyingType;
-    this.equivalentExternalOntologyProperties = emptyExternalMappingsListOrSave(inputProperty.equivalentProperty);
+    this.equivalentExternalOntologyProperties = emptyExternalMappingsListOrSave(
+      inputProperty.equivalentProperty,
+    );
     this.generalConstraints = new GeneralConstraints(inputProperty.constraints);
     // this.subpropertyOf = emptyEntitiesIdsListOrSave(inputProperty.subpropertyOf);
     // this.relatedProperty = emptyEntitiesIdsListOrSave(inputProperty.relatedProperty);
@@ -89,7 +98,11 @@ export abstract class WdProperty extends WdEntity {
   // }
 
   datatypeIsNotLexicographic(): boolean {
-    return this.datatype !== Datatype.LEXEME && this.datatype !== Datatype.FORM && this.datatype !== Datatype.SENSE;
+    return (
+      this.datatype !== Datatype.LEXEME &&
+      this.datatype !== Datatype.FORM &&
+      this.datatype !== Datatype.SENSE
+    );
   }
 
   public static isURIType(entityType: string): boolean {
@@ -118,7 +131,9 @@ export class ItemProperty extends WdProperty {
 
   constructor(inputProperty: InputProperty) {
     super(inputProperty);
-    this.itemConstraints = new ItemTypeConstraints(inputProperty.constraints.typeDependent as InputItemTypeConstraints);
+    this.itemConstraints = new ItemTypeConstraints(
+      inputProperty.constraints.typeDependent as InputItemTypeConstraints,
+    );
   }
 
   // public getRangeClassIdsByConstraints(): EntityIdsList {

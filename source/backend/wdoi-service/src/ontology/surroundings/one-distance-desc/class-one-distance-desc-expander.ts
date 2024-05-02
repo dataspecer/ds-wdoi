@@ -9,7 +9,11 @@ export class ClassOneDistanceDescReturnWrapper {
   surroundingClassesDesc: WdClass[];
   surroundingPropertiesDesc: WdProperty[];
 
-  constructor(startClass: WdClass, surroundingClassesDesc: WdClass[], surroundingPropertiesDesc: WdProperty[]) {
+  constructor(
+    startClass: WdClass,
+    surroundingClassesDesc: WdClass[],
+    surroundingPropertiesDesc: WdProperty[],
+  ) {
     this.startClass = startClass;
     this.surroundingClassesDesc = surroundingClassesDesc;
     this.surroundingPropertiesDesc = surroundingPropertiesDesc;
@@ -19,7 +23,11 @@ export class ClassOneDistanceDescReturnWrapper {
 export class ClassOneDistanceDescExpander extends OneDistanceDescExpander {
   protected readonly startClass: WdClass;
 
-  constructor(startClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(
+    startClass: WdClass,
+    classes: ReadonlyMap<EntityId, WdClass>,
+    properties: ReadonlyMap<EntityId, WdProperty>,
+  ) {
     super(classes, properties);
     this.startClass = startClass;
   }
@@ -31,17 +39,36 @@ export class ClassOneDistanceDescExpander extends OneDistanceDescExpander {
     const propertiesPresent = new Set<EntityId>();
 
     // Classes
-    materializeEntitiesWithContext(this.startClass.subclassOf, this.contextClasses, classesPresent, surroundingClasses);
+    materializeEntitiesWithContext(
+      this.startClass.subclassOf,
+      this.contextClasses,
+      classesPresent,
+      surroundingClasses,
+    );
 
     // Properties
-    materializeEntitiesWithContext(this.startClass.subjectOfProperty, this.contextProperties, propertiesPresent, surroundingProperties);
-    materializeEntitiesWithContext(this.startClass.valueOfProperty, this.contextProperties, propertiesPresent, surroundingProperties);
+    materializeEntitiesWithContext(
+      this.startClass.subjectOfProperty,
+      this.contextProperties,
+      propertiesPresent,
+      surroundingProperties,
+    );
+    materializeEntitiesWithContext(
+      this.startClass.valueOfProperty,
+      this.contextProperties,
+      propertiesPresent,
+      surroundingProperties,
+    );
 
     return [surroundingClasses, surroundingProperties];
   }
 
   public getSurroundings(): ClassOneDistanceDescReturnWrapper {
     const [surroundingClassNames, surroundingPropertyNames] = this.getOneDistanceDocsSurroundings();
-    return new ClassOneDistanceDescReturnWrapper(this.startClass, surroundingClassNames, surroundingPropertyNames);
+    return new ClassOneDistanceDescReturnWrapper(
+      this.startClass,
+      surroundingClassNames,
+      surroundingPropertyNames,
+    );
   }
 }

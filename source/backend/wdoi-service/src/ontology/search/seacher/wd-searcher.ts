@@ -25,14 +25,31 @@ export class WdSearch extends Searcher {
   private static readonly BASE_URL = 'https://www.wikidata.org/w/api.php';
   private static readonly API_ENDPOINTS = {
     searchEntities: (type: SearchEntityType, query: string, languagePriority: string) => {
-      return WdSearch.BASE_URL + `?action=wbsearchentities&search=${encodeURI(query)}&language=${languagePriority}&limit=7&type=${type}&format=json`;
+      return (
+        WdSearch.BASE_URL +
+        '?action=wbsearchentities' +
+        '&search=' +
+        encodeURI(query) +
+        '&language=' +
+        languagePriority +
+        '&limit=7' +
+        '&type=' +
+        type +
+        '&format=json'
+      );
     },
   };
 
-  private async search(type: SearchEntityType, query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+  private async search(
+    type: SearchEntityType,
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList> {
     const lang = languagePriority ?? this.defaultLanguagePriority;
 
-    const response = await (await fetch(WdSearch.API_ENDPOINTS.searchEntities(type, query, lang))).json();
+    const response = await (
+      await fetch(WdSearch.API_ENDPOINTS.searchEntities(type, query, lang))
+    ).json();
 
     if (isWdPhpSearchEntitiesResponse(response)) {
       return this.parseSearchHits(response.search);
@@ -40,11 +57,17 @@ export class WdSearch extends Searcher {
     return [];
   }
 
-  public async searchClasses(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+  public async searchClasses(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList> {
     return await this.search('item', query, languagePriority);
   }
 
-  public async searchProperties(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+  public async searchProperties(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList> {
     return await this.search('property', query, languagePriority);
   }
 

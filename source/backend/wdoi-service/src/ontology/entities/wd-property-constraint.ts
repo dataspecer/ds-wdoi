@@ -1,4 +1,8 @@
-import type { InputConstraints, InputItemTypeConstraints, InputSubjectValueTypeContraint } from '../loading/input/input-property.js';
+import type {
+  InputConstraints,
+  InputItemTypeConstraints,
+  InputSubjectValueTypeContraint,
+} from '../loading/input/input-property.js';
 import type { EntityIdsList } from './common.js';
 import { emptyEntitiesIdsListOrSave } from './wd-property-empty-type-constants.js';
 
@@ -27,7 +31,9 @@ export class SubjectValueTypeConstraint {
   constructor(inputSubjectValueConst: InputSubjectValueTypeContraint) {
     this.subclassOf = emptyEntitiesIdsListOrSave(inputSubjectValueConst.subclassOf);
     this.instanceOf = emptyEntitiesIdsListOrSave(inputSubjectValueConst.instanceOf);
-    this.subclassOfInstanceOf = emptyEntitiesIdsListOrSave(inputSubjectValueConst.subclassOfInstanceOf);
+    this.subclassOfInstanceOf = emptyEntitiesIdsListOrSave(
+      inputSubjectValueConst.subclassOfInstanceOf,
+    );
   }
 }
 

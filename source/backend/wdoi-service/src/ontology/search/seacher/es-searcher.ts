@@ -23,7 +23,11 @@ export class EsSearch extends Searcher {
     });
   }
 
-  private async search(indexName: string, queryString: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+  private async search(
+    indexName: string,
+    queryString: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList> {
     // const searchResultsPrefix = this.client.search({
     //   index: indexName,
     //   _source: false,
@@ -106,11 +110,17 @@ export class EsSearch extends Searcher {
     return this.makeUnique((await searchResultsMatch).hits.hits);
   }
 
-  public async searchClasses(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+  public async searchClasses(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList> {
     return await this.search(EsSearch.CLASSES_ELASTIC_INDEX_NAME, query, languagePriority);
   }
 
-  public async searchProperties(query: string, languagePriority: string | undefined): Promise<EntityIdsList> {
+  public async searchProperties(
+    query: string,
+    languagePriority: string | undefined,
+  ): Promise<EntityIdsList> {
     return await this.search(EsSearch.PROPERTIES_ELASTIC_INDEX_NAME, query, languagePriority);
   }
 

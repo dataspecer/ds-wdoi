@@ -28,4 +28,6 @@ export const getClassWithSurroundingDescReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetClassWithSurroundingDescReplyType = FromSchema<typeof getClassWithSurroundingDescReplySchema>;
+export type GetClassWithSurroundingDescReplyType = FromSchema<
+  typeof getClassWithSurroundingDescReplySchema
+>;

@@ -20,7 +20,9 @@ export const getClassPropertyEndpointsReplySchema = {
   required: ['results'],
 } as const;
 
-export type GetClassPropertyEndpointsReplyType = FromSchema<typeof getClassPropertyEndpointsReplySchema>;
+export type GetClassPropertyEndpointsReplyType = FromSchema<
+  typeof getClassPropertyEndpointsReplySchema
+>;
 
 export const getClassPropertyEndpointsInputQueryStringSchema = {
   type: 'object',
@@ -33,4 +35,6 @@ export const getClassPropertyEndpointsInputQueryStringSchema = {
   required: ['order'],
 } as const;
 
-export type GetClassPropertyEndpointsInputQueryStringType = FromSchema<typeof getClassPropertyEndpointsInputQueryStringSchema>;
+export type GetClassPropertyEndpointsInputQueryStringType = FromSchema<
+  typeof getClassPropertyEndpointsInputQueryStringSchema
+>;

@@ -14,7 +14,11 @@ function processLine(line: string, processEntityFunc: (jsonEntity: any) => void)
   }
 }
 
-async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jsonEntity: any) => void, logStep: number): Promise<void> {
+async function processWdJsonFile(
+  pathToJsonFile: string,
+  processEntityFunc: (jsonEntity: any) => void,
+  logStep: number,
+): Promise<void> {
   const fileStream = fs.createReadStream(pathToJsonFile);
   const rl = readline.createInterface({
     input: fileStream,
@@ -30,14 +34,18 @@ async function processWdJsonFile(pathToJsonFile: string, processEntityFunc: (jso
   log(`${i} entities`);
 }
 
-export function processFuncClassesCapture(entitiesMap: Map<EntityId, WdClass>): (jsonEntity: any) => void {
+export function processFuncClassesCapture(
+  entitiesMap: Map<EntityId, WdClass>,
+): (jsonEntity: any) => void {
   return (jsonEntity: any) => {
     const newWdClass = new WdClass(jsonEntity);
     entitiesMap.set(newWdClass.id, newWdClass);
   };
 }
 
-export function processFuncPropertiesCapture(entitiesMap: Map<EntityId, WdProperty>): (jsonEntity: any) => void {
+export function processFuncPropertiesCapture(
+  entitiesMap: Map<EntityId, WdProperty>,
+): (jsonEntity: any) => void {
   return (jsonEntity: any) => {
     const newWdProperty = WdProperty.factory(jsonEntity);
     entitiesMap.set(newWdProperty.id, newWdProperty);

@@ -93,7 +93,10 @@ export abstract class ClassPropertyDomainsRangesInheritOrderExtractor extends Ex
     }
   }
 
-  protected abstract getPropertyScoreRecord(cls: WdClass, property: WdProperty): PropertyScoreRecord | undefined;
+  protected abstract getPropertyScoreRecord(
+    cls: WdClass,
+    property: WdProperty,
+  ): PropertyScoreRecord | undefined;
 
   private tryExchangeScoreInMarker(clsId: EntityId, newScore: number): void {
     const currentScore = this.classesIdsMap.get(clsId) as number;
@@ -108,18 +111,27 @@ export abstract class ClassPropertyDomainsRangesInheritOrderExtractor extends Ex
   }
 
   protected finalize_results(): void {
-    Timsort.sort(this.classes, (a, b) => (this.classesIdsMap.get(b.id) as number) - (this.classesIdsMap.get(a.id) as number));
+    Timsort.sort(
+      this.classes,
+      (a, b) => (this.classesIdsMap.get(b.id) as number) - (this.classesIdsMap.get(a.id) as number),
+    );
   }
 }
 
 export class ClassPropertyDomainsInheritOrderExtractor extends ClassPropertyDomainsRangesInheritOrderExtractor {
-  protected getPropertyScoreRecord(cls: WdClass, property: WdProperty): PropertyScoreRecord | undefined {
+  protected getPropertyScoreRecord(
+    cls: WdClass,
+    property: WdProperty,
+  ): PropertyScoreRecord | undefined {
     return cls.getDomainsPropertyScoreRecord(property);
   }
 }
 
 export class ClassPropertyRangesInheritOrderExtractor extends ClassPropertyDomainsRangesInheritOrderExtractor {
-  protected getPropertyScoreRecord(cls: WdClass, property: WdProperty): PropertyScoreRecord | undefined {
+  protected getPropertyScoreRecord(
+    cls: WdClass,
+    property: WdProperty,
+  ): PropertyScoreRecord | undefined {
     return cls.getRangesPropertyScoreRecord(property);
   }
 }

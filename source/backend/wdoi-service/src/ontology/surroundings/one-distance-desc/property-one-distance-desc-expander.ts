@@ -9,7 +9,11 @@ export class PropertyOneDistanceDescReturnWrapper {
   surroundingClassesDesc: WdClass[];
   surroundingPropertiesDesc: WdProperty[];
 
-  constructor(startProperty: WdProperty, surroundingClassesDesc: WdClass[], surroundingPropertiesDesc: WdProperty[]) {
+  constructor(
+    startProperty: WdProperty,
+    surroundingClassesDesc: WdClass[],
+    surroundingPropertiesDesc: WdProperty[],
+  ) {
     this.startProperty = startProperty;
     this.surroundingClassesDesc = surroundingClassesDesc;
     this.surroundingPropertiesDesc = surroundingPropertiesDesc;
@@ -19,7 +23,11 @@ export class PropertyOneDistanceDescReturnWrapper {
 export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
   protected readonly startProperty: WdProperty;
 
-  constructor(startProperty: WdProperty, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  constructor(
+    startProperty: WdProperty,
+    classes: ReadonlyMap<EntityId, WdClass>,
+    properties: ReadonlyMap<EntityId, WdProperty>,
+  ) {
     super(classes, properties);
     this.startProperty = startProperty;
   }
@@ -30,11 +38,21 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
     const classesPresent = new Set<EntityId>();
 
     // Subject constraints
-    materializeEntitiesWithContext(this.startProperty.generalConstraints.subjectTypeStats, this.contextClasses, classesPresent, surroundingClasses);
+    materializeEntitiesWithContext(
+      this.startProperty.generalConstraints.subjectTypeStats,
+      this.contextClasses,
+      classesPresent,
+      surroundingClasses,
+    );
 
     // Value constraints
     if (WdProperty.isItemProperty(this.startProperty)) {
-      materializeEntitiesWithContext(this.startProperty.itemConstraints.valueTypeStats, this.contextClasses, classesPresent, surroundingClasses);
+      materializeEntitiesWithContext(
+        this.startProperty.itemConstraints.valueTypeStats,
+        this.contextClasses,
+        classesPresent,
+        surroundingClasses,
+      );
     }
 
     return [surroundingClasses, surroundingProperties];
@@ -42,6 +60,10 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
 
   public getSurroundings(): PropertyOneDistanceDescReturnWrapper {
     const [surroundingClassNames, surroundingPropertyNames] = this.getOneDistanceDocsSurroundings();
-    return new PropertyOneDistanceDescReturnWrapper(this.startProperty, surroundingClassNames, surroundingPropertyNames);
+    return new PropertyOneDistanceDescReturnWrapper(
+      this.startProperty,
+      surroundingClassNames,
+      surroundingPropertyNames,
+    );
   }
 }

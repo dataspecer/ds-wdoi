@@ -1,10 +1,18 @@
 import type { EntityId } from './entities/common.js';
 import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class.js';
 import { type WdProperty } from './entities/wd-property.js';
-import { loadEntities, processFuncClassesCapture, processFuncPropertiesCapture } from './loading/load-ontology.js';
+import {
+  loadEntities,
+  processFuncClassesCapture,
+  processFuncPropertiesCapture,
+} from './loading/load-ontology.js';
 import { CLASSES_LOG_STEP, PROPERTIES_LOG_STEP, log } from '../logging/log.js';
 import { OntologySearch, type SearchResults } from './search/ontologySearch.js';
-import { type ClassHierarchyReturnWrapper, ClassHierarchyWalker, type ClassHierarchyWalkerParts } from './hierarchy-walker/class-hierarchy-walker.js';
+import {
+  type ClassHierarchyReturnWrapper,
+  ClassHierarchyWalker,
+  type ClassHierarchyWalkerParts,
+} from './hierarchy-walker/class-hierarchy-walker.js';
 import {
   type HierarchyWithPropertiesReturnWrapper,
   HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor,
@@ -25,7 +33,10 @@ import {
   expandWithPropertyRanges,
 } from './surroundings/domains-ranges/domains-ranges.js';
 import { materializeEntities } from './utils/materialize-entities.js';
-import { FilterByInstance, type FilterByInstanceReturnWrapper } from './surroundings/filter-by-instance/filter-by-instance.js';
+import {
+  FilterByInstance,
+  type FilterByInstanceReturnWrapper,
+} from './surroundings/filter-by-instance/filter-by-instance.js';
 
 export class WdOntology {
   private readonly rootClass: WdClass;
@@ -35,13 +46,21 @@ export class WdOntology {
   private readonly hierarchyWalker: ClassHierarchyWalker;
   private readonly filterByInstance: FilterByInstance;
 
-  private constructor(rootClass: WdClass, classes: ReadonlyMap<EntityId, WdClass>, properties: ReadonlyMap<EntityId, WdProperty>) {
+  private constructor(
+    rootClass: WdClass,
+    classes: ReadonlyMap<EntityId, WdClass>,
+    properties: ReadonlyMap<EntityId, WdProperty>,
+  ) {
     this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
     this.ontologySearch = new OntologySearch(this.classes, this.properties);
     this.hierarchyWalker = new ClassHierarchyWalker(this.classes, this.properties);
-    this.filterByInstance = new FilterByInstance(this.classes, this.properties);
+    this.filterByInstance = new FilterByInstance(
+      this.classes,
+      this.properties,
+      this.hierarchyWalker,
+    );
   }
 
   public async search(
@@ -50,49 +69,95 @@ export class WdOntology {
     searchProperties: boolean | undefined,
     languagePriority: string | undefined,
   ): Promise<SearchResults> {
-    return await this.ontologySearch.search(query, searchClasses, searchProperties, languagePriority);
+    return await this.ontologySearch.search(
+      query,
+      searchClasses,
+      searchProperties,
+      languagePriority,
+    );
   }
 
-  public getClassHierarchy(startClass: WdClass, parts: ClassHierarchyWalkerParts): ClassHierarchyReturnWrapper {
+  public getClassHierarchy(
+    startClass: WdClass,
+    parts: ClassHierarchyWalkerParts,
+  ): ClassHierarchyReturnWrapper {
     return this.hierarchyWalker.getHierarchy(startClass, parts);
   }
 
-  public getClassSurroundingsCombinedUsageStatisticsAndConstraints(startClass: WdClass): HierarchyWithPropertiesReturnWrapper {
-    const extractor = new HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor(startClass, this.classes, this.properties);
+  public getClassSurroundingsCombinedUsageStatisticsAndConstraints(
+    startClass: WdClass,
+  ): HierarchyWithPropertiesReturnWrapper {
+    const extractor = new HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor(
+      startClass,
+      this.classes,
+      this.properties,
+    );
     this.hierarchyWalker.walkParentHierarchyExtractionOnly(startClass, extractor);
     return extractor.getResult();
   }
 
-  public getClassPropertyDomainsBaseOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+  public getClassPropertyDomainsBaseOrder(
+    cls: WdClass,
+    property: WdProperty,
+  ): ClassPropertyDomainsRangesResultWrapper {
     const domainsPropertyRecord = cls.getDomainsPropertyScoreRecord(property);
     let domainsResult: WdClass[] = [];
     if (domainsPropertyRecord != null) {
       domainsResult = materializeEntities(domainsPropertyRecord.range, this.classes);
-      expandWithPropertyDomains(domainsResult, domainsPropertyRecord.rangeScoreMap, property, this.classes);
+      expandWithPropertyDomains(
+        domainsResult,
+        domainsPropertyRecord.rangeScoreMap,
+        property,
+        this.classes,
+      );
     }
     return new ClassPropertyDomainsRangesResultWrapper(domainsResult);
   }
 
-  public getClassPropertyDomainsInheritOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
-    const extractor = new ClassPropertyDomainsInheritOrderExtractor(cls, property, this.classes, this.properties);
+  public getClassPropertyDomainsInheritOrder(
+    cls: WdClass,
+    property: WdProperty,
+  ): ClassPropertyDomainsRangesResultWrapper {
+    const extractor = new ClassPropertyDomainsInheritOrderExtractor(
+      cls,
+      property,
+      this.classes,
+      this.properties,
+    );
     this.hierarchyWalker.walkParentHierarchyExtractionOnly(cls, extractor);
     const [classesPresent, resultWrapper] = extractor.getResult();
     expandWithPropertyDomains(resultWrapper.classes, classesPresent, property, this.classes);
     return resultWrapper;
   }
 
-  public getClassPropertyRangesBaseOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
+  public getClassPropertyRangesBaseOrder(
+    cls: WdClass,
+    property: WdProperty,
+  ): ClassPropertyDomainsRangesResultWrapper {
     const rangesPropertyRecord = cls.getRangesPropertyScoreRecord(property);
     let rangesResult: WdClass[] = [];
     if (rangesPropertyRecord != null) {
       rangesResult = materializeEntities(rangesPropertyRecord.range, this.classes);
-      expandWithPropertyRanges(rangesResult, rangesPropertyRecord.rangeScoreMap, property, this.classes);
+      expandWithPropertyRanges(
+        rangesResult,
+        rangesPropertyRecord.rangeScoreMap,
+        property,
+        this.classes,
+      );
     }
     return new ClassPropertyDomainsRangesResultWrapper(rangesResult);
   }
 
-  public getClassPropertyRangesInheritOrder(cls: WdClass, property: WdProperty): ClassPropertyDomainsRangesResultWrapper {
-    const extractor = new ClassPropertyRangesInheritOrderExtractor(cls, property, this.classes, this.properties);
+  public getClassPropertyRangesInheritOrder(
+    cls: WdClass,
+    property: WdProperty,
+  ): ClassPropertyDomainsRangesResultWrapper {
+    const extractor = new ClassPropertyRangesInheritOrderExtractor(
+      cls,
+      property,
+      this.classes,
+      this.properties,
+    );
     this.hierarchyWalker.walkParentHierarchyExtractionOnly(cls, extractor);
     const [classesPresent, resultWrapper] = extractor.getResult();
     expandWithPropertyRanges(resultWrapper.classes, classesPresent, property, this.classes);
@@ -108,12 +173,22 @@ export class WdOntology {
   }
 
   public getClassWithSurroundingDesc(startClass: WdClass): ClassOneDistanceDescReturnWrapper {
-    const classOneDistanceDocsExpander = new ClassOneDistanceDescExpander(startClass, this.classes, this.properties);
+    const classOneDistanceDocsExpander = new ClassOneDistanceDescExpander(
+      startClass,
+      this.classes,
+      this.properties,
+    );
     return classOneDistanceDocsExpander.getSurroundings();
   }
 
-  public getPropertyWithSurroundingDesc(startProperty: WdProperty): PropertyOneDistanceDescReturnWrapper {
-    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDescExpander(startProperty, this.classes, this.properties);
+  public getPropertyWithSurroundingDesc(
+    startProperty: WdProperty,
+  ): PropertyOneDistanceDescReturnWrapper {
+    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDescExpander(
+      startProperty,
+      this.classes,
+      this.properties,
+    );
     return propertyOneDistanceDocsExpander.getSurroundings();
   }
 
@@ -129,12 +204,23 @@ export class WdOntology {
     return await this.filterByInstance.createFilter(url);
   }
 
-  static async create(classesJsonFilePath: string, propertiesJsonFilePath: string): Promise<WdOntology | never> {
+  static async create(
+    classesJsonFilePath: string,
+    propertiesJsonFilePath: string,
+  ): Promise<WdOntology | never> {
     log('Starting to load properties');
-    const props = await loadEntities<WdProperty>(propertiesJsonFilePath, processFuncPropertiesCapture, PROPERTIES_LOG_STEP);
+    const props = await loadEntities<WdProperty>(
+      propertiesJsonFilePath,
+      processFuncPropertiesCapture,
+      PROPERTIES_LOG_STEP,
+    );
 
     log('Starting to load classes');
-    const cls = await loadEntities<WdClass>(classesJsonFilePath, processFuncClassesCapture, CLASSES_LOG_STEP);
+    const cls = await loadEntities<WdClass>(
+      classesJsonFilePath,
+      processFuncClassesCapture,
+      CLASSES_LOG_STEP,
+    );
 
     const rootClass = cls.get(ROOT_CLASS_ID);
     if (rootClass != null) {
