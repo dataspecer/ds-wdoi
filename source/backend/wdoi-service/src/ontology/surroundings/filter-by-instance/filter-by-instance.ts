@@ -35,18 +35,18 @@ export class FilterByInstanceReturnWrapper {
   readonly instanceOfIds: EntityIdsList;
   readonly subjectOfFilterRecords: FilterPropertyRecord[];
   readonly valueOfFilterRecords: FilterPropertyRecord[];
-  readonly parentsIdsHierarchy: EntityIdsList;
+  readonly classIdsHierarchy: EntityIdsList;
 
   constructor(
     instanceOfIds: EntityIdsList,
     subjectOfFilterRecords: FilterPropertyRecord[],
     valueOfFilterRecords: FilterPropertyRecord[],
-    parentsIdsHierarchy: EntityIdsList,
+    classIdsHierarchy: EntityIdsList,
   ) {
     this.instanceOfIds = instanceOfIds;
     this.subjectOfFilterRecords = subjectOfFilterRecords;
     this.valueOfFilterRecords = valueOfFilterRecords;
-    this.parentsIdsHierarchy = parentsIdsHierarchy;
+    this.classIdsHierarchy = classIdsHierarchy;
   }
 }
 
@@ -148,29 +148,32 @@ export class FilterByInstance {
 
     await this.parseOutwardsResponse(outwardsResponse, outwardFilterRecords, instanceOfIds);
     await this.parseInwardsResponse(inwardsResponse, inwardFilterRecords);
-    const parentsIdsHierarchy = this.getParentsIdsHierarchy(instanceOfIds);
+    const classIdsHierarchy = this.getClassIdsHierarchy(instanceOfIds);
 
     if (instanceOfIds.length !== 0) {
       return new FilterByInstanceReturnWrapper(
         instanceOfIds,
         [...outwardFilterRecords.values()],
         [...inwardFilterRecords.values()],
-        parentsIdsHierarchy,
+        classIdsHierarchy,
       );
     } else {
       return new FilterByInstanceReturnWrapper([], [], [], []);
     }
   }
 
-  private getParentsIdsHierarchy(instanceOfIds: EntityIdsList): EntityIdsList {
-    const parentsIds: EntityId[] = [];
+  private getClassIdsHierarchy(instanceOfIds: EntityIdsList): EntityIdsList {
+    const classIdsHierarchy: EntityId[] = [];
     instanceOfIds.forEach((clsId) => {
       const cls = this.classes.get(clsId) as WdClass;
       const hierarchyResultsWrapper = this.hierarchyWalker.getHierarchy(cls, 'parents');
-      parentsIds.push(hierarchyResultsWrapper.startClassId, ...hierarchyResultsWrapper.parentsIds);
+      classIdsHierarchy.push(
+        hierarchyResultsWrapper.startClassId,
+        ...hierarchyResultsWrapper.parentsIds,
+      );
     });
 
-    return [];
+    return classIdsHierarchy;
   }
 
   private parseOutwardResponseRow(

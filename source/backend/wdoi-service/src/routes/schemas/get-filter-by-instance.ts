@@ -55,7 +55,20 @@ export const getFilterByInstanceReplySchema = {
           type: 'array',
           items: filterPropertyRecordSchema,
         },
+        classIdsHierarchy: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
       },
+      additionalProperties: false,
+      required: [
+        'instanceOfIds',
+        'subjectOfFilterRecords',
+        'valueOfFilterRecords',
+        'classIdsHierarchy',
+      ],
     },
   },
   additionalProperties: false,
