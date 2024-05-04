@@ -152,7 +152,8 @@ def __modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pa
 def main_modification(classes_json_file: pathlib.Path, properties_json_file: pathlib.Path, classes_property_stats_json_file: pathlib.Path, properties_stats_json_file: pathlib.Path):
     try:
         __modify(classes_json_file, properties_json_file, classes_property_stats_json_file, properties_stats_json_file)
+        return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")
-        main_logger.error("Exiting...")
-        sys.exit(1)
+        main_logger.critical("Exiting phase...")
+        return False

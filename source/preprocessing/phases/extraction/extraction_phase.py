@@ -1,5 +1,4 @@
 import gzip
-import sys
 import pathlib
 import core.json_extractors.wd_fields as wd_fields_ex
 import core.model_wikidata.entity_types as wd_entity_types
@@ -51,7 +50,8 @@ def main_extraction(phase, lang, classes_gzip_file_path, properties_gzip_file_pa
             __extract_classes(classes_gzip_file_path, lang)
         if phase in ["both", "props"]:
             __extract_properties(properties_gzip_file_path, lang)
+        return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")
-        main_logger.error("Exiting...")
-        sys.exit(1)
+        main_logger.critical("Exiting phase...")
+        return False

@@ -51,7 +51,8 @@ def __compute_recommendations(classes_json_file_path: pathlib.Path, properties_j
 def main_property_recommendations(classe_json_file: pathlib.Path, properties_json_file: pathlib.Path):
     try:
         __compute_recommendations(classe_json_file, properties_json_file)
+        return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")
-        main_logger.error("Exiting...")
-        sys.exit(1)
+        main_logger.critical("Exiting phase...")
+        return False

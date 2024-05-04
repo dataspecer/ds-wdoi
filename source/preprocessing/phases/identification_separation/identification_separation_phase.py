@@ -1,4 +1,3 @@
-import sys
 import core.utils.timer as timer
 import phases.identification_separation.identification as identification
 import phases.identification_separation.separation as separation
@@ -14,7 +13,8 @@ def main_identification_separation(gzip_dump_file_path):
         property_statistics.first_pass_finished(wd_classes_ids_set, wd_properties_ids_dict)
         separation.separate_to_files(gzip_dump_file_path, wd_classes_ids_set, wd_properties_ids_dict, property_statistics)
         property_statistics.finalize_statistics()
+        return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")
-        main_logger.critical("Exiting...")
-        sys.exit(1)
+        main_logger.critical("Exiting phase...")
+        return False

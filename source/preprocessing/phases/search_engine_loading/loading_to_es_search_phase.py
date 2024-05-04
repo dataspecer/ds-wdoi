@@ -61,7 +61,8 @@ def main_loading(properties_json_file: pathlib.Path, classes_json_file: pathlib.
     try:
         __load_properties(properties_json_file, lang)
         __load_classes(classes_json_file, lang)
+        return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")
-        main_logger.error("Exiting...")
-        sys.exit(1)
+        main_logger.critical("Exiting phase...")
+        return False

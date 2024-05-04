@@ -1,6 +1,5 @@
 import gzip
 import pathlib
-import logging
 import core.utils.counter as counter
 import core.utils.decoding as decoding
 import core.utils.logging as ul
@@ -34,8 +33,8 @@ def __log_sum_progress(class_counter, property_counter, classes_set, properties_
 
 # Sitelinks are not used in the ontology.
 def __reduce_wd_entity(wd_entity):
-    if RootFields.SITELINKS in wd_entity:
-        wd_entity[RootFields.SITELINKS] = None
+    if RootFields.SITELINKS.value in wd_entity:
+        wd_entity[RootFields.SITELINKS.value] = None
     return wd_entity
 
 def __process_wd_item(wd_entity, classes_output_file, class_counter):
