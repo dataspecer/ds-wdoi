@@ -1,5 +1,4 @@
-import pathlib
-import sys 
+from pathlib import Path
 import core.utils.decoding as decoding
 import core.utils.logging as ul
 from core.utils.timer import timed
@@ -25,24 +24,24 @@ main_logger = ul.root_logger.getChild("modification")
 classes_logger = main_logger.getChild("classes")
 properties_logger = main_logger.getChild("properties")
 
-CLASSES_OUTPUT_FILE = 'classes-mod.json'
-PROPERTIES_OUTPUT_FILE = 'properties-mod.json'
+CLASSES_OUTPUT_FILE_PATH = Path(".") / 'classes-mod.json'
+PROPERTIES_OUTPUT_FILE_PATH = Path(".") / 'properties-mod.json'
 
 @timed(classes_logger)
-def __load_classes_to_dict(json_file_path: pathlib.Path) -> dict:
+def __load_classes_to_dict(json_file_path: Path) -> dict:
     return decoding.load_entities_to_dict(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP)
 
 @timed(properties_logger)
-def __load_properties_to_dict(json_file_path: pathlib.Path) -> dict:
+def __load_properties_to_dict(json_file_path: Path) -> dict:
     return decoding.load_entities_to_dict(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     
 @timed(classes_logger)
 def __write_classes_to_file(classes_dict: dict):
-    decoding.write_mapped_entities_to_file(classes_dict, CLASSES_OUTPUT_FILE)
+    decoding.write_mapped_entities_to_file(classes_dict, CLASSES_OUTPUT_FILE_PATH)
 
 @timed(properties_logger)
 def __write_properties_to_file(properties_dict: dict):
-    decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE)
+    decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
 
 def __modify_entities(modifiers, entities_dict: dict, logger, logging_step):
     for idx, entity in enumerate(entities_dict.values()):
@@ -55,7 +54,7 @@ def __report_status_of_modifiers(modifiers):
         mod.report_status()
 
 @timed(main_logger)
-def __merge_property_usage_stats(context: Context, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
+def __merge_property_usage_stats(context: Context, classes_property_usage_stats_filename: Path, properties_domain_range_usage_stats_filename: Path):
     cls_merger = ClassesPropertyUsageStatsMerger(classes_logger, context, classes_property_usage_stats_filename)
     cls_merger.modify_all()
     cls_merger.report_status()
@@ -130,7 +129,7 @@ After the unrooted classes removal, we remove any hanging references to the remo
 After we can safely modify properties.
 """
 @timed(main_logger)
-def __modify_context(context: Context, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
+def __modify_context(context: Context, classes_property_usage_stats_filename: Path, properties_domain_range_usage_stats_filename: Path):
     __merge_property_usage_stats(context, classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
     __remove_entities_with_empty_labels(context)
     __pre_unrooted_classes_removal(context)
@@ -140,7 +139,7 @@ def __modify_context(context: Context, classes_property_usage_stats_filename: pa
     __post_properties_mod_on_stats_references(context)
 
 @timed(main_logger)
-def __modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pathlib.Path, classes_property_usage_stats_filename: pathlib.Path, properties_domain_range_usage_stats_filename: pathlib.Path):
+def __modify(classes_json_file_path: Path, properties_json_file_path: Path, classes_property_usage_stats_filename: Path, properties_domain_range_usage_stats_filename: Path):
     classes = __load_classes_to_dict(classes_json_file_path)
     properties = __load_properties_to_dict(properties_json_file_path)
     context = Context(classes, properties)
@@ -149,7 +148,7 @@ def __modify(classes_json_file_path: pathlib.Path, properties_json_file_path: pa
     __write_properties_to_file(context.properties_dict)
     
 @timed(main_logger)
-def main_modification(classes_json_file: pathlib.Path, properties_json_file: pathlib.Path, classes_property_stats_json_file: pathlib.Path, properties_stats_json_file: pathlib.Path):
+def main_modification(classes_json_file: Path, properties_json_file: Path, classes_property_stats_json_file: Path, properties_stats_json_file: Path):
     try:
         __modify(classes_json_file, properties_json_file, classes_property_stats_json_file, properties_stats_json_file)
         return True

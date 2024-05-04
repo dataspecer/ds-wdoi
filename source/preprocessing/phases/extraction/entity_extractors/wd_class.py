@@ -2,7 +2,7 @@ import core.json_extractors.wd_fields as wd_json_fields_ex
 import core.json_extractors.wd_statements as wd_json_stmts_ex
 import phases.extraction.entity_extractors.wd_fields as wd_fields_tran
 import phases.extraction.entity_extractors.wd_languages as wd_languages_tran 
-from source.preprocessing.core.model_simplified.iri import construct_wd_iri
+from core.model_simplified.iri import construct_wd_iri
 from core.model_wikidata.properties import Properties
 from core.model_simplified.classes import ClassFields
 

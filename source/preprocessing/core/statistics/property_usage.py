@@ -3,17 +3,18 @@ from core.model_wikidata.properties import Datatypes
 from core.model_wikidata.properties import UnderlyingTypes
 from core.model_wikidata.entity_json_fields import RootFields
 from core.model_simplified.scores import ScoresFields
-import utils.decoding as decoding
-import utils.logging as ul
+import core.utils.decoding as decoding
+import core.utils.logging as ul
 import core.json_extractors.wd_fields as wd_json_fields_ex
 import core.json_extractors.wd_statements as wd_json_stmts_ex
 import core.model_wikidata.entity_types as wd_entity_types
 from core.model_simplified.classes import ClassFields
 from core.model_simplified.constraints import GenConstFields, ItemConstFields
 from core.model_simplified.properties import PropertyFields
+from pathlib import Path
 
-CLASSES_STATS_OUTPUT_FILE = "classes-property-usage.json"
-PROPERTIES_STATS_OUTPUT_FILE = "properties-domain-range-usage.json"
+CLASSES_STATS_OUTPUT_FILE_PATH = Path(".") / "classes-property-usage.json"
+PROPERTIES_STATS_OUTPUT_FILE_PATH = Path(".") / "properties-domain-range-usage.json"
 
 """
 The class serves as a statistics computation on property usage.
@@ -228,9 +229,9 @@ class PropertyUsageStatistics:
     
     def _save_to_files(self, classes_statistics_dict: dict, properties_statistics_dict: dict):
         self.logger.info("Writing classes to a file.")
-        decoding.write_mapped_entities_to_file(classes_statistics_dict, CLASSES_STATS_OUTPUT_FILE)
+        decoding.write_mapped_entities_to_file(classes_statistics_dict, CLASSES_STATS_OUTPUT_FILE_PATH)
         self.logger.info("Writing properties to a file.")
-        decoding.write_mapped_entities_to_file(properties_statistics_dict, PROPERTIES_STATS_OUTPUT_FILE)
+        decoding.write_mapped_entities_to_file(properties_statistics_dict, PROPERTIES_STATS_OUTPUT_FILE_PATH)
     
     def finalize_statistics(self):
         # Clear the instance of dict

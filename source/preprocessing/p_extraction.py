@@ -1,7 +1,7 @@
 import argparse
 import pathlib
 from core.default_languages import DEFAULT_LANGUAGES
-from phases.extraction.extraction_phase import main_extraction
+from phases.extraction.extraction_phase import main_extraction, Phases
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -20,7 +20,7 @@ if __name__ == "__main__":
                         help="Usage \"--langs en cs ... -- posArg1 posArg2 ...\" or at the end \"... posArgN --lang en cs ...")
     parser.add_argument("phase",
                         type=str,
-                        choices=["cls", "both", "props"],
+                        choices=[Phases.BOTH, Phases.CLASSES, Phases.PROPERTIES],
                         help="cls - transform only classes, props - transform only properties, both - transform both")
     parser.add_argument("classesGzipFile",
                         type=pathlib.Path, 

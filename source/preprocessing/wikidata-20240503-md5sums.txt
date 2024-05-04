@@ -1,4 +1,0 @@
-99f49a2046488cd7a9114a65872c1787  wikidata-20240503-lexemes-BETA.ttl.gz
-2480096768fff40d081f2c0fbf0887f6  wikidata-20240503-lexemes-BETA.ttl.bz2
-2bcc28d02ca31c3ab2fd53308922d2d9  wikidata-20240503-lexemes-BETA.nt.gz
-467416a6bd254ac264fe84f20e7c2049  wikidata-20240503-lexemes-BETA.nt.bz2

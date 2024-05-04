@@ -1,6 +1,6 @@
 from typing import Any
 from phases.modification.modifiers.context import Context
-from source.preprocessing.phases.modification.modifiers.modifier_all import ModifierAll
+from phases.modification.modifiers.modifier_all import ModifierAll
 
 class Remover(ModifierAll):
     def __init__(self, logger, context: Context) -> None:

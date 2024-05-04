@@ -8,7 +8,7 @@ from core.model_wikidata.properties import UnderlyingTypes as PropertyUnderlying
 from core.model_wikidata.properties import Properties
 from core.model_wikidata.constraints import GeneralConstraints
 from core.model_wikidata.constraints import ItemDatatypeConstraints
-from source.preprocessing.core.model_simplified.iri import construct_wd_iri
+from core.model_simplified.iri import construct_wd_iri
 from core.model_simplified.properties import PropertyFields
 from core.model_simplified.constraints import GenConstFields, ItemConstFields
 

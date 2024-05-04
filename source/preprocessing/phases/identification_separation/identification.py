@@ -1,5 +1,5 @@
 import gzip
-import pathlib
+from pathlib import Path
 import logging
 import core.json_extractors.wd_fields as wd_json_fields_ex
 import core.json_extractors.wd_statements as wd_json_stmts_ex
@@ -64,7 +64,7 @@ def __process_wd_entity(wd_entity, wd_classes_ids_set: set, wd_properties_ids_di
         logger.exception("There was an error during processing of the entity.")
     
 @timed(logger)
-def identify_classes_properties(gzip_dump_file_path: pathlib.Path, property_statistics: PropertyUsageStatistics):
+def identify_classes_properties(gzip_dump_file_path: Path, property_statistics: PropertyUsageStatistics):
     wd_classes_ids_set = set()
     wd_properties_ids_dict = dict()
     with (gzip.open(gzip_dump_file_path) as gzip_input_file):

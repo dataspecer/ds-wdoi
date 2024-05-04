@@ -1,5 +1,5 @@
 import gzip
-import pathlib
+from pathlib import Path
 import core.utils.counter as counter
 import core.utils.decoding as decoding
 import core.utils.logging as ul
@@ -12,8 +12,8 @@ from phases.identification_separation.main_logger import main_logger
 
 logger = main_logger.getChild("separation")
 
-CLASSES_OUTPUT_FILE = "classes.json.gz"
-PROPERTIES_OUTPUT_FILE = "properties.json.gz"
+CLASSES_OUTPUT_FILE_PATH = Path(".") / "classes.json.gz"
+PROPERTIES_OUTPUT_FILE_PATH = Path(".") /"properties.json.gz"
 
 def __log_context_func(class_counter, property_counter, classes_set, properties_dict):
     def log_context_message():
@@ -63,10 +63,10 @@ def __separate_to_files(gzip_input_file, classes_output_file, properties_output_
     __log_sum_progress(class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict)
 
 @timed(logger)
-def separate_to_files(gzip_dump_file_path: pathlib.Path, wd_classes_ids_set: set, wd_properties_ids_dict: dict, property_statistics: PropertyUsageStatistics):
+def separate_to_files(gzip_dump_file_path: Path, wd_classes_ids_set: set, wd_properties_ids_dict: dict, property_statistics: PropertyUsageStatistics):
     with (gzip.open(gzip_dump_file_path) as gzip_input_file,
-          gzip.open(CLASSES_OUTPUT_FILE, "wb") as classes_output_file,
-          gzip.open(PROPERTIES_OUTPUT_FILE, "wb") as properties_output_file
+          gzip.open(CLASSES_OUTPUT_FILE_PATH, "wb") as classes_output_file,
+          gzip.open(PROPERTIES_OUTPUT_FILE_PATH, "wb") as properties_output_file
         ):
             class_counter = counter.Counter()
             property_counter = counter.Counter()

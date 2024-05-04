@@ -1,4 +1,4 @@
-from source.preprocessing.phases.modification.modifiers.modifier_all import ModifierAll
+from phases.modification.modifiers.modifier_all import ModifierAll
 from phases.modification.modifiers.context import *
 import core.utils.logging as ul
 import pathlib

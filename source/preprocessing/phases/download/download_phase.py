@@ -21,6 +21,8 @@ MAX_RETRIES = 8
 DUMP_OUTPUT_FILE = WIKIDATA_GZ_DUMP_URL.split('/')[-1]
 DOWNLOAD_FOLDER = Path('.')
 
+DUMP_OUTPUT_FILE_PATH = DOWNLOAD_FOLDER / DUMP_OUTPUT_FILE
+
 class RetryFlag:
     def __init__(self) -> None:
         self.loaded_chunk = False
@@ -71,7 +73,7 @@ def __downloader(url, retry_flag: RetryFlag, initial_flag: InitialFlag, resume_b
     block_size = 1024
     initial_pos = resume_byte_pos if resume_byte_pos else 0
     mode = 'ab' if resume_byte_pos else 'wb'
-    file = DOWNLOAD_FOLDER / DUMP_OUTPUT_FILE
+    file = DUMP_OUTPUT_FILE_PATH
 
     with open(file, mode) as f:
         with tqdm(total=file_size, unit='B',
@@ -80,9 +82,9 @@ def __downloader(url, retry_flag: RetryFlag, initial_flag: InitialFlag, resume_b
                   ascii=True, miniters=1) as pbar:
             for chunk in r.iter_content(64 * block_size):
                 f.write(chunk)
-                # Reset retries when successfuly downloaded chunk.
+                # Reseting retries (new exception starts retries from 0).
                 retry_flag.reset()
-                # Set that the initial chunk was loaded.
+                # First write to file was success.
                 initial_flag.set()
                 pbar.update(len(chunk))
 
@@ -98,8 +100,9 @@ def __download_dump() -> bool:
 
             # Get filesize of online and offline file
             file_size_online = int(r.headers.get('content-length', 0))
-            file = DOWNLOAD_FOLDER / DUMP_OUTPUT_FILE
+            file = DUMP_OUTPUT_FILE_PATH
             
+            # Always overwrite the file - must write first chunk to the file.
             if not initial_flag.is_initial and file.exists():
                 file_size_offline = file.stat().st_size
                 

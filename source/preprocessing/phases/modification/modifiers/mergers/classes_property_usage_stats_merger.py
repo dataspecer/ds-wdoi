@@ -1,4 +1,4 @@
-from source.preprocessing.phases.modification.modifiers.modifier_all import ModifierAll
+from phases.modification.modifiers.modifier_all import ModifierAll
 from phases.modification.modifiers.context import *
 from core.model_simplified.classes import ClassFields
 from core.model_simplified.scores import ScoresFields
