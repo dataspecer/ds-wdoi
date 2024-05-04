@@ -27,12 +27,3 @@ def extract_wd_aliases(wd_entity_json):
 
 def extract_wd_datatype(wd_entity_json):
     return extract_from_wd_json(wd_entity_json, RootFields.DATATYPE)
-
-def extract_wd_entity_type(wd_entity_json) -> wd_entity_types.EntityTypes:
-    id = extract_wd_id(wd_entity_json)
-    if id != None:
-        if wd_entity_types.is_item(id):
-            return wd_entity_types.EntityTypes.ITEM
-        if wd_entity_types.is_property(id):
-            return wd_entity_types.EntityTypes.PROPERTY
-    return wd_entity_types.EntityTypes.UNKNOWN
