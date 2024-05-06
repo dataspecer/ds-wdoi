@@ -1,5 +1,12 @@
 # Preprocessing
 
+This section is divided into three parts:
+  1. Summary of the pipeline
+  2. How to run the pipeline
+  3. Notes on file output formats
+
+# Summary of the pipeline
+
 The preprocessing is done in 7 phases.:
 
 0. Download
@@ -28,6 +35,7 @@ The preprocessing is done in 7 phases.:
 > 1. During 1. and 2. phase, there are running statistics for property usage happening during the dump pases. The statistics run with during 1. and 2. phase to reduce time of the computation.
 > 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
 > 3. I consider only the unique values from extracted properties.
+> 4. The output files always contain a single json boject on each line representing an entity (a property or a class).
 
 # How to run and use the pipeline
 
@@ -280,3 +288,13 @@ The main file is `p_run_all_phases.py`.
     - each value represents a phase based on the output files suffixes.
     - the preprocessing will continue from the given phase
     - if the argument is used, download is diregarded
+
+
+# Notes on the file output formats
+
+- We use json format for storing entity information.
+- Every json file contain a single entity on a single line in the file.
+  - Thus to obtain an entity, it is enough to read line of the file the entity is present on.
+- The output entities from phases, except the 2. phase, follow the format denoted in the `core/model_simplified` folder.
+- Instead of storing references to objects, the fields that reference other entity store only an id of the entity.
+  - It is necessary to create a map/dictionary of the entities to follow the identifiers to the appropriate entities.

@@ -13,6 +13,9 @@ This phase assumes already merged property usage statistics from modification ph
 - Merging usage statistics with property constraints.
     - We are merging property constraints into the statistics usage constraints.
         - The main assumption here is that upon request for domains or ranges of properties, the entire list is returned with only different orderings based on the selected class.
-    - We expand the domains/ranges of properties with the property constraints values.
-    - Also, if the domain/range is missing, it is marked to the class.
+    - We expand the domains/ranges of properties based on usage with the property constraints values.
+        - **We are mergin it into the property usage fields** to save memory.
+    - Also, if the domain/range is missing on the property, it is marked also to the class.
+        - But the ranges on property_score_fields are kept the same.
+        - From this point out its used only for ordering when displaying to the user.
     - If the property from statistics do not have a usage and the merged property constraint is missing subject constraint or value constraint, it is not merged, Since that would mean it points nowhere.

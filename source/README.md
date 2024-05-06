@@ -58,6 +58,7 @@ Each property can also have assigned constraints - the constraints are not enfor
 - We also assume inheritance in the subclass of hierarchy - meaning properties of ancestors can be used in their subclasses.
     - This was implemented since many classes do not have any instances, thus are not domain of any property.
 - Each association property has always defined a range if it has defined a domain.
+- Associations are oriented edges.
 
 > Notes:
 >    - Some properties do not have a domain, thus cannot be used on any class. The api service accounts in for this.
