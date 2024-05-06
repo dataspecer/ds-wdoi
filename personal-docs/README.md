@@ -11,3 +11,4 @@ For better understanding and usage visit the `source` folder from the parent dir
 - `comments` - general comments about solutions and possible design
 - `project-aims` - contains aims of the research project
 - `progress.md` - contains brief progress history to know what's up
+- `useful-links.md` - links to useful Wikidata related information (model, tools, ...)

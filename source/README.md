@@ -15,8 +15,6 @@ The model of the Wikidata can be view [here](https://www.mediawiki.org/wiki/Wiki
 Everything in Wikidata is an entity, the entities are further divided into *items*, *properties*, *lexemes*, *senses* and *forms*.
 We are interested only in *items* and *properties*.
 
-
-
 ### Classes
 
 We are reusing rules for identifing classes from ([Wikidata ontology project](https://www.wikidata.org/wiki/Wikidata:WikiProject_Ontology/Modelling)):
@@ -27,7 +25,7 @@ We are reusing rules for identifing classes from ([Wikidata ontology project](ht
   - Everything a subclass of an entity (Q35120).
 
 We also extend this model to account only for *items*. 
-Since they represent real work entities.
+Since they represent real world entities.
 Meaning we are excluding lexicographical information.
 
 - Imlicitly the classes form a subclass of hierarchy with the root as entity (Q35120). 
@@ -56,7 +54,7 @@ Each property can also have assigned constraints - the constraints are not enfor
   - Each property usage on an instance of a class can be seen as a domain/range definition.
   - For each property we note the usage of domain classes and range classes.
   - In terms of modeling it means, that our "new" association property used on an instance of our "new" class can point to any class from the ammased range of the property. Or looking at our "new" property domains, denotes that each class from the domain classes can use the property.
-  - Each of the extracted domains/ranges we enrich with the property constraints information.
+  - Each of the extracted domains/ranges we enrich with the Wikidata property constraints information.
 - We also assume inheritance in the subclass of hierarchy - meaning properties of ancestors can be used in their subclasses.
     - This was implemented since many classes do not have any instances, thus are not domain of any property.
 - Each association property has always defined a range if it has defined a domain.
