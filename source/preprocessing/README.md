@@ -265,6 +265,7 @@ Example (notice that `" "` are not used):
 - How to obtain the values:
     - [docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
     - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image
+    - **Do not forget** to add `--network your_bridge` option to the run, so you could connet to the wdoi API service.
 
 ## Run all script
 

@@ -40,6 +40,8 @@
     "@fastify/cors": "^8.4.1",
     "@fastify/routes": "^5.1.0",
     "@fastify/sensible": "^5.5.0",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^3.0.0",
     "@types/sparql-http-client": "^3.0.2",
     "@types/timsort": "^0.3.3",
     "dotenv": "^16.3.1",

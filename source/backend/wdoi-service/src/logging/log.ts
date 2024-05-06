@@ -1,5 +1,13 @@
+import type { FastifyBaseLogger, FastifyInstance } from 'fastify';
+
 export const CLASSES_LOG_STEP = 100_000;
 export const PROPERTIES_LOG_STEP = 1_000;
+
+let fastifyLogger: FastifyBaseLogger | null = null;
+
+export function initLogger(fastify: FastifyInstance): void {
+  fastifyLogger = fastify.log;
+}
 
 export const envToLogger: any = {
   development: {
@@ -22,5 +30,7 @@ export function tryLog(i: number, step: number): void {
 }
 
 export function log(message: any): void {
-  console.log(message);
+  if (fastifyLogger != null) {
+    fastifyLogger.info(message);
+  } else console.log(message);
 }
