@@ -1,6 +1,8 @@
 # Info folder
 
 This folder contains written information about the project.
+All in all, this is mainly a personal documentation where I had written my comments during development.
+For better understanding and usage visit the `source` folder from the parent directory.
 
 - `correspondence` - contains correspondence with foreign entities, such as researchers and Wikidata users
 - `design` - contains design options

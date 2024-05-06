@@ -263,21 +263,22 @@ The first one is the mockup and the second one is the upgrade of the recommendat
     - We have local recommendations for a class.
   - Boosting of properties for this type.
   - Merging of the constraints with usage statistics done in preprocessing phase.
-
-- **Issues**:
-  - Merging of the constraints with usage statistics done in preprocessing phase.
-    - Not including proproprty constraints, iff the property do not point somewhere.
-    - It means that the property was never used, and does not provide both subject/value types, but only one side.
+    - Not including proproprty constraints, iff the property do not point somewhere (combining both constraints and usage statistics).
+      - It means that the property was never used, and does not provide both subject/value types, but only one side.
+      - Properties always point somewhere.
   - Boosting of properties for this type.
     - I do not include properties for this type if the property is not used on the class.
    
-
 ## 5. iteration
 
 Creating a new adapter and a surroundings dialog to Dataspecer.
 
 - New adapter
-  - Queries to the backend
+  - Queries to the backend.
+  - Sparql queries to find example instances for the Filter by instance dialog.
 - Surroundings dialog
-  - Removed navigation for parents since i could not make it work
-  - Added stepper for selection of parents and ranges
+  - Removed navigation for parents since i could not make it work.
+  - Added stepper for selection of parents and ranges.
+  - Added filter by instance dialog with guide how to select the instances.
+  - Added detail dialog that enables browsing of the ontology.
+  - Filter by instance dialog now displays notification if the selected instance is not part of the ancestor hierarchy.
