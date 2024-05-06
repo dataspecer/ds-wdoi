@@ -29,14 +29,101 @@ The preprocessing is done in 7 phases.:
 > 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
 > 3. I consider only the unique values from extracted properties.
 
-## **Logging**:
+
+# The Ontology
+
+We are extracting/creating ontology from the Wikidata.
+The model of the Wikidata can be view [here](https://www.mediawiki.org/wiki/Wikibase/DataModel).
+Everything in Wikidata is an entity, the entities are further divided into *items*, *properties*, *lexemes*, *senses* and *forms*.
+We are interested only in *items* and *properties*.
+
+## Classes
+
+We are reusing rules for identifing classes from ([Wikidata ontology project](https://www.wikidata.org/wiki/Wikidata:WikiProject_Ontology/Modelling)):
+  - The *item* has a *property* instance of (P31) with one of values equal to the metaclass of a class (Q16889133), or
+  - the *item* is a value of an instance of (P31) statement in any other item, or
+  - the *item* is a value of a subclass of (P279) statement in any other item, or
+  - the *item* contains a subclass of (P279) statement.
+  - Everything a subclass of an entity (Q35120).
+
+We also extend this model to account only for *items*. 
+Since they represent real work entities.
+Meaning we are excluding lexicographical information.
+
+- Imlicitly the classes form a subclass of hierarchy with the root as entity (Q35120). 
+- We also keep the instance of information among classes (e.g. volcano is instance of a volcanic landform and subclass of a mountain).
+
+## Properties
+
+- [Properties](https://www.wikidata.org/wiki/Help:Properties)
+    - [Property constraints](https://www.wikidata.org/wiki/Help:Property_constraints_portal)
+    - [Properties by datatype](https://www.wikidata.org/wiki/Special:ListDatatypes)
+    - [In depth about datatypes](https://www.wikidata.org/wiki/Help:Data_type)
+
+Properties have datatypes (higher level type, e.g. language string, table, item, wikidata-item, wikidata-property ) and an underlying type (lower lever type, e.g. item, string, quantity).
+Each property can also have assigned constraints - the constraints are not enforced or checked, so it is not a trustworthy source of information.
+
+- We extract and use all properties except:
+  - `subclass of` and `instance of`
+    - Since it would cause serious memory usage during the computation of the statistics and their general usage.
+  - Properties with datatype `Lexeme`, `Senses`, `Forms` 
+- We further devide the properties into attributes and associations:
+  - An attribute is a property with underlying type equal to the `quantity`, `string`, `geoordinates` and `time` - meaning it has a literal value.
+  - An association is a property with underlying type equal to the `item` - meaning it points to an item, in our case a class.
+- As for constraints, we do not enforce the constraints nor we use them (but we extract them if the need arises), except subject type and value type constraints which are used for enrichment of domains and ranges of properties.
+- For associations we create domains and ranges.
+  - We compute statistics of usage of properties on instances of classes.
+  - Each property usage on an instance of a class can be seen as a domain/range definition.
+  - For each property we note the usage of domain classes and range classes.
+  - In terms of modeling it means, that our "new" association property used on an instance of our "new" class can point to any class from the ammased range of the property. Or looking at our "new" property domains, denotes that each class from the domain classes can use the property.
+- We also assume inheritance in the subclass of hierarchy - meaning properties of ancestors can be used in their subclasses.
+
+
+
+# How to run and use the pipeline
+
+The pipeline uses Wikidata JSON dump in the GZIP format.
+Each of the main steps mentioned above has its own main script file.
+The script file can be run with the provided instructions (below).
+There is also a script that is able to run all the phases at once.
+
+
+## Before running the scippts
+
+- Before running the scripts, read the instructions and preferably comments for each of the phases in `phases` folder.
+- The the pipeline also assumes there is an Elastic Search service running, that is later used by the API service.
+  - read 6. phase information below about usage
+
+### Requirements
+
+- Python 3.11 and above
+- Elastic Search 8.13 and above
+- Mamory and time
+  - The runtimes and memory was measured on virtual infrasctructure with Ubuntu 22 with 64 GB of RAM and 32 core processor (altough this phase does not use multithreading).
+  - Memory
+    - Wikidata gzip dump ~ 130 GB (as of 4.4.2024) on disk, depending on the current size
+    - Phases (counting in reserves and disregarding Elastic Search):
+      - The 1. and 2. phase of preprocessing require at least 42 GB of RAM
+      - For the rest at least 16 GB
+  - Time
+    - Downloading depends on the internet connection
+      - University server took ~ 7 hours
+    - After downloading, ~ 11 hours to preprocess everything. 
+
+### Installing dependencies
+
+- Ideally use Python virtual enviroment for the scripts.
+- Use frozen `requirements.txt` file to install all dependencies. 
+
+### **Logging**:
+
   - Everything is logged into `log.log` file and console (`std_out`).
   - Errors also logged separately into `log_errors.log`.
   - Each phase is prefixed with a string identifier.
 
-## Donwloading Wikidata dump
+## Donwloading Wikidata dump (0. phase)
 
-Downloads new Wikidata dump, overwriting already existing one.
+Downloads the newest Wikidata dump in GZIP format, overwriting already existing one.
 The main script is `p_download.py`.
 
 - Input:
@@ -84,7 +171,7 @@ The simplified model is simply a flattening of the hierarchical Wikidata model.
 The main script is `p_extraction.py`.
 
 - Input:
-  - Optional argument for languages extracration
+  - Optional argument for languages extraction
     - `--lang`
     - Accepts a list of space separated language shortcuts
       - e.g. `--lang en cs de`
@@ -158,7 +245,7 @@ Before running this phase, create the indeces using `helper scripts` functions.
 The main script is `p_loading.py`.
 
 - Inputs:
-  - optional argument for languages extracration
+  - optional argument for languages extraction
     - This parameter must always be equal to the one used in phase 3.
     - `--lang`
     - accepts a list of space separated language shortcuts
@@ -222,3 +309,26 @@ Example (notice that `" "` are not used):
 - How to obtain the values:
     - [docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
     - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image
+
+## Run all script
+
+The script runs all phases.
+The main file is `p_run_all_phases.py`.
+
+- Input:
+  - optional argument for languages extraction
+    - `--lang`
+    - accepts a list of space separated language shortcuts
+      - e.g. `--lang en cs de`
+    - defaults to `--lang en`
+    - **The "en" is compulsory at the moment** and will be included even though it is not set.
+    - for available shortcuts refer to the [Wikidata language lists](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all)
+  - optional boolean flag argument whether to donwload the newest dump
+    - `--donwload`
+    - defaults to `False`
+    - the `True` will overwrite the existing dump in the current folder
+  - optional argument to continue from a specific phase
+    - `--continue-from` `[id_sep, ext, mod, recs, load]`
+    - each value represents a phase based on the output files suffixes.
+    - the preprocessing will continue from the given phase
+    - if the argument is used, download is diregarded
