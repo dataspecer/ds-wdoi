@@ -22,13 +22,19 @@ The scripts require `.env` file in the `preprocessing` folder with three values:
 2. `ES_CERT_PATH` a path to elastic search cerficate
 3. `ES_URL` - an url to elastic search instance
 
-
 Example (notice that `" "` are not used):
 
     ES_PASSWD=abcdefg
     ES_CERT_PATH=/path/to/http_ca.cert
     ES_URL=https://localhost:1234
 
-- How to obtain the values:
-    - [docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
-    - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image
+- Additional comments:
+    - [Docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
+    - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image, before using your own.
+      - If using the certificate copied from the Elastic, you also need to adjust the client to disable verification.
+    - Also to enable connection between Elastic and the Wikidata ontology API service Docker container (unless running without Docker), you need to set up a Docker `bridge`, which then enables to access the Elastic from within the Wikidata ontology API service Docker container.
+      - Since now you will be are running two separete docker containers (Elastic and Wikidata ontology API service), we need to connect them via [docker bridge](https://docs.docker.com/network/drivers/bridge/).
+        1. create your bridge `docker network create my-bridge`
+        2. add to the Elastic container when you start the container by using `--network your_bridge` when running the container
+        3. or you can add the `bridge` to the running Elastic container via `docker network connect your_bridge elastic_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
+        4. add the same option to service `--network your_bridge`

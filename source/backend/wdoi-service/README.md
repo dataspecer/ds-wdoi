@@ -157,7 +157,7 @@ The input is handled via `.env` file.
 - How to obtain the values:
   - [docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
   - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image
-  - **Do not forget** to add a [docker bridge](https://docs.docker.com/network/drivers/bridge/) (e.g.`--network your_bridge`) to the Elastic container and this service, so you could connect to the wdoi API service via docker bridge dns.
+  - **Do not forget** to add a [docker bridge](https://docs.docker.com/network/drivers/bridge/) (e.g.`--network your_bridge`) to the Elastic container and this service, so you could connect to the wdoi API service via docker bridge dns (more on that in below).
 
 <br>
 

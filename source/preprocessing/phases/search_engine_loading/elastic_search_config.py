@@ -46,4 +46,5 @@ ANALYZER_LANGUAGE_MAP = {
     "thai": ["th"],
 }
 
+# If using the certificate from docker image, you need to disable certificate verification.
 client = Elasticsearch(os.getenv('ES_URL'), ca_certs=os.getenv('ES_CERT_PATH'), basic_auth=('elastic', os.getenv('ES_PASSWD')), verify_certs=False)

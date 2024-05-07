@@ -67,4 +67,48 @@ Each property can also have assigned constraints - the constraints are not enfor
 
 ![missing image](./readme-pictures/overall.png)
 
-## Running 
+- The architecture consists of the main three containers.
+  1. Preprocessing pipeline 
+      - Downloads and preprocesses Wikidata GZIP dump file.
+      - The output of the pipeline are files containing Wikidata ontology as described above.
+      - The pipeline also loads the ontology as a last step into an Elastic search.
+      - The code and documentation is located in `preprocessing` folder.
+      - The code contains a series of Python scripts for preprocessing.
+  2. Wikidata ontology API service
+      - Loads the created ontology into a memory and provides an API for accessing and browsing the ontology.
+      - The API is modelled to fit the [Dataspecer](https://github.com/mff-uk/dataspecer) needs.
+      - The code and documentation is located in `backen/wdoi-service` folder.
+      - The code contains a Node.js application running with `Fastify`, and can be run inside Docker.
+  3. Elastic search
+      - Provides full-text search over the Wikidata ontology.
+      - Assuming the Elastic Search is running somewhere inside Docker container provided by the offical source.
+- To learn more about each part, visit their specific subfolders.
+  - Regarding Elastic search configuration you can view documentation and usage of 6. phase of the preprocessing pipeline.
+
+There also exists a `ds-mockup` inside `frontend` folder, which serves solely for development porposes.
+Usually it is not updated frequently to match the latest API of the service.
+
+### Dependencies 
+
+- As of now there are dependencies between the containers.
+  - The preprocessing pipeline assumes there is running an Elastic search service
+    - Since the last phase of the pipeline loads the ontology into the service.
+  - The Wikidata ontology API service depends on the output from the preprocessing pipeline.
+    - Since the output files of the pipeline needs to be loaded into the API service.
+  - The Wikidata ontology API service depends on the Elastic search service, which enables searching the ontology.
+
+### Comments on running
+
+- To learn how to run and set up each part you should visit their specific folder.
+
+- **The preprocessing pipeline** - can run the entire process or each specific phase.
+  - Right now, there is not a docker image support.
+  - Ideally eventually, there would be a service that could run the pipeline regularly.
+  - There should be running the Elastic search service, at least for the last phase.
+- **The Wikidata ontology API service** - can be run "normally" or inside Docker.
+  - The only problem is the dependency on the Elastic Search service, since they are separate containers, thus there is the need to create Docker `bridge` to connect the services.
+  - It would be nice if it could be run as `docker-compose` eventually, but right now, the set up is using Docker `run`.
+  - The problem is in the updating the indeces in the Elastic and reloading the Ontology into a memory.
+    - The API service should be down when the indeces are updates, and should be restarted to reload the ontology. 
+- **Elastic search** - running inside Docker.
+  - More on the set up and connection can be found inside 6. phase of the pipeline or set up Wikidata ontology API service with Docker. 

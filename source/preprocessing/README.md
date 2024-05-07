@@ -251,7 +251,10 @@ It either creates, refreshes or deletes classes and properties indices.
 
 ### Elastic search set up
 
-Assuming we are running on Elastic docker image.
+Assuming we are running on [Elastic docker image](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html).
+We are running with security enabled - which require setting up password and managing certificates.
+About the password and certificates can be found in the tutorial above.
+After obtaing the password and certificate you need to set up `.env` file.
 
 The scripts require `.env` file in the `preprocessing` folder with three values:
 1. `ES_PASSWD` - a password of the elastic search instance provided with certificate
@@ -264,10 +267,16 @@ Example (notice that `" "` are not used):
     ES_CERT_PATH=/path/to/http_ca.cert
     ES_URL=https://localhost:1234
 
-- How to obtain the values:
-    - [docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
-    - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image
-    - **Do not forget** to add `--network your_bridge` option to the run, so you could connet to the wdoi API service.
+- Additional comments:
+    - [Docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
+    - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image, before using your own.
+      - If using the certificate copied from the Elastic, you also need to adjust the client to disable verification.
+    - Also to enable connection between Elastic and the Wikidata ontology API service Docker container (unless running without Docker), you need to set up a Docker `bridge`, which then enables to access the Elastic from within the Wikidata ontology API service Docker container.
+      - Since now you will be are running two separete docker containers (Elastic and the Wikidata ontology API service), we need to connect them via [docker bridge](https://docs.docker.com/network/drivers/bridge/).
+        1. create your bridge `docker network create my-bridge`
+        2. add to the Elastic container when you start the container by using `--network your_bridge` when running the container
+        3. or you can add the `bridge` to the running Elastic container via `docker network connect your_bridge elastic_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
+        4. add the same option to the Wikidata ontology API service `--network your_bridge`
 
 ## Run all script
 
