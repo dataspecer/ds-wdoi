@@ -7,6 +7,8 @@ This section is divided into three parts:
 
 # Summary of the pipeline
 
+![missing picture](./readme-pictures/preprocessing.png)
+
 The preprocessing is done in 7 phases.:
 
 0. Download

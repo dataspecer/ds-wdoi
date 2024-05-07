@@ -1,7 +1,6 @@
 import { envVars } from './enviroment.js';
 import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
-import mapAllRoutes from '@fastify/routes';
 import loadOntology from './ontology/expose-to-fastify.js';
 import { envToLogger, initLogger, log } from './logging/log.js';
 import { ontologyRoutes } from './routes/routes-v3.js';
@@ -11,15 +10,22 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fs from 'fs';
 
+const IS_PRODUCTION = envVars.ENVIROMENT === 'production';
+const PORT = 3042;
+// '0.0.0.0' needs to be set in order to work with Fastify inside Docker.
+// Otherwise defaults to localhost during development."
+const HOST: string | undefined = IS_PRODUCTION ? '0.0.0.0' : '127.0.0.1';
+
 const fastify: FastifyInstance = Fastify({
-  // Be careful about writing to a file, since there no permissions for writing in the docker image.
   logger: envToLogger[envVars.ENVIROMENT] ?? true,
   pluginTimeout: 0,
 });
 
 const startFastify = async (): Promise<void> => {
   initLogger(fastify);
+  // Loading ontology into a memory.
   void fastify.register(loadOntology);
+  // Set up swagger dynamic generation.
   void fastify.register(fastifySwagger, {
     openapi: {
       openapi: '3.0.0',
@@ -40,6 +46,7 @@ const startFastify = async (): Promise<void> => {
       },
     },
   });
+  // Set up swagger docs (generated above) serving via static pages.
   void fastify.register(fastifySwaggerUi, {
     routePrefix: '/documentation',
     uiConfig: {
@@ -65,21 +72,18 @@ const startFastify = async (): Promise<void> => {
     origin: '*',
     methods: ['GET'],
   });
-  void fastify.register(mapAllRoutes);
+  // A set of utility functions for easier work with fastify (e.g. a set of route errors).
   void fastify.register(fastifySensible);
   void fastify.register(ontologyRoutes, { prefix: 'api/v3' });
   try {
     await fastify.ready();
-    log(fastify.routes);
-    if (envVars.ENVIROMENT !== 'production') {
-      // Will fail if running in docker image, since there are no write permissions.
+    if (!IS_PRODUCTION) {
       fs.writeFileSync('./swagger.yaml', fastify.swagger({ yaml: true }));
     }
     log(process.memoryUsage());
     await fastify.listen({
-      port: 3042,
-      // This needs to be set in order to work with Docker
-      host: '0.0.0.0',
+      port: PORT,
+      host: HOST,
     });
   } catch (err) {
     fastify.log.error(err);

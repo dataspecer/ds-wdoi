@@ -38,7 +38,6 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.10.0",
     "@fastify/cors": "^8.4.1",
-    "@fastify/routes": "^5.1.0",
     "@fastify/sensible": "^5.5.0",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^3.0.0",

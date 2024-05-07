@@ -62,3 +62,9 @@ Each property can also have assigned constraints - the constraints are not enfor
 
 > Notes:
 >    - Some properties do not have a domain, thus cannot be used on any class. The api service accounts in for this.
+
+## Architecture overview
+
+![missing image](./readme-pictures/overall.png)
+
+## Running 
