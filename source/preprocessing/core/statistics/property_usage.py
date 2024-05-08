@@ -105,7 +105,7 @@ class PropertyUsageStatistics:
                         self._assign_domain_usage(object_property_usage_record, property_id, statement_count)
                         self._assign_range_usage(object_property_usage_record["properties"][property_id], subject_class_id, statement_count)
 
-    def _process_item_property(self, subject_wd_entity, subject_str_entity_id, property_id):
+    def _process_entity_property(self, subject_wd_entity, subject_str_entity_id, property_id):
         property_statement_values = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
         for object_str_entity_id in property_statement_values:
             if object_str_entity_id in self.entity_to_instance_of_dict and object_str_entity_id != wd_json_stmts_ex.NO_VALUE:
@@ -118,9 +118,9 @@ class PropertyUsageStatistics:
 
     def _process_property(self, subject_wd_entity, subject_str_entity_id, property_id):
         if property_id in self.properties_ids_to_datatype_dict:
-            property_datatype = self.properties_ids_to_datatype_dict[property_id]
-            if property_datatype == Datatypes.ITEM:
-                self._process_item_property(subject_wd_entity, subject_str_entity_id, property_id)
+            underlying_type = Datatypes.type_of(self.properties_ids_to_datatype_dict[property_id])
+            if underlying_type == UnderlyingTypes.ENTITY:
+                self._process_entity_property(subject_wd_entity, subject_str_entity_id, property_id)
             else:
                 self._process_literal_property(subject_wd_entity, subject_str_entity_id, property_id)
 
@@ -133,7 +133,7 @@ class PropertyUsageStatistics:
             # Count outward properties for a class
             if subject_is_class:
                 self.class_property_usage_dict[subject_str_entity_id]["statementCount"] += len(wd_json_stmts_ex._extract_wd_statements_from_field(subject_wd_entity, RootFields.CLAIMS, property_id))
-            # Mark inward direct links to classes.
+            # Mark inward direct links to classes, checking for ITEM since we care about properties that can point to classes.
             if property_datatype == Datatypes.ITEM:
                 object_str_entity_ids = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
                 for object_str_entity_id in object_str_entity_ids:

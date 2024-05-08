@@ -63,6 +63,8 @@ class Datatypes(StrEnum):
                 return item.underlyingType
         raise ValueError(f"{value} is missing from {cls.__name__}.")
     
+    
+    
 class Properties(StrEnum):
     SUBCLASS_OF = "P279", UnderlyingTypes.ENTITY
     INSTANCE_OF = "P31", UnderlyingTypes.ENTITY
