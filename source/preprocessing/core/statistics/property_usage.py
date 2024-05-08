@@ -20,6 +20,7 @@ PROPERTIES_STATS_OUTPUT_FILE_PATH = Path(".") / "properties-domain-range-usage.j
 The class serves as a statistics computation on property usage.
 It is used in the first and second phase of the identification and separation phase.
 It first needs to construct a map for all entities and mark the instance of values - this is done in the identification phase.
+That is done in order to access ranges of properties in constant time.
 In the second phase, it marks all the property usage to classes and properties identified in the first phase.
 """
 class PropertyUsageStatistics:
@@ -27,14 +28,18 @@ class PropertyUsageStatistics:
     def __init__(self, logger) -> None:
         self.logger = logger.getChild("property_usage_statistics")
         self.classes_ids_set = None
+        # Contains allowed properties with their datatype.
         self.properties_ids_to_datatype_dict = None
         self.entity_to_instance_of_dict = dict()
-        self.class_property_usage_dict = dict()
         self.is_first_pass_finished = False
+        self.class_property_usage_dict = dict()
     
     def _create_new_class_property_usage_records(self):
         for class_id in self.classes_ids_set:
             self.class_property_usage_dict[class_id] = {
+                "instanceCount": 0,
+                "statementCount": 0,
+                "inlinksCount": 0,
                 "subjectOf": self._create_new_property_usage_record(),
                 "valueOf": self._create_new_property_usage_record()   
             } 
@@ -60,8 +65,13 @@ class PropertyUsageStatistics:
         instance_of_ids = wd_json_stmts_ex.extract_wd_statement_values(wd_entity, Properties.INSTANCE_OF)
         if len(instance_of_ids) != 0:
             self.entity_to_instance_of_dict[str_entity_id] = instance_of_ids
+                    
+    def _mark_instance_to_class(self, instance_of_ids):
+        for str_class_id in instance_of_ids:
+            if str_class_id in self.classes_ids_set:
+                self.class_property_usage_dict[str_class_id]["instanceCount"] += 1
 
-    def _is_instance_with_statements(self, str_entity_id, claims):
+    def _is_instance_with_claims(self, str_entity_id, claims):
         if str_entity_id in self.entity_to_instance_of_dict and claims != None:
             return True
         else:
@@ -114,9 +124,27 @@ class PropertyUsageStatistics:
             else:
                 self._process_literal_property(subject_wd_entity, subject_str_entity_id, property_id)
 
+    # Will count all in and out properties to classes from entities including the not allowed ones.
+    def _count_in_out_properties_to_class(self, subject_wd_entity, subject_str_entity_id, claims):
+        subject_is_class = True if subject_str_entity_id in self.classes_ids_set else False
+        for property_id in claims.keys():
+            # If the property is not allowed, assign it item datatype -> results might be invalid but it can hit into inwards properties.
+            property_datatype = self.properties_ids_to_datatype_dict[property_id] if property_id in self.properties_ids_to_datatype_dict else Datatypes.ITEM
+            # Count outward properties for a class
+            if subject_is_class:
+                self.class_property_usage_dict[subject_str_entity_id]["statementCount"] += len(wd_json_stmts_ex._extract_wd_statements_from_field(subject_wd_entity, RootFields.CLAIMS, property_id))
+            # Mark inward direct links to classes.
+            if property_datatype == Datatypes.ITEM:
+                object_str_entity_ids = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
+                for object_str_entity_id in object_str_entity_ids:
+                    if object_str_entity_id in self.classes_ids_set:
+                        self.class_property_usage_dict[object_str_entity_id]["inlinksCount"] += 1
+                
     def _process_entity_statements(self, subject_wd_entity, subject_str_entity_id):
         claims = wd_json_fields_ex.extract_wd_claims(subject_wd_entity) 
-        if self._is_instance_with_statements(subject_str_entity_id, claims):
+        self._count_in_out_properties_to_class(subject_wd_entity, subject_str_entity_id, claims)
+        if self._is_instance_with_claims(subject_str_entity_id, claims):
+            self._mark_instance_to_class(self.entity_to_instance_of_dict(subject_str_entity_id))
             for property_id in claims.keys():
                 self._process_property(subject_wd_entity, subject_str_entity_id, property_id)        
     
@@ -129,17 +157,22 @@ class PropertyUsageStatistics:
                 else:
                     self._store_entity_instance_of_values(wd_entity, str_entity_id)
             except:
-                self.logger.exception("There was an error during computing statistics.") 
+                self.logger.exception("There was an error during statistics computation.") 
 
 # Inititialization of final statistics fields
               
     def _init_classes_statistics_dict(self):
         classes_statistics_dict = dict()
-        for class_id in self.class_property_usage_dict.keys():
+        for class_id, class_property_usage_record in self.class_property_usage_dict.items():
             classes_statistics_dict[class_id] = {
                 ClassFields.ID.value: wd_json_fields_ex.extract_wd_numeric_id_part(class_id),
+                ClassFields.INSTANCE_COUNT.value: class_property_usage_record["instanceCount"],
+                ClassFields.INLINKS_COUNT.value: class_property_usage_record["inlinksCount"],
+                ClassFields.STATEMENT_COUNT.value: class_property_usage_record["statementCount"],
+                ClassFields.INSTANCE_INLINKS_COUNT.value: 0,
+                ClassFields.INSTANCE_STATEMENT_COUNT.value: 0,
                 ClassFields.SUBJECT_OF_STATS_SCORES.value: [],
-                ClassFields.VALUE_OF_STATS_SCORES.value: []
+                ClassFields.VALUE_OF_STATS_SCORES.value: [],
             }
         return classes_statistics_dict
                 
@@ -148,6 +181,7 @@ class PropertyUsageStatistics:
         for property_id in self.properties_ids_to_datatype_dict.keys():
             properties_statistics_dict[property_id] = {
                 PropertyFields.ID.value: wd_json_fields_ex.extract_wd_numeric_id_part(property_id),
+                PropertyFields.INSTANCE_USAGE_COUNT.value: 0,
                 GenConstFields.SUBJECT_TYPE_STATS.value: dict(),
                 ItemConstFields.VALUE_TYPE_STATS.value: dict()
             }
@@ -194,6 +228,7 @@ class PropertyUsageStatistics:
     def _add_to_domain_and_range_of_property(self, properties_statistics_dict: dict, class_id, class_property_usage_record):
         for property_id, range_record in class_property_usage_record["properties"].items():
             prop_stats = properties_statistics_dict[property_id]
+            prop_stats[PropertyFields.INSTANCE_USAGE_COUNT.value] = range_record["counter"]
             self._add_to_domain_of_property(prop_stats, class_id, range_record["counter"])
             self._add_to_range_of_property(prop_stats, range_record)
     
@@ -219,10 +254,16 @@ class PropertyUsageStatistics:
         i = 1
         for class_id, class_property_usage_record in self.class_property_usage_dict.items():
             classes_statistics_dict[class_id][ClassFields.SUBJECT_OF_STATS_SCORES.value] = self._compute_class_properties_usage_statistics(class_property_usage_record["subjectOf"])
+            classes_statistics_dict[class_id][ClassFields.INSTANCE_STATEMENT_COUNT] = class_property_usage_record["subjectOf"]["counter"]
+            
             classes_statistics_dict[class_id][ClassFields.VALUE_OF_STATS_SCORES.value] = self._compute_class_properties_usage_statistics(class_property_usage_record["valueOf"])
+            classes_statistics_dict[class_id][ClassFields.INSTANCE_INLINKS_COUNT] = class_property_usage_record["valueOf"]["counter"]
+            
             self._add_to_domain_and_range_of_property(properties_statistics_dict, class_id, class_property_usage_record["subjectOf"])
+            
             i += 1
             ul.try_log_progress(self.logger, i, ul.CLASSES_PROGRESS_STEP)
+        
         self.logger.info("Summarizing domain and range")
         self._summarize_property_domain_and_range(properties_statistics_dict)
         self._save_to_files(classes_statistics_dict, properties_statistics_dict)

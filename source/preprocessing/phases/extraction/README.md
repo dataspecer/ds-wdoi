@@ -4,6 +4,7 @@ The part contain 3. phase which is conducted in two steps - class extraction and
 The phase extracts the data from the Wikidata model into a simplified data model (located in the `core.model_simplified`).
 The simplified model is simply a flattening of the hierarchical Wikidata model, while picking up only certain information from the entities. 
 
+- The values of properties inside the Wikidata model are not checked, since Wikidata do not allow to use invalid values for properties (e.g. using an item for a string property).
 - To find out what is extract for each entity, confront the the extraction methods for a class and for a property.
 - The phases also is influenced by `lang` option which extracts only specific language information from the entities.
   - The language `en` is compulsory, and will be included if missing.

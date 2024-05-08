@@ -23,6 +23,7 @@ def is_allowed_property(property_id):
         return True
     else:
         return False
+    
 class Datatypes(StrEnum):
     ITEM = ("wikibase-item", UnderlyingTypes.ENTITY)	
     PROPERTY = ("wikibase-property", UnderlyingTypes.ENTITY)

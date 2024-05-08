@@ -38,7 +38,7 @@ Meaning we are excluding lexicographical information.
     - [Properties by datatype](https://www.wikidata.org/wiki/Special:ListDatatypes)
     - [In depth about datatypes](https://www.wikidata.org/wiki/Help:Data_type)
 
-Properties have datatypes (higher level type, e.g. language string, table, item, wikidata-item, wikidata-property ) and an underlying type (lower lever type, e.g. item, string, quantity).
+Properties have datatypes (higher level type, e.g. language string, table, wikidata-item, wikidata-property ) and an underlying type (lower level type, e.g. item, string, quantity).
 Each property can also have assigned constraints - the constraints are not enforced or checked, so it is not a trustworthy source of information.
 
 - We extract and use all properties except:
@@ -50,7 +50,7 @@ Each property can also have assigned constraints - the constraints are not enfor
   - An association is a property with underlying type equal to the `item` - meaning it points to an item, in our case a class.
 - As for constraints, we do not enforce the constraints nor we use them (but we extract them if the need arises), except subject type and value type constraints which are used for enrichment of domains and ranges of properties.
 - For associations we create domains and ranges.
-  - We compute statistics of usage of properties on instances of classes.
+  - We compute usage statistics of properties on instances of classes.
   - Each property usage on an instance of a class can be seen as a domain/range definition.
   - For each property we note the usage of domain classes and range classes.
   - In terms of modeling it means, that our "new" association property used on an instance of our "new" class can point to any class from the ammased range of the property. Or looking at our "new" property domains, denotes that each class from the domain classes can use the property.

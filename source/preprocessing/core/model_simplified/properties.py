@@ -17,6 +17,7 @@ class PropertyFields(StrEnum):
     UNDERLYING_TYPE = "underlyingType"
     # Numeric identifiers of classes that the property is instance of - groupings.
     INSTANCE_OF = "instanceOf"
+    
     # Numeric identifiers of properties that the property is subproperty of.
     SUBPROPERTY_OF = "subpropertyOf"
     # Numeric identifiers of properties that are subproperties of the property.
@@ -26,5 +27,10 @@ class PropertyFields(StrEnum):
     COMPLEMENTARY_PROPERTY = "complementaryProperty"
     NEGATES_PROPERTY = "negatesProperty"
     EQUIVALENT_PROPERTY = "equivalentProperty"
+    
     # Wikidata property constraints.
     CONSTRAINTS = "constraints"
+    
+    # Number of usages of the properties.
+    INSTANCE_USAGE_COUNT = "usageCount"
+    

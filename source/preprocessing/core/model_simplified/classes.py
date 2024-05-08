@@ -48,3 +48,18 @@ class ClassFields(StrEnum):
     # Properties with scores and ranges that this class is a subject of based on property usage statistics.
     # The properties are the same as in SUBJECT_OF_STATS, but containing the scores and ranges.
     VALUE_OF_STATS_SCORES = "valueOfStatsScores"
+    
+    # Counts from property usage statistics added during modification phase during merging.
+    
+    # Number of instances
+    INSTANCE_COUNT = "instanceCount"
+    # Number of Wikidata sitelinks
+    SITELINKS_COUNT = "sitelinksCount"
+    # Number of times a property was pointing directly to a class.
+    INLINKS_COUNT = "inlinksCount"
+    # Number of times a property was pointing to an instance of a class.
+    INSTANCE_INLINKS_COUNT = "instanceInlinksCount"
+    # Number of statements on a class.
+    STATEMENT_COUNT = "statementCount"
+    # Number of statements on instances of a class.
+    INSTANCE_STATEMENT_COUNT = "instanceStatementCount"

@@ -167,3 +167,4 @@ cython_debug/
 *.bz2
 *.gz
 preprocessing-env
+statistics-and-logs

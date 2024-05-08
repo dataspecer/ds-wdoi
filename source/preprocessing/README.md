@@ -37,7 +37,7 @@ The preprocessing is done in 7 phases.:
 > 1. During 1. and 2. phase, there are running statistics for property usage happening during the dump pases. The statistics run with during 1. and 2. phase to reduce time of the computation.
 > 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
 > 3. I consider only the unique values from extracted properties.
-> 4. The output files always contain a single json boject on each line representing an entity (a property or a class).
+> 4. The output files always contain a single json object on each line representing an entity (a property or a class).
 
 # How to run and use the pipeline
 
@@ -239,7 +239,7 @@ It either creates, refreshes or deletes classes and properties indices.
 
       # Searching the class/property index
       &> python loading_es_helpers.py search_classes "query string goes here"
-      &> python loading_es_helpers.py search_classes "query string goes here"
+      &> python loading_es_helpers.py search_properties "query string goes here"
 
       # Listing indices
       &> python loading_es_helpers.py list
@@ -253,7 +253,7 @@ It either creates, refreshes or deletes classes and properties indices.
 
 Assuming we are running on [Elastic docker image](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html).
 We are running with security enabled - which require setting up password and managing certificates.
-About the password and certificates can be found in the tutorial above.
+Information about the password and certificates can be found in the tutorial link above.
 After obtaing the password and certificate you need to set up `.env` file.
 
 The scripts require `.env` file in the `preprocessing` folder with three values:

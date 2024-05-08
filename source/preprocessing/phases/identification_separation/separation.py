@@ -31,14 +31,8 @@ def __log_sum_progress(class_counter, property_counter, classes_set, properties_
     properties_dict_count = len(properties_dict)
     logger.info(f"Separated Classes: {class_count:,} Properties: {property_count:,} . The sum is {(class_count + property_count):,} from the set of {classes_set_count + properties_dict_count:,}")
 
-# Sitelinks are not used in the ontology.
-def __reduce_wd_entity(wd_entity):
-    if RootFields.SITELINKS.value in wd_entity:
-        wd_entity[RootFields.SITELINKS.value] = None
-    return wd_entity
-
 def __process_wd_item(wd_entity, classes_output_file, class_counter):
-    decoding.write_wd_entity_to_file(__reduce_wd_entity(wd_entity), classes_output_file)
+    decoding.write_wd_entity_to_file(wd_entity, classes_output_file)
     class_counter.inc()
     
 def __process_wd_property(wd_entity, properties_output_file, property_counter):
