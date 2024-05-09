@@ -52,8 +52,8 @@ def __process_wd_entity(wd_entity, classes_output_file, properties_output_file, 
         
 def __separate_to_files(gzip_input_file, classes_output_file, properties_output_file, wd_classes_ids_set: set, wd_properties_ids_dict: dict, class_counter, property_counter, property_statistics: PropertyUsageStatistics):    
     for wd_entity in decoding.entities_generator(gzip_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict)):
-        __process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict) 
         property_statistics.process_entity(wd_entity)
+        __process_wd_entity(wd_entity, classes_output_file, properties_output_file, class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict) 
     __log_sum_progress(class_counter, property_counter, wd_classes_ids_set, wd_properties_ids_dict)
 
 @timed(logger)

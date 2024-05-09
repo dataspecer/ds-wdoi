@@ -40,6 +40,7 @@ class PropertyUsageStatistics:
                 "instanceCount": 0,
                 "statementCount": 0,
                 "inlinksCount": 0,
+                "sitelinksCount": 0,
                 "subjectOf": self._create_new_property_usage_record(),
                 "valueOf": self._create_new_property_usage_record()   
             } 
@@ -125,7 +126,7 @@ class PropertyUsageStatistics:
                 self._process_literal_property(subject_wd_entity, subject_str_entity_id, property_id)
 
     # Will count all in and out properties to classes from entities including the not allowed ones.
-    def _count_in_out_properties_to_class(self, subject_wd_entity, subject_str_entity_id, claims):
+    def _count_in_out_links_to_class(self, subject_wd_entity, subject_str_entity_id, claims):
         subject_is_class = True if subject_str_entity_id in self.classes_ids_set else False
         for property_id in claims.keys():
             # If the property is not allowed, assign it item datatype -> results might be invalid but it can hit into inwards properties.
@@ -133,6 +134,7 @@ class PropertyUsageStatistics:
             # Count outward properties for a class
             if subject_is_class:
                 self.class_property_usage_dict[subject_str_entity_id]["statementCount"] += len(wd_json_stmts_ex._extract_wd_statements_from_field(subject_wd_entity, RootFields.CLAIMS, property_id))
+                self.class_property_usage_dict[subject_str_entity_id]["sitelinksCount"] += len(wd_json_fields_ex.extract_site_links(subject_wd_entity))
             # Mark inward direct links to classes, checking for ITEM since we care about properties that can point to classes.
             if property_datatype == Datatypes.ITEM:
                 object_str_entity_ids = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
@@ -142,9 +144,9 @@ class PropertyUsageStatistics:
                 
     def _process_entity_statements(self, subject_wd_entity, subject_str_entity_id):
         claims = wd_json_fields_ex.extract_wd_claims(subject_wd_entity) 
-        self._count_in_out_properties_to_class(subject_wd_entity, subject_str_entity_id, claims)
+        self._count_in_out_links_to_class(subject_wd_entity, subject_str_entity_id, claims)
         if self._is_instance_with_claims(subject_str_entity_id, claims):
-            self._mark_instance_to_class(self.entity_to_instance_of_dict(subject_str_entity_id))
+            self._mark_instance_to_class(self.entity_to_instance_of_dict[subject_str_entity_id])
             for property_id in claims.keys():
                 self._process_property(subject_wd_entity, subject_str_entity_id, property_id)        
     
@@ -169,6 +171,7 @@ class PropertyUsageStatistics:
                 ClassFields.INSTANCE_COUNT.value: class_property_usage_record["instanceCount"],
                 ClassFields.INLINKS_COUNT.value: class_property_usage_record["inlinksCount"],
                 ClassFields.STATEMENT_COUNT.value: class_property_usage_record["statementCount"],
+                ClassFields.SITELINKS_COUNT.value: class_property_usage_record["sitelinksCount"],
                 ClassFields.INSTANCE_INLINKS_COUNT.value: 0,
                 ClassFields.INSTANCE_STATEMENT_COUNT.value: 0,
                 ClassFields.SUBJECT_OF_STATS_SCORES.value: [],
@@ -228,7 +231,7 @@ class PropertyUsageStatistics:
     def _add_to_domain_and_range_of_property(self, properties_statistics_dict: dict, class_id, class_property_usage_record):
         for property_id, range_record in class_property_usage_record["properties"].items():
             prop_stats = properties_statistics_dict[property_id]
-            prop_stats[PropertyFields.INSTANCE_USAGE_COUNT.value] = range_record["counter"]
+            prop_stats[PropertyFields.INSTANCE_USAGE_COUNT.value] += range_record["counter"]
             self._add_to_domain_of_property(prop_stats, class_id, range_record["counter"])
             self._add_to_range_of_property(prop_stats, range_record)
     

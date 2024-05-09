@@ -11,7 +11,8 @@
 > Note:
 >    1. All the identifiers in the outputfiles are already numeric.
 >    2. During counting of inlinks, we include all properties (disregarding the not allowed properties) and for entities we allow all as well. Thats is to get the overall information for the classes.
->    3.  The properties for computation match the identified properties from the 1. phase. The same applies for classes.
+>    3. The properties for computation match the identified properties from the 1. phase. The same applies for classes.
+>    4. The entities in the 2. phase are passed into the statistics before they are passed into the separation method.
 
 ## Score
 

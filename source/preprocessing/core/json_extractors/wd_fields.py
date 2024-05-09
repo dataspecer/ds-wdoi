@@ -27,3 +27,6 @@ def extract_wd_aliases(wd_entity_json):
 
 def extract_wd_datatype(wd_entity_json):
     return extract_from_wd_json(wd_entity_json, RootFields.DATATYPE)
+
+def extract_site_links(wd_entity_json):
+    return extract_from_wd_json(wd_entity_json, RootFields.SITELINKS)
