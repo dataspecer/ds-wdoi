@@ -9,6 +9,7 @@ The simplified model is simply a flattening of the hierarchical Wikidata model, 
 - The phases also is influenced by `lang` option which extracts only specific language information from the entities.
   - The language `en` is compulsory, and will be included if missing.
   - That is done in order to always have certain specific classes present in the ontology (e.g. the root entity).
+  - More on the issue can be found in the modification phase readme - removing classes with no label.
 - The fields representing other entities (e.g. `subclassOf`) are storing only number identifiers.
     - The application needs to know whether it is a property or a class.
 - We deviced an artificial entity for constraints `Q0` which denotes empty entity.

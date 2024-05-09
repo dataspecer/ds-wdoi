@@ -3,9 +3,9 @@ from phases.modification.modifiers.context import Context
 from core.model_wikidata.classes import *
 from core.model_simplified.classes import ClassFields
 
-class AllClassesAreRooted(ModifierPart):
+class RootAllClasses(ModifierPart):
     def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("all_classes_are_rooted"), context)
+        super().__init__(logger.getChild("root_all_classes"), context)
         self.found_root = False
     
     def __call__(self, wd_class) -> None:

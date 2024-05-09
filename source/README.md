@@ -25,11 +25,18 @@ We are reusing rules for identifing classes from ([Wikidata ontology project](ht
   - Everything a subclass of an entity (Q35120).
 
 We also extend this model to account only for *items*. 
-Since they represent real world entities.
-Meaning we are excluding lexicographical information.
+Meaning we are excluding lexicographic entities.
 
 - Imlicitly the classes form a subclass of hierarchy with the root as entity (Q35120). 
 - We also keep the instance of information among classes (e.g. volcano is instance of a volcanic landform and subclass of a mountain).
+
+<br>
+
+- Classes of instances:
+  - When looking into the data, we have noticed there are roughly 3 million classes that are simultaneously instance of a either protein, gene, and type of chemical entity.
+    - Their labels, descriptions, and aliases repeat a lot.
+  - We have decided to remove the classes that are simultaneously instances of protein, gene and chemical entity, while retaining the three classes.
+
 
 ### Properties
 
@@ -44,10 +51,10 @@ Each property can also have assigned constraints - the constraints are not enfor
 - We extract and use all properties except:
   - `subclass of` and `instance of`
     - Since it would cause serious memory usage during the computation of the statistics and their general usage.
-  - Properties with datatype `Lexeme`, `Senses`, `Forms` 
+  - Properties with datatype `Lexeme`, `Senses`, `Forms` and `Property`
 - We further devide the properties into attributes and associations:
-  - An attribute is a property with underlying type equal to the `quantity`, `string`, `geoordinates` and `time` - meaning it has a literal value.
-  - An association is a property with underlying type equal to the `item` - meaning it points to an item, in our case a class.
+  - An **attribute** is a property with underlying type equal to the `quantity`, `string`, `geoordinates` and `time` - meaning it has a literal value.
+  - An **association** is a property with underlying type equal to the `item` - meaning it points to an item, in our case a class.
 - As for constraints, we do not enforce the constraints nor we use them (but we extract them if the need arises), except subject type and value type constraints which are used for enrichment of domains and ranges of properties.
 - For associations we create domains and ranges.
   - We compute usage statistics of properties on instances of classes.
@@ -62,6 +69,17 @@ Each property can also have assigned constraints - the constraints are not enfor
 
 > Notes:
 >    - Some properties do not have a domain, thus cannot be used on any class. The api service accounts in for this.
+
+## Multilinguality
+
+- It is important to mention that we mainly focus on the English part of the Wikidata.
+- During preprocessing, a user is able to input languages he would like to be included in the classes and properties.
+- But we always enforce the English language, since it is the most widely used.
+- We also decided to exlude classes/properties which do not contain the selected languages (including the English), since the user would not be able to search for the classes.
+  - However, removing the classes can lead to breaking the hierarchy, but the question is whether the highly specific classes dependent on language form deep hierarchies.
+      - On the other, it is hard to assess the benefit of highly specific classes depending on the language inside Dataspecer.
+      - It can also mean that the classes were some testing case of a user and can bear no value.
+  - Right now, we have decided to exclude all the classes and properties with no label.
 
 ## Architecture overview
 

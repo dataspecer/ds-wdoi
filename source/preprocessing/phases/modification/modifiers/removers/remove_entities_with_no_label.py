@@ -1,11 +1,6 @@
 from phases.modification.modifiers.removers.remover import Remover
 from phases.modification.modifiers.context import Context
 
-"""
-This depends on the selection of the languages during transformation.
-If there are no labels, the users cannot search for the classes.
-These classes usually means they carry no semantic meaning (such as: empty wikidata entities).
-"""
 class RemoveEntitiesWithNoLabel(Remover):
     def __init__(self, logger, context: Context) -> None:
         super().__init__(logger.getChild("remove_entities_with_no_label"), context)

@@ -11,7 +11,7 @@ from phases.modification.modifiers.properties.assign_subject_object_values_to_cl
 from phases.modification.modifiers.mergers.classes_property_usage_stats_merger import *
 from phases.modification.modifiers.mergers.properties_domain_range_usage_stats_merger import *
 from phases.modification.modifiers.context import Context
-from phases.modification.modifiers.classes.all_classes_are_rooted import *
+from phases.modification.modifiers.classes.root_all_classes import *
 from phases.modification.modifiers.classes.remove_unexisting_references import *
 from phases.modification.modifiers.classes.mark_children_to_parents import *
 from phases.modification.modifiers.classes.mark_instances_to_parents import *
@@ -19,6 +19,7 @@ from phases.modification.modifiers.classes.remove_self_cycles import *
 from phases.modification.modifiers.classes.add_fields import *
 from phases.modification.modifiers.removers.remove_entities_with_no_label import *
 from phases.modification.modifiers.removers.remove_classes_with_no_parent import *
+from phases.modification.modifiers.removers.remove_classes_instances import *
 
 main_logger = ul.root_logger.getChild("modification")
 classes_logger = main_logger.getChild("classes")
@@ -67,38 +68,24 @@ def __merge_property_usage_stats(context: Context, classes_property_usage_stats_
 def __remove_entities_with_empty_labels(context: Context):
     remover = RemoveEntitiesWithNoLabel(main_logger, context)
     remover.modify_all()
+    remover.report_status()
 
 @timed(classes_logger)
-def __pre_unrooted_classes_removal(context: Context):
-    logger = classes_logger.getChild("pre_unrooted_classes_removal")
+def __modify_classes_general(context: Context):
+    logger = classes_logger.getChild("modify_classes_general")
     modifiers = [
         AddFields(logger, context), 
         RemoveUnexistingReferencesClasses(logger, context), 
         RemoveSelfCyclesClass(logger, context), 
         MarkChildrenToParents(logger, context),
         MarkInstancesToParents(logger, context),
-    ]
-    __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
-    __report_status_of_modifiers(modifiers)
-
-@timed(classes_logger)
-def __remove_unrooted_classes(context: Context):
-    logger = classes_logger.getChild("unrooted_classes_removal")
-    remover = RemoveClassesWithNoParent(logger, context)
-    remover.modify_all()
-    
-@timed(classes_logger)
-def __post_unrooted_classes_removal(context: Context):
-    logger = classes_logger.getChild("post_unrooted_classes_removal")
-    modifiers = [
-        RemoveUnexistingReferencesClasses(logger, context),
-        AllClassesAreRooted(logger, context) # as a check
+        RootAllClasses(logger, context)
     ]
     __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(properties_logger)
-def __modify_properties(context: Context):
+def __modify_properties_general(context: Context):
     modifiers = [
         RemoveUnexistingReferencesMainProperties(properties_logger, context), 
         RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger, context),
@@ -111,32 +98,41 @@ def __modify_properties(context: Context):
     __report_status_of_modifiers(modifiers)
 
 @timed(classes_logger)
-def __post_properties_mod_on_stats_references(context: Context):
-    logger = classes_logger.getChild("post_properties_mod_on_stats_references")
-    modifiers = [
-        # As a final check on property usage statistics in case previous step removed properties
-        RemoveUnexistingReferencesClasses(logger, context)
+def __remove_selected_class_instances(context: Context):
+    logger = classes_logger.getChild("pre_unrooted_classes_removal") 
+    
+    # type of chemical entity, gene, protein
+    classes_ids = [113145171, 7187, 8054]
+    class_instance_remover = RemoveClassInstances(classes_ids, logger ,context)
+    class_instance_remover.modify_all()
+    class_instance_remover.report_status()
+    
+    # Update references of the existing classes.
+    remove_refs = [
+        RemoveUnexistingReferencesClasses(logger, context),
     ]
-    __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
-    __report_status_of_modifiers(modifiers)
+    __modify_entities(remove_refs, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
+    __report_status_of_modifiers(remove_refs)
+    
+    # Remove all classes that got detached from the tree after the instance removal.
+    no_parent_class_remover = RemoveClassesWithNoParent(logger, context)
+    no_parent_class_remover.modify_all()
+    no_parent_class_remover.report_status()
+    
+    # Sanity check that everything is rooted
+    root_all_classes = [
+        RootAllClasses(logger, context),
+    ]
+    __modify_entities(root_all_classes, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
+    __report_status_of_modifiers(root_all_classes)
 
-
-"""
-The order matters here.
-First we remove entities that has no label.
-After that we prepare ground for removing unrooted classes by removing unexisting references, adding fields and marking children to parents.
-After the unrooted classes removal, we remove any hanging references to the removed classes. The all classes are rooted is just a check.
-After we can safely modify properties.
-"""
 @timed(main_logger)
 def __modify_context(context: Context, classes_property_usage_stats_filename: Path, properties_domain_range_usage_stats_filename: Path):
     __merge_property_usage_stats(context, classes_property_usage_stats_filename, properties_domain_range_usage_stats_filename)
     __remove_entities_with_empty_labels(context)
-    __pre_unrooted_classes_removal(context)
-    __remove_unrooted_classes(context)
-    __post_unrooted_classes_removal(context)
-    __modify_properties(context)
-    __post_properties_mod_on_stats_references(context)
+    __modify_classes_general(context)
+    __remove_selected_class_instances(context)
+    __modify_properties_general(context)
 
 @timed(main_logger)
 def __modify(classes_json_file_path: Path, properties_json_file_path: Path, classes_property_usage_stats_filename: Path, properties_domain_range_usage_stats_filename: Path):

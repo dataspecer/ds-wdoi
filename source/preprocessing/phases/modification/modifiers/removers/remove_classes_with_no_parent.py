@@ -18,7 +18,6 @@ class RemoveClassesWithNoParent(Remover):
     def modify_all(self) -> None:
         self._mark_for_removal()
         self.remove(self.context.classes_dict, self.classes_marked_for_removal, self.classes_removed)
-        self.report_status()
         
     def _mark_for_removal(self):
         for wd_class in self.context.classes_dict.values():
