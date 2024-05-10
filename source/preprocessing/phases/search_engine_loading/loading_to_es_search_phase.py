@@ -5,7 +5,7 @@ from core.model_wikidata.entity_json_fields import RootFields
 import phases.search_engine_loading.elastic_search_config as es
 import core.utils.logging as ul
 from core.utils.timer import timed
-from core.default_languages import ENGLISH_LANGUAGE
+from core.default_languages import DEFAULT_LANGUAGES
 
 main_logger = ul.root_logger.getChild("loading")
 classes_logger = main_logger.getChild("classes")
@@ -57,13 +57,10 @@ def __load_properties(json_file_path: Path, languages):
     __load_entities(json_file_path, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages, es.PROPERTIES_ELASTIC_INDEX_NAME)
     
 @timed(main_logger)
-def main_loading(properties_json_file_path: Path, classes_json_file_path: Path, lang):
+def main_loading(properties_json_file_path: Path, classes_json_file_path: Path):
     try:
-        if ENGLISH_LANGUAGE not in lang:
-            lang.append(ENGLISH_LANGUAGE)
-        
-        __load_properties(properties_json_file_path, lang)
-        __load_classes(classes_json_file_path, lang)
+        __load_properties(properties_json_file_path, DEFAULT_LANGUAGES)
+        __load_classes(classes_json_file_path, DEFAULT_LANGUAGES)
         return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")

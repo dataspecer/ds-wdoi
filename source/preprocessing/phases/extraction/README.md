@@ -6,10 +6,6 @@ The simplified model is simply a flattening of the hierarchical Wikidata model, 
 
 - The values of properties inside the Wikidata model are not checked, since Wikidata do not allow to use invalid values for properties (e.g. using an item for a string property).
 - To find out what is extract for each entity, confront the the extraction methods for a class and for a property.
-- The phases also is influenced by `lang` option which extracts only specific language information from the entities.
-  - The language `en` is compulsory, and will be included if missing.
-  - That is done in order to always have certain specific classes present in the ontology (e.g. the root entity).
-  - More on the issue can be found in the modification phase readme - removing classes with no label.
 - The fields representing other entities (e.g. `subclassOf`) are storing only number identifiers.
     - The application needs to know whether it is a property or a class.
 - We deviced an artificial entity for constraints `Q0` which denotes empty entity.
@@ -17,6 +13,10 @@ The simplified model is simply a flattening of the hierarchical Wikidata model, 
     - Sometimes value of an contraint (even all other properties) can be `no value` or `some value`, while `some value` is no importance to us, `no value` can be significant for contraints (refer to [no value/some value](https://www.mediawiki.org/wiki/Wikibase/DataModel)).
 - During extract we exluded depracated ranks of the statements.
 - **Note that not all the fields present in the simplified model exist in this phase, some of them are added later during modification, consult the function for extraction what exactly is returned.**
+- The phase extracts only Enlighs language information from the entities.
+  - In case other language were added in the future, the English language must always be present.
+    - That is done in order to always have certain specific classes present in the ontology (e.g. the root entity).
+    - More on the issue can be found in the modification phase readme - removing classes with no label.
 
 ## Extraction comments
 

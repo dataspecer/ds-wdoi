@@ -27,7 +27,7 @@ def throw_on_fail(success):
         raise Exception("A phase failed")
 
 @timed(main_logger)    
-def main_run_all(lang: list, download_dump: bool, continue_from: Phases):
+def main_run_all(download_dump: bool, continue_from: Phases, exclude_load: bool):
     try:
         # Download
         if continue_from in [Phases.ALL] and download_dump:
@@ -50,7 +50,7 @@ def main_run_all(lang: list, download_dump: bool, continue_from: Phases):
             throw_on_fail(recs.main_property_recommendations(mod.CLASSES_OUTPUT_FILE_PATH, mod.PROPERTIES_OUTPUT_FILE_PATH))
         
         # Load to ES
-        if continue_from in [Phases.ALL, Phases.LOAD]:
+        if continue_from in [Phases.ALL, Phases.LOAD] and not exclude_load:
             load_helpers.delete()
             load_helpers.create()
             load_helpers.refresh()

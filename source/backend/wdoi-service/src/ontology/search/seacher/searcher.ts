@@ -1,21 +1,9 @@
 import { type EntityIdsList } from '../../entities/common.js';
 
 export abstract class Searcher {
-  protected readonly defaultLanguagePriority: string;
+  public abstract searchClasses(query: string): Promise<EntityIdsList>;
 
-  constructor(defaultLanguagePriority: string) {
-    this.defaultLanguagePriority = defaultLanguagePriority;
-  }
-
-  public abstract searchClasses(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList>;
-
-  public abstract searchProperties(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList>;
+  public abstract searchProperties(query: string): Promise<EntityIdsList>;
 
   protected interleaveArrays(arr: any[][]): any[] {
     return Array.from(

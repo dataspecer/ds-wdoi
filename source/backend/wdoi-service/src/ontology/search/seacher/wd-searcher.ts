@@ -24,14 +24,13 @@ function isWdPhpSearchEntitiesResponse(obj: any): obj is WdPhpSearchEntitiesResp
 export class WdSearch extends Searcher {
   private static readonly BASE_URL = 'https://www.wikidata.org/w/api.php';
   private static readonly API_ENDPOINTS = {
-    searchEntities: (type: SearchEntityType, query: string, languagePriority: string) => {
+    searchEntities: (type: SearchEntityType, query: string) => {
       return (
         WdSearch.BASE_URL +
         '?action=wbsearchentities' +
         '&search=' +
         encodeURI(query) +
-        '&language=' +
-        languagePriority +
+        '&language=en' +
         '&limit=7' +
         '&type=' +
         type +
@@ -40,16 +39,8 @@ export class WdSearch extends Searcher {
     },
   };
 
-  private async search(
-    type: SearchEntityType,
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList> {
-    const lang = languagePriority ?? this.defaultLanguagePriority;
-
-    const response = await (
-      await fetch(WdSearch.API_ENDPOINTS.searchEntities(type, query, lang))
-    ).json();
+  private async search(type: SearchEntityType, query: string): Promise<EntityIdsList> {
+    const response = await (await fetch(WdSearch.API_ENDPOINTS.searchEntities(type, query))).json();
 
     if (isWdPhpSearchEntitiesResponse(response)) {
       return this.parseSearchHits(response.search);
@@ -57,18 +48,12 @@ export class WdSearch extends Searcher {
     return [];
   }
 
-  public async searchClasses(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList> {
-    return await this.search('item', query, languagePriority);
+  public async searchClasses(query: string): Promise<EntityIdsList> {
+    return await this.search('item', query);
   }
 
-  public async searchProperties(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList> {
-    return await this.search('property', query, languagePriority);
+  public async searchProperties(query: string): Promise<EntityIdsList> {
+    return await this.search('property', query);
   }
 
   private parseSearchHits(searchHits: SearchEntitiesHit[]): EntityIdsList {

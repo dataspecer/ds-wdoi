@@ -8,7 +8,7 @@ import core.utils.decoding as decoding
 from core.utils.timer import timed
 from phases.extraction.entity_extractors.wd_class import extract_wd_class
 from phases.extraction.entity_extractors.wd_property import extract_wd_property
-from core.default_languages import ENGLISH_LANGUAGE
+from core.default_languages import DEFAULT_LANGUAGES
 
 main_logger = ul.root_logger.getChild("extraction")
 classes_logger = main_logger.getChild("extract_classes")
@@ -51,15 +51,12 @@ def __extract_properties(gzip_file_path: Path, languages):
     __extract_entities(gzip_file_path, PROPERTIES_OUTPUT_FILE_PATH, extract_wd_property, wd_entity_types.is_wd_entity_property, properties_logger, ul.PROPERTIES_PROGRESS_STEP, languages)
     
 @timed(main_logger)    
-def main_extraction(phase: Phases, lang: list, classes_gzip_file_path: Path, properties_gzip_file_path: Path):
+def main_extraction(phase: Phases, classes_gzip_file_path: Path, properties_gzip_file_path: Path):
     try:
-        if ENGLISH_LANGUAGE not in lang:
-            lang.append(ENGLISH_LANGUAGE)
-
         if phase in [Phases.BOTH, Phases.CLASSES]:
-            __extract_classes(classes_gzip_file_path, lang)
+            __extract_classes(classes_gzip_file_path, DEFAULT_LANGUAGES)
         if phase in [Phases.BOTH, Phases.PROPERTIES]:
-            __extract_properties(properties_gzip_file_path, lang)
+            __extract_properties(properties_gzip_file_path, DEFAULT_LANGUAGES)
         return True
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")

@@ -101,8 +101,8 @@ def __modify_properties_general(context: Context):
 def __remove_selected_class_instances(context: Context):
     logger = classes_logger.getChild("pre_unrooted_classes_removal") 
     
-    # type of chemical entity, gene, protein
-    classes_ids = [113145171, 7187, 8054]
+    # type of chemical entity, gene, protein, a group of stereoisomers
+    classes_ids = [113145171, 7187, 8054, 59199015]
     class_instance_remover = RemoveClassInstances(classes_ids, logger ,context)
     class_instance_remover.modify_all()
     class_instance_remover.report_status()

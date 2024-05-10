@@ -33,10 +33,9 @@ Meaning we are excluding lexicographic entities.
 <br>
 
 - Classes of instances:
-  - When looking into the data, we have noticed there are roughly 3 million classes that are simultaneously instance of a either protein, gene, and type of chemical entity.
+  - When looking into the data, we have noticed there are roughly 3 million classes that are simultaneously instance of a either protein (Q8054), gene (Q7187), and type of chemical entity (Q113145171), and a group of stereoisomers (Q59199015).
     - Their labels, descriptions, and aliases repeat a lot.
-  - We have decided to remove the classes that are simultaneously instances of protein, gene and chemical entity, while retaining the three classes.
-
+  - We have decided to remove the classes that are simultaneously instances of the above mentioned classes, but keeping the mentioned classes in the ontology.
 
 ### Properties
 
@@ -72,14 +71,13 @@ Each property can also have assigned constraints - the constraints are not enfor
 
 ## Multilinguality
 
-- It is important to mention that we mainly focus on the English part of the Wikidata.
-- During preprocessing, a user is able to input languages he would like to be included in the classes and properties.
-- But we always enforce the English language, since it is the most widely used.
-- We also decided to exlude classes/properties which do not contain the selected languages (including the English), since the user would not be able to search for the classes.
+- **It is important to mention that we focus on the English part of the Wikidata**.
+- Thus, we decided to exlude classes/properties which do not contain the English labels, since otherwise the user would not be able to search for the classes/properties.
   - However, removing the classes can lead to breaking the hierarchy, but the question is whether the highly specific classes dependent on language form deep hierarchies.
       - On the other, it is hard to assess the benefit of highly specific classes depending on the language inside Dataspecer.
       - It can also mean that the classes were some testing case of a user and can bear no value.
   - Right now, we have decided to exclude all the classes and properties with no label.
+- In case of expansion in the future, there is the need to change the extraction, modification, and loading phases in the preprocessing and accomodate the Wikidata API service.
 
 ## Architecture overview
 

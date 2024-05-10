@@ -10,8 +10,8 @@ export class EsSearch extends Searcher {
   private static readonly CLASSES_ELASTIC_INDEX_NAME = 'classes';
   private static readonly PROPERTIES_ELASTIC_INDEX_NAME = 'properties';
 
-  constructor(defaultLanguagePriority: string) {
-    super(defaultLanguagePriority);
+  constructor() {
+    super();
     this.client = new Client({
       node: envVars.ES_NODE,
       auth: { username: 'elastic', password: envVars.ES_PASSWD },
@@ -23,11 +23,7 @@ export class EsSearch extends Searcher {
     });
   }
 
-  private async search(
-    indexName: string,
-    queryString: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList> {
+  private async search(indexName: string, queryString: string): Promise<EntityIdsList> {
     // const searchResultsPrefix = this.client.search({
     //   index: indexName,
     //   _source: false,
@@ -110,18 +106,12 @@ export class EsSearch extends Searcher {
     return this.makeUnique((await searchResultsMatch).hits.hits);
   }
 
-  public async searchClasses(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList> {
-    return await this.search(EsSearch.CLASSES_ELASTIC_INDEX_NAME, query, languagePriority);
+  public async searchClasses(query: string): Promise<EntityIdsList> {
+    return await this.search(EsSearch.CLASSES_ELASTIC_INDEX_NAME, query);
   }
 
-  public async searchProperties(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<EntityIdsList> {
-    return await this.search(EsSearch.PROPERTIES_ELASTIC_INDEX_NAME, query, languagePriority);
+  public async searchProperties(query: string): Promise<EntityIdsList> {
+    return await this.search(EsSearch.PROPERTIES_ELASTIC_INDEX_NAME, query);
   }
 
   // This must preserve order of the given array.

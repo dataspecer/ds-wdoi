@@ -17,7 +17,6 @@ export class SearchResults {
 }
 
 export class OntologySearch {
-  static readonly DEFAULT_LANGUAGE_PRIORITY = 'en';
   private readonly esSearch: EsSearch;
   private readonly wdSearch: WdSearch;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
@@ -43,15 +42,14 @@ export class OntologySearch {
   ) {
     this.classes = classes;
     this.properties = properties;
-    this.esSearch = new EsSearch(OntologySearch.DEFAULT_LANGUAGE_PRIORITY);
-    this.wdSearch = new WdSearch(OntologySearch.DEFAULT_LANGUAGE_PRIORITY);
+    this.esSearch = new EsSearch();
+    this.wdSearch = new WdSearch();
   }
 
   public async search(
     query: string,
     searchClasses: boolean | undefined,
     searchProperties: boolean | undefined,
-    languagePriority: string | undefined,
   ): Promise<SearchResults> {
     if (WdEntity.URI_REGEXP.test(query)) {
       return this.searchBasedOnURI(query);
@@ -62,33 +60,27 @@ export class OntologySearch {
 
     try {
       if (searchClasses != null && searchClasses) {
-        classesSearchResult = await this.searchClasses(query, languagePriority);
+        classesSearchResult = await this.searchClasses(query);
       }
       if (searchProperties != null && searchProperties) {
-        propertiesSearchResult = await this.searchProperties(query, languagePriority);
+        propertiesSearchResult = await this.searchProperties(query);
       }
     } catch (_) {}
     return new SearchResults(classesSearchResult, propertiesSearchResult);
   }
 
-  private async searchClasses(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<WdClass[]> {
-    const wdClassesIds = this.wdSearch.searchClasses(query, languagePriority);
-    const esClassesIds = this.esSearch.searchClasses(query, languagePriority);
+  private async searchClasses(query: string): Promise<WdClass[]> {
+    const wdClassesIds = this.wdSearch.searchClasses(query);
+    const esClassesIds = this.esSearch.searchClasses(query);
     return materializeEntities(
       this.makeUniqueWithKeptOrder([...(await wdClassesIds), ...(await esClassesIds)]),
       this.classes,
     );
   }
 
-  private async searchProperties(
-    query: string,
-    languagePriority: string | undefined,
-  ): Promise<WdProperty[]> {
-    const wdPropertiesIds = this.wdSearch.searchProperties(query, languagePriority);
-    const esPropertiesIds = this.esSearch.searchProperties(query, languagePriority);
+  private async searchProperties(query: string): Promise<WdProperty[]> {
+    const wdPropertiesIds = this.wdSearch.searchProperties(query);
+    const esPropertiesIds = this.esSearch.searchProperties(query);
     return materializeEntities(
       this.makeUniqueWithKeptOrder([...(await wdPropertiesIds), ...(await esPropertiesIds)]),
       this.properties,

@@ -1,4 +1,3 @@
-import argparse
 import phases.search_engine_loading.elastic_search_config as es
 import pprint
 import core.utils.logging as ul
@@ -26,10 +25,11 @@ def __create_dynamic_mapping(language_shortcut: str, analyzer: str):
 
 def __create_language_mappings():
     dynamic_templates = []
-    analyzer_language_map = es.ANALYZER_LANGUAGE_MAP
-    for analyzer, language_shortcuts in analyzer_language_map.items():
-        for shortcut in language_shortcuts:
-            dynamic_templates.append(__create_dynamic_mapping(shortcut, analyzer))
+    # Create mapping only for the allowed English language.
+    analyzer = "english"
+    language_shortcuts =  es.ANALYZER_LANGUAGE_MAP[analyzer]
+    for shortcut in language_shortcuts:
+        dynamic_templates.append(__create_dynamic_mapping(shortcut, analyzer))
     return {
         "_source": {
             "enabled": False
@@ -112,7 +112,6 @@ def create():
         logger.info(f"Created index == {es.PROPERTIES_ELASTIC_INDEX_NAME} successfully")
             
     logger.info("Creating ended")
-    
 
 def delete():
     logger.info("Deleting started")

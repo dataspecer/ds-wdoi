@@ -16,9 +16,6 @@ export const searchInputQueryStringSchema = {
     searchProperties: {
       type: 'boolean',
     },
-    languagePriority: {
-      type: 'string',
-    },
   },
   additionalProperties: false,
   required: ['query'],
