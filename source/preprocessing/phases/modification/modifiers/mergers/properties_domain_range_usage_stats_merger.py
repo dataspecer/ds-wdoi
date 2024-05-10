@@ -10,13 +10,12 @@ from core.model_simplified.scores import ScoresFields
 
 class PropertiesDomainRangeUsageStatsMerger(ModifierAll):
     
-    def __init__(self, logger, context: Context, properties_domain_range_usage_stats_filename: pathlib.Path) -> None:
-        super().__init__(logger.getChild("properties_domain_range_stats_merger"), context)
+    def __init__(self, logger, context: Context, properties_domain_range_usage_stats_filename: pathlib.Path, logging_on: bool) -> None:
+        super().__init__(logger.getChild("properties_domain_range_stats_merger"), context, logging_on)
         self.properties_domain_range_usage_stats_filename = properties_domain_range_usage_stats_filename
         self.missing_properties = set()
     
     def modify_all(self) -> None:
-        self.logger.info("Starting loading of property domain and range statistics")
         properties_domain_range_usage_stats: dict = decoding.load_entities_to_dict(self.properties_domain_range_usage_stats_filename, self.logger, ul.PROPERTIES_PROGRESS_STEP)
         for idx, property_stats in enumerate(properties_domain_range_usage_stats.values()):
             property_id = property_stats[PropertyFields.ID.value]
@@ -29,7 +28,7 @@ class PropertiesDomainRangeUsageStatsMerger(ModifierAll):
                     wd_property[PropertyFields.CONSTRAINTS.value][GenConstFields.TYPE_DEPENDENT.value][ItemConstFields.VALUE_TYPE_STATS.value] = list(map(lambda x: x[ScoresFields.CLASS.value], property_stats[ItemConstFields.VALUE_TYPE_STATS.value]))
             else:
                 self.missing_properties.add(property_id)
-                self.logger.info(f"Found missing property = {property_id}")
+                self.try_log(f"Found missing property = {property_id}")
             ul.try_log_progress(self.logger, idx, ul.PROPERTIES_PROGRESS_STEP)
             
     def report_status(self) -> None:

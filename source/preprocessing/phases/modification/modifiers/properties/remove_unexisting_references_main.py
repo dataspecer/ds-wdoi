@@ -3,8 +3,8 @@ from phases.modification.modifiers.context import Context
 from core.model_simplified.properties import PropertyFields
 
 class RemoveUnexistingReferencesMainProperties(ModifierPart):
-    def __init__(self, logger,  context: Context) -> None:
-        super().__init__(logger.getChild("rer_properties_main"), context)
+    def __init__(self, logger,  context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("rer_properties_main"), context, logging_on)
     
     def __call__(self, wd_property) -> None:
         wd_property[PropertyFields.INSTANCE_OF.value] = self.filter_existing_classes(wd_property[PropertyFields.INSTANCE_OF.value])

@@ -54,7 +54,7 @@ def main_run_all(download_dump: bool, continue_from: Phases, exclude_load: bool)
             load_helpers.delete()
             load_helpers.create()
             load_helpers.refresh()
-            throw_on_fail(load.main_loading(recs.CLASSES_OUTPUT_FILE_PATH, recs.PROPERTIES_OUTPUT_FILE_PATH, lang))
+            throw_on_fail(load.main_loading(recs.CLASSES_OUTPUT_FILE_PATH, recs.PROPERTIES_OUTPUT_FILE_PATH))
         
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")

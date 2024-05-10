@@ -63,3 +63,11 @@ class ClassFields(StrEnum):
     STATEMENT_COUNT = "statementCount"
     # Number of statements on instances of a class.
     INSTANCE_STATEMENT_COUNT = "instanceStatementCount"
+    
+    # Additional identifiers used for the loading phase - extension of descriptions.
+    
+    HAS_EFFECT = 'hasEffect'
+    HAS_CAUSE = 'hasCause'
+    HAS_CHARACTERISTICS = 'hasCharacteristics'
+    HAS_PARTS = 'hasParts'
+    PART_OF = 'partOf'

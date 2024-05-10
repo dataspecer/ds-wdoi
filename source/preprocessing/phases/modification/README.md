@@ -40,7 +40,7 @@ The script itself works in steps that depend on one another.
         5. Mark instances to parents.
             - So we get inverse relation for instances.
     4. Remove selected class instances from the ontology.
-        1. Removing instances of classes - gene, protein, type of chemical entity.
+        1. Removing instances of classes - gene, protein, type of chemical entity, and a group of stereoisomers.
             - It will keep the ancestors trees untouched, in case there was a cycle.
             - We are removing them because they form roughly 3 million classes, and contain labels/descriptions/aliases which repeat a lot.
             - There is also a question whether to remove instances of the instances (recursively).

@@ -9,8 +9,8 @@ Since there is the need to traverse recursively to children and remove them as w
 In case the removed class is their only parent or all parents are already marked for removal.
 """
 class RemoveClassesWithNoParent(Remover):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("remove_classes_with_no_parent"), context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("remove_classes_with_no_parent"), context, logging_on)
     
     def report_status(self) -> None:
         self.logger.info(f"Classes Marked: {len(self.classes_marked_for_removal)} Removed {len(self.classes_removed)}")
@@ -24,9 +24,9 @@ class RemoveClassesWithNoParent(Remover):
             if len(wd_class[ClassFields.SUBCLASS_OF.value]) == 0 and wd_class[ClassFields.ID.value] != ROOT_ENTITY_ID_NUM:
                 self.classes_marked_for_removal.add(wd_class[ClassFields.ID.value])
                 if len(wd_class[ClassFields.CHILDREN.value]) == 0:
-                    self.logger.info(f"Marked empty class for removal {wd_class[ClassFields.ID.value]}")
+                    self.try_log(f"Marked empty class for removal {wd_class[ClassFields.ID.value]}")
                 else:
-                    self.logger.info(f"Marked class for removal {wd_class[ClassFields.ID.value]}")
+                    self.try_log(f"Marked class for removal {wd_class[ClassFields.ID.value]}")
                     self._recursive_removal(wd_class[ClassFields.CHILDREN.value])
                     
     def _recursive_removal(self, class_children_ids):
@@ -37,7 +37,7 @@ class RemoveClassesWithNoParent(Remover):
                 child = self.context.classes_dict[child_id]
                 if self._marked_parents_count(child[ClassFields.SUBCLASS_OF.value]) == len(child[ClassFields.SUBCLASS_OF.value]) and child_id != ROOT_ENTITY_ID_NUM:
                     self.classes_marked_for_removal.add(child[ClassFields.ID.value])
-                    self.logger.info(f"Marked class for removal {child[ClassFields.ID.value]}")
+                    self.try_log(f"Marked class for removal {child[ClassFields.ID.value]}")
                     queue.append(child[ClassFields.CHILDREN.value])
         
     def _marked_parents_count(self, parents_ids):

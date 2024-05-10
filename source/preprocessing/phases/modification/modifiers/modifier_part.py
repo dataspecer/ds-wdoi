@@ -4,8 +4,8 @@ from phases.modification.modifiers.context import Context
 from phases.modification.modifiers.modifier import Modifier
 
 class ModifierPart(Modifier):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger, context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger, context, logging_on)
         self.marker_set = set()
     
     @abstractmethod
@@ -18,7 +18,7 @@ class ModifierPart(Modifier):
             if id in entities_dict:
                 existing_entities_ids.append(id)
             else:
-                self.logger.info(f"Found missing reference {id} (is Class = {isClass})")
+                self.try_log(f"Found missing reference {id} (is Class = {isClass})")
                 self.marker_set.add(id)
         return existing_entities_ids
     
@@ -34,7 +34,7 @@ class ModifierPart(Modifier):
             if str_property_id in self.context.properties_dict:
                 existing_records[str_property_id] = list(filter(lambda x: x in self.context.properties_dict or x == "0", allowance_map[str_property_id]))
             else:
-                self.logger.info(f"Found missing reference {str_property_id} (is Class = {False})")
+                self.try_log(f"Found missing reference {str_property_id} (is Class = {False})")
                 self.marker_set.add(str_property_id)
         return existing_records
     
@@ -44,7 +44,7 @@ class ModifierPart(Modifier):
         if entity_id in entities_ids_list:
             entities_ids_list.remove(entity_id)
             self.marker_set.add(entity_id)
-            self.logger.info(f"Found self reference in {"property" if not isClass else "class"}:{entity_id} on field: {field}")
+            self.try_log(f"Found self reference in {"property" if not isClass else "class"}:{entity_id} on field: {field}")
             return True
         else:
             return False 

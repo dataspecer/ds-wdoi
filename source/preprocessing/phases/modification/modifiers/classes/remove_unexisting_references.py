@@ -4,8 +4,8 @@ from core.model_simplified.classes import ClassFields
 from core.model_simplified.scores import ScoresFields
 
 class RemoveUnexistingReferencesClasses(ModifierPart):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("rer_classes"), context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("rer_classes"), context, logging_on)
     
     def remove_unexisting_inner_range(self, property_scores_records):
         for property_scores_record in property_scores_records:

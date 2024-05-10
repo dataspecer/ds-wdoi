@@ -8,8 +8,8 @@ import core.utils.decoding as decoding
 
 class ClassesPropertyUsageStatsMerger(ModifierAll):
     
-    def __init__(self, logger, context: Context, classes_property_usage_stats_filename: pathlib.Path) -> None:
-        super().__init__(logger.getChild("classes_property_usage_merger"), context)
+    def __init__(self, logger, context: Context, classes_property_usage_stats_filename: pathlib.Path, logging_on: bool) -> None:
+        super().__init__(logger.getChild("classes_property_usage_merger"), context, logging_on)
         self.classes_property_usage_stats_filename = classes_property_usage_stats_filename
         self.missing_classes = set()
     
@@ -31,7 +31,6 @@ class ClassesPropertyUsageStatsMerger(ModifierAll):
         wd_class[ClassFields.SITELINKS_COUNT.value] = class_stats[ClassFields.SITELINKS_COUNT.value]
     
     def modify_all(self) -> None:
-        self.logger.info("Starting loading of classes property usage statistics")
         classes_property_usage_stats: dict = decoding.load_entities_to_dict(self.classes_property_usage_stats_filename, self.logger, ul.CLASSES_PROGRESS_STEP)
         for idx, class_stats in enumerate(classes_property_usage_stats.values()):
             cls_id = class_stats[ClassFields.ID.value]
@@ -44,7 +43,7 @@ class ClassesPropertyUsageStatsMerger(ModifierAll):
                 self.merge_property_usage(wd_class, class_stats, ClassFields.VALUE_OF_STATS_SCORES.value, ClassFields.VALUE_OF_STATS.value)
             else:
                 self.missing_classes.add(cls_id)
-                self.logger.info(f"Found missing class = {cls_id}")
+                self.try_log(f"Found missing class = {cls_id}")
             ul.try_log_progress(self.logger, idx, ul.CLASSES_PROGRESS_STEP)
             
     def report_status(self) -> None:

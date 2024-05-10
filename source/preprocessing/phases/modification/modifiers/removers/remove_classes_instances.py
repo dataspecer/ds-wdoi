@@ -4,8 +4,8 @@ from phases.modification.modifiers.context import Context
 from core.model_simplified.classes import ClassFields
 
 class RemoveClassInstances(Remover):
-    def __init__(self, classes_ids, logger, context: Context) -> None:
-        super().__init__(logger.getChild("remove_class_instances"), context)
+    def __init__(self, classes_ids, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("remove_class_instances"), context, logging_on)
         self.ancestors_ids_to_keep = set(classes_ids)
         self.classes_ids = classes_ids
     
@@ -37,16 +37,15 @@ class RemoveClassInstances(Remover):
     def modify_all(self) -> None:
         self._mark_ancestors_to_keep()
         self._mark_instances_for_removal()
-        self.remove(self.context.classes_dict, self.classes_marked_for_removal, self.classes_removed, logging=False)
+        self.remove(self.context.classes_dict, self.classes_marked_for_removal, self.classes_removed)
         
     def _mark_instances_for_removal(self):
         for class_id in self.classes_ids:
             wd_class = self.context.classes_dict[class_id]
-            instances_ids = self.context.classes_dict[wd_class[ClassFields.INSTANCES.value]]
+            instances_ids = wd_class[ClassFields.INSTANCES.value]
             for instance_id in instances_ids:
                 if instance_id not in self.ancestors_ids_to_keep:
                     self.classes_marked_for_removal.add(instance_id)
-                    # TODO maybe recursily remove instances of the removed instances.
 
                 
                 

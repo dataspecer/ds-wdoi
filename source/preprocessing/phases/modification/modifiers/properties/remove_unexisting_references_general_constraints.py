@@ -4,8 +4,8 @@ from core.model_simplified.properties import PropertyFields
 from core.model_simplified.constraints import GenConstFields, ItemConstFields, TypeConstFields
 
 class RemoveUnexistingReferencesGeneralConstraintsProperties(ModifierPart):
-    def __init__(self, logger,  context: Context) -> None:
-        super().__init__(logger.getChild("rer_properties_general_constraints"), context)
+    def __init__(self, logger,  context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("rer_properties_general_constraints"), context, logging_on)
     
     def __call__(self, wd_property) -> None:
         constraints = wd_property[PropertyFields.CONSTRAINTS.value]

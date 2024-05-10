@@ -2,8 +2,8 @@ from phases.modification.modifiers.removers.remover import Remover
 from phases.modification.modifiers.context import Context
 
 class RemoveEntitiesWithNoLabel(Remover):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("remove_entities_with_no_label"), context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("remove_entities_with_no_label"), context, logging_on)
     
     def report_status(self) -> None:
         self.logger.info(f"Classes Marked: {len(self.classes_marked_for_removal)} Removed {len(self.classes_removed)}")
@@ -20,5 +20,5 @@ class RemoveEntitiesWithNoLabel(Remover):
         for entity in entities_dict.values():
             if len(entity['labels']) == 0:
                 mark_set.add(entity['id'])
-                self.logger.info(f'Marked for removal entity {entity['id']}.')
+                self.try_log(f'Marked for removal entity {entity['id']}.')
     

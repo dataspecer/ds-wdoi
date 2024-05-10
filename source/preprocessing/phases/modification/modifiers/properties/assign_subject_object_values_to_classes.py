@@ -8,8 +8,8 @@ from core.model_simplified.properties import PropertyFields
 from core.model_simplified.constraints import GenConstFields, ItemConstFields, TypeConstFields
 
 class AssignSubjectValueConstsToClasses(ModifierPart):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("assign_subject_consts_object"), context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("assign_subject_consts_object"), context, logging_on)
         self.object_assignment = set()
 
     def __call__(self, wd_property) -> None:

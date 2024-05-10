@@ -85,12 +85,14 @@ class Properties(StrEnum):
     MAIN_SUBJECT = "P921", UnderlyingTypes.ENTITY
     FOUND_IN_TAXON = "P703", UnderlyingTypes.ENTITY
     TOPICS_MAIN_CATEGORY = "P910", UnderlyingTypes.ENTITY
-    PART_OF = "P361", UnderlyingTypes.ENTITY
-    HAS_PARTS = "P527", UnderlyingTypes.ENTITY
     PARENT_TAXON = "P171", UnderlyingTypes.ENTITY
     INDIVIDUAL_OF_TAXON = "P10241", UnderlyingTypes.ENTITY
-    HAS_EFFECT = "P1542", UnderlyingTypes.ENTITY
     TOPICS_MAIN_TEMPLATE = "P1424", UnderlyingTypes.ENTITY
+    PART_OF = "P361", UnderlyingTypes.ENTITY
+    HAS_PARTS = "P527", UnderlyingTypes.ENTITY
+    HAS_EFFECT = "P1542", UnderlyingTypes.ENTITY
+    HAS_CHARACTERISTICS = "P1552", UnderlyingTypes.ENTITY
+    HAS_CAUSE = "P828", UnderlyingTypes.ENTITY
     
     def __new__(cls, value: str, type: UnderlyingTypes):
         obj =  str.__new__(cls, value)

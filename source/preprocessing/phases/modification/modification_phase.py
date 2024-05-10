@@ -28,6 +28,8 @@ properties_logger = main_logger.getChild("properties")
 CLASSES_OUTPUT_FILE_PATH = Path(".") / 'classes-mod.json'
 PROPERTIES_OUTPUT_FILE_PATH = Path(".") / 'properties-mod.json'
 
+VERBOSE = False
+
 @timed(classes_logger)
 def __load_classes_to_dict(json_file_path: Path) -> dict:
     return decoding.load_entities_to_dict(json_file_path, classes_logger, ul.CLASSES_PROGRESS_STEP)
@@ -56,17 +58,17 @@ def __report_status_of_modifiers(modifiers):
 
 @timed(main_logger)
 def __merge_property_usage_stats(context: Context, classes_property_usage_stats_filename: Path, properties_domain_range_usage_stats_filename: Path):
-    cls_merger = ClassesPropertyUsageStatsMerger(classes_logger, context, classes_property_usage_stats_filename)
+    cls_merger = ClassesPropertyUsageStatsMerger(classes_logger, context, classes_property_usage_stats_filename, VERBOSE)
     cls_merger.modify_all()
     cls_merger.report_status()
     
-    props_merger = PropertiesDomainRangeUsageStatsMerger(properties_logger, context, properties_domain_range_usage_stats_filename)
+    props_merger = PropertiesDomainRangeUsageStatsMerger(properties_logger, context, properties_domain_range_usage_stats_filename, VERBOSE)
     props_merger.modify_all()
     props_merger.report_status()
 
 @timed(main_logger)
 def __remove_entities_with_empty_labels(context: Context):
-    remover = RemoveEntitiesWithNoLabel(main_logger, context)
+    remover = RemoveEntitiesWithNoLabel(main_logger, context, VERBOSE)
     remover.modify_all()
     remover.report_status()
 
@@ -74,12 +76,12 @@ def __remove_entities_with_empty_labels(context: Context):
 def __modify_classes_general(context: Context):
     logger = classes_logger.getChild("modify_classes_general")
     modifiers = [
-        AddFields(logger, context), 
-        RemoveUnexistingReferencesClasses(logger, context), 
-        RemoveSelfCyclesClass(logger, context), 
-        MarkChildrenToParents(logger, context),
-        MarkInstancesToParents(logger, context),
-        RootAllClasses(logger, context)
+        AddFields(logger, context, VERBOSE), 
+        RemoveUnexistingReferencesClasses(logger, context, VERBOSE), 
+        RemoveSelfCyclesClass(logger, context, VERBOSE), 
+        MarkChildrenToParents(logger, context, VERBOSE),
+        MarkInstancesToParents(logger, context, VERBOSE),
+        RootAllClasses(logger, context, VERBOSE)
     ]
     __modify_entities(modifiers, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
@@ -87,41 +89,47 @@ def __modify_classes_general(context: Context):
 @timed(properties_logger)
 def __modify_properties_general(context: Context):
     modifiers = [
-        RemoveUnexistingReferencesMainProperties(properties_logger, context), 
-        RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger, context),
-        RemoveUnexistingReferencesItemConstraintsProperties(properties_logger, context),
-        RemoveSelfCyclesProperty(properties_logger, context),
-        AssignSubjectValueConstsToClasses(properties_logger, context),
-        MarkSubpropertiesToParents(properties_logger, context)
+        RemoveUnexistingReferencesMainProperties(properties_logger, context, VERBOSE), 
+        RemoveUnexistingReferencesGeneralConstraintsProperties(properties_logger, context, VERBOSE),
+        RemoveUnexistingReferencesItemConstraintsProperties(properties_logger, context, VERBOSE),
+        RemoveSelfCyclesProperty(properties_logger, context, VERBOSE),
+        AssignSubjectValueConstsToClasses(properties_logger, context, VERBOSE),
+        MarkSubpropertiesToParents(properties_logger, context, VERBOSE)
     ]
     __modify_entities(modifiers, context.properties_dict, properties_logger, ul.PROPERTIES_PROGRESS_STEP)
     __report_status_of_modifiers(modifiers)
 
 @timed(classes_logger)
 def __remove_selected_class_instances(context: Context):
-    logger = classes_logger.getChild("pre_unrooted_classes_removal") 
+    logger = classes_logger.getChild("remove-instances") 
     
     # type of chemical entity, gene, protein, a group of stereoisomers
     classes_ids = [113145171, 7187, 8054, 59199015]
-    class_instance_remover = RemoveClassInstances(classes_ids, logger ,context)
+    
+    logger.info("Removing instances")
+    class_instance_remover = RemoveClassInstances(classes_ids, logger, context, VERBOSE)
     class_instance_remover.modify_all()
     class_instance_remover.report_status()
     
     # Update references of the existing classes.
+    logger.info("Starting to update references")
     remove_refs = [
-        RemoveUnexistingReferencesClasses(logger, context),
+        RemoveUnexistingReferencesClasses(logger, context, VERBOSE),
     ]
     __modify_entities(remove_refs, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(remove_refs)
     
     # Remove all classes that got detached from the tree after the instance removal.
-    no_parent_class_remover = RemoveClassesWithNoParent(logger, context)
+    logger.info("Removing classes with no parent")
+    no_parent_class_remover = RemoveClassesWithNoParent(logger, context, VERBOSE)
     no_parent_class_remover.modify_all()
     no_parent_class_remover.report_status()
     
     # Sanity check that everything is rooted
+    logger.info("Removing references and sanity check that everything is rooted")
     root_all_classes = [
-        RootAllClasses(logger, context),
+        RemoveUnexistingReferencesClasses(logger, context, VERBOSE),
+        RootAllClasses(logger, context, VERBOSE),
     ]
     __modify_entities(root_all_classes, context.classes_dict, logger, ul.CLASSES_PROGRESS_STEP)
     __report_status_of_modifiers(root_all_classes)

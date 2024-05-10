@@ -8,8 +8,8 @@ This should be run after removing unexisting references, self cycles and assigme
 """
 class MarkSubpropertiesToParents(ModifierPart):
     
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("mark_subproperties_to_parents"), context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("mark_subproperties_to_parents"), context, logging_on)
         
     def __call__(self, wd_property) -> None:
         entityId = wd_property[PropertyFields.ID.value]
@@ -20,7 +20,7 @@ class MarkSubpropertiesToParents(ModifierPart):
                 self.add_field_if_missing(parent, PropertyFields.SUBPROPERTIES.value)
                 parent[PropertyFields.SUBPROPERTIES.value].append(entityId)
             else:
-                self.logger.info(f"Missing property {parentId}")
+                self.try_log(f"Missing property {parentId}")
                 self.marker_set.add(parentId)
     
     def report_status(self) -> None:

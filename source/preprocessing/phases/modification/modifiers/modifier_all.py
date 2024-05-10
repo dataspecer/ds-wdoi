@@ -8,8 +8,8 @@ This is because some actions could overlap and destroy their assumption of the c
 e.g. if some parts were removed without any notice.
 """
 class ModifierAll(Modifier):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger, context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger, context, logging_on)
     
     @abstractmethod
     def modify_all(self) -> None:

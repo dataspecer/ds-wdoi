@@ -9,8 +9,8 @@ Note that the list is incomplete, since some fields are added during merging of 
 The fields here are for the main modification phase.
 """
 class AddFields(ModifierPart):
-    def __init__(self, logger, context: Context) -> None:
-        super().__init__(logger.getChild("add_fields"), context)
+    def __init__(self, logger, context: Context, logging_on: bool) -> None:
+        super().__init__(logger.getChild("add_fields"), context, logging_on)
 
     def __call__(self, wd_class) -> None:
         self.add_field_if_missing(wd_class, ClassFields.CHILDREN.value)
