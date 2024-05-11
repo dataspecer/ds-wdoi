@@ -24,6 +24,8 @@ export interface InputSubjectValueTypeContraint {
   readonly subclassOfInstanceOf: EntityIdsList;
 }
 
+// Contains all the contents from the preprocessing phase.
+// There is no need to store them all, just extract what is needed.
 export interface InputProperty extends InputEntity {
   readonly datatype: Datatype;
   readonly underlyingType: UnderlyingType;
@@ -35,6 +37,7 @@ export interface InputProperty extends InputEntity {
   readonly subproperties: EntityIdsList;
   readonly equivalentProperty: ExternalOntologyMappings;
   readonly constraints: InputConstraints;
+  readonly usageCount: number;
 }
 
 export interface InputConstraints {

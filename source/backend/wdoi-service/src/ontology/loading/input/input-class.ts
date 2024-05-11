@@ -15,6 +15,8 @@ export interface InputPropertyScoreRecord {
 }
 export type InputPropertyScoreRecordList = readonly InputPropertyScoreRecord[];
 
+// Contains all the contents from the preprocessing phase.
+// There is no need to store them all, just extract what is needed.
 export interface InputClass extends InputEntity {
   readonly subclassOf: EntityIdsList;
   readonly propertiesForThisType: EntityIdsList;
@@ -27,4 +29,18 @@ export interface InputClass extends InputEntity {
   readonly valueOfStats: EntityIdsList;
   readonly valueOfStatsScores: InputPropertyScoreRecordList;
   readonly instances: EntityIdsList;
+
+  readonly instanceCount: number;
+  readonly sitelinksCount: number;
+  readonly inlinksCount: number;
+  readonly instanceInlinksCount: number;
+  readonly statementCount: number;
+  readonly instanceStatementCount: number;
+
+  readonly hasEffect: EntityIdsList;
+  readonly hasCause: EntityIdsList;
+  readonly hasCharacteristics: EntityIdsList;
+  readonly hasParts: EntityIdsList;
+  readonly partOf: EntityIdsList;
+  readonly hasUse: EntityIdsList;
 }

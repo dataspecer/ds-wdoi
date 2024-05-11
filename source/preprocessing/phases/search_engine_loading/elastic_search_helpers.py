@@ -38,13 +38,12 @@ def __create_language_mappings():
         "dynamic_templates": dynamic_templates,
     }
 
-
 def index_exists(client, name):
     if not client.indices.exists(index=name):
-        logger.info(f"Index == {name} does NOT EXIST.")
+        logger.info(f"Index '{name}' does not exist.")
         return False
     else:
-        logger.info(f"Index == {name} does EXIST.")
+        logger.info(f"Index '{name}' does exist.")
         return True
 
 def list_indices():
@@ -69,6 +68,16 @@ def list_mappings():
     
     logger.info("Listing mappings ended")
 
+def list_sizes():
+    logger.info("List sizes")
+    
+    response = es.client.indices.stats(index="*", metric="store")
+    for index, stats in response['indices'].items():
+        size_in_bytes = stats['total']['store']['size_in_bytes']
+        print(f"Index Size: '{index}': {size_in_bytes} bytes")
+        
+    logger.info("List sizes ended")
+        
 def refresh():
     logger.info("Refreshing started")
     
@@ -80,13 +89,13 @@ def refresh():
         logger.critical("Exiting...")        
         exit(1)
     else:
-        logger.info(f"Refreshing index == {es.CLASSES_ELASTIC_INDEX_NAME}")
+        logger.info(f"Refreshing index '{es.CLASSES_ELASTIC_INDEX_NAME}'")
         es.client.indices.refresh(index=es.CLASSES_ELASTIC_INDEX_NAME)
-        logger.info(f"Refreshed index == {es.CLASSES_ELASTIC_INDEX_NAME} successfully")
+        logger.info(f"Refreshed index '{es.CLASSES_ELASTIC_INDEX_NAME}' successfully")
         
-        logger.info(f"Refreshing index == {es.PROPERTIES_ELASTIC_INDEX_NAME}")
+        logger.info(f"Refreshing index '{es.PROPERTIES_ELASTIC_INDEX_NAME}'")
         es.client.indices.refresh(index=es.PROPERTIES_ELASTIC_INDEX_NAME)
-        logger.info(f"Refreshed index == {es.PROPERTIES_ELASTIC_INDEX_NAME} successfully")
+        logger.info(f"Refreshed index '{es.PROPERTIES_ELASTIC_INDEX_NAME}' successfully")
     
     logger.info("Refreshing ended")
 
@@ -103,28 +112,29 @@ def create():
     else:
         mappings = __create_language_mappings()
         
-        logger.info(f"Creating index == {es.CLASSES_ELASTIC_INDEX_NAME}")
+        logger.info(f"Creating index '{es.CLASSES_ELASTIC_INDEX_NAME}'")
         es.client.indices.create(index=es.CLASSES_ELASTIC_INDEX_NAME, mappings=mappings)
-        logger.info(f"Created index == {es.CLASSES_ELASTIC_INDEX_NAME} successfully")
+        logger.info(f"Created index '{es.CLASSES_ELASTIC_INDEX_NAME}' successfully")
         
-        logger.info(f"Creating index == {es.PROPERTIES_ELASTIC_INDEX_NAME}")
+        logger.info(f"Creating index '{es.PROPERTIES_ELASTIC_INDEX_NAME}'")
         es.client.indices.create(index=es.PROPERTIES_ELASTIC_INDEX_NAME, mappings=mappings)
-        logger.info(f"Created index == {es.PROPERTIES_ELASTIC_INDEX_NAME} successfully")
+        logger.info(f"Created index '{es.PROPERTIES_ELASTIC_INDEX_NAME}' successfully")
             
     logger.info("Creating ended")
+    
 
 def delete():
     logger.info("Deleting started")
     
     if (index_exists(es.client, es.CLASSES_ELASTIC_INDEX_NAME)):
-        logger.info(f"Deleting classes index == {es.CLASSES_ELASTIC_INDEX_NAME}")
+        logger.info(f"Deleting classes index '{es.CLASSES_ELASTIC_INDEX_NAME}'")
         es.client.indices.delete(index=es.CLASSES_ELASTIC_INDEX_NAME)
-        logger.info(f"Deleted classes index == {es.CLASSES_ELASTIC_INDEX_NAME} successfully")
+        logger.info(f"Deleted classes index '{es.CLASSES_ELASTIC_INDEX_NAME}' successfully")
         
     if (index_exists(es.client, es.PROPERTIES_ELASTIC_INDEX_NAME)):
-        logger.info(f"Deleting properties index == {es.PROPERTIES_ELASTIC_INDEX_NAME}")
+        logger.info(f"Deleting properties index '{es.PROPERTIES_ELASTIC_INDEX_NAME}'")
         es.client.indices.delete(index=es.PROPERTIES_ELASTIC_INDEX_NAME)
-        logger.info(f"Deleted properties index == {es.PROPERTIES_ELASTIC_INDEX_NAME} successfully")   
+        logger.info(f"Deleted properties index '{es.PROPERTIES_ELASTIC_INDEX_NAME}' successfully")   
     
     logger.info("Deleting ended")
         

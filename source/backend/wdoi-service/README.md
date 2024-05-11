@@ -142,9 +142,9 @@ The input is handled via `.env` file.
 
     ES_NODE='https://localhost:9200'
     ES_PASSWD='password'
-    ES_CERT_PATH='absolute/path/to/http_ca.crt'
-    CLASSES_PATH='absolute/path/to/preprocessed/classes/file.json'
-    PROPERTIES_PATH='absolute/path/to/preprocessed/properties/file.json'
+    ES_CERT_PATH='/path/to/http_ca.crt'
+    CLASSES_PATH='/path/to/preprocessed/classes/file.json'
+    PROPERTIES_PATH='/path/to/preprocessed/properties/file.json'
 
 - The service expects two files from preprocessing phase `CLASSES_PATH` and `PROPERTIES_PATH` in json format.
   - The files should be output from the 5. phase (Property recommendations).
@@ -199,6 +199,7 @@ The input is handled via `.env` file.
 
     docker run --network your_bridge \
     -p 3042:3042 \
+    --restart unless-stopped \
     -e ES_NODE="https://elastic:9200" \
     -e ES_PASSWD="your_password_here" \
     --mount type=bind,source=/path/to/ds-wdoi/source/preprocessing/classes-recs.json,target=/app/input/classes.json,readonly \
@@ -213,6 +214,6 @@ The input is handled via `.env` file.
 
 ## Why separate containers
 
-- It would be nice if we could run it by docker compose, but right now, there is not a straightforward way to achieve it.
+- It would be nice if we could run it by docker compose, but right now, there is not a straightforward way to achieve it, thus for the time being, we rely on the composition of separate docker images.
   - We need to update the indices in the elastic, while this is happening this service should be down.
-  - After the indices are update, ther would be need to restart this service.
+  - After the indices are updated, there is the need to restart this service.

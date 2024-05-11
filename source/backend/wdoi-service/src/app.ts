@@ -9,6 +9,7 @@ import process from 'process';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fs from 'fs';
+import closeWithGrace from 'close-with-grace';
 
 const IS_PRODUCTION = envVars.ENVIROMENT === 'production';
 const PORT = 3042;
@@ -91,11 +92,12 @@ const startFastify = async (): Promise<void> => {
   }
 };
 
-process.on('uncaughtException', (error) => {
-  console.error(error);
-});
-process.on('unhandledRejection', (error) => {
-  console.error(error);
+closeWithGrace(async ({ signal, err, manual }) => {
+  if (err != null) {
+    fastify.log.error(err);
+  }
+  fastify.log.info(`Received ${signal}. Closing...`);
+  await fastify.close();
 });
 
 void startFastify();

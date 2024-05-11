@@ -32,6 +32,7 @@ The simplified model is simply a flattening of the hierarchical Wikidata model, 
   - subclass of values
   - properties for this type
   - equivalent class (external ontology mapping)
+  - identifiers of properties - part of, parts, has characteristics, has effect, has cause, has use
 - For properties it extracts:
   - id
   - iri

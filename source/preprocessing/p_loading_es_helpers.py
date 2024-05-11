@@ -20,7 +20,7 @@ if __name__ == "__main__":
                             """)
     parser.add_argument("operation",
                         type=str,
-                        choices=["create", "delete", "refresh", "search_classes", "search_properties", "list", "mappings"], 
+                        choices=["create", "delete", "refresh", "search_classes", "search_properties", "list", "mappings", "size"], 
                         help="An operation to execute.")
     parser.add_argument("query",
                         type=str,
@@ -44,6 +44,8 @@ if __name__ == "__main__":
         helpers.list_indices()
     elif operation == "mappings":
         helpers.list_mappings()
+    elif operation == "size":
+        helpers.list_sizes()
     else:
         raise ValueError("Operation was not defined for the script.")
     

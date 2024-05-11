@@ -71,3 +71,4 @@ class ClassFields(StrEnum):
     HAS_CHARACTERISTICS = 'hasCharacteristics'
     HAS_PARTS = 'hasParts'
     PART_OF = 'partOf'
+    HAS_USE = "hasUse"

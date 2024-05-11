@@ -228,6 +228,9 @@ It either creates, refreshes or deletes classes and properties indices.
       # List mappings of indices
       &> python loading_es_helpers.py mappings
 
+      # List index sizes
+      &> python loading_es_helpers.py size
+
 - Logging prefix: `es_helpers`
 
 ### Elastic search set up

@@ -93,6 +93,7 @@ class Properties(StrEnum):
     HAS_EFFECT = "P1542", UnderlyingTypes.ENTITY
     HAS_CHARACTERISTICS = "P1552", UnderlyingTypes.ENTITY
     HAS_CAUSE = "P828", UnderlyingTypes.ENTITY
+    HAS_USE = "P366", UnderlyingTypes.ENTITY
     
     def __new__(cls, value: str, type: UnderlyingTypes):
         obj =  str.__new__(cls, value)

@@ -29,6 +29,7 @@ def extract_wd_class(str_class_id, wd_class, languages):
     has_characteristics_str_ids = wd_json_stmts_ex.extract_wd_statement_values(wd_class, Properties.HAS_CHARACTERISTICS)
     has_parts_str_ids = wd_json_stmts_ex.extract_wd_statement_values(wd_class, Properties.HAS_PARTS)
     part_of_str_ids = wd_json_stmts_ex.extract_wd_statement_values(wd_class, Properties.PART_OF)
+    has_use_str_ids = wd_json_stmts_ex.extract_wd_statement_values(wd_class, Properties.HAS_USE)
     
     return {
         ClassFields.ID.value: num_id,
@@ -45,4 +46,5 @@ def extract_wd_class(str_class_id, wd_class, languages):
         ClassFields.HAS_CHARACTERISTICS.value: __str_to_num_ids(has_characteristics_str_ids),
         ClassFields.HAS_PARTS.value: __str_to_num_ids(has_parts_str_ids),
         ClassFields.PART_OF.value: __str_to_num_ids(part_of_str_ids),
+        ClassFields.HAS_USE.value: __str_to_num_ids(has_use_str_ids)
     }
