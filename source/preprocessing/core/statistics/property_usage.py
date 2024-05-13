@@ -254,8 +254,7 @@ class PropertyUsageStatistics:
 ## Statistics finalization
 
     def _compute_statistics(self, classes_statistics_dict: dict, properties_statistics_dict: dict):
-        i = 1
-        for class_id, class_property_usage_record in self.class_property_usage_dict.items():
+        for i, [class_id, class_property_usage_record] in enumerate(self.class_property_usage_dict.items()):
             classes_statistics_dict[class_id][ClassFields.SUBJECT_OF_STATS_SCORES.value] = self._compute_class_properties_usage_statistics(class_property_usage_record["subjectOf"])
             classes_statistics_dict[class_id][ClassFields.INSTANCE_STATEMENT_COUNT] = class_property_usage_record["subjectOf"]["counter"]
             
@@ -264,7 +263,6 @@ class PropertyUsageStatistics:
             
             self._add_to_domain_and_range_of_property(properties_statistics_dict, class_id, class_property_usage_record["subjectOf"])
             
-            i += 1
             ul.try_log_progress(self.logger, i, ul.CLASSES_PROGRESS_STEP)
         
         self.logger.info("Summarizing domain and range")
@@ -273,9 +271,9 @@ class PropertyUsageStatistics:
     
     def _save_to_files(self, classes_statistics_dict: dict, properties_statistics_dict: dict):
         self.logger.info("Writing classes to a file.")
-        decoding.write_mapped_entities_to_file(classes_statistics_dict, CLASSES_STATS_OUTPUT_FILE_PATH)
+        decoding.write_entities_dict_to_file(classes_statistics_dict, CLASSES_STATS_OUTPUT_FILE_PATH)
         self.logger.info("Writing properties to a file.")
-        decoding.write_mapped_entities_to_file(properties_statistics_dict, PROPERTIES_STATS_OUTPUT_FILE_PATH)
+        decoding.write_entities_dict_to_file(properties_statistics_dict, PROPERTIES_STATS_OUTPUT_FILE_PATH)
     
     def finalize_statistics(self):
         # Clear the instance of dict

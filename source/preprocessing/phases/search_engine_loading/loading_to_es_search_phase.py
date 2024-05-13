@@ -39,7 +39,7 @@ def __generate_elastic_input(wd_entity, languages, elastic_index_name):
     return elastic_input
 
 def __elastic_input_generator(input_json_file, logger, logging_step, languages, elastic_index_name):
-    for wd_entity in decoding.entities_generator(input_json_file, logger, logging_step):
+    for wd_entity in decoding.entities_from_file(input_json_file, logger, logging_step):
         yield __generate_elastic_input(wd_entity, languages, elastic_index_name)
         
 def __load_entities(json_file_path: Path, logger, logging_step, languages, elastic_index_name): 

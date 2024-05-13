@@ -52,7 +52,7 @@ def main_number_of_same_info(json_file_path: pathlib.Path, part: str):
     part_logger = logger.getChild(part)
     with open(json_file_path, "rb") as input_file:
         resultsDict = dict()
-        for entity in decoding.entities_generator(input_file, part_logger, ul.CLASSES_PROGRESS_STEP):
+        for entity in decoding.entities_from_file(input_file, part_logger, ul.CLASSES_PROGRESS_STEP):
             str_values = get_str_values(entity, part)
             for value in str_values:
                 if value in resultsDict:

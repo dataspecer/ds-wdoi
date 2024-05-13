@@ -12,7 +12,7 @@ logger = main_logger.getChild("reduce_property_usage")
 CLASSE_OUTPUT_FILE_PATH = Path(".") / "classes-experimental-prep-1-reduction.json" 
 PROPERTIES_OUTPUT_FILE_PATH = Path(".") / "properties-experimental-prep-1-reduction.json" 
 
-def __ancestors_of_generator(wd_data_class, classes_dict: dict):
+def __ancestors_of(wd_data_class, classes_dict: dict):
         visited_ids = set()
         queue = deque()
         
@@ -35,7 +35,7 @@ def __ancestors_of_generator(wd_data_class, classes_dict: dict):
 def __reduce_property_usage_on_classes(classes_dict):
     for i, [wd_data_class_id, wd_data_class] in enumerate(classes_dict.items()):
         class_properties = wd_data_class[DataClassFields.OWN_PROPERTIES.value]
-        for ancestor in __ancestors_of_generator(wd_data_class, classes_dict):
+        for ancestor in __ancestors_of(wd_data_class, classes_dict):
             if wd_data_class_id != ancestor[DataClassFields.ID.value]:
                 class_properties = class_properties - ancestor[DataClassFields.OWN_PROPERTIES.value]
         # Still as a set to by used by other classes.
@@ -53,7 +53,7 @@ def __assign_ancestors_to_classes(classes_dict):
     for i, [wd_data_class_id, wd_data_class] in enumerate(classes_dict.items()):
         property_count = len(wd_data_class[DataClassFields.OWN_PROPERTIES.value])
         ancestors_defining_property = set([wd_data_class_id] if property_count != 0 else [])
-        for ancestor in __ancestors_of_generator(wd_data_class, classes_dict):
+        for ancestor in __ancestors_of(wd_data_class, classes_dict):
             if len(ancestor[DataClassFields.OWN_PROPERTIES.value]) != 0:
                 ancestors_defining_property.add(ancestor[DataClassFields.ID.value])
         wd_data_class[DataClassFields.ANCESTORS_DEFINING_PROPERTIES.value] = list(ancestors_defining_property)
@@ -91,8 +91,8 @@ def __remove_properties_with_no_usage(properties_dict):
 
 @timed(logger)
 def __write_dicts_to_files(classes_dict, properties_dict):
-    decoding.write_mapped_entities_to_file(classes_dict, CLASSE_OUTPUT_FILE_PATH)
-    decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
+    decoding.write_entities_dict_to_file(classes_dict, CLASSE_OUTPUT_FILE_PATH)
+    decoding.write_entities_dict_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
 
 @timed(logger)
 def reduce_property_usage(classes_dict: dict, properties_dict: dict):

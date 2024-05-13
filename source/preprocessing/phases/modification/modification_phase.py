@@ -40,11 +40,11 @@ def __load_properties_to_dict(json_file_path: Path) -> dict:
     
 @timed(classes_logger)
 def __write_classes_to_file(classes_dict: dict):
-    decoding.write_mapped_entities_to_file(classes_dict, CLASSES_OUTPUT_FILE_PATH)
+    decoding.write_entities_dict_to_file(classes_dict, CLASSES_OUTPUT_FILE_PATH)
 
 @timed(properties_logger)
 def __write_properties_to_file(properties_dict: dict):
-    decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
+    decoding.write_entities_dict_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
 
 def __modify_entities(modifiers, entities_dict: dict, logger, logging_step):
     for idx, entity in enumerate(entities_dict.values()):

@@ -68,7 +68,7 @@ def identify_classes_properties(gzip_dump_file_path: Path, property_statistics: 
     wd_classes_ids_set = set()
     wd_properties_ids_dict = dict()
     with (gzip.open(gzip_dump_file_path) as gzip_input_file):
-        for wd_entity in decoding.entities_generator(gzip_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(wd_classes_ids_set, wd_properties_ids_dict)):
+        for wd_entity in decoding.entities_from_file(gzip_input_file, logger, ul.ENTITY_PROGRESS_STEP, __log_context_func(wd_classes_ids_set, wd_properties_ids_dict)):
             property_statistics.process_entity(wd_entity)
             __process_wd_entity(wd_entity, wd_classes_ids_set, wd_properties_ids_dict)
         return wd_classes_ids_set, wd_properties_ids_dict

@@ -13,7 +13,7 @@ OUTPUT_FILE = "ancestors_defining_property_count.json"
 def main_ancestors_defining_property_count(classes_json_file_path: pathlib.Path):
     with open(classes_json_file_path, "rb") as classes_input_file:
         results = []
-        for cls in decoding.entities_generator(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
+        for cls in decoding.entities_from_file(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
             number_of_classes = len(cls[DataClassFields.ANCESTORS_DEFINING_PROPERTIES.value])
             results.append({
                 "n": number_of_classes,

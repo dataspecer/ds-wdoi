@@ -16,7 +16,7 @@ RANGES_OUTPUT_FILE = "domains_ranges_per_class_sorted_ranges.json"
 def main_domains_ranges_per_class(classes_json_file_path: pathlib.Path, field: Literal[ClassFields.VALUE_OF_STATS, ClassFields.SUBJECT_OF_STATS]):
     with open(classes_json_file_path, "rb") as input_json_file:
         results = []
-        for entity in decoding.entities_generator(input_json_file, logger, ul.CLASSES_PROGRESS_STEP):
+        for entity in decoding.entities_from_file(input_json_file, logger, ul.CLASSES_PROGRESS_STEP):
             cls_property_counts = []
             for property_record in entity[field.value]:
                 if len(property_record[ScoresFields.RANGE.value]) != 0:

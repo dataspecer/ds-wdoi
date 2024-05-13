@@ -6,15 +6,13 @@ from phases.property_recommendations.main_logger import main_logger
 logger = main_logger.getChild("boosting")
 
 def boost_score_for_properties_for_this_type(classes_dict: dict):
-    i = 0
-    for cls_id, cls in classes_dict.items():
+    for i, [cls_id, cls] in enumerate(classes_dict.items()):
         subject_of_stats_scores: list = cls[ClassFields.SUBJECT_OF_STATS_SCORES.value]
         properties_for_this_type = cls[ClassFields.PROPERTIES_FOR_THIS_TYPE.value]
         if len(properties_for_this_type) != 0:
             __boost_score_for_records(cls_id, subject_of_stats_scores, properties_for_this_type)
             subject_of_stats_scores.sort(reverse=True, key=lambda x: x[ScoresFields.SCORE.value])
             cls[ClassFields.SUBJECT_OF_STATS.value] = list(map(lambda x: x[ScoresFields.PROPERTY.value], subject_of_stats_scores))
-        i += 1
         ul.try_log_progress(logger, i, ul.CLASSES_PROGRESS_STEP)
 
 def __boost_score_for_records(cls_id, subject_of_stats_scores, properties_for_this_type):

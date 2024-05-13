@@ -1,4 +1,3 @@
-import core.model_wikidata.entity_types as wd_entity_types
 from core.model_wikidata.entity_json_fields import RootFields
 
 def extract_from_wd_json(wd_entity_json, field: str):

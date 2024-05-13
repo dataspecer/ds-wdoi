@@ -13,7 +13,7 @@ OUTPUT_FILE = "number_of_instances.json"
 def main_number_of_instances(classes_json_file_path: pathlib.Path):
     with open(classes_json_file_path, "rb") as classes_input_file:
         results = []
-        for cls in decoding.entities_generator(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
+        for cls in decoding.entities_from_file(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
             num_instances = len(cls[ClassFields.INSTANCES.value])
             if num_instances != 0:
                 results.append({

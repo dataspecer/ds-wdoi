@@ -19,11 +19,11 @@ def __load_properties_to_dict(json_file_path: Path) -> dict:
 
 @timed(main_logger)
 def __write_classes_to_file(classes_dict: dict):
-    decoding.write_mapped_entities_to_file(classes_dict, CLASSES_OUTPUT_FILE_PATH)
+    decoding.write_entities_dict_to_file(classes_dict, CLASSES_OUTPUT_FILE_PATH)
 
 @timed(main_logger)
 def __write_properties_to_file(properties_dict: dict):
-    decoding.write_mapped_entities_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
+    decoding.write_entities_dict_to_file(properties_dict, PROPERTIES_OUTPUT_FILE_PATH)
 
 @timed(main_logger)
 def __merge_property_constraints_with_usage(classes_dict: dict, properties_dict: dict):

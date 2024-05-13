@@ -13,7 +13,7 @@ OUTPUT_FILE = "classes_defining_property_count.json"
 def main_classes_defining_property_count(property_json_file_path: pathlib.Path):
     with open(property_json_file_path, "rb") as property_input_file:
         results = []
-        for prop in decoding.entities_generator(property_input_file, logger, ul.PROPERTIES_PROGRESS_STEP):
+        for prop in decoding.entities_from_file(property_input_file, logger, ul.PROPERTIES_PROGRESS_STEP):
             number_of_classes = len(prop[DataPropertyFields.CLASSES_DEFINING_USAGE.value])
             results.append({
                 "n": number_of_classes,

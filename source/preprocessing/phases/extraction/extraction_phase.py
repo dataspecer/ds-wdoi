@@ -38,7 +38,7 @@ def __extract_entities(gzip_file_path: Path, output_file_name, transform_func, t
           open(output_file_name, "wb") as output_file
         ):
             decoding.init_json_array_in_files([output_file])
-            for wd_entity in decoding.entities_generator(gzip_input_file, logger, logging_step):
+            for wd_entity in decoding.entities_from_file(gzip_input_file, logger, logging_step):
                 __process_wd_entity(wd_entity, output_file, transform_func, type_check_func, logger, languages)
             decoding.close_json_array_in_files([output_file])
 

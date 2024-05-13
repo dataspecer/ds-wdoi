@@ -11,7 +11,7 @@ logger = main_logger.getChild("classes_subjects_objects")
 def main_classes_subjects_objects(classes_json_file_path: pathlib.Path):
     with open(classes_json_file_path, "rb") as classes_input_file:
         results = []
-        for cls in decoding.entities_generator(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
+        for cls in decoding.entities_from_file(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):
             results.append({
                 "subject_of_count_consts": len(cls[ClassFields.SUBJECT_OF_CONSTS.value]),
                 "value_of_count_consts": len(cls[ClassFields.VALUE_OF_CONSTS.value]),

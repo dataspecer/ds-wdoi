@@ -9,8 +9,7 @@ from phases.property_recommendations.main_logger import main_logger
 logger = main_logger.getChild("merging")
 
 def merge_property_subject_object_type_constraints_into_usage_statistics(classes_dict: dict, properties_dict: dict):
-    i = 0
-    for property_id, property in properties_dict.items():
+    for i, [property_id, property] in enumerate(properties_dict.items()):
         subject_types = __get_subject_classes_by_constraint(property)
         value_types = __get_value_classes_by_constraint(property)
         if property[PropertyFields.UNDERLYING_TYPE.value] == UnderlyingTypes.ENTITY:
@@ -19,7 +18,6 @@ def merge_property_subject_object_type_constraints_into_usage_statistics(classes
         else:
             logger.info(f"Merging literal property {property_id}")
             __merge_literal_property(property_id, property, classes_dict, subject_types)
-        i += 1
         ul.try_log_progress(logger, i, ul.PROPERTIES_PROGRESS_STEP)
           
 def __get_subject_classes_by_constraint(property):
