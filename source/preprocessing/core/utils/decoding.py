@@ -58,11 +58,11 @@ def entities_generator(json_file, logger, logging_step, context_message_func = _
         ul.try_log_progress(logger, i, logging_step, context_message_func())
     ul.log_progress(logger, i, context_message_func())
     
-def load_entities_to_dict(json_file_path: pathlib.Path, logger, logging_step): 
+def load_entities_to_dict(json_file_path: pathlib.Path, logger, logging_step, transform_func = None): 
     entities_dict = dict()
     with open(json_file_path, "rb") as input_json_file:
         for wd_entity in entities_generator(input_json_file, logger, logging_step):
-            entities_dict[wd_entity['id']] = wd_entity
+            entities_dict[wd_entity['id']] = wd_entity if transform_func == None else transform_func(wd_entity)
         ul.log_loading_to_map(logger, entities_dict)
     return entities_dict
 
