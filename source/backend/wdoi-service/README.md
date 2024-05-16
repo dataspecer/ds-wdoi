@@ -200,7 +200,7 @@ The input is handled via `.env` file.
     docker run --network your_bridge \
     -p 3042:3042 \
     --restart unless-stopped \
-    -e ES_NODE="https://elastic:9200" \
+    -e ES_NODE="http://elastic:9200" \
     -e ES_PASSWD="your_password_here" \
     --mount type=bind,source=/path/to/ds-wdoi/source/preprocessing/classes-recs.json,target=/app/input/classes.json,readonly \
     --mount type=bind,source=/path/to/ds-wdoi/source/preprocessing/properties-recs.json,target=/app/input/properties.json,readonly \

@@ -1,0 +1,42 @@
+name: wdoi
+
+services:
+
+  elastic:
+    image: elasticsearch:8.13.0
+    restart: unless-stopped
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      - wdoi_internal
+
+  api:
+    build: ./backend/wdoi-service
+    restart: unless-stopped
+    ports:
+      - "3042:3042"
+    networks:
+      - wdoi_external
+      - wdoi_internal
+    environment:
+      ES_NODE: http://wdoi-elastic-1:9200
+      CLASSES_PATH: /app/input/classes-recs.json
+      PROPERTIES_PATH: /app/input/properties-recs.json
+      RESTART_KEY: "1234567"
+    volumes:
+      - type: bind
+        source: ./preprocessing/output
+        target: /app/input
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  wdoi_external:
+    driver: bridge
+  wdoi_internal:
+    external: true

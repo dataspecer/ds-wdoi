@@ -34,3 +34,9 @@ export function log(message: any): void {
     fastifyLogger.info(message);
   } else console.log(message);
 }
+
+export function logError(message: any): void {
+  if (fastifyLogger != null) {
+    fastifyLogger.error(message);
+  } else console.error(message);
+}

@@ -5,7 +5,7 @@ import {
   type GetClassPropertyEndpointsInputParamsType,
   getClassPropertyEndpointsInputParamsSchema,
 } from './schemas/input-params.js';
-import { type WdClass } from '../ontology/entities/wd-class.js';
+import { type WdClass } from '../../ontology/entities/wd-class.js';
 import {
   type GetClassHierarchyInputQueryStringType,
   classHierarchyReplySchema,
@@ -19,7 +19,7 @@ import {
 import { surroundingsReplySchema } from './schemas/get-class-surroundings.js';
 import { getClassWithSurroundingDescReplySchema } from './schemas/get-class.js';
 import { getPropertyWithSurroundingDescReplySchema } from './schemas/get-property.js';
-import { type WdProperty } from '../ontology/entities/wd-property.js';
+import { type WdProperty } from '../../ontology/entities/wd-property.js';
 import {
   type GetClassPropertyEndpointsInputQueryStringType,
   getClassPropertyEndpointsInputQueryStringSchema,
@@ -41,6 +41,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         querystring: searchInputQueryStringSchema,
         response: {
           '2xx': searchReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -60,6 +61,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         params: getEntityInputParamsSchema,
         response: {
           '2xx': getClassWithSurroundingDescReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -87,6 +89,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         params: getEntityInputParamsSchema,
         response: {
           '2xx': getPropertyWithSurroundingDescReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -118,6 +121,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         querystring: getClassHierarchyInputQueryStringSchema,
         response: {
           '2xx': classHierarchyReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -140,6 +144,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         params: getEntityInputParamsSchema,
         response: {
           '2xx': surroundingsReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -166,6 +171,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         querystring: getClassPropertyEndpointsInputQueryStringSchema,
         response: {
           '2xx': getClassPropertyEndpointsReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -197,6 +203,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         querystring: getClassPropertyEndpointsInputQueryStringSchema,
         response: {
           '2xx': getClassPropertyEndpointsReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },
@@ -224,6 +231,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
         querystring: getFilterBySchemaQueryStringSchema,
         response: {
           '2xx': getFilterByInstanceReplySchema,
+          '4xx': { $ref: 'HttpError' },
         },
       },
     },

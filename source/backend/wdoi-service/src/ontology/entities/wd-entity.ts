@@ -1,3 +1,4 @@
+import { logError } from '../../logging/log.js';
 import type { InputEntity } from '../loading/input/input-entity.js';
 import type { EntityId, LanguageMap } from './common.js';
 import { emptyLanguageMapOrSave } from './wd-property-empty-type-constants.js';
@@ -42,7 +43,9 @@ export abstract class WdEntity {
           }
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      logError(e);
+    }
     return [null, null];
   }
 }

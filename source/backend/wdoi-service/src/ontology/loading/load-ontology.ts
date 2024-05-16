@@ -4,7 +4,7 @@ import { WdClass } from '../entities/wd-class.js';
 import { WdProperty } from '../entities/wd-property.js';
 import type { EntityId } from '../entities/common.js';
 
-import { tryLog, log } from '../../logging/log.js';
+import { tryLog, log, logError } from '../../logging/log.js';
 
 function processLine(line: string, processEntityFunc: (jsonEntity: any) => void): void {
   const decodedLine = line.trim();
@@ -19,19 +19,23 @@ async function processWdJsonFile(
   processEntityFunc: (jsonEntity: any) => void,
   logStep: number,
 ): Promise<void> {
-  const fileStream = fs.createReadStream(pathToJsonFile);
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
+  try {
+    const fileStream = fs.createReadStream(pathToJsonFile);
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
+    });
 
-  let i = 0;
-  for await (const line of rl) {
-    processLine(line, processEntityFunc);
-    i += 1;
-    tryLog(i, logStep);
+    let i = 0;
+    for await (const line of rl) {
+      processLine(line, processEntityFunc);
+      i += 1;
+      tryLog(i, logStep);
+    }
+    log(`${i} entities`);
+  } catch (e) {
+    logError(e);
   }
-  log(`${i} entities`);
 }
 
 export function processFuncClassesCapture(
@@ -58,6 +62,10 @@ export async function loadEntities<T>(
   logStep: number,
 ): Promise<ReadonlyMap<EntityId, T>> {
   const entitiesMap = new Map<EntityId, T>();
-  await processWdJsonFile(pathToJsonFile, processFuncCapture(entitiesMap), logStep);
+  try {
+    await processWdJsonFile(pathToJsonFile, processFuncCapture(entitiesMap), logStep);
+  } catch (e) {
+    logError(e);
+  }
   return entitiesMap;
 }

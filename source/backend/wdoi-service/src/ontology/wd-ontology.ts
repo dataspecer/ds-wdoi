@@ -39,7 +39,7 @@ import {
 } from './surroundings/filter-by-instance/filter-by-instance.js';
 
 export class WdOntology {
-  private readonly rootClass: WdClass;
+  private readonly rootClass: WdClass | undefined;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly ontologySearch: OntologySearch;
@@ -47,7 +47,7 @@ export class WdOntology {
   private readonly filterByInstance: FilterByInstance;
 
   private constructor(
-    rootClass: WdClass,
+    rootClass: WdClass | undefined,
     classes: ReadonlyMap<EntityId, WdClass>,
     properties: ReadonlyMap<EntityId, WdProperty>,
   ) {
@@ -217,7 +217,8 @@ export class WdOntology {
     );
 
     const rootClass = cls.get(ROOT_CLASS_ID);
-    if (rootClass != null) {
+    // Allow missing root when dics are empty - empty initial start.
+    if (rootClass != null || (props.size === 0 && cls.size === 0)) {
       const ontology = new WdOntology(rootClass, cls, props);
       log('Ontology created');
       return ontology;

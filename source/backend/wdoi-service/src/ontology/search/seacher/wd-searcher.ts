@@ -1,3 +1,4 @@
+import { logError } from '../../../logging/log.js';
 import { type EntityId, type EntityIdsList } from '../../entities/common.js';
 import { Searcher } from './searcher.js';
 
@@ -40,10 +41,16 @@ export class WdSearch extends Searcher {
   };
 
   private async search(type: SearchEntityType, query: string): Promise<EntityIdsList> {
-    const response = await (await fetch(WdSearch.API_ENDPOINTS.searchEntities(type, query))).json();
+    try {
+      const response = await (
+        await fetch(WdSearch.API_ENDPOINTS.searchEntities(type, query))
+      ).json();
 
-    if (isWdPhpSearchEntitiesResponse(response)) {
-      return this.parseSearchHits(response.search);
+      if (isWdPhpSearchEntitiesResponse(response)) {
+        return this.parseSearchHits(response.search);
+      }
+    } catch (e) {
+      logError(e);
     }
     return [];
   }

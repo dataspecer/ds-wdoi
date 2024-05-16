@@ -3,7 +3,7 @@ import { type EntityId, type EntityIdsList } from '../../entities/common.js';
 import { type SearchHit } from '@elastic/elasticsearch/lib/api/types.js';
 import { Searcher } from './searcher.js';
 import { envVars } from '../../../enviroment.js';
-import * as fs from 'fs';
+import { logError } from '../../../logging/log.js';
 
 export class EsSearch extends Searcher {
   private readonly client: Client;
@@ -14,12 +14,6 @@ export class EsSearch extends Searcher {
     super();
     this.client = new Client({
       node: envVars.ES_NODE,
-      auth: { username: 'elastic', password: envVars.ES_PASSWD },
-      // caFingerprint: envVars.ES_CA_FINGERPRINT,
-      tls: {
-        ca: fs.readFileSync(envVars.ES_CERT_PATH),
-        rejectUnauthorized: false,
-      },
     });
   }
 
@@ -61,49 +55,54 @@ export class EsSearch extends Searcher {
     // });
     // const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
     // const interleavedResults = this.interleaveArrays(searchResults);
-    const searchResultsMatch = this.client.search({
-      index: indexName,
-      _source: false,
-      query: {
-        bool: {
-          should: [
-            {
-              match: {
-                labels_en: {
-                  query: queryString,
-                  fuzziness: 'AUTO',
+    try {
+      const searchResultsMatch = this.client.search({
+        index: indexName,
+        _source: false,
+        query: {
+          bool: {
+            should: [
+              {
+                match: {
+                  labels_en: {
+                    query: queryString,
+                    fuzziness: 'AUTO',
+                  },
                 },
               },
-            },
-            {
-              term: {
-                'labels_en.keyword': {
-                  value: queryString,
-                  boost: 2.0,
+              {
+                term: {
+                  'labels_en.keyword': {
+                    value: queryString,
+                    boost: 2.0,
+                  },
                 },
               },
-            },
-            {
-              match: {
-                aliases_en: {
-                  query: queryString,
-                  fuzziness: 'AUTO',
+              {
+                match: {
+                  aliases_en: {
+                    query: queryString,
+                    fuzziness: 'AUTO',
+                  },
                 },
               },
-            },
-            {
-              term: {
-                'aliases_en.keyword': {
-                  value: queryString,
-                  boost: 2.0,
+              {
+                term: {
+                  'aliases_en.keyword': {
+                    value: queryString,
+                    boost: 2.0,
+                  },
                 },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
-    });
-    return this.makeUnique((await searchResultsMatch).hits.hits);
+      });
+      return this.makeUnique((await searchResultsMatch).hits.hits);
+    } catch (e) {
+      logError(e);
+    }
+    return [];
   }
 
   public async searchClasses(query: string): Promise<EntityIdsList> {

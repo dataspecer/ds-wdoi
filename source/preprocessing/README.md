@@ -38,6 +38,7 @@ The preprocessing is done in 7 phases.:
 > 2. The types of property values are not checked, since the Wikidata does not allow to entry value that do not match the property type. Such as: placing a property into subclass of statement.
 > 3. I consider only the unique values from extracted properties.
 > 4. The output files always contain a single json object on each line representing an entity (a property or a class).
+> 5. Output files are created inside `output` directory.
 
 # How to run and use the pipeline
 
@@ -109,12 +110,12 @@ The main script is `p_identification_separation.py`.
         $> python p_identification_separation.py latest-all.json.gz
 
 - Output:
-  - Separated classes and propeties files in the folder of script execution.
+  - Separated classes and propeties files in the `output` directory.
     - `classes.json.gz`
     - `properties.json.gz`
     - Each output file contains an json array where on each line is a Wikidata entity.
     
-  - Statistics summaries files in the folder of script execution.
+  - Statistics summaries files in the `output` directory.
     - `classes-property-usage.json`
       - Contains property usage summary for each class with probabilities.
     - `properties-domain-range-usage.json`
@@ -141,7 +142,7 @@ The main script is `p_extraction.py`.
         $> python p_extraction.py both classes.json.gz properties.json.gz
 
 - Output:
-  - Files in the folder of script execution, containing entities in the new simplified model.
+  - Files in the `output` directory, containing entities in the new simplified model.
     - `classes-ex.json`
     - `properties-ex.json`
 
@@ -160,7 +161,7 @@ The main script is `p_modification.py`.
         $> python p_modification.py classes-ex.json properties-ex.json classes-property-usage.json properties-domain-range-usage.json
 
 - Output:
-  - Files in the folder of script execution, containing the modified classes and properties.
+  - Files in the `output` directory, containing the modified classes and properties.
     - `classes-mod.json`
     - `properties-mod.json`
 
@@ -179,7 +180,7 @@ The main script is `p_property_recommendations.py`.
         $> python p_property_recommendations.py classes-mod.json properties-mod.json
 
 - Output:
-  - Files in the folder of script execution, containing the merged and reordered domains/ranges of classes and properties.
+  - Files in the `output` directory, containing the merged and reordered domains/ranges of classes and properties.
     - `classes-recs.json`
     - `properties-recs.json`
 
@@ -289,3 +290,7 @@ The main file is `p_run_all_phases.py`.
 - The output entities from phases, except the 2. phase, follow the format denoted in the `core/model_simplified` folder.
 - Instead of storing references to objects, the fields that reference other entity store only an id of the entity.
   - It is necessary to create a map/dictionary of the entities to follow the identifiers to the appropriate entities.
+
+```
+sudo docker run -it --network wdoi_internal -e ES_URL="http://wdoi-elastic-1:9200" --mount type=bind,source=./output,target=/app/output --rm preprocessing /bin/bash
+```

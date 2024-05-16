@@ -1,3 +1,4 @@
+import { logError } from '../../logging/log.js';
 import { type EntityId, type EntityIdsList } from '../entities/common.js';
 import { WdClass } from '../entities/wd-class.js';
 import { WdEntity } from '../entities/wd-entity.js';
@@ -65,7 +66,9 @@ export class OntologySearch {
       if (searchProperties != null && searchProperties) {
         propertiesSearchResult = await this.searchProperties(query);
       }
-    } catch (_) {}
+    } catch (e) {
+      logError(e);
+    }
     return new SearchResults(classesSearchResult, propertiesSearchResult);
   }
 

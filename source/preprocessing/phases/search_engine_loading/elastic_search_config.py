@@ -48,9 +48,9 @@ ANALYZER_LANGUAGE_MAP = {
 
 # If using the certificate from docker image, you need to disable certificate verification.
 client = Elasticsearch(
-    os.getenv('ES_URL'),
-    ca_certs=os.getenv('ES_CERT_PATH'),
-    basic_auth=('elastic', os.getenv('ES_PASSWD')),
+    hosts=[os.getenv('ES_URL')],
+    # ca_certs=os.getenv('ES_CERT_PATH'),
+    # basic_auth=('elastic', os.getenv('ES_PASSWD')),
     verify_certs=False,
     request_timeout=30,
     max_retries=5

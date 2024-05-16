@@ -5,6 +5,7 @@ import { WdEntity } from '../../entities/wd-entity.js';
 import { WdProperty } from '../../entities/wd-property.js';
 import SparqlClient from 'sparql-http-client';
 import { type ClassHierarchyWalker } from '../../hierarchy-walker/class-hierarchy-walker.js';
+import { logError } from '../../../logging/log.js';
 
 interface SparqlSelectRowItem {
   value: string;
@@ -119,7 +120,9 @@ export class FilterByInstance {
         if (!this.classes.has(instanceId)) {
           return await this.createFilterInternal(instanceId);
         }
-      } catch (_) {}
+      } catch (e) {
+        logError(e);
+      }
     }
     return new FilterByInstanceReturnWrapper([], [], [], []);
   }
