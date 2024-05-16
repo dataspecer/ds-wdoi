@@ -1,5 +1,9 @@
+from core.output_directory import OUTPUT_DIR_PATH
 import logging
 import logging.config
+
+LOG_FILE_PATH = OUTPUT_DIR_PATH / "log.log"
+LOG_FILE_ERROR_PATH = OUTPUT_DIR_PATH / "log_errors.log"
 
 log_config = {
     "version":1,
@@ -17,7 +21,7 @@ log_config = {
         "all_file":{
             "class": "logging.handlers.RotatingFileHandler",
             "level":"INFO",
-            "filename":"log.log",
+            "filename": str(LOG_FILE_PATH),
             "maxBytes": 2147483648, # 2 GiB
             "backupCount": 1,
             "encoding": "utf8",
@@ -26,7 +30,7 @@ log_config = {
         "errors_file":{
             "class": "logging.handlers.RotatingFileHandler",
             "level":"WARNING",
-            "filename":"log_errors.log",
+            "filename": str(LOG_FILE_ERROR_PATH),
             "maxBytes": 2147483648, # 2 GiB
             "backupCount": 1,
             "encoding": "utf8",

@@ -1,6 +1,6 @@
 from enum import StrEnum
 import gzip
-from pathlib import Path
+from core.output_directory import OUTPUT_DIR_PATH
 import core.json_extractors.wd_fields as wd_fields_ex
 import core.model_wikidata.entity_types as wd_entity_types
 import core.utils.logging as ul
@@ -14,8 +14,8 @@ main_logger = ul.root_logger.getChild("extraction")
 classes_logger = main_logger.getChild("extract_classes")
 properties_logger = main_logger.getChild("extract_properties")
 
-CLASSES_OUTPUT_FILE_PATH = Path(".") / "classes-ex.json"
-PROPERTIES_OUTPUT_FILE_PATH = Path(".") / 'properties-ex.json'
+CLASSES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes-ex.json"
+PROPERTIES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / 'properties-ex.json'
 
 class Phases(StrEnum):
     BOTH = "both"

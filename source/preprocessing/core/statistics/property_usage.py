@@ -11,10 +11,10 @@ import core.model_wikidata.entity_types as wd_entity_types
 from core.model_simplified.classes import ClassFields
 from core.model_simplified.constraints import GenConstFields, ItemConstFields
 from core.model_simplified.properties import PropertyFields
-from pathlib import Path
+from core.output_directory import OUTPUT_DIR_PATH
 
-CLASSES_STATS_OUTPUT_FILE_PATH = Path(".") / "classes-property-usage.json"
-PROPERTIES_STATS_OUTPUT_FILE_PATH = Path(".") / "properties-domain-range-usage.json"
+CLASSES_STATS_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes-property-usage.json"
+PROPERTIES_STATS_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "properties-domain-range-usage.json"
 
 """
 The class serves as a statistics computation on property usage.

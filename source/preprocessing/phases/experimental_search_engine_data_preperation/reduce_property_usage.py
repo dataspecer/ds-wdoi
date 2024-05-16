@@ -1,16 +1,16 @@
 from collections import deque
 from phases.experimental_search_engine_data_preperation.main_logger import main_logger
-from pathlib import Path
 from core.utils.timer import timed
 from phases.experimental_search_engine_data_preperation.data_entities.data_class import DataClassFields
 from phases.experimental_search_engine_data_preperation.data_entities.data_property import DataPropertyFields
 import core.utils.logging as ul
 import core.utils.decoding as decoding
+from core.output_directory import OUTPUT_DIR_PATH
 
 logger = main_logger.getChild("reduce_property_usage")
 
-CLASSE_OUTPUT_FILE_PATH = Path(".") / "classes-experimental-prep-1-reduction.json" 
-PROPERTIES_OUTPUT_FILE_PATH = Path(".") / "properties-experimental-prep-1-reduction.json" 
+CLASSE_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes-experimental-prep-1-reduction.json" 
+PROPERTIES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "properties-experimental-prep-1-reduction.json" 
 
 def __ancestors_of(wd_data_class, classes_dict: dict):
         visited_ids = set()

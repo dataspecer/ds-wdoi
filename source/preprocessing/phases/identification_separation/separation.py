@@ -6,14 +6,14 @@ import core.utils.logging as ul
 from core.utils.timer import timed
 import core.json_extractors.wd_fields as wd_json_fields_ex
 import core.model_wikidata.entity_types as wd_entity_types
-from core.model_wikidata.entity_json_fields import RootFields
 from core.statistics.property_usage import PropertyUsageStatistics
 from phases.identification_separation.main_logger import main_logger
+from core.output_directory import OUTPUT_DIR_PATH
 
 logger = main_logger.getChild("separation")
 
-CLASSES_OUTPUT_FILE_PATH = Path(".") / "classes.json.gz"
-PROPERTIES_OUTPUT_FILE_PATH = Path(".") / "properties.json.gz"
+CLASSES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes.json.gz"
+PROPERTIES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "properties.json.gz"
 
 def __log_context_func(class_counter, property_counter, classes_set, properties_dict):
     def log_context_message():

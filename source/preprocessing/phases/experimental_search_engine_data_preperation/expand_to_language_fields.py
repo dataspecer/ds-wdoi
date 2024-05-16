@@ -1,4 +1,3 @@
-from collections import deque
 from phases.experimental_search_engine_data_preperation.main_logger import main_logger
 from pathlib import Path
 from core.utils.timer import timed
@@ -10,10 +9,11 @@ import re
 import phases.extraction.entity_extractors.wd_languages as wd_languages_tran
 import core.json_extractors.wd_fields as wd_fields_ex
 import core.default_languages as default_langs
+from core.output_directory import OUTPUT_DIR_PATH
 
 logger = main_logger.getChild("extend_to_language_fields")
 
-CLASSES_OUTPUT_FILE_PATH = Path(".") / "classes-experimental-prep-2-expand.json" 
+CLASSES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes-experimental-prep-2-expand.json" 
 
 FIELDS_TO_EXPAND = [
         DataClassFields.HAS_CAUSE.value,

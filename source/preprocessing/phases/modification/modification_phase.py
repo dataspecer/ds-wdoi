@@ -20,13 +20,14 @@ from phases.modification.modifiers.classes.add_fields import *
 from phases.modification.modifiers.removers.remove_entities_with_no_label import *
 from phases.modification.modifiers.removers.remove_classes_with_no_parent import *
 from phases.modification.modifiers.removers.remove_classes_instances import *
+from core.output_directory import OUTPUT_DIR_PATH
 
 main_logger = ul.root_logger.getChild("modification")
 classes_logger = main_logger.getChild("classes")
 properties_logger = main_logger.getChild("properties")
 
-CLASSES_OUTPUT_FILE_PATH = Path(".") / 'classes-mod.json'
-PROPERTIES_OUTPUT_FILE_PATH = Path(".") / 'properties-mod.json'
+CLASSES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / 'classes-mod.json'
+PROPERTIES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / 'properties-mod.json'
 
 VERBOSE = False
 

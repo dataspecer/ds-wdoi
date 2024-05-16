@@ -1,9 +1,9 @@
 import requests
-from pathlib import Path
 from tqdm import tqdm
 from core.utils.timer import timed
 import core.utils.logging as ul
 import time
+from core.output_directory import OUTPUT_DIR_PATH
 
 """
 I am reusing retryable download with requests lib from:
@@ -12,6 +12,7 @@ https://gist.github.com/tobiasraabe/58adee67de619ce621464c1a6511d7d9
 
 The code below is adjusted for my use case.
 """
+
 main_logger = ul.root_logger.getChild("download")
 
 WIKIDATA_GZ_DUMP_URL = 'https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.gz'
@@ -19,7 +20,7 @@ WAIT_TIME = 30 # s
 MAX_RETRIES = 8
 
 DUMP_OUTPUT_FILE = WIKIDATA_GZ_DUMP_URL.split('/')[-1]
-DOWNLOAD_FOLDER = Path('.')
+DOWNLOAD_FOLDER = OUTPUT_DIR_PATH
 
 DUMP_OUTPUT_FILE_PATH = DOWNLOAD_FOLDER / DUMP_OUTPUT_FILE
 

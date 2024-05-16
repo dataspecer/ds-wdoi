@@ -5,9 +5,10 @@ from core.utils.timer import timed
 from phases.property_recommendations.boost_score_for_properties_for_this_type import boost_score_for_properties_for_this_type
 from phases.property_recommendations.merge_property_constraints_with_usage_statistics import merge_property_subject_object_type_constraints_into_usage_statistics
 from phases.property_recommendations.main_logger import main_logger
+from core.output_directory import OUTPUT_DIR_PATH
 
-CLASSES_OUTPUT_FILE_PATH = Path(".") / "classes-recs.json"
-PROPERTIES_OUTPUT_FILE_PATH = Path(".") / "properties-recs.json"
+CLASSES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes-recs.json"
+PROPERTIES_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "properties-recs.json"
 
 @timed(main_logger)
 def __load_classes_to_dict(json_file_path: Path) -> dict:
