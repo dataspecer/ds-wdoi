@@ -22,7 +22,7 @@ services:
       - wdoi_external
       - wdoi_internal
     environment:
-      ES_NODE: http://wdoi-elastic-1:9200
+      ES_NODE: http://elastic:9200
       CLASSES_PATH: /app/input/classes-recs.json
       PROPERTIES_PATH: /app/input/properties-recs.json
       RESTART_KEY: "1234567"
@@ -30,6 +30,8 @@ services:
       - type: bind
         source: ./preprocessing/output
         target: /app/input
+        bind:
+          create_host_path: true
 
 volumes:
   esdata:
