@@ -42,6 +42,8 @@ The preprocessing is done in 7 phases.:
 
 # How to run and use the pipeline
 
+> The running scripts are the same in development and in the conteiners.
+
 The pipeline uses Wikidata JSON dump in the GZIP format.
 Each of the main steps mentioned above has its own main script file.
 The script file can be run with the provided instructions (below).
@@ -51,7 +53,7 @@ There is also a script that is able to run all the phases at once (the bottom of
 
 - Before running the scripts, read the instructions and preferably comments for each of the phases in `phases` folder.
 - The the pipeline also assumes there is an Elastic Search service running, that is later used by the API service.
-  - Read 6. phase information below about usage.
+- Read at the end how to run in development and containerization.
 
 ### Requirements
 
@@ -211,57 +213,47 @@ It either creates, refreshes or deletes classes and properties indices.
 - Usage:
 
       # Creating indices
-      &> python loading_es_helpers.py create
+      $> python loading_es_helpers.py create
 
       # Deleting everything
-      &> python loading_es_helpers.py delete
+      $> python loading_es_helpers.py delete
 
       # Refreshing the indices
-      &> python loading_es_helpers.py refresh
+      $> python loading_es_helpers.py refresh
 
       # Searching the class/property index
-      &> python loading_es_helpers.py search_classes "query string goes here"
-      &> python loading_es_helpers.py search_properties "query string goes here"
+      $> python loading_es_helpers.py search_classes "query string goes here"
+      $> python loading_es_helpers.py search_properties "query string goes here"
 
       # Listing indices
-      &> python loading_es_helpers.py list
+      $> python loading_es_helpers.py list
 
       # List mappings of indices
-      &> python loading_es_helpers.py mappings
+      $> python loading_es_helpers.py mappings
 
       # List index sizes
-      &> python loading_es_helpers.py size
+      $> python loading_es_helpers.py size
 
 - Logging prefix: `es_helpers`
 
-### Elastic search set up
+## Restart the Wikidata ontology API service
 
-Assuming we are running on [Elastic docker image](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html).
-We are running with security enabled - which require setting up password and managing certificates.
-Information about the password and certificates can be found in the tutorial link above.
-After obtaing the password and certificate you need to set up `.env` file.
+The script is `p_restart_api_service.py`.
+It restarts the Wikidata API service in order to load the new preprocessed ontology.
 
-The scripts require `.env` file in the `preprocessing` folder with three values:
-1. `ES_PASSWD` - a password of the elastic search instance provided with certificate
-2. `ES_CERT_PATH` a path to elastic search cerficate
-3. `ES_URL` - an url to elastic search instance
+- Input:
+  - `--timeout`
+    - optional argument specifiying the the waitime before returning error.
+    - The restart can take some time, so setting up above 120 seconds is recommended.
+    - Defaults to 180 seconds.
+  - Running:
 
-Example (notice that `" "` are not used):
+        $> python p_restart_api_service.py --timeout 180
 
-    ES_PASSWD=abcdefg
-    ES_CERT_PATH=/path/to/http_ca.cert
-    ES_URL=https://localhost:1234
+- Output:
+  - None
 
-- Additional comments:
-    - [Docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
-    - Since we are not using Kibana, it is enough to reset the password and copy the certiface out of the image, before using your own.
-      - If using the certificate copied from the Elastic, you also need to adjust the client to disable verification.
-    - Also to enable connection between Elastic and the Wikidata ontology API service Docker container (unless running without Docker), you need to set up a Docker `bridge`, which then enables to access the Elastic from within the Wikidata ontology API service Docker container.
-      - Since now you will be are running two separete docker containers (Elastic and the Wikidata ontology API service), we need to connect them via [docker bridge](https://docs.docker.com/network/drivers/bridge/).
-        1. create your bridge `docker network create your-bridge`
-        2. add to the Elastic container when you start the container by using `--network your_bridge` when running the container
-        3. or you can add the `bridge` to the running Elastic container via `docker network connect your_bridge elastic_container_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
-        4. add the same option to the Wikidata ontology API service `--network your_bridge` when starting the service
+- Logging prefix: `restart_api_service`
 
 ## Run all script
 
@@ -273,6 +265,9 @@ The main file is `p_run_all_phases.py`.
     - `--donwload`
     - Defaults to `False`
     - The `True` will **overwrite the existing dump** in the current folder.
+  - Optional boolean flag argument whether to restart the API service.
+    - `--restart`
+    - Defaults to `False`.
   - Optional argument to continue from a specific phase.
     - `--continue-from` `[id_sep | ext | mod | recs | load]`
     - Each value represents a phase based on the output files suffixes.
@@ -282,7 +277,7 @@ The main file is `p_run_all_phases.py`.
     - `--no-load`
     - In case you wanted to run the pipeline without relying on the Elastic. You can always run it separately.
 
-# Notes on the file output formats
+## Notes on the file output formats
 
 - We use json format for storing entity information.
 - Every json file contain a single entity on a single line in the file.
@@ -291,6 +286,51 @@ The main file is `p_run_all_phases.py`.
 - Instead of storing references to objects, the fields that reference other entity store only an id of the entity.
   - It is necessary to create a map/dictionary of the entities to follow the identifiers to the appropriate entities.
 
+## Running Development
+
+- Elastic search set up:
+  - Assuming we are running on [Elastic docker image](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html).
+  - We are running with security disabled.
+  - It is enought to run the `docker-compose.dev.yml` in the parent `source` folder. 
+
+- The application assumes environment varibles inside `.env` file.
+  1. `ES_NODE` an url to Elastic search instance.
+  2. `API_SERVICE_RESTART` an url path to the restart API of the Wikidata ontology API service (if it is running).
+  3. `API_SERVICE_RESTART_KEY` a key used to restart the Wikidata ontology api service.
+
+Then you can run the scripts with the above mentioned methods.
+
+## Containers and production
+
+The problem with the containerization is that the preprocessing is not running all the time and that the Wikidata ontology API service needs to restart to load the new data.
+In development, it is easy.
+But in containers there are additional requirements.
+
+- Docker image structure:
+  - `/app` contains the copied and installed packages and code files.
+  - `/app/output` is expected to bind the host's `/preprocessing/output` directory to enable storing and sharing of the files.
+- The docker image itself is not running any command. It is expected that the container is started via `docker run` starting `bash` and connects to the `wdoi_internal` network bridge which enables communiation with the unexposed Elastic search service and the ontology API service. Then you can start the scripts from within the container and restart/reload services.
+- Environments:
+  - The environments must match the `.env` variable names. Assuming they are set via `-e` option in `docker run`.
+  - `ES_NODE` url must match the host name of the Elastic search instance connected to the internal bridge network.
+  - `API_SERVICE_RESTART` the same applied for the API service, the host name must match the name of the service in the bridge network.
+  - `API_SERVICE_RESTART_KEY` must match the key to restart the API service.
+  - Follow the `docker-compose.yml` in the parent `source` folder.
+    - The host names are the names of the services - e.g. `api` and `elastic`
+
+> Building the image.
+
+    $> docker build -t prep .
+
+> Example of running after build.
 ```
-sudo docker run -it --network wdoi_internal -e ES_URL="http://wdoi-elastic-1:9200" --mount type=bind,source=./output,target=/app/output --rm preprocessing /bin/bash
+    $> sudo docker run --rm \
+    -it \
+    --network wdoi_internal \
+    -e ES_NODE="http://elastic:9200" \
+    -e API_SERVICE_RESTART="http://api:3042/restart" \
+    -e API_SERVICE_RESTART_KEY="1234567" \
+    --mount type=bind,source=./output,target=/app/output \
+    prep /bin/bash
 ```
+

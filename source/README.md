@@ -117,14 +117,57 @@ Usually it is not updated frequently to match the latest API of the service.
 
 - To learn how to run and set up each part you should visit their specific folder.
 
-- **The preprocessing pipeline** - can run the entire process or each specific phase.
-  - Right now, there is not a docker image support.
-  - Ideally eventually, there would be a service that could run the pipeline regularly.
-  - There should be running the Elastic search service, at least for the last phase.
-- **The Wikidata ontology API service** - can be run "normally" or inside Docker.
-  - The only problem is the dependency on the Elastic Search service, since they are separate containers, thus there is the need to create Docker `bridge` to connect the services.
-  - It would be nice if it could be run as `docker-compose` eventually, but right now, the set up is using Docker `run`.
-  - The problem is in the updating the indeces in the Elastic and reloading the Ontology into a memory.
-    - The API service should be down when the indeces are updates, and should be restarted to reload the ontology. 
-- **Elastic search** - running inside Docker.
-  - More on the set up and connection can be found inside 6. phase of the pipeline or set up Wikidata ontology API service with Docker. 
+#### Running in development
+
+- To set up the databases run the `docker-compose.dev.yml` which will set up necessary databases without security.
+- For the rest of the applications:
+  - Preprocessing:
+    - The scripts run either all or selected phases of the pipeline.
+    - The output is generated inside `./preprocessing/output` directory.
+    - The directory should then be access among other services.
+    - Does the loading of the data to databases and can restart the API service to load new ontology from the file.
+  - API service:
+    - Accesses the output directory from the pipeline.
+    - Needs setting up with `.env` file.
+    - Can be restarted via preprocessing phase in order to load new data from the files.
+
+#### Running in containers and production
+
+The problem we have faced when conteinerizing the application was that the preprocessing does not run all the time.
+And that it needs to create files, reload the data into the databases and restart the API service to enable it reloading new ontology.
+For our simple enviroment we have came up with a simple settings.
+
+The API service will be the only service that can be access from the outside (exporting its ports).
+The rest of the services will be placed inside an internal network via `docker bridge` (not exporting ports).
+The API service will be connected to the internal network bridge while being exposes to the outside via external network bridge.
+
+The output directory of the preprocessing pipeline is mounted as readonly bind to the API service image.
+Which then can load the data from the files or can reload them on restart.
+This way, if we create new output files from the pipeline, we can send the restart request to the API service which then reloads the data from mounted folder.
+
+The general approach is to run the pipeline before starting the `docker-compose.yml`.
+When you start up the `docker-compose.yml` it will start the services.
+Then, if you want to adjust the files or the ontology.
+Run the container from the `/preprocessing` directory.
+Which then should connect to the internal bridge network and can access other services.
+You can update services, restart API service, or preprocess new data via interactive bash. 
+
+- Guide:
+  - Create network bridge that will serve as internal network.
+    - [Docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
+    - In our settings the bridge is named `wdoi_internal`.
+      - Examples:
+        1. Create your bridge `docker network create your-bridge`
+        2. Add to the container when you start the container by using `--network your_bridge` when running the container
+        3. Or you can add the `bridge` to the running container via `docker network connect your_bridge container_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
+  - Then visit the `docker-compose.yml` file and set up necessary environment variables.
+    - Set the internal network to the bridge you have created (we used `wdoi_internal`).
+      - The `external` flag means that the definition is outside of the compose file.
+    - See external bridge for the API service which is local to the compose file.(we used `wdoi_external`).
+    - See the binding for the `./preprocessing/output` directory for the API service.
+    - See the volumes for the databases (local for the compose file).
+
+
+In order to run the application in containers run the `docker-compose.yml` which starts the API service and the databases.
+You can then run the container from preprocessing pipeline to make changes to the databases or restarting the API service.
+

@@ -30,6 +30,7 @@ services:
       - type: bind
         source: ./preprocessing/output
         target: /app/input
+        read_only: true
         bind:
           create_host_path: true
 

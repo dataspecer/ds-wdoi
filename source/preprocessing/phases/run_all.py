@@ -11,6 +11,7 @@ import core.statistics.property_usage as property_usage
 import phases.property_recommendations.property_recommendations_phase as recs
 import phases.search_engine_loading.loading_to_es_search_phase as load
 import phases.search_engine_loading.elastic_search_helpers as load_helpers
+import phases.restart_api_service as restart_api
 
 main_logger = ul.root_logger.getChild("run_all")
 
@@ -26,10 +27,8 @@ def throw_on_fail(success):
     if not success:
         raise Exception("A phase failed")
 
-
-
 @timed(main_logger)    
-def main_run_all(download_dump: bool, continue_from: Phases, exclude_load: bool):
+def main_run_all(download_dump: bool, continue_from: Phases, exclude_load: bool, restart_api_service: bool):
     try:
         # Download
         if continue_from in [Phases.ALL] and download_dump:
@@ -62,6 +61,9 @@ def main_run_all(download_dump: bool, continue_from: Phases, exclude_load: bool)
             load_helpers.create()
             load_helpers.refresh()
             throw_on_fail(load.main_loading(recs.CLASSES_OUTPUT_FILE_PATH, recs.PROPERTIES_OUTPUT_FILE_PATH))
+        
+        if restart_api_service:
+            throw_on_fail(restart_api.main_restart_api_service())
         
     except Exception as e:
         main_logger.exception("There was an error that cannot be handled")
