@@ -3,7 +3,7 @@ from collections import deque
 from core.model_simplified.classes import ClassFields
 import core.utils.logging as ul
 import core.utils.decoding as decoding
-from phases.experimental_search_engine_data_preperation.data_entities.data_class import DataClassFields
+from phases.experimental_search_engine_data_preparation.data_entities.data_class import DataClassFields
 from summaries.summaries import main_logger
 from core.utils.timer import timed
 

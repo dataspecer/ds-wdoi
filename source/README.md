@@ -139,7 +139,7 @@ For our simple enviroment we have came up with a simple settings.
 
 The API service will be the only service that can be access from the outside (exporting its ports).
 The rest of the services will be placed inside an internal network via `docker bridge` (not exporting ports).
-The API service will be connected to the internal network bridge while being exposes to the outside via external network bridge.
+The API service will be connected to the internal network bridge while being exposed to the outside via external network bridge.
 
 The output directory of the preprocessing pipeline is mounted as readonly bind to the API service image.
 Which then can load the data from the files or can reload them on restart.
@@ -163,10 +163,9 @@ You can update services, restart API service, or preprocess new data via interac
   - Then visit the `docker-compose.yml` file and set up necessary environment variables.
     - Set the internal network to the bridge you have created (we used `wdoi_internal`).
       - The `external` flag means that the definition is outside of the compose file.
-    - See external bridge for the API service which is local to the compose file.(we used `wdoi_external`).
+    - See external bridge for the API service which is local to the compose file (we used `wdoi_external`).
     - See the binding for the `./preprocessing/output` directory for the API service.
     - See the volumes for the databases (local for the compose file).
-
 
 In order to run the application in containers run the `docker-compose.yml` which starts the API service and the databases.
 You can then run the container from preprocessing pipeline to make changes to the databases or restarting the API service.

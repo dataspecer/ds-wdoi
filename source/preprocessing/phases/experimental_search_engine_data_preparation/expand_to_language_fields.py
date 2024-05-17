@@ -1,7 +1,7 @@
-from phases.experimental_search_engine_data_preperation.main_logger import main_logger
+from phases.experimental_search_engine_data_preparation.main_logger import main_logger
 from pathlib import Path
 from core.utils.timer import timed
-from phases.experimental_search_engine_data_preperation.data_entities.data_class import DataClassFields
+from phases.experimental_search_engine_data_preparation.data_entities.data_class import DataClassFields
 import core.utils.logging as ul
 import core.utils.decoding as decoding
 import gzip

@@ -1,7 +1,7 @@
 import core.utils.decoding as decoding
 import core.utils.logging as ul
 from core.utils.timer import timed
-from phases.experimental_search_engine_data_preperation.data_entities.data_class import DataClassFields
+from phases.experimental_search_engine_data_preparation.data_entities.data_class import DataClassFields
 from summaries.summaries import main_logger
 import pathlib
 

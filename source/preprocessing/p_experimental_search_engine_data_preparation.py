@@ -1,6 +1,6 @@
 import argparse
 import pathlib
-from phases.experimental_search_engine_data_preperation.search_engine_data_preparation_phase import main_search_engine_data_preparation, Phases
+from phases.experimental_search_engine_data_preparation.search_engine_data_preparation_phase import main_search_engine_data_preparation, Phases
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
