@@ -6,8 +6,8 @@ from phases.experimental_search_engine_data_preparation.data_entities.data_class
 from phases.experimental_search_engine_data_preparation.data_entities.data_property import transform_wd_property
 import core.utils.decoding as decoding
 import core.utils.logging as ul
-import phases.experimental_search_engine_data_preparation.reduce_property_usage as reduce
-import phases.experimental_search_engine_data_preparation.expand_to_language_fields as extend
+import phases.experimental_search_engine_data_preparation.parts.reduce_property_usage.reduce_property_usage_part as reduce
+import phases.experimental_search_engine_data_preparation.parts.expand_to_language_fields.expand_to_language_fields_part as extend
 
 class Phases(StrEnum):
     ALL = "all"

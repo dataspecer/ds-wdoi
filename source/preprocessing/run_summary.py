@@ -1,4 +1,11 @@
-# Add summaries you want to run
+from summaries.number_of_same_info.same_info import main_number_of_same_info, Part as SameInfoPart
+from summaries.number_of_instances.number_of_instances import main_number_of_instances
+from summaries.domains_ranges_counts.classes_subjects_objects import main_classes_subjects_objects
+from summaries.domains_ranges_counts.domains_ranges_stats_per_class import main_domains_ranges_per_class
+from summaries.domains_ranges_counts.domains_ranges_stats_per_property import main_domains_ranges_per_property
+from summaries.all_properties_for_classes.all_properties_for_classes import main_all_properties_for_classes
 from summaries.experimental.ancestors_count import main_ancestors_count
+from summaries.experimental.ancestors_defining_property_count import main_ancestors_defining_property_count 
+from summaries.experimental.classes_defining_property_count import main_classes_defining_property_count 
 
-main_ancestors_count("./classes-experimental-prep-1-reduction.json")
+# Choose which ones to run.

@@ -3,6 +3,7 @@ import core.utils.logging as ul
 from core.utils.timer import timed
 from core.model_simplified.classes import ClassFields
 from summaries.summaries import main_logger
+from enum import StrEnum
 import pathlib
 
 logger = main_logger.getChild("number_of_same_info")
@@ -11,6 +12,12 @@ EMPTY_STRING = "__empty__"
 
 OUTPUT_FILE_PREFIX = "number_of_same_info_"
 OUTPUT_FILE_SUFFIX = ".json"
+
+class Part(StrEnum):
+    ALIASES = "aliases"
+    DESCRIPTION = "description"
+    LABELS = "labels"
+    LABELS_DESCRIPTION = "labels_description"
 
 def create_output_file_name(part):
     return OUTPUT_FILE_PREFIX + part + OUTPUT_FILE_SUFFIX
@@ -32,7 +39,7 @@ def get_aliases(entity) -> list[str]:
         aliases = map(lambda x: x.lower(), entity_aliases['en'])
     return aliases
 
-def get_str_values(entity, part):
+def get_str_values(entity, part: Part):
     str_values = []
     if part == 'aliases':
         str_values = get_aliases(entity)
@@ -48,7 +55,7 @@ def get_str_values(entity, part):
     return str_values
 
 @timed(logger)
-def main_number_of_same_info(json_file_path: pathlib.Path, part: str):
+def main_number_of_same_info(json_file_path: pathlib.Path, part: Part):
     part_logger = logger.getChild(part)
     with open(json_file_path, "rb") as input_file:
         resultsDict = dict()

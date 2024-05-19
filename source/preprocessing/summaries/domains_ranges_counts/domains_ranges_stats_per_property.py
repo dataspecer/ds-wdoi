@@ -19,7 +19,7 @@ def __get_value_of_consts_list(property):
         return []
     
 @timed(logger)
-def main_domains_ranges_per_class(properties_json_file_path: pathlib.Path):
+def main_domains_ranges_per_property(properties_json_file_path: pathlib.Path):
     with open(properties_json_file_path, "rb") as properties_input_file:
         properties_list = json.load(properties_input_file)
         results = []
