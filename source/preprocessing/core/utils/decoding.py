@@ -21,7 +21,7 @@ def __load_wd_entity_json(string_line: str):
     return orjson.loads(__remove_ending_comma(string_line))
 
 def __serialize_wd_entity_json(wd_entity):
-    return orjson.dumps(wd_entity)
+    return orjson.dumps(wd_entity, option=orjson.OPT_SERIALIZE_NUMPY)
 
 def init_json_array_in_files(file_array) -> None:
     for f in file_array:
@@ -36,7 +36,7 @@ def write_wd_entity_to_file(wd_entity, output_file):
     output_file.write(",\n".encode())
     
 def write_json_to_file(json_obj, output_file):
-    output_file.write(orjson.dumps(json_obj))
+    output_file.write(__serialize_wd_entity_json(json_obj))
 
 def __empty_message():
     return ""

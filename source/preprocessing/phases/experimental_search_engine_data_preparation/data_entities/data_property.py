@@ -5,6 +5,7 @@ class DataPropertyFields(StrEnum):
     CLASSES_DEFINING_USAGE = "classesDefiningUsage"
     LEXICALIZATION = "lexicalization"
     DENSE_VECTOR = "denseVector"
+    SPARSE_VECTOR = "sparseVector"
     
     ID = "id"
     ALIASES = "aliases"

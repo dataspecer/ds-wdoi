@@ -7,6 +7,7 @@ class DataClassFields(StrEnum):
     
     LEXICALIZATION = "lexicalization"
     DENSE_VECTOR = "denseVector"
+    SPARSE_VECTOR = "sparseVector"
     
     ID = "id"
     ALIASES = "aliases"
