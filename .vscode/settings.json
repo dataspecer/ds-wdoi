@@ -2,5 +2,6 @@
     "eslint.workingDirectories": ["./source/backend/wdoi-service", "./source/frontend/ds-mockup"],
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "prettier.requireConfig": true
+    "prettier.requireConfig": true,
+    "python.terminal.activateEnvironment": false
 }
