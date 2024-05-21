@@ -1,6 +1,5 @@
 from phases.experimental_search_engine_data_preparation.main_logger import main_logger
 from core.utils.timer import timed
-from phases.experimental_search_engine_data_preparation.data_entities.data_class import DataClassFields
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 import torch
 import core.utils.logging as ul

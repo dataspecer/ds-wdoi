@@ -74,7 +74,13 @@ There is also a script that is able to run all the phases at once (the bottom of
 ### Installing dependencies
 
 - Ideally use Python virtual enviroment for the scripts.
+
+      $> python -m venv venv
+      $> source venv/bin/activate 
+
 - Use frozen `requirements.txt` file to install all dependencies.
+
+      $> python -m pip install -r requirements.txt
 
 ### **Logging**:
 
