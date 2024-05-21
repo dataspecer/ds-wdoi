@@ -6,25 +6,13 @@ import core.utils.logging as ul
 
 logger = main_logger.getChild("dense")
 
-POOL_SIZE = 8
 DIMENSIONS = 512
 
 @timed(logger)
 def vectorize_dense(entities_dict: dict, lex_field: str, dense_vector_field: str):
     model = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1", truncate_dim=DIMENSIONS)
-    
-    entities_list = [wd_data_entity for wd_data_entity in entities_dict.values()]
-    texts_list = [wd_data_entity[lex_field] for wd_data_entity in entities_list]
-    
-    logger.info(f"Starting dense embeddings processing using {POOL_SIZE} cpus")
-    
-    pool = model.start_multi_process_pool(["cpu" for i in range(POOL_SIZE)])
-    
-    embeddings = model.encode_multi_process(texts_list, pool, batch_size=64)
-    
-    model.stop_multi_process_pool(pool)
-    
-    logger.info("Finished embeddings")
-    for idx, embedding in enumerate(embeddings):
-        entities_list[idx][dense_vector_field] = embedding
-        ul.try_log_progress(logger, idx, ul.HUNDRED_K_PROGRESS_STEP)
+    for i, wd_data_entity in enumerate(entities_dict.values()):
+        text = wd_data_entity[lex_field]
+        vector = model.encode(text, show_progress_bar=False)
+        wd_data_entity[dense_vector_field] = vector
+        ul.try_log_progress(logger, i, ul.TEN_K_PROGRESS_STEP)
