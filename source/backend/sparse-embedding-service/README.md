@@ -42,6 +42,12 @@ Installing requirements.
 
 We are not using requirements.
 
+### Environments
+
+The application expects two environment variables:
+    - `NUM_THREADS` - a number of threads to be used by the pytorch library.
+    - `ACCESS_TOKEN` - an HugginFace access token for the gated `naver/splade-v3` model.
+
 ### Running in development mode
 
 - Using the `fastapi-cli`.
@@ -53,7 +59,12 @@ We are not using requirements.
     - Otherwise, it would default to the FastAPI defaults mentioned above.
     - Assuming you are in the `/app` folder.
 
-            $> env HUGGIN_FACE_TOKEN="your_access_token" uvicorn main:app --host 0.0.0.0 --port 8002
+            $> uvicorn main:app --host 0.0.0.0 --port 8002
+
+- Setting up environments:
+    - Create `.env` file in the root forlder.
+    - Entry the enviroments.
+    - Note that the environments will be all strings.
 
 ### Containerizing and production
 
@@ -64,11 +75,13 @@ We are not using requirements.
 - Eventually, if adding into a Docker compose, using the `command` overrides the `Dockerfile` command.
     - Meaning you can set up ports in there.
 - Do not forget to set up the HugginFace access token as an environment variables.
+- And do not forget to add docker bridge `--network your_network`
+    - In the set of the wdoi backend, you do not want to expose the ports.
+    - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
 
 > Example of running separately:
 
     $> docker build -t your_image_name .
-    $> docker run --rm -p 8002:8002 -e HUGGIN_FACE_TOKEN="your_access_token" --name your_container_name your_image_name 
 
-    // To add network bridge. Assuming you have created the bridge.
-    $> docker run --rm --network your_bridge_name -p 8002:8002 --name your_container_name your_image_name 
+    $> docker run --rm --network your_bridge_name -e ACCESS_TOKEN="your_access_token" -e NUM_THREADS="2" --name your_container_name your_image_name 
+

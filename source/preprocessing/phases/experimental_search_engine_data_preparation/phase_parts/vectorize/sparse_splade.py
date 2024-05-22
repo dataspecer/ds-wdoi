@@ -8,7 +8,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
-logger = main_logger.getChild("dense")
+logger = main_logger.getChild("sparse")
 
 ACCESS_TOKEN = os.getenv('HUGGIN_FACE_TOKEN')
 

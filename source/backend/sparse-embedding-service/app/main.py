@@ -5,8 +5,13 @@ import orjson
 import os
 import torch 
 from transformers import AutoModelForMaskedLM, AutoTokenizer
+from dotenv import load_dotenv, find_dotenv
 
-ACCESS_TOKEN = os.getenv('HUGGIN_FACE_TOKEN')
+load_dotenv(find_dotenv())
+
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+
+torch.set_num_threads(int(os.getenv('NUM_THREADS')))
 
 app = FastAPI()
 
