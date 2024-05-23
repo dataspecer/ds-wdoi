@@ -18,9 +18,9 @@ if __name__ == "__main__":
     operation = args.operation
         
     if operation == "qdrant_info":
-        qdrant_helpers.collection_info(qdrant_helpers.CLASSES_COLLECTION_NAME)
+        qdrant_helpers.collection_info(qdrant_helpers.QDRANT_CLASSES_COLLECTION_NAME)
     elif operation == "qdrant_delete":
-        qdrant_helpers.delete_collection(qdrant_helpers.CLASSES_COLLECTION_NAME)
+        qdrant_helpers.delete_collection(qdrant_helpers.QDRANT_CLASSES_COLLECTION_NAME)
     else:
         raise ValueError("Operation was not defined for the script.")
     
