@@ -1,7 +1,4 @@
 import argparse
-import phases.search_engine_loading.elastic_search_config as es
-import pprint
-import core.utils.logging as ul
 import phases.search_engine_loading.elastic_search_helpers as helpers
     
 if __name__ == "__main__":

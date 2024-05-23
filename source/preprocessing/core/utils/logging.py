@@ -1,6 +1,7 @@
 from core.output_directory import OUTPUT_DIR_PATH
 import logging
 import logging.config
+import functools
 
 LOG_FILE_PATH = OUTPUT_DIR_PATH / "log.log"
 LOG_FILE_ERROR_PATH = OUTPUT_DIR_PATH / "log_errors.log"
@@ -68,4 +69,15 @@ def try_log_progress(logger, i, step, context_message = ""):
 def log_loading_to_map(logger, entity_map):
         logger.info(f"Loaded {len(entity_map)} entities")
 
-        
+def log_start_end(logger, start_message, end_message):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kvargs):
+            logger.info(start_message)
+           
+            value = func(*args, **kvargs)
+           
+            logger.info(end_message)
+            return value
+        return wrapper
+    return decorator

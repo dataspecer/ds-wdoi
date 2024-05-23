@@ -2,7 +2,7 @@ name: wdoi_dev
 
 services:
 
-  elastic_dev:
+  elastic_dev: 
     image: elasticsearch:8.13.0
     restart: unless-stopped
     ports: 
@@ -13,7 +13,21 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g" 
+
+  qdrant_dev:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qddata:/qdrant/storage
+    environment:
+      - QDRANT__TELEMETRY_DISABLED=True
 
 volumes:
   esdata:
+    driver: local
+  qddata:
     driver: local

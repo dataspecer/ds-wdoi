@@ -71,20 +71,21 @@ def _extract_wd_statements_values(statements, typed_extractor, is_qualifier: boo
                 values.append(stmt_value)
     return __get_unique_values(values)
 
-"""
+def extract_wd_statement_values(wd_json, property: Properties, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
+    """
     Function either expects array of statements or entity which the statements are extracted from provided field (Claims as a default).
     The is_qualifier denoted whether the statements are/were extracted from withing statements.
     That means that those statements do not include main snak but only datavalue directly.
     The include_no_value serves as a helper when a property can have novalue as a value.
     In that case, the novalue is returned as a non existent identifier Q0.
-"""
-def extract_wd_statement_values(wd_json, property: Properties, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
+    Mimics:
+        statements = wd_json
+        if field != None:
+            statements = _extract_wd_statements_from_field(wd_json, field, property)
+        typed_extractor = __get_typed_extractor(property, property.underlyingType)
+        return _extract_wd_statements_values(statements, typed_extractor, is_qualifier, include_no_value)
+    """
     return _extract_wd_statement_values_dynamic_prop(wd_json, property, property.underlyingType, field=field, is_qualifier=is_qualifier, include_no_value=include_no_value)
-    # statements = wd_json
-    # if field != None:
-    #     statements = _extract_wd_statements_from_field(wd_json, field, property)
-    # typed_extractor = __get_typed_extractor(property, property.underlyingType)
-    # return _extract_wd_statements_values(statements, typed_extractor, is_qualifier, include_no_value)
 
 def _extract_wd_statement_values_dynamic_prop(wd_json, str_property_id: str, underlyingType: UnderlyingTypes, *, field: str | None = RootFields.CLAIMS, is_qualifier: bool = False, include_no_value: bool = False):
     statements = wd_json

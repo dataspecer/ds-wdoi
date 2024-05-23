@@ -26,8 +26,8 @@ DUMP_OUTPUT_FILE_PATH = DOWNLOAD_FOLDER / DUMP_OUTPUT_FILE
 
 class RetryFlag:
     """
-        A flag denoting whether the download failed.
-        Counting number of retries, and whether it loaded a new chunk, thus reseting the retry flag.
+    A flag denoting whether the download failed.
+    Counting number of retries, and whether it loaded a new chunk, thus reseting the retry flag.
     """
     def __init__(self) -> None:
         self.loaded_chunk = False
@@ -43,7 +43,7 @@ class RetryFlag:
 
 class InitialFlag:
     """
-        Initial flag denoting whether a first write to a file was done.
+    Initial flag denoting whether a first write to a file was done.
     """
     def __init__(self) -> None:
         self.is_initial = True

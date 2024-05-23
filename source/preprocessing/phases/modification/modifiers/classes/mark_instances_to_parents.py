@@ -2,10 +2,11 @@ from phases.modification.modifiers.modifier_part import ModifierPart
 from phases.modification.modifiers.context import Context
 from phases.modification.modifiers.classes.add_fields import *
 from core.model_simplified.classes import ClassFields
-"""
-This should be run after removing unexisting references, self cycles and assigment of fields.
-"""
+
 class MarkInstancesToParents(ModifierPart):
+    """
+    This should be run after removing unexisting references, self cycles and assigment of fields.
+    """
     
     def __init__(self, logger, context: Context, logging_on: bool) -> None:
         super().__init__(logger.getChild("mark_instances_to_parents"), context, logging_on)

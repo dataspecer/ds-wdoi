@@ -99,7 +99,3 @@ def vectorize_entities(classes_json_file_path: Path, properties_json_file_path: 
     vectorize_sparse(properties_dict, DataPropertyFields.LEXICALIZATION.value, DataPropertyFields.SPARSE_VECTOR.value)
     
     __write_dicts_to_files(classes_dict, properties_dict)
-    
-    
-    
-    

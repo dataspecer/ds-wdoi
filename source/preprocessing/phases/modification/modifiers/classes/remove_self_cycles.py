@@ -2,10 +2,11 @@ from phases.modification.modifiers.modifier_part import ModifierPart
 from phases.modification.modifiers.context import Context
 from core.model_simplified.classes import ClassFields
 
-"""
-This should be run before removing unexisitng references or marking children.
-"""
 class RemoveSelfCyclesClass(ModifierPart):
+    """
+    This should be run before removing unexisitng references or marking children.
+    """
+    
     def __init__(self, logger, context: Context, logging_on: bool) -> None:
         super().__init__(logger.getChild("remove_self_cycles_class"), context, logging_on)
         

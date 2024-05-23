@@ -24,3 +24,4 @@ def timed(logger):
             return value
         return wrapper
     return decorator
+

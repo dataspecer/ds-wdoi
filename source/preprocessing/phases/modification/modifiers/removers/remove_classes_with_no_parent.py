@@ -3,12 +3,14 @@ from phases.modification.modifiers.context import Context
 from phases.modification.modifiers.classes.add_fields import *
 from core.model_wikidata.classes import *
 from core.model_simplified.classes import ClassFields
-"""
-Assuming this runs after children were assigned to classes. 
-Since there is the need to traverse recursively to children and remove them as well.
-In case the removed class is their only parent or all parents are already marked for removal.
-"""
+
 class RemoveClassesWithNoParent(Remover):
+    """
+    Assuming this runs after children were assigned to classes. 
+    Since there is the need to traverse recursively to children and remove them as well.
+    In case the removed class is their only parent or all parents are already marked for removal.
+    """
+
     def __init__(self, logger, context: Context, logging_on: bool) -> None:
         super().__init__(logger.getChild("remove_classes_with_no_parent"), context, logging_on)
     
