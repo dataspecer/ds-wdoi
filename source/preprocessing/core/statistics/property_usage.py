@@ -16,14 +16,14 @@ from core.output_directory import OUTPUT_DIR_PATH
 CLASSES_STATS_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "classes-property-usage.json"
 PROPERTIES_STATS_OUTPUT_FILE_PATH = OUTPUT_DIR_PATH / "properties-domain-range-usage.json"
 
-"""
-The class serves as a statistics computation on property usage.
-It is used in the first and second phase of the identification and separation phase.
-It first needs to construct a map for all entities and mark the instance of values - this is done in the identification phase.
-That is done in order to access ranges of properties in constant time.
-In the second phase, it marks all the property usage to classes and properties identified in the first phase.
-"""
 class PropertyUsageStatistics:
+    """
+    The class serves as a statistics computation on property usage.
+    It is used in the first and second phase of the identification and separation phase.
+    It first needs to construct a map for all entities and mark the instance of values - this is done in the identification phase.
+    That is done in order to access ranges of properties in constant time.
+    In the second phase, it marks all the property usage to classes and properties identified in the first phase.
+    """
     
     def __init__(self, logger) -> None:
         self.logger = logger.getChild("property_usage_statistics")
@@ -128,13 +128,15 @@ class PropertyUsageStatistics:
     # Will count all in and out properties to classes from entities including the not allowed ones.
     def _count_in_out_links_to_class(self, subject_wd_entity, subject_str_entity_id, claims):
         subject_is_class = True if subject_str_entity_id in self.classes_ids_set else False
+        
+        if subject_is_class:
+            self.class_property_usage_dict[subject_str_entity_id]["statementCount"] += len(wd_json_stmts_ex._extract_wd_statements_from_field(subject_wd_entity, RootFields.CLAIMS, property_id))
+            self.class_property_usage_dict[subject_str_entity_id]["sitelinksCount"] += len(wd_json_fields_ex.extract_site_links(subject_wd_entity))
+        
         for property_id in claims.keys():
             # If the property is not allowed, assign it item datatype -> results might be invalid but it can hit into inwards properties.
             property_datatype = self.properties_ids_to_datatype_dict[property_id] if property_id in self.properties_ids_to_datatype_dict else Datatypes.ITEM
             # Count outward properties for a class
-            if subject_is_class:
-                self.class_property_usage_dict[subject_str_entity_id]["statementCount"] += len(wd_json_stmts_ex._extract_wd_statements_from_field(subject_wd_entity, RootFields.CLAIMS, property_id))
-                self.class_property_usage_dict[subject_str_entity_id]["sitelinksCount"] += len(wd_json_fields_ex.extract_site_links(subject_wd_entity))
             # Mark inward direct links to classes, checking for ITEM since we care about properties that can point to classes.
             if property_datatype == Datatypes.ITEM:
                 object_str_entity_ids = wd_json_stmts_ex._extract_wd_statement_values_dynamic_prop(subject_wd_entity, property_id, UnderlyingTypes.ENTITY)
