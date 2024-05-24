@@ -17,7 +17,10 @@ if __name__ == "__main__":
     parser.add_argument("propertiesJsonFile",
                         type=pathlib.Path, 
                         help="A path to the preprocessed properties json file.")
+    parser.add_argument("expandedLabelsJsonFile",
+                        type=pathlib.Path, 
+                        help="A path to the preprocessed labels json file.")
     args = parser.parse_args()
     
-    main_search_engine_loading(args.phase, args.classesJsonFile, args.propertiesJsonFile)
+    main_search_engine_loading(args.phase, args.classesJsonFile, args.propertiesJsonFile, args.expandedLabelsJsonFile)
       

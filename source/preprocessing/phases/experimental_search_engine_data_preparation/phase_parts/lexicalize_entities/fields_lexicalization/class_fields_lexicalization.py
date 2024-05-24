@@ -18,7 +18,7 @@ def __try_add_to_map(m, key, value: None | str):
     if value != None:
         m[key] = value
 
-def lexicalize_wd_data_class(wd_data_class, classes_dict: dict, expanded_labels_dict: dict):
+def lexicalize_wd_data_class(wd_data_class, classes_dict: dict, properties_dict: dict, expanded_labels_dict: dict):
     lex_map = {}
     
     label_lex = __lexicalize_label_description(wd_data_class)

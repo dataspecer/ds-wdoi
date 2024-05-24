@@ -32,36 +32,42 @@ def __write_dicts_to_files(classes_lex_dict, properties_lex_dict):
     decoding.write_entities_dict_to_file(properties_lex_dict, PROPERTIES_OUTPUT_FILE_PATH)
 
 @timed(logger)
-def __lexicalize_classes(classes_dict: dict, expanded_labels_dict: dict):
-    classes_lex_dict = dict()
-    for i, [wd_data_class_id, wd_data_class] in enumerate(classes_dict.items()):
-        lex_map = lexicalize_wd_data_class(wd_data_class, classes_dict, expanded_labels_dict)
-        classes_lex_dict[wd_data_class_id] = { 
-                DataClassFields.ID.value: wd_data_class_id,
-                DataClassFields.LEXICALIZATION.value: lex_map
+def __lexicalize_entities(id_field: str, lex_field: str, data_entity_dict_to_enumerate: dict, classes_dict: dict, properties_dict: dict, expanded_labels_dict: dict, lex_func):
+    entities_lex_dict = dict()
+    for i, [wd_data_entity_id, wd_data_entity] in enumerate(data_entity_dict_to_enumerate.items()):
+        lex_map = lex_func(wd_data_entity, classes_dict, properties_dict, expanded_labels_dict)
+        entities_lex_dict[wd_data_entity_id] = { 
+                id_field: wd_data_entity_id,
+                lex_field: lex_map
             }
-        ul.try_log_progress(logger, i, ul.CLASSES_PROGRESS_STEP)
-    return classes_lex_dict
-
-@timed(logger)
-def __lexicalize_properties(properties_dict: dict):
-    properties_lex_dict = dict()
-    for i, [wd_data_property_id, wd_data_property] in enumerate(properties_dict.items()):
-        lex_map = lexicalize_wd_data_property(wd_data_property)
-        properties_lex_dict[wd_data_property_id] = { 
-                DataPropertyFields.ID.value: wd_data_property_id,
-                DataPropertyFields.LEXICALIZATION.value: lex_map
-            }
-        ul.try_log_progress(logger, i, ul.PROPERTIES_PROGRESS_STEP)
-    return properties_lex_dict
+        ul.try_log_progress(logger, i, ul.HUNDRED_K_PROGRESS_STEP)
+    return entities_lex_dict
 
 @timed(logger)
 def lexicalize_entities(classes_json_file_path: Path, properties_json_file_path: Path, expanded_labels_json_file_path: Path):
     classes_dict = __load_classes_to_dict(classes_json_file_path)
     properties_dict = __load_properties_to_dict(properties_json_file_path)
     expanded_labels_dict = __load_expanded_labels_to_dict(expanded_labels_json_file_path)
-    classes_lex_dict = __lexicalize_classes(classes_dict, expanded_labels_dict)
-    properties_lex_dict = __lexicalize_properties(properties_dict)
+    
+    classes_lex_dict = __lexicalize_entities(
+        DataClassFields.ID.value,
+        DataClassFields.LEXICALIZATION.value,
+        classes_dict, 
+        classes_dict,
+        properties_dict,
+        expanded_labels_dict,
+        lexicalize_wd_data_class
+    )
+    properties_lex_dict = __lexicalize_entities(
+        DataPropertyFields.ID.value,
+        DataPropertyFields.LEXICALIZATION.value,
+        properties_dict, 
+        classes_dict,
+        properties_dict,
+        expanded_labels_dict,
+        lexicalize_wd_data_property
+    )
+    
     __write_dicts_to_files(classes_lex_dict, properties_lex_dict)
     
     
