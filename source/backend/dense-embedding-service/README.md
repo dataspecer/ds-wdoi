@@ -51,7 +51,7 @@ The application expects two environment variables:
     - Otherwise, it would default to the FastAPI defaults mentioned above.
     - Assuming you are in the `/app` folder.
 
-            $> uvicorn main:app --host 0.0.0.0 --port 8001
+            $> uvicorn main:app --host 0.0.0.0 --port 8100
 
 - Setting up environments:
     - Create `.env` file in the root forlder.
@@ -61,8 +61,8 @@ The application expects two environment variables:
 ### Containerizing and production
 
 - The service has enclosed `Dockerfile` based on the FastAPI documentation.
-- If the container is run with `docker run` it runs the `fastapi run app/main.py --port 8001` command.
-    - Essentially running on port `8001`
+- If the container is run with `docker run` it runs the `fastapi run app/main.py --port 8100` command.
+    - Essentially running on port `8100`
 - Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
 - Eventually, if adding into a Docker compose, using the `command` overrides the `Dockerfile` command.
     - Meaning you can set up ports in there.

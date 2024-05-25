@@ -28,11 +28,11 @@ class SparseEmbeddingModel:
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, token=ACCESS_TOKEN)
         self.model = AutoModelForMaskedLM.from_pretrained(model_id, token=ACCESS_TOKEN)
     
-    def embed_sparse(self, text: str):
+    def embed_sparse(self, sentence: str):
         """
         Computes a vector from logits and attention mask using ReLU, log, and max operations.
         """
-        tokens = self.tokenizer(text, truncation=True, return_tensors="pt")
+        tokens = self.tokenizer(sentence, truncation=True, return_tensors="pt")
         output = self.model(**tokens)
         logits, attention_mask = output.logits, tokens.attention_mask
         relu_log = torch.log(1 + torch.relu(logits))
@@ -48,7 +48,7 @@ class SparseEmbeddingModel:
 embedding_model = SparseEmbeddingModel()
 
 class QueryBody(BaseModel):
-    query: str
+    sentence: str
 
 class EmbeddingORJSONResponse(Response):
     media_type = "application/json"
@@ -57,10 +57,12 @@ class EmbeddingORJSONResponse(Response):
 
 @app.post("/embed", response_class=EmbeddingORJSONResponse)
 async def embed(body: QueryBody):
-    indices, values = embedding_model.embed_sparse(body.query) 
+    indices, values = embedding_model.embed_sparse(body.sentence) 
     return EmbeddingORJSONResponse(
         {
-            "indices": indices,
-            "values": values 
+            "results": {
+                "indices": indices,
+                "values": values 
+            }
         }
     )

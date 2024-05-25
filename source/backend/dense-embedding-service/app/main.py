@@ -24,13 +24,13 @@ class EmbeddingModel:
     def __init__(self):
         self.model = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1")
     
-    def embed(self, query):
-        return self.model.encode(query, show_progress_bar=False)
+    def embed(self, sentence):
+        return self.model.encode(sentence, show_progress_bar=False)
 
 embedding_model = EmbeddingModel()
 
 class QueryBody(BaseModel):
-    query: str
+    sentence: str
 
 class EmbeddingORJSONResponse(Response):
     media_type = "application/json"
@@ -39,9 +39,9 @@ class EmbeddingORJSONResponse(Response):
 
 @app.post("/embed", response_class=EmbeddingORJSONResponse)
 async def embed(body: QueryBody):
-    embedding = embedding_model.embed(body.query) 
+    embedding = embedding_model.embed(body.sentence) 
     return EmbeddingORJSONResponse(
         {
-            "embedding": embedding 
+            "results": embedding 
         }
     )

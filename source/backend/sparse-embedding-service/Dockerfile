@@ -6,4 +6,4 @@ RUN pip install --no-cache-dir --upgrade fastapi orjson torch transformers
 
 COPY ./app /code/app
 
-CMD ["fastapi", "run", "app/main.py", "--port", "8002"]
+CMD ["fastapi", "run", "app/main.py", "--port", "8200"]

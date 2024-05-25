@@ -46,7 +46,7 @@ class EmbeddingORJSONResponse(Response):
     def render(self, content) -> bytes:
         return orjson.dumps(content, option=orjson.OPT_SERIALIZE_NUMPY)
 
-@app.post("/embed", response_class=EmbeddingORJSONResponse)
+@app.post("/rerank", response_class=EmbeddingORJSONResponse)
 async def embed(body: QueryBody):
     results = reranker_model.rerank_sentences(body.query, body.sentences, body.ids) 
     return EmbeddingORJSONResponse(

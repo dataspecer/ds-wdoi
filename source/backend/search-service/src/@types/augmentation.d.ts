@@ -1,9 +1,7 @@
-import { type EntityId } from '../ontology/entities/common.js';
-import type { WdOntology } from '../ontology/wd-ontology.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { WdOntologySearch } from '../ontology-search/ontology-search.ts';
 
 declare module 'fastify' {
   export interface FastifyInstance {
-    
+    wdOntologySearch: WdOntologySearch;
   }
 }

@@ -6,4 +6,4 @@ RUN pip install --no-cache-dir --upgrade fastapi orjson sentence-transformers
 
 COPY ./app /code/app
 
-CMD ["fastapi", "run", "app/main.py", "--port", "8001"]
+CMD ["fastapi", "run", "app/main.py", "--port", "8100"]

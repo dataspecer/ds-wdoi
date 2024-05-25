@@ -9,6 +9,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 import fs from 'fs';
 import closeWithGrace from 'close-with-grace';
 import { restartable } from '@fastify/restartable';
+import { restartRoutes } from './routes/restart-routes/restart-routes.js';
 
 const IS_PRODUCTION = envVars.ENVIROMENT === 'production';
 const PORT = 3062;
@@ -29,13 +30,13 @@ const fastify = await restartable(
       openapi: {
         openapi: '3.0.0',
         info: {
-          title: 'Wikidata ontology API service',
-          description: 'An API for browsing Wikidata ontology.',
+          title: 'The Wikidata Ontology Search Service',
+          description: 'An API for searching the Wikidata ontology.',
           version: '0.1.0',
         },
         servers: [
           {
-            url: 'http://127.0.0.1:3042',
+            url: 'http://127.0.0.1:3062',
             description: 'Development or Production server',
           },
         ],
@@ -73,8 +74,8 @@ const fastify = await restartable(
     });
     // A set of utility functions for easier work with fastify (e.g. a set of route errors).
     void app.register(fastifySensible, { sharedSchemaId: 'HttpError' });
+    void app.register(restartRoutes);
     // void app.register(ontologyRoutes, { prefix: 'api/v3' });
-    // void app.register(restartRoutes);
 
     return app;
   },
