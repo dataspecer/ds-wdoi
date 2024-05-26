@@ -12,15 +12,20 @@ export class WdOntologyContext {
   readonly classes: ReadonlyMap<EntityId, WdClass>;
   readonly properties: ReadonlyMap<EntityId, WdProperty>;
   readonly rootClass: WdClass | undefined;
+  readonly rootClassProperties: Set<EntityId> = new Set<EntityId>();
 
   private constructor(
-    rootClass: WdClass | undefined,
     classes: ReadonlyMap<EntityId, WdClass>,
     properties: ReadonlyMap<EntityId, WdProperty>,
+    rootClass: WdClass | undefined,
   ) {
-    this.rootClass = rootClass;
     this.classes = classes;
     this.properties = properties;
+    this.rootClass = rootClass;
+
+    if (rootClass !== undefined) {
+      this.rootClassProperties = new Set<EntityId>(rootClass?.ownProperties ?? []);
+    }
   }
 
   static async create(
@@ -43,8 +48,8 @@ export class WdOntologyContext {
 
     const rootClass = cls.get(ROOT_CLASS_ID);
     // Allow missing root when dics are empty - empty initial start.
-    if (rootClass != null || (props.size === 0 && cls.size === 0)) {
-      const ontology = new WdOntologyContext(rootClass, cls, props);
+    if (rootClass !== undefined || (props.size === 0 && cls.size === 0)) {
+      const ontology = new WdOntologyContext(cls, props, rootClass);
       log('Ontology context created');
       return ontology;
     } else {
