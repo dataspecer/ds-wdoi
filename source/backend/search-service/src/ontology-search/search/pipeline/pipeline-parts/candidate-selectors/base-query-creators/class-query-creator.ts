@@ -1,21 +1,13 @@
-import {
-  type EntityId,
-  type EntityIdString,
-} from '../../../../ontology-context/entities/common.js';
-import { type WdOntologyContext } from '../../../../ontology-context/ontology-context.js';
-import { type ClassQuery } from '../../query.js';
-import { type PipelinePart, PipelinePartSingle } from '../../pipeline-part.js';
+import type { EntityId, EntityIdString } from '../../../../../ontology-context/entities/common.js';
+import type { WdOntologyContext } from '../../../../../ontology-context/ontology-context.js';
+import type { ClassQuery } from '../../../query.js';
+import { QueryCreator } from './query-creator.js';
 
-export abstract class ClassPipelinePart extends PipelinePartSingle {
+export class ClassQueryCreator extends QueryCreator {
   protected readonly classQuery: ClassQuery;
 
-  constructor(
-    classQuery: ClassQuery,
-    ontologyContext: WdOntologyContext,
-    maxResults: number,
-    predecessor: PipelinePart | undefined,
-  ) {
-    super(classQuery, ontologyContext, maxResults, predecessor);
+  constructor(ontologyContext: WdOntologyContext, classQuery: ClassQuery) {
+    super(ontologyContext);
     this.classQuery = classQuery;
   }
 

@@ -4,7 +4,7 @@ import { type Normalizer } from '../../../../normalizers/normalizer.js';
 import { PipelinePartSingle, type PipelinePartResults } from '../../../pipeline-part.js';
 import { type Query } from '../../../query.js';
 
-export abstract class EntityTupleFeatureReranker extends PipelinePartSingle {
+export abstract class TupleFeatureReranker extends PipelinePartSingle {
   protected readonly queryWeight: number;
   protected readonly firstFeatureWeight: number;
   protected readonly normalizer: Normalizer;

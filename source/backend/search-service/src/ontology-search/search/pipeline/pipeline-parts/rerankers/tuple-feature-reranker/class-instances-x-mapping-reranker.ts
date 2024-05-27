@@ -1,7 +1,7 @@
 import { type EntityId } from '../../../../../ontology-context/entities/common.js';
-import { EntityTupleFeatureReranker } from '../../common-parts/rerankers/entity-tuple-feature-reranker.js';
+import { TupleFeatureReranker } from './tuple-feature-reranker.js';
 
-export abstract class ClassInstancesAndMappingsReranker extends EntityTupleFeatureReranker {
+export abstract class ClassInstancesAndMappingsReranker extends TupleFeatureReranker {
   protected getFirstFeature(entityId: EntityId): number {
     return this.ontologyContext.classes.get(entityId)?.instanceCount ?? 0;
   }

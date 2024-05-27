@@ -1,11 +1,11 @@
-import { type WdOntologyContext } from '../../../../../ontology-context/ontology-context.js';
-import { type Normalizer } from '../../../../normalizers/normalizer.js';
-import { type Query } from '../../../query.js';
+import { type WdOntologyContext } from '../../../../ontology-context/ontology-context.js';
+import { type Normalizer } from '../../../normalizers/normalizer.js';
+import { type Query } from '../../query.js';
 import {
   type PipelinePart,
   PipelinePartMulti,
   type PipelinePartResults,
-} from '../../../pipeline-part.js';
+} from '../../pipeline-part.js';
 
 export class TupleFusion extends PipelinePartMulti {
   private readonly normalizer: Normalizer;

@@ -1,17 +1,17 @@
-import { type WdOntologyContext } from '../../../../../ontology-context/ontology-context.js';
+import { type WdOntologyContext } from '../../../../ontology-context/ontology-context.js';
 import {
   CROSS_ENCODER_MAX_SENTENCES,
   type CrossEncoderRerankerClient,
   type CrossEncoderRerankerInput,
-} from '../../../../service-clients/clients/cross-encoder-client.js';
+} from '../../../service-clients/clients/cross-encoder-client.js';
 import {
   type PipelinePart,
   PipelinePartSingle,
   type PipelinePartResults,
-} from '../../../pipeline-part.js';
-import { type Query } from '../../../query.js';
-import { type EntityId } from '../../../../../ontology-context/entities/common.js';
-import { type WdEntity } from '../../../../../ontology-context/entities/wd-entity.js';
+} from '../../pipeline-part.js';
+import { type Query } from '../../query.js';
+import { type EntityId } from '../../../../ontology-context/entities/common.js';
+import { type WdEntity } from '../../../../ontology-context/entities/wd-entity.js';
 
 export class CrossEncoderReranker extends PipelinePartSingle {
   private readonly crossEncoderClient: CrossEncoderRerankerClient;
