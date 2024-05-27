@@ -5,12 +5,12 @@ from phases.experimental_search_engine_data_preparation.data_entities.data_class
 from summaries.summaries import main_logger
 import pathlib
 
-logger = main_logger.getChild("ancestors_defining_property_count")
+logger = main_logger.getChild("classes_ancestors_defining_property_count")
 
-OUTPUT_FILE = "ancestors_defining_property_count.json"
+OUTPUT_FILE = "classes_ancestors_defining_property_count.json"
 
 @timed(logger)
-def main_ancestors_defining_property_count(classes_json_file_path: pathlib.Path):
+def main_classes_ancestors_defining_property_count(classes_json_file_path: pathlib.Path):
     with open(classes_json_file_path, "rb") as classes_input_file:
         results = []
         for cls in decoding.entities_from_file(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):

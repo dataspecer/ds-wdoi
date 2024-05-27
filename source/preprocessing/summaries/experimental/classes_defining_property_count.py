@@ -5,7 +5,7 @@ from phases.experimental_search_engine_data_preparation.data_entities.data_prope
 from summaries.summaries import main_logger
 import pathlib
 
-logger = main_logger.getChild("number_of_instances")
+logger = main_logger.getChild("classes_number_of_instances")
 
 OUTPUT_FILE = "classes_defining_property_count.json"
 

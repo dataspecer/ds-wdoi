@@ -5,12 +5,12 @@ from core.model_simplified.classes import ClassFields
 from summaries.summaries import main_logger
 import pathlib
 
-logger = main_logger.getChild("number_of_instances")
+logger = main_logger.getChild("number_of_class_instances")
 
-OUTPUT_FILE = "number_of_instances.json"
+OUTPUT_FILE = "number_of_class_instances.json"
 
 @timed(logger)
-def main_number_of_instances(classes_json_file_path: pathlib.Path):
+def main_number_of_class_instances(classes_json_file_path: pathlib.Path):
     with open(classes_json_file_path, "rb") as classes_input_file:
         results = []
         for cls in decoding.entities_from_file(classes_input_file, logger, ul.CLASSES_PROGRESS_STEP):

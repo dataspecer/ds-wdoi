@@ -7,9 +7,9 @@ from phases.experimental_search_engine_data_preparation.data_entities.data_class
 from summaries.summaries import main_logger
 from core.utils.timer import timed
 
-logger = main_logger.getChild("ancestors_count")
+logger = main_logger.getChild("classes_ancestors_count")
 
-OUTPUT_FILE = "ancestors_count.json"
+OUTPUT_FILE = "classes_ancestors_count.json"
 
 @timed(logger)
 def __load_classes_to_dict(json_file_path: pathlib.Path) -> dict:
@@ -32,7 +32,7 @@ def __ancestors_of(id, cls, classes_dict: dict):
                 yield next_cls
     
 @timed(logger)
-def main_ancestors_count(classes_json_file_path: pathlib.Path):
+def main_classes_ancestors_count(classes_json_file_path: pathlib.Path):
     classes_dict = __load_classes_to_dict(classes_json_file_path)
     with open(OUTPUT_FILE, "wb") as output_file:
         results = []
