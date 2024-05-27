@@ -30,7 +30,7 @@ export abstract class PipelinePartSingle extends PipelinePart {
     query: Query,
     ontologyContext: WdOntologyContext,
     maxResults: number,
-    predecessor: PipelinePart | undefined,
+    predecessor: PipelinePart | undefined = undefined,
   ) {
     super(query, ontologyContext, maxResults);
     this.predecesor = predecessor;

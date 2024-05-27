@@ -15,8 +15,8 @@ export type SparseVectorValues = number[];
 export type SparseVectorIndices = number[];
 
 export interface SparseVector {
-  readonly indices: SparseVectorIndices;
-  readonly values: SparseVectorValues;
+  indices: SparseVectorIndices;
+  values: SparseVectorValues;
 }
 
 export type NumberFeature = number;

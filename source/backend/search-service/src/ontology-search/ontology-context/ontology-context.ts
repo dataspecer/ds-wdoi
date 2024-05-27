@@ -7,6 +7,10 @@ import {
   processFuncPropertiesCapture,
   processFuncClassesCapture,
 } from './loading/load-ontology-context.js';
+import {
+  normalizeClassesFeatures,
+  normalizePropertiesFeatures,
+} from './normalize-features/normalize-features.js';
 
 export class WdOntologyContext {
   readonly classes: ReadonlyMap<EntityId, WdClass>;
@@ -49,9 +53,13 @@ export class WdOntologyContext {
     const rootClass = cls.get(ROOT_CLASS_ID);
     // Allow missing root when dics are empty - empty initial start.
     if (rootClass !== undefined || (props.size === 0 && cls.size === 0)) {
-      const ontology = new WdOntologyContext(cls, props, rootClass);
+      const ontologyContext = new WdOntologyContext(cls, props, rootClass);
+
+      normalizePropertiesFeatures(ontologyContext.properties);
+      normalizeClassesFeatures(ontologyContext.classes);
+
       log('Ontology context created');
-      return ontology;
+      return ontologyContext;
     } else {
       throw new Error('Could not find a root class.');
     }
