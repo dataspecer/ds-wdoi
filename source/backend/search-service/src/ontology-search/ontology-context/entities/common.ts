@@ -4,12 +4,15 @@ export type LanguageArrayMap = Record<string, string[]>;
 export type EntityIdsList = readonly EntityId[];
 export type EntityId = number;
 
+export type EntityIdsListStrings = readonly string[];
+export type EntityIdString = string;
+
 export type Lexicalization = string;
 
-export type DenseVector = readonly number[];
+export type DenseVector = number[];
 
-export type SparseVectorValues = readonly number[];
-export type SparseVectorIndices = readonly number[];
+export type SparseVectorValues = number[];
+export type SparseVectorIndices = number[];
 
 export interface SparseVector {
   readonly indices: SparseVectorIndices;

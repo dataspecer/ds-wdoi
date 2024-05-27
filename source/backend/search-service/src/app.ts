@@ -96,8 +96,8 @@ const startFastify = async (app: FastifyInstance): Promise<void> => {
       port: PORT,
       host: HOST,
     });
-  } catch (err) {
-    app.log.error(err);
+  } catch (e) {
+    app.log.error(e);
     process.exit(1);
   }
 };

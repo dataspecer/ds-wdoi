@@ -36,8 +36,8 @@ export abstract class ServiceClient {
         results: response.results,
         error: false,
       };
-    } catch (_) {
-      logError('Failed to use cross-encoder.');
+    } catch (e) {
+      logError(e);
       return {
         error: true,
       };

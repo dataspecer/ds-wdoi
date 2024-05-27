@@ -59,16 +59,14 @@ export class CrossEncoderReranker extends PipelinePartSingle {
   protected async executeInternal(
     predecessorResults: PipelinePartResults,
   ): Promise<PipelinePartResults> {
-    let returnValue: PipelinePartResults = [];
-
     const input = this.createInput(predecessorResults);
     const results = await this.crossEncoderClient.rerank(input);
 
     if (!results.error && results.results !== undefined) {
       // Results are sorted from the backend service.
-      returnValue = results.results;
+      return results.results;
     }
 
-    return returnValue;
+    return [];
   }
 }

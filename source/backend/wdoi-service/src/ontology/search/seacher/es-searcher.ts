@@ -18,43 +18,6 @@ export class EsSearch extends Searcher {
   }
 
   private async search(indexName: string, queryString: string): Promise<EntityIdsList> {
-    // const searchResultsPrefix = this.client.search({
-    //   index: indexName,
-    //   _source: false,
-    //   query: {
-    //     multi_match: {
-    //       query: queryString,
-    //       type: 'phrase_prefix',
-    //       slop: 3,
-    //     },
-    //   },
-    // });
-    // const searchResultsMatch = this.client.search({
-    //   index: indexName,
-    //   _source: false,
-    //   query: {
-    //     dis_max: {
-    //       queries: [
-    //         {
-    //           multi_match: {
-    //             query: queryString,
-    //             type: 'best_fields',
-    //             fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
-    //           },
-    //         },
-    //         {
-    //           multi_match: {
-    //             query: queryString,
-    //             type: 'most_fields',
-    //             fields: ['labels_en^3', 'labels_en.keyword^2', 'aliases_en.keyword', 'aliases_en'],
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   },
-    // });
-    // const searchResults = [(await searchResultsPrefix).hits.hits, (await searchResultsMatch).hits.hits];
-    // const interleavedResults = this.interleaveArrays(searchResults);
     try {
       const searchResultsMatch = this.client.search({
         index: indexName,

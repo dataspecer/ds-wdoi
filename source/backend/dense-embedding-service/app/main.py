@@ -23,9 +23,10 @@ app.add_middleware(
 class EmbeddingModel:
     def __init__(self):
         self.model = SentenceTransformer("mixedbread-ai/mxbai-embed-large-v1")
+        self.prompt = 'Represent this sentence for searching relevant passages: '
     
     def embed(self, sentence):
-        return self.model.encode(sentence, show_progress_bar=False)
+        return self.model.encode(self.prompt + sentence, show_progress_bar=False)
 
 embedding_model = EmbeddingModel()
 
