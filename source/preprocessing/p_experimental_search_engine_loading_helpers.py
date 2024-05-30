@@ -17,8 +17,10 @@ if __name__ == "__main__":
         
     if operation == "qdrant_info":
         qdrant_helpers.collection_info(qdrant_helpers.QDRANT_CLASSES_COLLECTION_NAME)
+        qdrant_helpers.collection_info(qdrant_helpers.QDRANT_PROPERTIES_COLLECTION_NAME)
     elif operation == "qdrant_delete":
         qdrant_helpers.delete_collection(qdrant_helpers.QDRANT_CLASSES_COLLECTION_NAME)
+        qdrant_helpers.delete_collection(qdrant_helpers.QDRANT_PROPERTIES_COLLECTION_NAME)
     elif operation == "es_create":
         es_helpers.create()
     elif operation == "es_delete":
