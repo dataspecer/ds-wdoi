@@ -1,34 +1,40 @@
+import type { WdOntologyContext } from '../../../ontology-context/ontology-context.js';
 import type { PipelinePart } from '../../pipeline/pipeline-part.js';
 import type { Query } from '../../pipeline/query.js';
 
-export interface PipelinePartsFactoryConfig<T, Q extends Query> {
-  query: Q;
+export interface PipelinePartsFactoryConfig<T> {
   id: T;
   maxResults: number;
 }
 
-export interface CandidateSelectorFactoryConfig<T, Q extends Query>
-  extends PipelinePartsFactoryConfig<T, Q> {}
+export interface CandidateSelectorFactoryConfig<T> extends PipelinePartsFactoryConfig<T> {}
 
-export interface FusionCandidateSelectorFactoryConfig<T, Q extends Query>
-  extends PipelinePartsFactoryConfig<T, Q> {
+export interface FusionCandidateSelectorFactoryConfig<FT, CT>
+  extends PipelinePartsFactoryConfig<FT> {
   fusionWeights: number[];
-  candidateSelectors: Array<CandidateSelectorFactoryConfig<T, Q>>;
+  candidateSelectors: Array<CandidateSelectorFactoryConfig<CT>>;
 }
 
-export interface RerankerFactoryConfig<T, Q extends Query>
-  extends PipelinePartsFactoryConfig<T, Q> {
-  queryWeight: number | undefined;
-  featureWeights: number[] | undefined;
+export interface RerankerFactoryConfig<T> extends PipelinePartsFactoryConfig<T> {
+  queryWeight?: number | undefined;
+  featureWeights?: number[] | undefined;
 }
 
 export abstract class PipelinePartsFactory<CSC, FCSC, RC, Q extends Query> {
-  abstract createCandidateSelector(config: CandidateSelectorFactoryConfig<CSC, Q>): PipelinePart;
+  abstract createCandidateSelector(
+    query: Q,
+    ontologyContext: WdOntologyContext,
+    config: CandidateSelectorFactoryConfig<CSC>,
+  ): PipelinePart;
   abstract createFusionCandidateSelector(
-    config: FusionCandidateSelectorFactoryConfig<FCSC, Q>,
+    query: Q,
+    ontologyContext: WdOntologyContext,
+    config: FusionCandidateSelectorFactoryConfig<FCSC, CSC>,
   ): PipelinePart;
   abstract createReranker(
+    query: Q,
+    ontologyContext: WdOntologyContext,
     predecessor: PipelinePart,
-    config: RerankerFactoryConfig<RC, Q>,
+    config: RerankerFactoryConfig<RC>,
   ): PipelinePart;
 }

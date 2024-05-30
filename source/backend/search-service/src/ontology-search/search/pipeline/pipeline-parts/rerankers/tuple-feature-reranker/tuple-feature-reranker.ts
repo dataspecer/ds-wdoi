@@ -1,7 +1,11 @@
 import { type EntityId } from '../../../../../ontology-context/entities/common.js';
 import { type WdOntologyContext } from '../../../../../ontology-context/ontology-context.js';
 import { type Normalizer } from '../../../../normalizers/normalizer.js';
-import { PipelinePartSingle, type PipelinePartResults } from '../../../pipeline-part.js';
+import {
+  type PipelinePart,
+  PipelinePartSingle,
+  type PipelinePartResults,
+} from '../../../pipeline-part.js';
 import { type Query } from '../../../query.js';
 
 export abstract class TupleFeatureReranker extends PipelinePartSingle {
@@ -13,7 +17,7 @@ export abstract class TupleFeatureReranker extends PipelinePartSingle {
     query: Query,
     ontologyContext: WdOntologyContext,
     maxResults: number,
-    predecessor: PipelinePartSingle | undefined,
+    predecessor: PipelinePart | undefined,
     queryWeight: number,
     firstFeatureWeight: number,
     normalizer: Normalizer,

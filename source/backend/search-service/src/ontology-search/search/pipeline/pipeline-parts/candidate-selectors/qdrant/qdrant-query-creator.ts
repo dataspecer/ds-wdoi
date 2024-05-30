@@ -1,6 +1,6 @@
 import type { EntityId } from '../../../../../ontology-context/entities/common.js';
 import type { WdOntologyContext } from '../../../../../ontology-context/ontology-context.js';
-import type { ClassQuery } from '../../../query.js';
+import type { ClassQuery, PropertyQuery } from '../../../query.js';
 import { ClassQueryCreator } from '../base-query-creators/class-query-creator.js';
 import { PropertyQueryCreator } from '../base-query-creators/property-query-creator.js';
 
@@ -61,7 +61,7 @@ export class QdrantPropertyQueryCreator extends PropertyQueryCreator implements 
 
   constructor(
     ontologyContext: WdOntologyContext,
-    propertyQuery: ClassQuery,
+    propertyQuery: PropertyQuery,
     collectionName: string,
     vectorName: string,
   ) {

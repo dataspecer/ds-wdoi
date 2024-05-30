@@ -23,3 +23,5 @@ export const getRestartReplySchema = {
   additionalProperties: false,
   required: ['ok'],
 } as const;
+
+export type GetRestartReplySchemaType = FromSchema<typeof getRestartReplySchema>;

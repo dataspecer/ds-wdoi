@@ -20,7 +20,7 @@ export class ClassQueryCreator extends QueryCreator {
     for (const wdPropertyId of this.classQuery.properties) {
       if (!this.ontologyContext.rootClassProperties.has(wdPropertyId)) {
         const wdProperty = this.ontologyContext.properties.get(wdPropertyId);
-        if (wdProperty !== undefined) {
+        if (wdProperty !== undefined && wdProperty.classesDefiningUsage.length !== 0) {
           usageClasseForProperties.push(
             asStrings ? wdProperty.classesDefiningUsageAsString : wdProperty.classesDefiningUsage,
           );

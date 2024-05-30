@@ -12,4 +12,4 @@ export class SparseEmbedClient extends ServiceClient {
   }
 }
 
-export const crossEncoderClient = new SparseEmbedClient(envVars.SPARSE_EMBED_NODE);
+export const sparseEmbedClient = new SparseEmbedClient(envVars.SPARSE_EMBED_NODE);

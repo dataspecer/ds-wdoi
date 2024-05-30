@@ -32,3 +32,5 @@ export class MinMaxNormalizer extends Normalizer {
     return map;
   }
 }
+
+export const minMaxNormalizer = new MinMaxNormalizer();
