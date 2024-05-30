@@ -2,6 +2,7 @@ import type { EntityId } from '../../../../../ontology-context/entities/common.j
 import type { WdOntologyContext } from '../../../../../ontology-context/ontology-context.js';
 import type { ClassQuery } from '../../../query.js';
 import { ClassQueryCreator } from '../base-query-creators/class-query-creator.js';
+import { PropertyQueryCreator } from '../base-query-creators/property-query-creator.js';
 
 export interface QdrantQueryCreator {
   readonly collectionName: string;
@@ -14,8 +15,8 @@ export interface QdrantClassUsageFilter {
 }
 
 export class QdrantClassQueryCreator extends ClassQueryCreator implements QdrantQueryCreator {
-  collectionName: string;
-  vectorName: string;
+  readonly collectionName: string;
+  readonly vectorName: string;
 
   constructor(
     ontologyContext: WdOntologyContext,
@@ -51,5 +52,25 @@ export class QdrantClassQueryCreator extends ClassQueryCreator implements Qdrant
     );
 
     return usageFilter.must.length !== 0 ? usageFilter : undefined;
+  }
+}
+
+export class QdrantPropertyQueryCreator extends PropertyQueryCreator implements QdrantQueryCreator {
+  readonly collectionName: string;
+  readonly vectorName: string;
+
+  constructor(
+    ontologyContext: WdOntologyContext,
+    propertyQuery: ClassQuery,
+    collectionName: string,
+    vectorName: string,
+  ) {
+    super(ontologyContext, propertyQuery);
+    this.collectionName = collectionName;
+    this.vectorName = vectorName;
+  }
+
+  createFilter(): QdrantClassUsageFilter | undefined {
+    return undefined;
   }
 }
