@@ -6,7 +6,7 @@ import { ClassQueryCreator } from '../base-query-creators/class-query-creator.js
 export interface QdrantQueryCreator {
   readonly collectionName: string;
   readonly vectorName: string;
-  createFilter: () => QdrantClassUsageFilter;
+  createFilter: () => QdrantClassUsageFilter | undefined;
 }
 
 export interface QdrantClassUsageFilter {
@@ -42,13 +42,14 @@ export class QdrantClassQueryCreator extends ClassQueryCreator implements Qdrant
     return filter;
   }
 
-  createFilter(): QdrantClassUsageFilter {
+  createFilter(): QdrantClassUsageFilter | undefined {
     const notAsStrings = false;
     const usageClasses = this.computeUsageClassesForProperties(notAsStrings);
     const usageFilter = this.createQdrantClassTermsFilter(
       'ancestorsDefiningProperties',
       usageClasses as EntityId[][],
     );
-    return usageFilter;
+
+    return usageFilter.must.length !== 0 ? usageFilter : undefined;
   }
 }

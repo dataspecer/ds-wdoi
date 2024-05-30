@@ -6,7 +6,7 @@ import type { SparseEmbedClient } from '../../../../service-clients/clients/spar
 import { PipelinePartSingle } from '../../../pipeline-part.js';
 import type { PipelinePart, PipelinePartResults } from '../../../pipeline-part.js';
 import type { Query } from '../../../query.js';
-import type { QdrantQueryCreator } from './qdrant-query-creator.js';
+import type { QdrantClassUsageFilter, QdrantQueryCreator } from './qdrant-query-creator.js';
 
 export class QdrantSelector extends PipelinePartSingle {
   protected readonly qdrantClient: QdrantClientWrapper;
@@ -43,7 +43,7 @@ export class QdrantSelector extends PipelinePartSingle {
     predecessorResults: PipelinePartResults | undefined,
   ): Promise<PipelinePartResults> {
     try {
-      const filter: undefined | any = this.queryCreator.createFilter();
+      const usageFilter: undefined | QdrantClassUsageFilter = this.queryCreator.createFilter();
       const results = await this.embedClient.embed({ sentence: this.query.query });
       if (!results.error && results.results !== undefined) {
         const embVector = results.results;
@@ -53,7 +53,7 @@ export class QdrantSelector extends PipelinePartSingle {
             vector: embVector as any,
           },
           limit: this.maxResults,
-          filter,
+          filter: usageFilter,
         });
         return this.convertQdrantResultsToPipelineResults(searchResults);
       }

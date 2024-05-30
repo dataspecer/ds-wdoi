@@ -27,26 +27,29 @@ export class TupleFusion extends PipelinePartMulti {
   protected async executeInternal(
     predecessorResults: PipelinePartResults[],
   ): Promise<PipelinePartResults> {
-    if (predecessorResults.length !== 0) {
-      const first = predecessorResults[0];
-      const second = predecessorResults[1];
+    if (predecessorResults.length >= 2) {
+      const firstResults = predecessorResults[0];
+      const secondResults = predecessorResults[1];
 
-      const firstMap = this.normalizer.normalizeInPlaceWithMap(first);
-      const secondMap = this.normalizer.normalizeInPlaceWithMap(second);
+      const firstMap = this.normalizer.normalizeInPlaceWithMap(firstResults);
+      const secondMap = this.normalizer.normalizeInPlaceWithMap(secondResults);
+      const secondWeight = 1 - this.firstWeight;
 
       const returnValue: PipelinePartResults = [];
 
       // Compute merged scores utilizing the first results as storage.
-      for (const firstResult of first) {
+      for (const firstResult of firstResults) {
         const secondScore = secondMap.get(firstResult.id)?.score ?? 0;
-        firstResult.score =
-          firstResult.score * this.firstWeight + secondScore * (1 - this.firstWeight);
+        firstResult.score = firstResult.score * this.firstWeight + secondScore * secondWeight;
         returnValue.push(firstResult);
       }
 
       // Fill in the rest of the return values from the second results.
-      for (const secondResult of second) {
-        if (!firstMap.has(secondResult.id)) returnValue.push(secondResult);
+      for (const secondResult of secondResults) {
+        if (!firstMap.has(secondResult.id)) {
+          secondResult.score *= secondWeight;
+          returnValue.push(secondResult);
+        }
       }
 
       returnValue.sort((a, b) => b.score - a.score);
