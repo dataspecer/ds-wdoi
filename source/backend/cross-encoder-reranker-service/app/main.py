@@ -27,7 +27,7 @@ class RerankerModel:
     def score_sentences(self, query: str, sentences: list[str], ids: list[int]):
         query_sentence_pairs = [[query, sentence] for sentence in sentences]
         scores = self.model.predict(query_sentence_pairs, show_progress_bar=False)
-        return [{ "id": ids[idx], "score": score} for idx, score in enumerate(scores)]
+        return [{ "id": ids[i], "score": score} for i, score in enumerate(scores)]
 
     def rerank_sentences(self, query: str, sentences: list[str], ids: list[int]):
         results = self.score_sentences(query, sentences, ids)

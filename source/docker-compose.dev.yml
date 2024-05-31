@@ -26,6 +26,31 @@ services:
     environment:
       - QDRANT__TELEMETRY_DISABLED=True
 
+  cross_encoder_dev:
+    build: ./backend/cross-encoder-reranker-service
+    restart: unless-stopped
+    ports:
+      - "8300:8300"
+    environment:
+      NUM_THREADS: 4
+
+  dense_embed_dev:
+    build: ./backend/dense-embedding-service
+    restart: unless-stopped
+    ports:
+      - "8100:8100"
+    environment:
+      NUM_THREADS: 4
+
+  sparse_embed_dev:
+    build: ./backend/sparse-embedding-service
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    environment:
+      NUM_THREADS: 2
+      ACCESS_TOKEN:
+
 volumes:
   esdata:
     driver: local
