@@ -30,10 +30,7 @@ export type ClassCandidateSelectorsIds =
   | 'qdrant_sparse'
   | 'qdrant_dense';
 
-export type ClassFusionCandidateSelectorsIds =
-  | 'qdrant_sparse_dense'
-  | 'elastic_bm25_qdrant_dense'
-  | 'elastic_bm25_fielded_qdrant_dense';
+export type ClassFusionCandidateSelectorsIds = 'fusion';
 
 export type ClassRerankersIds = 'cross_encoder' | 'feature_instance_mappings';
 
@@ -118,11 +115,7 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
       ClassCandidateSelectorsIds
     >,
   ): PipelinePart {
-    if (
-      config.id === 'qdrant_sparse_dense' ||
-      config.id === 'elastic_bm25_qdrant_dense' ||
-      config.id === 'elastic_bm25_fielded_qdrant_dense'
-    ) {
+    if (config.id === 'fusion') {
       this.checkFusionConfig(config);
       const first = this.createCandidateSelector(
         query,
@@ -144,7 +137,7 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
         minMaxNormalizer,
       );
     } else {
-      throw new Error(`Missing constructor for in classes fusion factory.`);
+      throw new Error(`Missing constructor for classes in fusion factory.`);
     }
   }
 
@@ -170,7 +163,6 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
       ) {
         throw new Error('Invalid parameters of class reranker.');
       }
-
       return new ClassInstancesAndMappingsReranker(
         query,
         ontologyContext,

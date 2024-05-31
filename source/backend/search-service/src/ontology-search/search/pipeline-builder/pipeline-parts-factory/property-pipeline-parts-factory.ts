@@ -23,9 +23,7 @@ import {
 
 export type PropertyCandidateSelectorsIds = 'elastic_bm25' | 'qdrant_sparse' | 'qdrant_dense';
 
-export type PropertyFusionCandidateSelectorsIds =
-  | 'qdrant_sparse_dense'
-  | 'elastic_bm25_qdrant_dense';
+export type PropertyFusionCandidateSelectorsIds = 'fusion';
 
 export type PropertyRerankersIds = 'cross_encoder' | 'feature_usage_mappings';
 
@@ -106,7 +104,7 @@ export class PropertiesPipelinePartsFactory extends PipelinePartsFactory<
       PropertyCandidateSelectorsIds
     >,
   ): PipelinePart {
-    if (config.id === 'elastic_bm25_qdrant_dense' || config.id === 'qdrant_sparse_dense') {
+    if (config.id === 'fusion') {
       this.checkFusionConfig(config);
       const first = this.createCandidateSelector(
         query,
@@ -154,7 +152,6 @@ export class PropertiesPipelinePartsFactory extends PipelinePartsFactory<
       ) {
         throw new Error('Invalid parameters of property reranker.');
       }
-
       return new PropertyUsageAndMappingsReranker(
         query,
         ontologyContext,

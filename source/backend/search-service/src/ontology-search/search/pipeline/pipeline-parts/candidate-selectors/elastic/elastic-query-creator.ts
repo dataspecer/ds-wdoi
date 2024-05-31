@@ -145,12 +145,36 @@ export class ElasticClassBM25FieldedQueryCreator extends ElasticClassQueryCreato
           combined_fields: {
             query: this.classQuery.query,
             fields: [
-              'labels_en^8',
-              'aliases_en^6',
-              'subclassOf_en^4',
+              'labels_en^10',
+              'aliases_en^8',
+              'subclassOf_en^6',
               'additionalDescriptions_en^2',
               'descriptions_en',
             ],
+          },
+        },
+        {
+          term: {
+            'subclassOf_en.keyword': {
+              value: this.classQuery.query,
+              boost: 8,
+            },
+          },
+        },
+        {
+          term: {
+            'aliases_en.keyword': {
+              value: this.classQuery.query,
+              boost: 10,
+            },
+          },
+        },
+        {
+          term: {
+            'labels_en.keyword': {
+              value: this.classQuery.query,
+              boost: 12,
+            },
           },
         },
       ],

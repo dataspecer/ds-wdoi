@@ -35,11 +35,7 @@ export const classesFusionCandidateSelectorConfig = {
   type: 'object',
   properties: {
     id: {
-      enum: [
-        'qdrant_sparse_dense',
-        'elastic_bm25_qdrant_dense',
-        'elastic_bm25_fielded_qdrant_dense',
-      ],
+      enum: ['fusion'],
     },
     maxResults: {
       type: 'number',

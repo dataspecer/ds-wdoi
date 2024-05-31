@@ -23,7 +23,7 @@ export const searchRoutes: FastifyPluginCallback = function (fastify, opts, done
         fusionCandidateSelectorConfig: body.fusionCandidateSelectorConfig,
         rerankerConfig: body.rerankerConfig,
       });
-      return { results };
+      return { results: results ?? [] };
     },
   );
 
@@ -44,7 +44,7 @@ export const searchRoutes: FastifyPluginCallback = function (fastify, opts, done
         fusionCandidateSelectorConfig: body.fusionCandidateSelectorConfig,
         rerankerConfig: body.rerankerConfig,
       });
-      return { results };
+      return { results: results ?? [] };
     },
   );
 

@@ -29,7 +29,7 @@ export const propertiesFusionCandidateSelectorConfig = {
   type: 'object',
   properties: {
     id: {
-      enum: ['qdrant_sparse_dense', 'elastic_bm25_qdrant_dense'],
+      enum: ['fusion'],
     },
     maxResults: {
       type: 'number',
