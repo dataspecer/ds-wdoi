@@ -10,7 +10,7 @@ if __name__ == "__main__":
                             """)
     parser.add_argument("phase",
                         type=str,
-                        choices=[Phases.ALL, Phases.PROPERTY_USAGE_REDUCTION, Phases.EXPAND_TO_LANGUAGE_FIELDS, Phases.LEXICALIZE, Phases.VECTORIZE],
+                        choices=[Phases.ALL, Phases.PROPERTY_USAGE_REDUCTION, Phases.EXPAND_TO_LANGUAGE_FIELDS, Phases.LEXICALIZE, Phases.VECTORIZE, Phases.MINIMIZE],
                         help="Selects a phase to execute. Note that there are dependencies between the phases -> reduction, then expanding, then lexicalize and lastly vectorize.")
     parser.add_argument("classJsonFile",
                         type=pathlib.Path, 

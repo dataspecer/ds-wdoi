@@ -35,9 +35,6 @@ def write_wd_entity_to_file(wd_entity, output_file):
     output_file.write(__serialize_wd_entity_json(wd_entity))
     output_file.write(",\n".encode())
     
-def write_json_to_file(json_obj, output_file):
-    output_file.write(__serialize_wd_entity_json(json_obj))
-
 def __empty_message():
     return ""
     

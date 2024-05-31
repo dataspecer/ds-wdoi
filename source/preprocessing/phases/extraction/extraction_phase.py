@@ -1,4 +1,5 @@
 from enum import StrEnum
+from pathlib import Path
 import gzip
 from core.output_directory import OUTPUT_DIR_PATH
 import core.json_extractors.wd_fields as wd_fields_ex

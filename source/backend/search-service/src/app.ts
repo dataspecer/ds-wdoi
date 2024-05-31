@@ -2,6 +2,7 @@ import { envVars } from './enviroment.js';
 import { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import { envToLogger, initLogger, log } from './logging/log.js';
+import loadOntology from './ontology-search/expose-to-fastify.js';
 import fastifySensible from '@fastify/sensible';
 import process from 'process';
 import fastifySwagger from '@fastify/swagger';
@@ -10,6 +11,7 @@ import fs from 'fs';
 import closeWithGrace from 'close-with-grace';
 import { restartable } from '@fastify/restartable';
 import { restartRoutes } from './routes/restart-routes/restart-routes.js';
+import { searchRoutes } from './routes/search-routes/search-routes.js';
 
 const IS_PRODUCTION = envVars.ENVIROMENT === 'production';
 const PORT = 3062;
@@ -24,7 +26,7 @@ const fastify = await restartable(
 
     initLogger(app);
     // Loading ontology into a memory.
-    // void app.register(loadOntology);
+    void app.register(loadOntology);
     // Set up swagger dynamic generation.
     void app.register(fastifySwagger, {
       openapi: {
@@ -75,7 +77,7 @@ const fastify = await restartable(
     // A set of utility functions for easier work with fastify (e.g. a set of route errors).
     void app.register(fastifySensible, { sharedSchemaId: 'HttpError' });
     void app.register(restartRoutes);
-    // void app.register(ontologyRoutes, { prefix: 'api/v3' });
+    void app.register(searchRoutes);
 
     return app;
   },

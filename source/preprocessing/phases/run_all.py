@@ -11,7 +11,7 @@ import core.statistics.property_usage as property_usage
 import phases.property_recommendations.property_recommendations_phase as recs
 import phases.search_engine_loading.loading_to_es_search_phase as load
 import phases.search_engine_loading.elastic_search_helpers as load_helpers
-import phases.restart_api_service as restart_api
+import phases.restart_service as restart_api
 
 main_logger = ul.root_logger.getChild("run_all")
 

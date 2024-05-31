@@ -1,5 +1,5 @@
 import argparse
-from phases.restart_api_service import main_restart_api_service, DEFAULT_TIMEOUT
+from phases.restart_service import main_restart_api_service, DEFAULT_TIMEOUT
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
