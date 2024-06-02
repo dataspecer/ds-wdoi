@@ -39,7 +39,7 @@ export class CrossEncoderReranker extends PipelinePartSingle {
 
   protected createInput(predecessorResults: PipelinePartResults): CrossEncoderRerankerInput {
     const input: CrossEncoderRerankerInput = {
-      query: this.query.query,
+      query: this.query.text,
       ids: [],
       sentences: [],
     };

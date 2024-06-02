@@ -1,10 +1,9 @@
 import { type EntityId } from '../../entities/common.js';
 import { type WdClass } from '../../entities/wd-class.js';
 import { WdProperty } from '../../entities/wd-property.js';
-import { materializeEntitiesWithContext } from '../../utils/materialize-entities.js';
-import { OneDistanceDescExpander } from './one-distance-desc-expander.js';
+import { EntityDetail } from './entity-detail.js';
 
-export class PropertyOneDistanceDescReturnWrapper {
+export class PropertyDetailReturnWrapper {
   startProperty: WdProperty;
   surroundingClassesDesc: WdClass[];
   surroundingPropertiesDesc: WdProperty[];
@@ -20,7 +19,7 @@ export class PropertyOneDistanceDescReturnWrapper {
   }
 }
 
-export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
+export class PropertyDetail extends EntityDetail {
   protected readonly startProperty: WdProperty;
 
   constructor(
@@ -32,13 +31,13 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
     this.startProperty = startProperty;
   }
 
-  private getOneDistanceDocsSurroundings(): [WdClass[], WdProperty[]] {
+  protected getOneDistanceDocsSurroundings(): [WdClass[], WdProperty[]] {
     const surroundingClasses: WdClass[] = [];
     const surroundingProperties: WdProperty[] = [];
     const classesPresent = new Set<EntityId>();
 
     // Subject constraints
-    materializeEntitiesWithContext(
+    this.collectToContext(
       this.startProperty.generalConstraints.subjectTypeStats,
       this.contextClasses,
       classesPresent,
@@ -47,7 +46,7 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
 
     // Value constraints
     if (WdProperty.isItemProperty(this.startProperty)) {
-      materializeEntitiesWithContext(
+      this.collectToContext(
         this.startProperty.itemConstraints.valueTypeStats,
         this.contextClasses,
         classesPresent,
@@ -58,9 +57,9 @@ export class PropertyOneDistanceDescExpander extends OneDistanceDescExpander {
     return [surroundingClasses, surroundingProperties];
   }
 
-  public getSurroundings(): PropertyOneDistanceDescReturnWrapper {
+  public getDetail(): PropertyDetailReturnWrapper {
     const [surroundingClassNames, surroundingPropertyNames] = this.getOneDistanceDocsSurroundings();
-    return new PropertyOneDistanceDescReturnWrapper(
+    return new PropertyDetailReturnWrapper(
       this.startProperty,
       surroundingClassNames,
       surroundingPropertyNames,

@@ -67,7 +67,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           match: {
             labels_en: {
-              query: this.classQuery.query,
+              query: this.classQuery.text,
               fuzziness: 'AUTO',
               boost: 8,
             },
@@ -76,7 +76,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           term: {
             'labels_en.keyword': {
-              value: this.classQuery.query,
+              value: this.classQuery.text,
               boost: 12,
             },
           },
@@ -84,7 +84,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           match: {
             aliases_en: {
-              query: this.classQuery.query,
+              query: this.classQuery.text,
               fuzziness: 'AUTO',
               boost: 6,
             },
@@ -93,7 +93,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           term: {
             'aliases_en.keyword': {
-              value: this.classQuery.query,
+              value: this.classQuery.text,
               boost: 9,
             },
           },
@@ -101,7 +101,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           match: {
             subclassOf_en: {
-              query: this.classQuery.query,
+              query: this.classQuery.text,
               fuzziness: 'AUTO',
               boost: 4,
             },
@@ -110,7 +110,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           term: {
             'subclassOf_en.keyword': {
-              value: this.classQuery.query,
+              value: this.classQuery.text,
               boost: 6,
             },
           },
@@ -118,7 +118,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           match: {
             additionalDescriptions_en: {
-              query: this.classQuery.query,
+              query: this.classQuery.text,
               fuzziness: 'AUTO',
               boost: 2,
             },
@@ -127,7 +127,7 @@ export class ElasticClassBM25QueryCreator extends ElasticClassQueryCreator {
         {
           match: {
             descriptions_en: {
-              query: this.classQuery.query,
+              query: this.classQuery.text,
               fuzziness: 'AUTO',
             },
           },
@@ -143,7 +143,7 @@ export class ElasticClassBM25FieldedQueryCreator extends ElasticClassQueryCreato
       should: [
         {
           combined_fields: {
-            query: this.classQuery.query,
+            query: this.classQuery.text,
             fields: [
               'labels_en^10',
               'aliases_en^8',
@@ -156,7 +156,7 @@ export class ElasticClassBM25FieldedQueryCreator extends ElasticClassQueryCreato
         {
           term: {
             'subclassOf_en.keyword': {
-              value: this.classQuery.query,
+              value: this.classQuery.text,
               boost: 8,
             },
           },
@@ -164,7 +164,7 @@ export class ElasticClassBM25FieldedQueryCreator extends ElasticClassQueryCreato
         {
           term: {
             'aliases_en.keyword': {
-              value: this.classQuery.query,
+              value: this.classQuery.text,
               boost: 10,
             },
           },
@@ -172,7 +172,7 @@ export class ElasticClassBM25FieldedQueryCreator extends ElasticClassQueryCreato
         {
           term: {
             'labels_en.keyword': {
-              value: this.classQuery.query,
+              value: this.classQuery.text,
               boost: 12,
             },
           },
@@ -199,7 +199,7 @@ export class ElasticPropertyBM25QueryCreator
         {
           match: {
             labels_en: {
-              query: this.propertyQuery.query,
+              query: this.propertyQuery.text,
               fuzziness: 'AUTO',
               boost: 4.0,
             },
@@ -208,7 +208,7 @@ export class ElasticPropertyBM25QueryCreator
         {
           term: {
             'labels_en.keyword': {
-              value: this.propertyQuery.query,
+              value: this.propertyQuery.text,
               boost: 8.0,
             },
           },
@@ -216,7 +216,7 @@ export class ElasticPropertyBM25QueryCreator
         {
           match: {
             aliases_en: {
-              query: this.propertyQuery.query,
+              query: this.propertyQuery.text,
               fuzziness: 'AUTO',
               boost: 4.0,
             },
@@ -225,7 +225,7 @@ export class ElasticPropertyBM25QueryCreator
         {
           term: {
             'aliases_en.keyword': {
-              value: this.propertyQuery.query,
+              value: this.propertyQuery.text,
               boost: 8.0,
             },
           },
@@ -233,7 +233,7 @@ export class ElasticPropertyBM25QueryCreator
         {
           match: {
             descriptions_en: {
-              query: this.propertyQuery.query,
+              query: this.propertyQuery.text,
               fuzziness: 'AUTO',
             },
           },

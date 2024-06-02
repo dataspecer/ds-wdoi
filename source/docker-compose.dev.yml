@@ -49,7 +49,7 @@ services:
       - "8200:8200"
     environment:
       NUM_THREADS: 2
-      ACCESS_TOKEN:
+      ACCESS_TOKEN: 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
 
 volumes:
   esdata:

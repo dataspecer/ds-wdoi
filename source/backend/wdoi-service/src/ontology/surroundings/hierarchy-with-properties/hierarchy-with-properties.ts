@@ -6,7 +6,7 @@ import type {
 } from '../../entities/common.js';
 import { type WdClass } from '../../entities/wd-class.js';
 import { type WdProperty } from '../../entities/wd-property.js';
-import { Extractor } from '../../hierarchy-walker/class-hierarchy-walker.js';
+import type { Extractor } from '../../hierarchy-walker/class-hierarchy-walker.js';
 import * as Timsort from 'timsort';
 
 export class HierarchyWithPropertiesReturnWrapper {
@@ -34,7 +34,7 @@ export class HierarchyWithPropertiesReturnWrapper {
   }
 }
 
-export abstract class HierarchyWithPropertiesExtractor extends Extractor {
+export abstract class HierarchyWithPropertiesExtractor implements Extractor {
   // Context
   protected readonly contextClasses: ReadonlyMap<EntityId, WdClass>;
   protected readonly contexProperties: ReadonlyMap<EntityId, WdProperty>;
@@ -59,7 +59,6 @@ export abstract class HierarchyWithPropertiesExtractor extends Extractor {
     contextClasses: ReadonlyMap<EntityId, WdClass>,
     contextProperties: ReadonlyMap<EntityId, WdProperty>,
   ) {
-    super();
     this.startClass = startClass;
     this.contextClasses = contextClasses;
     this.contexProperties = contextProperties;

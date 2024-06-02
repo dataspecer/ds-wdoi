@@ -44,7 +44,7 @@ export class QdrantSelector extends PipelinePartSingle {
   ): Promise<PipelinePartResults> {
     try {
       const usageFilter: undefined | QdrantClassUsageFilter = this.queryCreator.createFilter();
-      const results = await this.embedClient.embed({ sentence: this.query.query });
+      const results = await this.embedClient.embed({ sentence: this.query.text });
       if (!results.error && results.results !== undefined) {
         const embVector = results.results;
         const searchResults = await this.qdrantClient.qc.search(this.queryCreator.collectionName, {

@@ -8,7 +8,7 @@ export const getPropertyWithSurroundingDescReplySchema = {
     results: {
       type: 'object',
       properties: {
-        property: wdPropertySchema,
+        startProperty: wdPropertySchema,
         surroundingClassesDesc: {
           type: 'array',
           items: wdClassDescOnlySchema,
@@ -19,7 +19,7 @@ export const getPropertyWithSurroundingDescReplySchema = {
         },
       },
       additionalProperties: false,
-      required: ['property', 'surroundingClassesDesc', 'surroundingPropertiesDesc'],
+      required: ['startProperty', 'surroundingClassesDesc', 'surroundingPropertiesDesc'],
     },
   },
   additionalProperties: false,

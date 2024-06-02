@@ -1,7 +1,7 @@
 import type { PropertyScoreRecord, EntityId, EntityIdsList } from '../../entities/common.ts';
 import { type WdClass } from '../../entities/wd-class.js';
 import { type WdProperty } from '../../entities/wd-property.js';
-import { Extractor } from '../../hierarchy-walker/class-hierarchy-walker.js';
+import type { Extractor } from '../../hierarchy-walker/class-hierarchy-walker.js';
 import * as Timsort from 'timsort';
 
 export type ClassPropertyDomainsRangesOrder = 'base' | 'inherit';
@@ -48,7 +48,7 @@ function addClassesIfMissing(
   });
 }
 
-export abstract class ClassPropertyDomainsRangesInheritOrderExtractor extends Extractor {
+export abstract class ClassPropertyDomainsRangesInheritOrderExtractor implements Extractor {
   // Context
   protected readonly contextClasses: ReadonlyMap<EntityId, WdClass>;
   protected readonly contexProperties: ReadonlyMap<EntityId, WdProperty>;
@@ -67,7 +67,6 @@ export abstract class ClassPropertyDomainsRangesInheritOrderExtractor extends Ex
     contextClasses: ReadonlyMap<EntityId, WdClass>,
     contextProperties: ReadonlyMap<EntityId, WdProperty>,
   ) {
-    super();
     this.startClass = startClass;
     this.property = property;
     this.contextClasses = contextClasses;

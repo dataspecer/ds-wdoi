@@ -24,16 +24,15 @@ export class ClassHierarchyReturnWrapper {
   }
 }
 
-export abstract class Extractor {
-  abstract extract(cls: WdClass): void;
+export interface Extractor {
+  extract: (cls: WdClass) => void;
 }
 
-export class HierarchyClassesExtractor extends Extractor {
+export class HierarchyClassesExtractor implements Extractor {
   private readonly classesIdsSet: Set<EntityId> = new Set<EntityId>();
   private readonly classes: WdClass[] = [];
 
   constructor(startClass: WdClass) {
-    super();
     this.classesIdsSet.add(startClass.id);
     this.classes.push(startClass);
   }

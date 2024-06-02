@@ -3,12 +3,12 @@ import { type FromSchema } from 'json-schema-to-ts';
 export const searchPropertiesQuerySchema = {
   type: 'object',
   properties: {
-    query: {
+    text: {
       type: 'string',
     },
   },
   additionalProperties: false,
-  required: ['query'],
+  required: ['text'],
 } as const;
 
 export const propertiesCandidateSelectorConfig = {

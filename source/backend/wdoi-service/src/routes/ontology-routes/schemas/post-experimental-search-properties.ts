@@ -4,12 +4,12 @@ import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 export const experimentalSearchPropertiesQuerySchema = {
   type: 'object',
   properties: {
-    query: {
+    text: {
       type: 'string',
     },
   },
   additionalProperties: false,
-  required: ['query'],
+  required: ['text'],
 } as const;
 
 export const experimentalPropertiesCandidateSelectorConfig = {

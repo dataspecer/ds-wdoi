@@ -4,7 +4,7 @@ import { wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
 export const experimentalSearchClassesQuerySchema = {
   type: 'object',
   properties: {
-    query: {
+    text: {
       type: 'string',
     },
     properties: {
@@ -15,7 +15,7 @@ export const experimentalSearchClassesQuerySchema = {
     },
   },
   additionalProperties: false,
-  required: ['query', 'properties'],
+  required: ['text', 'properties'],
 } as const;
 
 export const experimentalClassesCandidateSelectorConfig = {

@@ -1,4 +1,4 @@
-import type { EntityId, EntityIdsList } from './entities/common.js';
+import type { EntityId } from './entities/common.js';
 import { ROOT_CLASS_ID, type WdClass } from './entities/wd-class.js';
 import { type WdProperty } from './entities/wd-property.js';
 import {
@@ -18,13 +18,13 @@ import {
   HierarchyWithPropertiesCombinedUsageStatisticsAndConstraintsExtractor,
 } from './surroundings/hierarchy-with-properties/hierarchy-with-properties.js';
 import {
-  ClassOneDistanceDescExpander,
-  type ClassOneDistanceDescReturnWrapper,
-} from './surroundings/one-distance-desc/class-one-distance-desc-expander.js';
+  ClassDetailExtractor,
+  type ClassDetailReturnWrapper,
+} from './surroundings/entity-detail/class-detail.js';
 import {
-  PropertyOneDistanceDescExpander,
-  type PropertyOneDistanceDescReturnWrapper,
-} from './surroundings/one-distance-desc/property-one-distance-desc-expander.js';
+  PropertyDetail,
+  type PropertyDetailReturnWrapper,
+} from './surroundings/entity-detail/property-detail.js';
 import {
   ClassPropertyDomainsInheritOrderExtractor,
   ClassPropertyDomainsRangesResultWrapper,
@@ -37,25 +37,19 @@ import {
   FilterByInstance,
   type FilterByInstanceReturnWrapper,
 } from './surroundings/filter-by-instance/filter-by-instance.js';
-import { ExperimentalOntologySearch } from './experimental-search/experimental-ontology-search.js';
 import { envVars } from '../enviroment.js';
 import type { ExperimentalSearchPropertiesBodyType } from '../routes/ontology-routes/schemas/post-experimental-search-properties.js';
 import type { ExperimentalSearchClassesBodyType } from '../routes/ontology-routes/schemas/post-experimental-search-classes.js';
+import { ExperimentalClassSearch } from './experimental-search/experimental-class-search.js';
+import { ExperimentalPropertySearch } from './experimental-search/experimental-property-search.js';
 
 export class WdOntology {
   private readonly rootClass: WdClass | undefined;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly ontologySearch: OntologySearch;
-  private readonly experimentalClassSearch: ExperimentalOntologySearch<
-    ExperimentalSearchClassesBodyType,
-    EntityIdsList
-  >;
-
-  private readonly experimentalPropertySearch: ExperimentalOntologySearch<
-    ExperimentalSearchPropertiesBodyType,
-    EntityIdsList
-  >;
+  private readonly experimentalClassSearch: ExperimentalClassSearch;
+  private readonly experimentalPropertySearch: ExperimentalPropertySearch;
 
   private readonly hierarchyWalker: ClassHierarchyWalker;
   private readonly filterByInstance: FilterByInstance;
@@ -75,12 +69,12 @@ export class WdOntology {
       this.properties,
       this.hierarchyWalker,
     );
-    this.experimentalClassSearch = new ExperimentalOntologySearch(
+    this.experimentalClassSearch = new ExperimentalClassSearch(
       envVars.SEARCH_CLASSES_ENDPOINT,
       this.classes,
       this.properties,
     );
-    this.experimentalPropertySearch = new ExperimentalOntologySearch(
+    this.experimentalPropertySearch = new ExperimentalPropertySearch(
       envVars.SEARCH_PROPERTIES_ENDPOINT,
       this.classes,
       this.properties,
@@ -98,15 +92,13 @@ export class WdOntology {
   public async experimentalSearchClasses(
     config: ExperimentalSearchClassesBodyType,
   ): Promise<WdClass[]> {
-    const results = await this.experimentalClassSearch.search(config);
-    return materializeEntities(results?.results ?? [], this.classes);
+    return await this.experimentalClassSearch.search(config);
   }
 
   public async experimentalSearchProperties(
     config: ExperimentalSearchPropertiesBodyType,
   ): Promise<WdProperty[]> {
-    const results = await this.experimentalPropertySearch.search(config);
-    return materializeEntities(results?.results ?? [], this.properties);
+    return await this.experimentalPropertySearch.search(config);
   }
 
   public getClassHierarchy(
@@ -196,24 +188,19 @@ export class WdOntology {
     return resultWrapper;
   }
 
-  public getClassWithSurroundingDesc(startClass: WdClass): ClassOneDistanceDescReturnWrapper {
-    const classOneDistanceDocsExpander = new ClassOneDistanceDescExpander(
+  public getClassWithSurroundingDesc(startClass: WdClass): ClassDetailReturnWrapper {
+    const classDetailExtractor = new ClassDetailExtractor(
       startClass,
       this.classes,
       this.properties,
     );
-    return classOneDistanceDocsExpander.getSurroundings();
+    this.hierarchyWalker.walkParentHierarchyExtractionOnly(startClass, classDetailExtractor);
+    return classDetailExtractor.getDetail();
   }
 
-  public getPropertyWithSurroundingDesc(
-    startProperty: WdProperty,
-  ): PropertyOneDistanceDescReturnWrapper {
-    const propertyOneDistanceDocsExpander = new PropertyOneDistanceDescExpander(
-      startProperty,
-      this.classes,
-      this.properties,
-    );
-    return propertyOneDistanceDocsExpander.getSurroundings();
+  public getPropertyWithSurroundingDesc(startProperty: WdProperty): PropertyDetailReturnWrapper {
+    const propertyDetail = new PropertyDetail(startProperty, this.classes, this.properties);
+    return propertyDetail.getDetail();
   }
 
   public getClass(classId: EntityId): WdClass | undefined {

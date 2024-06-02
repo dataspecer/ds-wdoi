@@ -121,11 +121,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const startClass = fastify.wdOntology.getClass(id) as WdClass;
       const results = fastify.wdOntology.getClassWithSurroundingDesc(startClass);
       return {
-        results: {
-          class: results.startClass,
-          surroundingClassesDesc: results.surroundingClassesDesc,
-          surroundingPropertiesDesc: results.surroundingPropertiesDesc,
-        },
+        results,
       };
     },
   );
@@ -149,11 +145,7 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const startProperty = fastify.wdOntology.getProperty(id) as WdProperty;
       const results = fastify.wdOntology.getPropertyWithSurroundingDesc(startProperty);
       return {
-        results: {
-          property: results.startProperty,
-          surroundingClassesDesc: results.surroundingClassesDesc,
-          surroundingPropertiesDesc: results.surroundingPropertiesDesc,
-        },
+        results,
       };
     },
   );

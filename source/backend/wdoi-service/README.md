@@ -112,9 +112,9 @@ For properties right now we do not store any constraints except the merged usage
   - `hierarchy-with-properties`
     - Implements extractor for obtaining all properties from a class (including its hierarchy).
     - The extractor sorts the properties based on the score from preprocessing.
-  - `one-distance-desc`
-    - Implements surroundings of an entity in one distance (one edge step).
-    - For a class it obtains available properties and subclasses.
+  - `entity-details`
+    - Implements entity detail.
+    - For a class it obtains available properties and subclasses from the ancestors hierarchy.
     - For a property it obtains related properties and domains and ranges.
   - `domains-ranges`
     - Implements methods for obtaining domains and ranges for a property and a class.

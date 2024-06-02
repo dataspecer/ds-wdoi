@@ -3,7 +3,7 @@ import { type FromSchema } from 'json-schema-to-ts';
 export const searchClassesQuerySchema = {
   type: 'object',
   properties: {
-    query: {
+    text: {
       type: 'string',
     },
     properties: {
@@ -14,7 +14,7 @@ export const searchClassesQuerySchema = {
     },
   },
   additionalProperties: false,
-  required: ['query', 'properties'],
+  required: ['text', 'properties'],
 } as const;
 
 export const classesCandidateSelectorConfig = {

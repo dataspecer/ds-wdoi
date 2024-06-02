@@ -1,7 +1,7 @@
 import type { EntityIdsList } from '../../ontology-context/entities/common.js';
 
 export interface Query {
-  query: string;
+  text: string;
 }
 
 export interface ClassQuery extends Query {

@@ -10,7 +10,25 @@ export const getClassWithSurroundingDescReplySchema = {
     results: {
       type: 'object',
       properties: {
-        class: wdClassSchema,
+        startClass: wdClassSchema,
+        parentsIds: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        subjectOfIds: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
+        valueOfIds: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+        },
         surroundingClassesDesc: {
           type: 'array',
           items: wdClassDescOnlySchema,
@@ -21,7 +39,14 @@ export const getClassWithSurroundingDescReplySchema = {
         },
       },
       additionalProperties: false,
-      required: ['class', 'surroundingClassesDesc', 'surroundingPropertiesDesc'],
+      required: [
+        'startClass',
+        'parentsIds',
+        'subjectOfIds',
+        'valueOfIds',
+        'surroundingClassesDesc',
+        'surroundingPropertiesDesc',
+      ],
     },
   },
   additionalProperties: false,

@@ -109,7 +109,7 @@ export class PipelineBuilder {
     if (rerankerPresent && config.rerankerConfig?.length === 0)
       throw new Error('Missing rerankers in the provided reranker config.');
     // Empty query.
-    if (query.query == null || query.query === '') throw new Error('Empty query provided');
+    if (query.text == null || query.text === '') throw new Error('Empty query provided');
     // Invalid fusion params.
     if (
       fusionSelectorPresent &&
