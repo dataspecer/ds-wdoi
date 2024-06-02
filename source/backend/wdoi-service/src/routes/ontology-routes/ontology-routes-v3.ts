@@ -30,6 +30,16 @@ import {
   getFilterByInstanceReplySchema,
   getFilterBySchemaQueryStringSchema,
 } from './schemas/get-filter-by-instance.js';
+import {
+  type ExperimentalSearchPropertiesBodyType,
+  experimentalSearchPropertiesBodySchema,
+  experimentalSearchPropertiesReplySchema,
+} from './schemas/post-experimental-search-properties.js';
+import {
+  type ExperimentalSearchClassesBodyType,
+  experimentalSearchClassesBodySchema,
+  experimentalSearchClassesReplySchema,
+} from './schemas/post-experimental-search-classes.js';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   // Search
@@ -49,6 +59,46 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
       const { query, searchClasses, searchProperties } = req.query;
       const searchResults = await fastify.wdOntology.search(query, searchClasses, searchProperties);
       return { results: { classes: searchResults.classes, properties: searchResults.properties } };
+    },
+  );
+
+  // Experimental search on classes.
+
+  fastify.post<{ Body: ExperimentalSearchClassesBodyType }>(
+    '/experimental/search-classes',
+    {
+      schema: {
+        body: experimentalSearchClassesBodySchema,
+        response: {
+          '2xx': experimentalSearchClassesReplySchema,
+          '4xx': { $ref: 'HttpError' },
+        },
+      },
+    },
+    async (req, res) => {
+      const config = req.body;
+      const searchResults = await fastify.wdOntology.experimentalSearchClasses(config);
+      return { results: searchResults };
+    },
+  );
+
+  // Experimental search on properties.
+
+  fastify.post<{ Body: ExperimentalSearchPropertiesBodyType }>(
+    '/experimental/search-properties',
+    {
+      schema: {
+        body: experimentalSearchPropertiesBodySchema,
+        response: {
+          '2xx': experimentalSearchPropertiesReplySchema,
+          '4xx': { $ref: 'HttpError' },
+        },
+      },
+    },
+    async (req, res) => {
+      const config = req.body;
+      const searchResults = await fastify.wdOntology.experimentalSearchProperties(config);
+      return { results: searchResults };
     },
   );
 
