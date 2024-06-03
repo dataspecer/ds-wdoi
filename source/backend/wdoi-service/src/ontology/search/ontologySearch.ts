@@ -17,6 +17,8 @@ export class SearchResults {
   }
 }
 
+const MAX_RESULTS = 30;
+
 export class OntologySearch {
   private readonly esSearch: EsSearch;
   private readonly wdSearch: WdSearch;
@@ -76,7 +78,9 @@ export class OntologySearch {
     const wdClassesIds = this.wdSearch.searchClasses(query);
     const esClassesIds = this.esSearch.searchClasses(query);
     return materializeEntities(
-      this.makeUniqueWithKeptOrder([...(await wdClassesIds), ...(await esClassesIds)]),
+      this.makeUniqueWithKeptOrder(
+        [...(await wdClassesIds), ...(await esClassesIds)].slice(0, MAX_RESULTS),
+      ),
       this.classes,
     );
   }
@@ -85,7 +89,9 @@ export class OntologySearch {
     const wdPropertiesIds = this.wdSearch.searchProperties(query);
     const esPropertiesIds = this.esSearch.searchProperties(query);
     return materializeEntities(
-      this.makeUniqueWithKeptOrder([...(await wdPropertiesIds), ...(await esPropertiesIds)]),
+      this.makeUniqueWithKeptOrder(
+        [...(await wdPropertiesIds), ...(await esPropertiesIds)].slice(0, MAX_RESULTS),
+      ),
       this.properties,
     );
   }

@@ -32,7 +32,7 @@ export class WdSearch extends Searcher {
         '&search=' +
         encodeURI(query) +
         '&language=en' +
-        '&limit=7' +
+        '&limit=20' +
         '&type=' +
         type +
         '&format=json'

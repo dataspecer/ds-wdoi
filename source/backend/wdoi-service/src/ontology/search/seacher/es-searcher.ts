@@ -22,6 +22,8 @@ export class EsSearch extends Searcher {
       const searchResultsMatch = this.client.search({
         index: indexName,
         _source: false,
+        from: 0,
+        size: 20,
         query: {
           bool: {
             should: [

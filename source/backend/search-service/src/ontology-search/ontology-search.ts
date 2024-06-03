@@ -17,6 +17,8 @@ import type {
 } from './search/pipeline-builder/pipeline-parts-factory/property-pipeline-parts-factory.js';
 import type { ClassQuery, PropertyQuery } from './search/pipeline/query.js';
 
+const MAX_RESULTS = 30;
+
 export class WdOntologySearch {
   ontologyContext: WdOntologyContext;
   pipelineBuilder: PipelineBuilder;
@@ -49,7 +51,7 @@ export class WdOntologySearch {
       const pipeline = this.pipelineBuilder.createClassSearchPipeline(query, config);
       if (pipeline !== undefined) {
         const results = await pipeline.execute();
-        return results.map((v) => v.id);
+        return results.slice(0, MAX_RESULTS).map((v) => v.id);
       }
     } catch (e) {
       logError(e);
@@ -69,7 +71,7 @@ export class WdOntologySearch {
       const pipeline = this.pipelineBuilder.createPropertySearchPipeline(query, config);
       if (pipeline !== undefined) {
         const results = await pipeline.execute();
-        return results.map((v) => v.id);
+        return results.slice(0, MAX_RESULTS).map((v) => v.id);
       }
     } catch (e) {
       logError(e);
