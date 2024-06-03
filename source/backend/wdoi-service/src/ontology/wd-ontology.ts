@@ -38,18 +38,18 @@ import {
   type FilterByInstanceReturnWrapper,
 } from './surroundings/filter-by-instance/filter-by-instance.js';
 import { envVars } from '../enviroment.js';
-import type { ExperimentalSearchPropertiesBodyType } from '../routes/ontology-routes/schemas/post-experimental-search-properties.js';
-import type { ExperimentalSearchClassesBodyType } from '../routes/ontology-routes/schemas/post-experimental-search-classes.js';
-import { ExperimentalClassSearch } from './search-experimental/experimental-class-search.js';
-import { ExperimentalPropertySearch } from './search-experimental/experimental-property-search.js';
+import { ClassSearch } from './search-v2/class-search.js';
+import { PropertySearch } from './search-v2/property-search.js';
+import type { SearchClassesBodyType } from '../routes/ontology-routes/schemas/post-search-classes.js';
+import type { SearchPropertiesBodyType } from '../routes/ontology-routes/schemas/post-search-properties.js';
 
 export class WdOntology {
   private readonly rootClass: WdClass | undefined;
   private readonly classes: ReadonlyMap<EntityId, WdClass>;
   private readonly properties: ReadonlyMap<EntityId, WdProperty>;
   private readonly ontologySearch: OntologySearch;
-  private readonly experimentalClassSearch: ExperimentalClassSearch;
-  private readonly experimentalPropertySearch: ExperimentalPropertySearch;
+  private readonly classSearch: ClassSearch;
+  private readonly propertySearch: PropertySearch;
 
   private readonly hierarchyWalker: ClassHierarchyWalker;
   private readonly filterByInstance: FilterByInstance;
@@ -69,12 +69,12 @@ export class WdOntology {
       this.properties,
       this.hierarchyWalker,
     );
-    this.experimentalClassSearch = new ExperimentalClassSearch(
+    this.classSearch = new ClassSearch(
       envVars.SEARCH_CLASSES_ENDPOINT,
       this.classes,
       this.properties,
     );
-    this.experimentalPropertySearch = new ExperimentalPropertySearch(
+    this.propertySearch = new PropertySearch(
       envVars.SEARCH_PROPERTIES_ENDPOINT,
       this.classes,
       this.properties,
@@ -89,16 +89,12 @@ export class WdOntology {
     return await this.ontologySearch.search(query, searchClasses, searchProperties);
   }
 
-  public async experimentalSearchClasses(
-    config: ExperimentalSearchClassesBodyType,
-  ): Promise<WdClass[]> {
-    return await this.experimentalClassSearch.search(config);
+  public async searchClasses(config: SearchClassesBodyType): Promise<WdClass[]> {
+    return await this.classSearch.search(config);
   }
 
-  public async experimentalSearchProperties(
-    config: ExperimentalSearchPropertiesBodyType,
-  ): Promise<WdProperty[]> {
-    return await this.experimentalPropertySearch.search(config);
+  public async searchProperties(config: SearchPropertiesBodyType): Promise<WdProperty[]> {
+    return await this.propertySearch.search(config);
   }
 
   public getClassHierarchy(

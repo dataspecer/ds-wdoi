@@ -1,7 +1,7 @@
 import { type FromSchema } from 'json-schema-to-ts';
 import { wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
 
-export const experimentalSearchClassesQuerySchema = {
+export const searchClassesQuerySchema = {
   type: 'object',
   properties: {
     text: {
@@ -18,7 +18,7 @@ export const experimentalSearchClassesQuerySchema = {
   required: ['text', 'properties'],
 } as const;
 
-export const experimentalClassesCandidateSelectorConfig = {
+export const searchClassesCandidateSelectorConfig = {
   type: 'object',
   properties: {
     id: {
@@ -32,7 +32,7 @@ export const experimentalClassesCandidateSelectorConfig = {
   required: ['id', 'maxResults'],
 } as const;
 
-export const experimentalClassesFusionCandidateSelectorConfig = {
+export const searchClassesFusionCandidateSelectorConfig = {
   type: 'object',
   properties: {
     id: {
@@ -49,14 +49,14 @@ export const experimentalClassesFusionCandidateSelectorConfig = {
     },
     candidateSelectors: {
       type: 'array',
-      items: experimentalClassesCandidateSelectorConfig,
+      items: searchClassesCandidateSelectorConfig,
     },
   },
   additionalProperties: false,
   required: ['id', 'maxResults', 'fusionWeights', 'candidateSelectors'],
 } as const;
 
-export const experimentalClassesRerankerConfig = {
+export const searchClassesRerankerConfig = {
   type: 'object',
   properties: {
     id: {
@@ -79,26 +79,24 @@ export const experimentalClassesRerankerConfig = {
   required: ['id', 'maxResults'],
 } as const;
 
-export const experimentalSearchClassesBodySchema = {
+export const searchClassesBodySchema = {
   type: 'object',
   properties: {
-    query: experimentalSearchClassesQuerySchema,
-    candidateSelectorConfig: experimentalClassesCandidateSelectorConfig,
-    fusionCandidateSelectorConfig: experimentalClassesFusionCandidateSelectorConfig,
+    query: searchClassesQuerySchema,
+    candidateSelectorConfig: searchClassesCandidateSelectorConfig,
+    fusionCandidateSelectorConfig: searchClassesFusionCandidateSelectorConfig,
     rerankerConfig: {
       type: 'array',
-      items: experimentalClassesRerankerConfig,
+      items: searchClassesRerankerConfig,
     },
   },
   additionalProperties: false,
   required: ['query'],
 } as const;
 
-export type ExperimentalSearchClassesBodyType = FromSchema<
-  typeof experimentalSearchClassesBodySchema
->;
+export type SearchClassesBodyType = FromSchema<typeof searchClassesBodySchema>;
 
-export const experimentalSearchClassesReplySchema = {
+export const searchClassesReplySchema = {
   type: 'object',
   properties: {
     results: {
@@ -110,6 +108,4 @@ export const experimentalSearchClassesReplySchema = {
   required: ['results'],
 } as const;
 
-export type ExperimentalSearchClassesReplyType = FromSchema<
-  typeof experimentalSearchClassesReplySchema
->;
+export type SearchClassesReplyType = FromSchema<typeof searchClassesReplySchema>;

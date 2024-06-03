@@ -1,7 +1,7 @@
 import { type FromSchema } from 'json-schema-to-ts';
 import { wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
-export const experimentalSearchPropertiesQuerySchema = {
+export const searchPropertiesQuerySchema = {
   type: 'object',
   properties: {
     text: {
@@ -12,7 +12,7 @@ export const experimentalSearchPropertiesQuerySchema = {
   required: ['text'],
 } as const;
 
-export const experimentalPropertiesCandidateSelectorConfig = {
+export const searchPropertiesCandidateSelectorConfig = {
   type: 'object',
   properties: {
     id: {
@@ -26,7 +26,7 @@ export const experimentalPropertiesCandidateSelectorConfig = {
   required: ['id', 'maxResults'],
 } as const;
 
-export const experimentalPropertiesFusionCandidateSelectorConfig = {
+export const searchPropertiesFusionCandidateSelectorConfig = {
   type: 'object',
   properties: {
     id: {
@@ -43,14 +43,14 @@ export const experimentalPropertiesFusionCandidateSelectorConfig = {
     },
     candidateSelectors: {
       type: 'array',
-      items: experimentalPropertiesCandidateSelectorConfig,
+      items: searchPropertiesCandidateSelectorConfig,
     },
   },
   additionalProperties: false,
   required: ['id', 'maxResults', 'fusionWeights', 'candidateSelectors'],
 } as const;
 
-export const experimentalPropertiesRerankerConfig = {
+export const searchPropertiesRerankerConfig = {
   type: 'object',
   properties: {
     id: {
@@ -73,26 +73,24 @@ export const experimentalPropertiesRerankerConfig = {
   required: ['id', 'maxResults'],
 } as const;
 
-export const experimentalSearchPropertiesBodySchema = {
+export const searchPropertiesBodySchema = {
   type: 'object',
   properties: {
-    query: experimentalSearchPropertiesQuerySchema,
-    candidateSelectorConfig: experimentalPropertiesCandidateSelectorConfig,
-    fusionCandidateSelectorConfig: experimentalPropertiesFusionCandidateSelectorConfig,
+    query: searchPropertiesQuerySchema,
+    candidateSelectorConfig: searchPropertiesCandidateSelectorConfig,
+    fusionCandidateSelectorConfig: searchPropertiesFusionCandidateSelectorConfig,
     rerankerConfig: {
       type: 'array',
-      items: experimentalPropertiesRerankerConfig,
+      items: searchPropertiesRerankerConfig,
     },
   },
   additionalProperties: false,
   required: ['query'],
 } as const;
 
-export type ExperimentalSearchPropertiesBodyType = FromSchema<
-  typeof experimentalSearchPropertiesBodySchema
->;
+export type SearchPropertiesBodyType = FromSchema<typeof searchPropertiesBodySchema>;
 
-export const experimentalSearchPropertiesReplySchema = {
+export const searchPropertiesReplySchema = {
   type: 'object',
   properties: {
     results: {
@@ -104,6 +102,4 @@ export const experimentalSearchPropertiesReplySchema = {
   required: ['results'],
 } as const;
 
-export type ExperimentalSearchPropertiesReplyType = FromSchema<
-  typeof experimentalSearchPropertiesReplySchema
->;
+export type SearchPropertiesReplyType = FromSchema<typeof searchPropertiesReplySchema>;

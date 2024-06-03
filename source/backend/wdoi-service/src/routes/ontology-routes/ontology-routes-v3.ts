@@ -31,15 +31,15 @@ import {
   getFilterBySchemaQueryStringSchema,
 } from './schemas/get-filter-by-instance.js';
 import {
-  type ExperimentalSearchPropertiesBodyType,
-  experimentalSearchPropertiesBodySchema,
-  experimentalSearchPropertiesReplySchema,
-} from './schemas/post-experimental-search-properties.js';
+  searchPropertiesBodySchema,
+  searchPropertiesReplySchema,
+  type SearchPropertiesBodyType,
+} from './schemas/post-search-properties.js';
 import {
-  type ExperimentalSearchClassesBodyType,
-  experimentalSearchClassesBodySchema,
-  experimentalSearchClassesReplySchema,
-} from './schemas/post-experimental-search-classes.js';
+  searchClassesBodySchema,
+  searchClassesReplySchema,
+  type SearchClassesBodyType,
+} from './schemas/post-search-classes.js';
 
 export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, done) {
   // Search
@@ -62,42 +62,42 @@ export const ontologyRoutes: FastifyPluginCallback = function (fastify, opts, do
     },
   );
 
-  // Experimental search on classes.
+  // Search on classes.
 
-  fastify.post<{ Body: ExperimentalSearchClassesBodyType }>(
-    '/experimental/search-classes',
+  fastify.post<{ Body: SearchClassesBodyType }>(
+    '/search-classes',
     {
       schema: {
-        body: experimentalSearchClassesBodySchema,
+        body: searchClassesBodySchema,
         response: {
-          '2xx': experimentalSearchClassesReplySchema,
+          '2xx': searchClassesReplySchema,
           '4xx': { $ref: 'HttpError' },
         },
       },
     },
     async (req, res) => {
       const config = req.body;
-      const searchResults = await fastify.wdOntology.experimentalSearchClasses(config);
+      const searchResults = await fastify.wdOntology.searchClasses(config);
       return { results: searchResults };
     },
   );
 
-  // Experimental search on properties.
+  // Search on properties.
 
-  fastify.post<{ Body: ExperimentalSearchPropertiesBodyType }>(
-    '/experimental/search-properties',
+  fastify.post<{ Body: SearchPropertiesBodyType }>(
+    '/search-properties',
     {
       schema: {
-        body: experimentalSearchPropertiesBodySchema,
+        body: searchPropertiesBodySchema,
         response: {
-          '2xx': experimentalSearchPropertiesReplySchema,
+          '2xx': searchPropertiesReplySchema,
           '4xx': { $ref: 'HttpError' },
         },
       },
     },
     async (req, res) => {
       const config = req.body;
-      const searchResults = await fastify.wdOntology.experimentalSearchProperties(config);
+      const searchResults = await fastify.wdOntology.searchProperties(config);
       return { results: searchResults };
     },
   );

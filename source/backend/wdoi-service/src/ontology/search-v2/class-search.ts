@@ -1,15 +1,11 @@
-import type { ExperimentalSearchClassesBodyType } from '../../routes/ontology-routes/schemas/post-experimental-search-classes.js';
+import type { SearchClassesBodyType } from '../../routes/ontology-routes/schemas/post-search-classes.js';
 import type { EntityIdsList } from '../entities/common.js';
 import { WdClass } from '../entities/wd-class.js';
 import { materializeEntities } from '../utils/materialize-entities.js';
-import { ExperimentalEntitySearch } from './experimental-entity-search.js';
+import { EntitySearch } from './entity-search.js';
 
-export class ExperimentalClassSearch extends ExperimentalEntitySearch<
-  ExperimentalSearchClassesBodyType,
-  WdClass,
-  EntityIdsList
-> {
-  async search(config: ExperimentalSearchClassesBodyType): Promise<WdClass[]> {
+export class ClassSearch extends EntitySearch<SearchClassesBodyType, WdClass, EntityIdsList> {
+  async search(config: SearchClassesBodyType): Promise<WdClass[]> {
     if (WdClass.URI_REGEXP.test(config.query.text)) {
       const uriSearchResult = this.searchBasedOnURI(config.query.text);
       if (uriSearchResult?.wdClass !== undefined) {
