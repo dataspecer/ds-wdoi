@@ -119,7 +119,8 @@ Usually it is not updated frequently to match the latest API of the service.
 
 #### Running in development
 
-- To set up the databases run the `docker-compose.dev.yml` which will set up necessary databases without security.
+- To set up the databases and other services create a copy of the the `docker-compose.dev.yml` as `docker-compose.dev.local.yml`.
+  - Set up the `ACCESS_TOKEN` environment variable in the `docker-compose.dev.local.yml` to access the gated model in the sparse embedding service.
 - For the rest of the applications:
   - Preprocessing:
     - The scripts run either all or selected phases of the pipeline.

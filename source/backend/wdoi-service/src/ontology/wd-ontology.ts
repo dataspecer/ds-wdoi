@@ -40,8 +40,8 @@ import {
 import { envVars } from '../enviroment.js';
 import type { ExperimentalSearchPropertiesBodyType } from '../routes/ontology-routes/schemas/post-experimental-search-properties.js';
 import type { ExperimentalSearchClassesBodyType } from '../routes/ontology-routes/schemas/post-experimental-search-classes.js';
-import { ExperimentalClassSearch } from './experimental-search/experimental-class-search.js';
-import { ExperimentalPropertySearch } from './experimental-search/experimental-property-search.js';
+import { ExperimentalClassSearch } from './search-experimental/experimental-class-search.js';
+import { ExperimentalPropertySearch } from './search-experimental/experimental-property-search.js';
 
 export class WdOntology {
   private readonly rootClass: WdClass | undefined;
