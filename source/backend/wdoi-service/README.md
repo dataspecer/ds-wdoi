@@ -247,4 +247,5 @@ But the prefered way is to run the `docker-compose.yml` from the parent `source`
 ## Swagger
 
 - In development mode, upon startup of the service, there will be generated `swagger.yaml` file into the current folder.
-- In both development and production mode, the swagger is served as a static page from the route `/documentation`.
+- The swagger is served as a static page from the route `/documentation`
+- It is disable in production mode.

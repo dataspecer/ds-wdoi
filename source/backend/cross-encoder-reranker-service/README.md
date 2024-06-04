@@ -4,8 +4,10 @@ The service, given a query and a list of sentences, returns a list of scores wit
 
 ## Model used
 
-- We are using the [mixedbread-ai/mxbai-rerank-large-v1](https://huggingface.co/mixedbread-ai/mxbai-rerank-large-v1).
+- We are using the [mixedbread-ai/mxbai-rerank-base-v1](https://huggingface.co/mixedbread-ai/mxbai-rerank-base-v1).
 - Sentence-Transformers for the Cross-encoder library.
+- It provides a reasonable performance with speed.
+- Their large cross encoder is great, but takes a lot of time on four threads.
 
 ## Server
 

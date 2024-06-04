@@ -22,7 +22,7 @@ app.add_middleware(
 
 class RerankerModel:
     def __init__(self):
-        self.model = CrossEncoder("mixedbread-ai/mxbai-rerank-large-v1")
+        self.model = CrossEncoder("mixedbread-ai/mxbai-rerank-base-v1")
     
     def score_sentences(self, query: str, sentences: list[str], ids: list[int]):
         query_sentence_pairs = [[query, sentence] for sentence in sentences]

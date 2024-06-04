@@ -47,8 +47,8 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
   ): PipelinePart {
     const isBM25 = config.id === 'elastic_bm25';
     const isBM25Fielded = config.id === 'elastic_bm25_fielded';
-    const isDense = config.id === 'qdrant_sparse';
-    const isSparse = config.id === 'qdrant_dense';
+    const isDense = config.id === 'qdrant_dense';
+    const isSparse = config.id === 'qdrant_sparse';
 
     if (isBM25 || isBM25Fielded) {
       const queryCreator = isBM25

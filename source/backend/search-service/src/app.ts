@@ -27,49 +27,51 @@ const fastify = await restartable(
     initLogger(app);
     // Loading ontology into a memory.
     void app.register(loadOntology);
-    // Set up swagger dynamic generation.
-    void app.register(fastifySwagger, {
-      openapi: {
-        openapi: '3.0.0',
-        info: {
-          title: 'The Wikidata Ontology Search Service',
-          description: 'An API for searching the Wikidata ontology.',
-          version: '0.1.0',
-        },
-        servers: [
-          {
-            url: 'http://127.0.0.1:3062',
-            description: 'Development or Production server',
+    if (IS_PRODUCTION) {
+      // Set up swagger dynamic generation.
+      void app.register(fastifySwagger, {
+        openapi: {
+          openapi: '3.0.0',
+          info: {
+            title: 'The Wikidata Ontology Search Service',
+            description: 'An API for searching the Wikidata ontology.',
+            version: '0.1.0',
           },
-        ],
-        externalDocs: {
-          url: 'https://github.com/dataspecer/ds-wdoi/tree/main/source',
-          description: 'Find more info here.',
+          servers: [
+            {
+              url: 'http://127.0.0.1:3062',
+              description: 'Development or Production server',
+            },
+          ],
+          externalDocs: {
+            url: 'https://github.com/dataspecer/ds-wdoi/tree/main/source',
+            description: 'Find more info here.',
+          },
         },
-      },
-    });
-    // Set up swagger docs (generated above) serving via static pages.
-    void app.register(fastifySwaggerUi, {
-      routePrefix: '/documentation',
-      uiConfig: {
-        docExpansion: 'full',
-        deepLinking: false,
-      },
-      uiHooks: {
-        onRequest: function (request, reply, next) {
-          next();
+      });
+      // Set up swagger docs (generated above) serving via static pages.
+      void app.register(fastifySwaggerUi, {
+        routePrefix: '/documentation',
+        uiConfig: {
+          docExpansion: 'full',
+          deepLinking: false,
         },
-        preHandler: function (request, reply, next) {
-          next();
+        uiHooks: {
+          onRequest: function (request, reply, next) {
+            next();
+          },
+          preHandler: function (request, reply, next) {
+            next();
+          },
         },
-      },
-      staticCSP: true,
-      transformStaticCSP: (header) => header,
-      transformSpecification: (swaggerObject, request, reply) => {
-        return swaggerObject;
-      },
-      transformSpecificationClone: true,
-    });
+        staticCSP: true,
+        transformStaticCSP: (header) => header,
+        transformSpecification: (swaggerObject, request, reply) => {
+          return swaggerObject;
+        },
+        transformSpecificationClone: true,
+      });
+    }
     void app.register(cors, {
       origin: '*',
       methods: ['GET'],
