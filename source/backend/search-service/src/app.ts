@@ -27,7 +27,7 @@ const fastify = await restartable(
     initLogger(app);
     // Loading ontology into a memory.
     void app.register(loadOntology);
-    if (IS_PRODUCTION) {
+    if (!IS_PRODUCTION) {
       // Set up swagger dynamic generation.
       void app.register(fastifySwagger, {
         openapi: {
@@ -78,8 +78,8 @@ const fastify = await restartable(
     });
     // A set of utility functions for easier work with fastify (e.g. a set of route errors).
     void app.register(fastifySensible, { sharedSchemaId: 'HttpError' });
-    void app.register(restartRoutes);
     void app.register(searchRoutes);
+    void app.register(restartRoutes);
 
     return app;
   },
