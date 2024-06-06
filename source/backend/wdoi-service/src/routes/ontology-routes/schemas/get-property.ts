@@ -1,5 +1,5 @@
 import { type FromSchema } from 'json-schema-to-ts';
-import { wdClassDescOnlySchema, wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
+import { wdClassHierarchyDescOnlySchema } from './wd-class-schema.js';
 import { wdPropertySchema, wdPropertyDescOnlySchema } from './wd-property-schema.js';
 
 export const getPropertyWithSurroundingDescReplySchema = {
