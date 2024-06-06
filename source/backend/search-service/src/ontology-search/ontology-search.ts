@@ -17,7 +17,7 @@ import type {
 } from './search/pipeline-builder/pipeline-parts-factory/property-pipeline-parts-factory.js';
 import type { ClassQuery, PropertyQuery } from './search/pipeline/query.js';
 
-const MAX_RESULTS = 30;
+const MAX_RESULTS = 20;
 
 export class WdOntologySearch {
   ontologyContext: WdOntologyContext;
