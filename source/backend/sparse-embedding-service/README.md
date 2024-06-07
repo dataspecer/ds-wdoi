@@ -74,7 +74,7 @@ The application expects two environment variables:
     - Meaning you can set up ports in there.
 - Do not forget to set up the HugginFace access token as an environment variables.
 - Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
-    - And do not forget to add docker bridge `--network your_network`
+    - And do not forget to add docker bridge `--network your_internal_bridge_name`
         - In the set of the wdoi backend, you do not want to expose the ports.
         - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
 
@@ -82,5 +82,5 @@ The application expects two environment variables:
 
     $> docker build -t your_image_name .
 
-    $> docker run --rm --network your_bridge_name -e ACCESS_TOKEN="your_access_token" -e NUM_THREADS="2" --name your_container_name your_image_name 
+    $> docker run --rm --network your_internal_bridge_name -e ACCESS_TOKEN="your_access_token" -e NUM_THREADS="2" --name your_container_name your_image_name 
 

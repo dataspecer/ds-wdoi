@@ -67,7 +67,7 @@ The application expects a one environment variable:
 - Eventually, if adding into a Docker compose, using the `command` overrides the `Dockerfile`'s command.
     - Meaning you can set up ports in there.
 - Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
-    - Do not forget to add docker bridge `--network your_network` or setting up in the docker compose.
+    - Do not forget to add docker bridge `--network your_internal_bridge_name` or setting up in the docker compose.
         - In the set of the wdoi backend services, you do not want to expose the ports.
         - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
 
@@ -75,5 +75,5 @@ The application expects a one environment variable:
 
     $> docker build -t your_image_name .
 
-    $> docker run --rm --network your_bridge_name -e NUM_THREADS="4" --name your_container_name your_image_name 
+    $> docker run --rm --network your_internal_bridge_name -e NUM_THREADS="4" --name your_container_name your_image_name 
 
