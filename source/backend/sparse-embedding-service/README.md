@@ -25,6 +25,7 @@ The service embeds the query contained in the post JSON body into a sparse embed
     - Defaults to `0.0.0.0`.
 - Ports:
     - Defaults to `8000`.
+    - But we assume the service runs on the `8200` port, and we will use it across the system.
 
 ## Running
 
@@ -52,11 +53,9 @@ The application expects two environment variables:
 
 - Using the `fastapi-cli`.
 
-        $> env HUGGIN_FACE_TOKEN="your_access_token" fastapi dev ./app/main.py
+        $> env HUGGIN_FACE_TOKEN="your_access_token" fastapi dev ./app/main.py --port 8200
 
 - Using the `uvicorn` server.
-    - It is the prefered way, since you can set up the port and run other services as well.
-    - Otherwise, it would default to the FastAPI defaults mentioned above.
     - Assuming you are in the `/app` folder.
 
             $> uvicorn main:app --host 0.0.0.0 --port 8200
@@ -71,13 +70,13 @@ The application expects two environment variables:
 - The service has enclosed `Dockerfile` based on the FastAPI documentation.
 - If the container is run with `docker run` it runs the `fastapi run app/main.py --port 8200` command.
     - Essentially running on port `8200`
-- Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
 - Eventually, if adding into a Docker compose, using the `command` overrides the `Dockerfile` command.
     - Meaning you can set up ports in there.
 - Do not forget to set up the HugginFace access token as an environment variables.
-- And do not forget to add docker bridge `--network your_network`
-    - In the set of the wdoi backend, you do not want to expose the ports.
-    - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
+- Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
+    - And do not forget to add docker bridge `--network your_network`
+        - In the set of the wdoi backend, you do not want to expose the ports.
+        - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
 
 > Example of running separately:
 

@@ -6,6 +6,7 @@ The service embeds the query contained in the post JSON body into a dense embedd
 
 - We are using the [mixedbread-ai/mxbai-embed-large-v1](https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1).
 - Sentence-Transformers for the embedding library.
+- The maximum length of the model is 512 tokens.
 
 ## Server
 
@@ -18,6 +19,7 @@ The service embeds the query contained in the post JSON body into a dense embedd
     - Defaults to `0.0.0.0`.
 - Ports:
     - Defaults to `8000`.
+    - But we assume the service runs on `8100` port, and will use it across the system.
 
 ## Running
 
@@ -37,24 +39,22 @@ We are not using requirements.
 
 ### Environments
 
-The application expects two environment variables:
-    - `NUM_THREADS` - a number of threads to be used by the pytorch library.
+The application expects a one environment variable:
+    - `NUM_THREADS` - a number of threads to be used by the `pytorch` library.
 
 ### Running in development mode
 
 - Using the `fastapi-cli`.
 
-        $> fastapi dev ./app/main.py
+        $> fastapi dev ./app/main.py --port 8100
 
 - Using the `uvicorn` server.
-    - It is the prefered way, since you can set up the port and run other services as well.
-    - Otherwise, it would default to the FastAPI defaults mentioned above.
     - Assuming you are in the `/app` folder.
 
             $> uvicorn main:app --host 0.0.0.0 --port 8100
 
 - Setting up environments:
-    - Create `.env` file in the root forlder.
+    - Create `.env` file in the root folder.
     - Entry the enviroments.
     - Note that the environments will be all strings.
 
@@ -63,13 +63,12 @@ The application expects two environment variables:
 - The service has enclosed `Dockerfile` based on the FastAPI documentation.
 - If the container is run with `docker run` it runs the `fastapi run app/main.py --port 8100` command.
     - Essentially running on port `8100`
-- Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
 - Eventually, if adding into a Docker compose, using the `command` overrides the `Dockerfile` command.
     - Meaning you can set up ports in there.
-- Do not forget to set up the HugginFace access token as an environment variables.
-- And do not forget to add docker bridge `--network your_network`
-    - In the set of the wdoi backend, you do not want to expose the ports.
-    - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
+- Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
+    - And do not forget to add docker bridge `--network your_network`
+        - In the set of the wdoi backend, you do not want to expose the ports.
+        - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
 
 > Example of running separately:
 
