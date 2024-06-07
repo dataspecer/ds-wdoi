@@ -19,7 +19,6 @@ services:
     ports:
       - "3042:3042"
     networks:
-      - wdoi_external
       - wdoi_internal
     environment:
       ES_NODE: http://elastic:9200
@@ -39,7 +38,5 @@ volumes:
     driver: local
 
 networks:
-  wdoi_external:
-    driver: bridge
   wdoi_internal:
     external: true

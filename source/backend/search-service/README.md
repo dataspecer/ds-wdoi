@@ -14,7 +14,7 @@ Is implemented as Node.js server with Fastify and Typescript.
 
 ![missing picture](./readme-pictures/search-service-components.png)
 
-- The service is divided into seven main components:
+- The service is divided into 6 main components:
   1. Service API and Routes
   2. Ontology Search
   3. Ontology Context
@@ -69,10 +69,15 @@ Is implemented as Node.js server with Fastify and Typescript.
 
 - The ontology context is essentially represented by a `WdOntologyContext` class that provides the Wikidata entities to the rest of the application.
 - The creation handles the loading of the ontology from the specified files inside environment variables.
+
   - After the loading is finished, a normalization process takes place on the ontology features.
-  - We normalize everything to enable fusions and reranking of with the scores from the databases, since not everything is between [0, 1] score relevance.
-  - We are using `saturation` = `x / (x + pivot)`.
-    - The idea behind the function is to provide a score between the [0, 1] interval for features. We dont want to utterly overwhelm the search results, as with `min-max` normalizers. Since the features we are normalizing have rather a diversity in the ranges (e.g. the number of instances on classes).
+  - We normalize every feature used for reranking to enable reranking with the scores from the candidate selectors.
+  - We are using `saturation` = `x / (x + pivot)` for:
+
+    - Class features of instance count and external ontology mappings.
+    - Property features of usage on instances and external ontology mappings.
+    - The idea behind the function is to provide a score between the [0, 1] interval for features. We wanted to boost classes which have a lot of instances/mappings, but the amount of classes that have instances and mappings is already low, so we did not want to create big gaps between the classes that have at least some instances/mappings since it is already a mark of relevance. So by setting the `pivot` low, we will give a similar score to the classes that have a lot of instances/mappings and to those that have the features as small multiples of the pivot. The idea is that that the classes with high instances/mappings are rather distinct and will probably not appear in the same candidate list for reranking. The similar applies for properties.
+    - Here the `min-max` normalizers do not work, since it would give almost all of the score to the highest values and nothing to the rest.
 
 ## Search Pipeline Parts
 
@@ -82,13 +87,13 @@ Is implemented as Node.js server with Fastify and Typescript.
   - Candidate selectors
   - Fusions
   - Rerankers
-- Each part is also defined with the maximum of N results, which slices and returns only the top N results from the part.
+- Each part is also defined with the maximum of N results, meaning the part returns only the top N results.
 
 ### Candidate selectors
 
 The candidate selectors form the basis of the search pipeline.
 They query the databases and provide candidates for further reranking parts or fusions.
-Since they query the databases, we used a form of a `Bridge` design pattern to split the hierarchy between the properties and classes entities candidate selectors.
+Since they query the databases, we used a form of a `Bridge` design pattern to split the hierarchy between the properties and classes candidate selectors.
 
 There are two general selectors:
 
@@ -107,7 +112,7 @@ Here the maximum number of results denotes the number of results retrieved from 
 ### Fusion
 
 The fusion part is the `multiple` part in the `Compose` design pattern.
-Here we use only the selectors in the part and only allow tuple fusion, but it can be extended to a variable number of fusions.
+Here we use only the selectors as the children and only allow tuple fusions, but it can be extended to a variable number of fusions.
 The fusion of the selectors then merges the results and returns the top N results as defined in the maximum number of results during creation.
 
 ### Reranking
@@ -119,13 +124,13 @@ We have implemented two reranking strategies.
 1. Cross encoder reranker
    - Given a query and lexicalizations of entities, it ranks each entity with the similarity to the query.
 2. A tuple feature reranker
-   - Given two numeric features of the entities, it reranks the entities with regard to the convex combination to the query score.
+   - Given two numeric features of the entities, it reranks the entities with regard to the convex combination of the query score and the features score.
    - `final_score` = `(query_score) * (query_weight) + (features_score) * (1 - query_weight)`
 
 ## Search Pipeline Builder
 
-Each query comes with configuration.
-The configuration is taken by the builder, which then creates the search pipeline that is afterwards executed and search results are returned.
+Each query comes with a configuration.
+The configuration is taken by the builder, then the builder creates the search pipeline that is afterwards executed.
 
 The pipeline builder internally uses the `Abstract Factory` design pattern.
 The abstract factory is specialized into class pipeline parts and property pipeline parts.
@@ -147,7 +152,7 @@ Each wrapper is thought to be a `singleton`, the pipeline builder then uses the 
 
 ## Running during development
 
-The input is handled via `.env` file during development. In conteinerized application, the variables are handled via `docker run -e "..."` or inside `docker compose`.
+The input is handled via `.env` file during development. In a conteinerized application, the variables are handled via `docker run -e "..."` or inside `docker compose`.
 
 - Environment variables:
 
@@ -164,7 +169,7 @@ The input is handled via `.env` file during development. In conteinerized applic
 
 - The service expects the `CLASSES_PATH` and `PROPERTIES_PATH` to point to the preprocessed data from the search engine preparation phase. Here we are using specifically the minimized version, since the loading time would be exceptionally high with the stored vectors.
 - `CROSS_RERANKER_NODE`, `DENSE_EMBED_NODE`, and `SPARSE_EMBED_NODE` represent the LM services URLs.
-- `ES_NODE` and `QDRANT_NODE` represent elastic search and qdrant databases URLs in the given order.
+- `ES_NODE` and `QDRANT_NODE` represent Elastic search and Qdrant databases URLs in the given order.
 - `RESTART_KEY` mentioned in the `fastify` introduction, the restart key is used as a simple security feature for restarting the service.
 
 <br>
@@ -180,7 +185,7 @@ The input is handled via `.env` file during development. In conteinerized applic
 There is also nodemon installed, but the testing usually requires loading the ontology to see the full behaviour.
 For this reason, running with the start proved to be more beneficial.
 
-## Containerizing and running in production
+## Containerization and running in production
 
 - There is a ready `Dockerfile` in the folder and it is set up to run in production mode.
 - The image structure:
@@ -189,28 +194,17 @@ For this reason, running with the start proved to be more beneficial.
 - Ports and hosts
   - `fastify` needs to set the `host` to `0.0.0.0` in order to work with the docker.
   - `port` is set to run on `3062` as in development.
+- Based on the Wdoi services architecture, the service is not ment to be published to the outside, so you can choose if you want to publish ports (`-p` option).
+- When running separately, you will want to connect the service to the rest of the application. To do that, create a docker bridge that will connect the services. The services are then available by their container names as hosts names.
 
 ### Environment variables
 
-- The assumption is that the environment variables are set during the container start up, either inside the provided `docker-compose.yml` or during `docker run`.
-  - The variable names need to match the varibles from the development `.env` file.
+- The assumption is that the environment variables are set during the container's start up, either inside the provided `docker-compose.yml` or during `docker run`.
+  - The variable names need to match the variables from the development `.env` file.
     - `NODE_ENV` is set in the `Dockerfile` to `production`.
-    - The `CLASSES_PATH` and `PROPERTIES_PATH` contain path to the files in the binded `/app/input` folder. The names match the files from the outside. When starting the container you need to create bind mount to enable the access to the preprocessing output folder.
+    - The `CLASSES_PATH` and `PROPERTIES_PATH` contain path to the files in the binded `/app/input` folder. The names match the files from the outside. When starting the container you need to create a bind mount to enable the access to the preprocessing output folder.
     - **Important**:
-      - The `host` part of the URLs of the services must match the service names of the rest of the service containers (assuming they are also running inside a container). The need stems from the fact that only the Wikidata ontology API service will be connect to the outside. While rest of the services will be connected via internal network bridge. This also means that we do not want to expose ports in the `Dockerfile`, `docker run`, and `docker compose`.
-
-### Connecting to other services
-
-- We have already mentioned that this service is not exposed to the outside (assuming we are running in the docker compose).
-- This means that there is the need to create/attach the internal bridge that will connect the services.
-- The service should not expose it's ports, otherwise the service will be visible from the outside.
-- The simplest way to achieve it is through docker compose (see docker compose files in the root `source` directory).
-- More on the docker bridge if running in separate containers.
-  - [Docker bridge](https://docs.docker.com/network/drivers/bridge/).
-    1. Create your bridge `docker network create my-bridge`.
-    2. Add to the container when you start the container by using `--network my_bridge` when running the container.
-    3. Or you can add the `bridge` to the running container via `docker network connect my_bridge my_container_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
-    4. Add the same option to other service `--network your_bridge`.
+      - The `host` part of the URLs of the services must match the service names of the rest of the service containers (assuming they are also running inside a container).
 
 ### Building and running the image separately
 
@@ -218,10 +212,10 @@ For this reason, running with the start proved to be more beneficial.
 
     $> docker build -t search_service_image .
 
-> Running the container (adjust the bridge and environment variables). The example shows how to bind the output files from preprocessing as separate files. In docker compose, it is easier to bind the entire folder. We are not exposing ports, since the only access then should be from the Wikidata ontology API service and the preprocessing image which can restart the service.
+> Running the container (adjust the environment variables and the bridge). The example shows how to bind the output files from preprocessing as separate files. In docker compose, it is easier to bind the entire folder. We are not exposing ports, since the only access then should be from the Wikidata ontology API service and the preprocessing image which can restart the service.
 
     docker run --rm --restart unless-stopped \
-    --network your_internal_bridge \
+    --network your_bridge \
     -e ES_NODE="http://elastic:9200" \
     -e QDRANT_NODE="http://qdrant:6333"
     -e CROSS_RERANKER_NODE="http://cross:8300/rerank"

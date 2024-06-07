@@ -180,7 +180,7 @@ The input is handled via `.env` file during development. In conteinerized applic
 There is also nodemon installed, but the testing usually requires loading the ontology to see the full behaviour.
 For this reason, running with the start proved to be more beneficial.
 
-## Containerizing and running in production
+## Containerization and running in production
 
 - There is a ready `Dockerfile` in the folder and it is set up to run in production mode.
 - The image structure:
@@ -189,6 +189,8 @@ For this reason, running with the start proved to be more beneficial.
 - Ports and hosts
   - `fastify` needs to set the `host` to `0.0.0.0` in order to work with the docker.
   - `port` is set to run on `3042` as in development.
+- Based on the Wdoi services architecture, the service is ment to be published to the outside. So you should publish ports (`-p` option).
+- When running separately, you will want to connect the service to the rest of the application. To do that, create a docker bridge that will connect the services. The services are then available by their container names as hosts names.
 
 ### Enviroment variables
 
@@ -197,21 +199,6 @@ For this reason, running with the start proved to be more beneficial.
   - `NODE_ENV` is set in the `Dockerfile` to `production`.
   - `SEARCH_PROPERTIES_ENDPOINT` and `SEARCH_CLASSES_ENDPOINT` contains url of the Search search instance, but the `host` name must match the container name of Search service. Since the containers are connected via external bridge and the Search service itself is not expected to be exposed to the public.
   - `CLASSES_PATH`, `PROPERTIES_PATH` contain path to the files in the binded `/app/input` folder. The names match the files from the outside. When starting the container you need to create bind mount to enable the access to the preprocessing output folder.
-  - `RESTART_KEY` is the same as before.
-
-### Connecting to other services
-
-- We have already mentioned that this service is the only one exposed to the public.
-- This means that there is the need to create at least two bridges.
-  - One for internal communication so the services could be accessed via their names as hosts.
-  - One for external communication so this service could be accessed from the outside.
-- The service exposes the ports `3042` while the others do not expose the ports.
-- More on the docker bridge if running in separate containers.
-  - [Docker bridge](https://docs.docker.com/network/drivers/bridge/).
-    1. Create your bridge `docker network create my-bridge`.
-    2. Add to the container when you start the container by using `--network my_bridge` when running the container.
-    3. Or you can add the `bridge` to the running container via `docker network connect my_bridge my_container_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
-    4. Add the same option to other service `--network your_bridge`.
 
 ### Building and running the image separately
 
@@ -224,8 +211,7 @@ For this reason, running with the start proved to be more beneficial.
     docker run --rm \
     -p 3042:3042 \
     --restart unless-stopped \
-    --network wdoi_internal \
-    --network wdoi_external \
+    --network your_bridge \
     -e SEARCH_CLASSES_ENDPOINT=http://search:3062/search-classes" \
     -e SEARCH_PROPERTIES_ENDPOINT="http://search:3062/search-properties" \
     -e RESTART_KEY="1234567" \

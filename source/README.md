@@ -93,7 +93,7 @@ Each property can also have assigned constraints - the constraints are not enfor
   2. Wikidata ontology API service
       - Loads the created ontology into a memory and provides an API for accessing and browsing the ontology.
       - The API is modelled to fit the [Dataspecer](https://github.com/mff-uk/dataspecer) needs.
-      - The code and documentation is located in `backen/wdoi-service` folder.
+      - The code and documentation is located in `backend/wdoi-service` folder.
       - The code contains a Node.js application running with `Fastify`, and can be run inside Docker.
   3. Elastic search
       - Provides full-text search over the Wikidata ontology.
@@ -138,9 +138,9 @@ The problem we have faced when conteinerizing the application was that the prepr
 And that it needs to create files, reload the data into the databases and restart the API service to enable it reloading new ontology.
 For our simple enviroment we have came up with a simple settings.
 
-The API service will be the only service that can be access from the outside (exporting its ports).
-The rest of the services will be placed inside an internal network via `docker bridge` (not exporting ports).
-The API service will be connected to the internal network bridge while being exposed to the outside via external network bridge.
+The API service will be the only service that can be access from the outside (publishing it's ports), while the rest will not publish their ports.
+All the services will be placed inside an bridge network via `docker bridge` (not publishing its ports).
+Which then enables to communication between the services, while the only accessible service from the outside is the API service.
 
 The output directory of the preprocessing pipeline is mounted as readonly bind to the API service image.
 Which then can load the data from the files or can reload them on restart.
@@ -154,7 +154,7 @@ Which then should connect to the internal bridge network and can access other se
 You can update services, restart API service, or preprocess new data via interactive bash. 
 
 - Guide:
-  - Create network bridge that will serve as internal network.
+  - Create network bridge that will serve as the connector network between the services.
     - [Docker tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
     - In our settings the bridge is named `wdoi_internal`.
       - Examples:
@@ -162,9 +162,8 @@ You can update services, restart API service, or preprocess new data via interac
         2. Add to the container when you start the container by using `--network your_bridge` when running the container
         3. Or you can add the `bridge` to the running container via `docker network connect your_bridge container_name` ([guide](https://docs.docker.com/reference/cli/docker/network/connect/))
   - Then visit the `docker-compose.yml` file and set up necessary environment variables.
-    - Set the internal network to the bridge you have created (we used `wdoi_internal`).
+    - Set the bridge network to the bridge you have created (we used `wdoi_internal`).
       - The `external` flag means that the definition is outside of the compose file.
-    - See external bridge for the API service which is local to the compose file (we used `wdoi_external`).
     - See the binding for the `./preprocessing/output` directory for the API service.
     - See the volumes for the databases (local for the compose file).
 

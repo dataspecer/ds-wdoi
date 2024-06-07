@@ -65,7 +65,7 @@ The application expects two environment variables:
     - Entry the enviroments.
     - Note that the environments will be all strings.
 
-### Containerizing and production
+### Containerization and running in production
 
 - The service has enclosed `Dockerfile` based on the FastAPI documentation.
 - If the container is run with `docker run` it runs the `fastapi run app/main.py --port 8200` command.
@@ -73,14 +73,12 @@ The application expects two environment variables:
 - Eventually, if adding into a Docker compose, using the `command` overrides the `Dockerfile` command.
     - Meaning you can set up ports in there.
 - Do not forget to set up the HugginFace access token as an environment variables.
-- Based on the Wdoi services architecture, it is assumed that it will run with the defined external bridge network attached.
-    - And do not forget to add docker bridge `--network your_internal_bridge_name`
-        - In the set of the wdoi backend, you do not want to expose the ports.
-        - The services will communicate via the internal bridge network, so the `docker run` or `docker compose` should not contain the exposition of ports.
+- Based on the Wdoi services architecture, the service is not ment to be published to the outside, so you can choose if you want to publish ports (`-p` option).
+- When running separately, you will want to connect the service to the rest of the application. To do that, create a docker bridge that will connect the services. The services are then available by their container names as hosts names.
 
 > Example of running separately:
 
     $> docker build -t your_image_name .
 
-    $> docker run --rm --network your_internal_bridge_name -e ACCESS_TOKEN="your_access_token" -e NUM_THREADS="2" --name your_container_name your_image_name 
+    $> docker run --rm --network your_bridge -e ACCESS_TOKEN="your_access_token" -e NUM_THREADS="2" --name your_container_name your_image_name 
 

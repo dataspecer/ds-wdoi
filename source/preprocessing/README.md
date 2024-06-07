@@ -242,24 +242,26 @@ It either creates, refreshes or deletes classes and properties indices.
 
 - Logging prefix: `es_helpers`
 
-## Restart the Wikidata ontology API service
+## Restart the Wikidata ontology API service or the Wikidata Search service
 
-The script is `p_restart_api_service.py`.
-It restarts the Wikidata API service in order to load the new preprocessed ontology.
+The scripts are `p_restart_api_service.py` and `p_restart_search_service.py`.
+They restart the Wikidata API/Search service in order to load the new preprocessed ontology.
 
 - Input:
   - `--timeout`
     - optional argument specifiying the the waitime before returning error.
     - The restart can take some time, so setting up above 120 seconds is recommended.
-    - Defaults to 180 seconds.
+    - Defaults to 360 seconds.
   - Running:
 
-        $> python p_restart_api_service.py --timeout 180
+        $> python p_restart_api_service.py --timeout 360
+
+        $> python p_restart_search_service.py --timeout 360
 
 - Output:
   - None
 
-- Logging prefix: `restart_api_service`
+- Logging prefix: `restart_service`
 
 ## Run all script
 
@@ -292,37 +294,40 @@ The main file is `p_run_all_phases.py`.
 - Instead of storing references to objects, the fields that reference other entity store only an id of the entity.
   - It is necessary to create a map/dictionary of the entities to follow the identifiers to the appropriate entities.
 
-## Running Development
+## Running in development
 
 - Elastic search set up:
   - Assuming we are running on [Elastic docker image](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html).
-  - We are running with security disabled.
-  - It is enought to run the `docker-compose.dev.yml` in the parent `source` folder. 
+- Qdrant set up:
+  - Assuming we are running on [Qdrant docker image](https://qdrant.tech/documentation/guides/installation/#docker)
+- We are running with security disabled.
+- It is enought to run the `docker-compose.dev.yml` in the parent `source` folder. 
 
 - The application assumes environment varibles inside `.env` file.
   1. `ES_NODE` an url to Elastic search instance.
-  2. `API_SERVICE_RESTART` an url path to the restart API of the Wikidata ontology API service (if it is running).
+  2. `API_SERVICE_RESTART` an url path to the restart API of the Wikidata ontology API service.
   3. `API_SERVICE_RESTART_KEY` a key used to restart the Wikidata ontology api service.
+  4. `QDRANT_NODE` an url to the Qdrant database.
+  5. `SEARCH_SERVICE_RESTART` an url path to the restart API of the Wikidata Search service.
+  6. `SEARCH_SERVICE_RESTART_KEY` a key used to restart the Wikidata Search service.
+  7. `HUGGIN_FACE_TOKEN` a token to the Huggin face account to enable access of the gated models.
 
 Then you can run the scripts with the above mentioned methods.
 
-## Containers and production
+## Containerization and running in production
 
 The problem with the containerization is that the preprocessing is not running all the time and that the Wikidata ontology API service needs to restart to load the new data.
 In development, it is easy.
-But in containers there are additional requirements.
 
 - Docker image structure:
   - `/app` contains the copied and installed packages and code files.
   - `/app/output` is expected to bind the host's `/preprocessing/output` directory to enable storing and sharing of the files.
-- The docker image itself is not running any command. It is expected that the container is started via `docker run` starting `bash` and connects to the `wdoi_internal` network bridge which enables communiation with the unexposed Elastic search service and the ontology API service. Then you can start the scripts from within the container and restart/reload services.
+- The docker image itself is not running any command. It is expected that the container is started via `docker run` starting `bash` and specifying a network bridge which enables communiation with the rest of the unpublished services. Then you can start the scripts from within the container and restart/reload services.
 - Environments:
   - The environments must match the `.env` variable names. Assuming they are set via `-e` option in `docker run`.
-  - `ES_NODE` url must match the host name of the Elastic search instance connected to the internal bridge network.
-  - `API_SERVICE_RESTART` the same applied for the API service, the host name must match the name of the service in the bridge network.
-  - `API_SERVICE_RESTART_KEY` must match the key to restart the API service.
-  - Follow the `docker-compose.yml` in the parent `source` folder.
-    - The host names are the names of the services - e.g. `api` and `elastic`
+  - All the URLs must match the service names in the bridge network to enable communtation with the unpublished services.
+- Follow the `docker-compose.yml` in the parent `source` folder.
+  - The host names are the names of the services - e.g. `api` and `elastic`
 
 > Building the image.
 
@@ -332,10 +337,14 @@ But in containers there are additional requirements.
 ```
     $> sudo docker run --rm \
     -it \
-    --network wdoi_internal \
+    --network your_bridge \
     -e ES_NODE="http://elastic:9200" \
+    -e QDRANT_NODE="http://qdrant:6333" \
     -e API_SERVICE_RESTART="http://api:3042/restart" \
     -e API_SERVICE_RESTART_KEY="1234567" \
+    -e SEARCH_SERVICE_RESTART="http://search:3062/restart" \
+    -e SEARCH_SERVICE_RESTART_KEY="1234567" \
+    -e HUGGIN_FACE_TOKEN="abcdefg" \
     --mount type=bind,source=./output,target=/app/output \
     prep /bin/bash
 ```
