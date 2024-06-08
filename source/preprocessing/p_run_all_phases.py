@@ -14,9 +14,9 @@ if __name__ == "__main__":
     parser.add_argument('--exclude-load', default=False, action=argparse.BooleanOptionalAction, help="If set, the loading phase is exluded from the pipeline.")
     parser.add_argument("--continue-from",
                         type=str,
-                        choices=[Phases.ID_SEP, Phases.EXT, Phases.MOD, Phases.RECS, Phases.LOAD],
+                        choices=[Phases.ID_SEP, Phases.EXT, Phases.MOD, Phases.RECS, Phases.PREP, Phases.LOAD],
                         default=Phases.ALL,
                         help="Continue from a phase. Defaults to running all. Downloading can be done only if not continuing from a phase and download option is set.")    
     args = parser.parse_args()
     
-    main_run_all(args.lang, args.download, args.continue_from, args.exclude_load, args.restart)
+    main_run_all(args.download, args.continue_from, args.exclude_load, args.restart)

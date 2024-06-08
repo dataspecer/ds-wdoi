@@ -9,29 +9,45 @@ This section is divided into three parts:
 
 ![missing picture](./readme-pictures/preprocessing.png)
 
-The preprocessing is done in 7 phases.:
+The preprocessing is done in 8 phases.:
 
-0. Download
-1. Identification 
+1. Download
+2. Identification 
    - The first pass of the dump .
      - Identification of classes and properties.
      - *Property usage statistics*
         - Store instance of values for each entity in the dump for further processing.
-2. Separation
+3. Separation
    -  She second pass of the dump.
       -  Separation of classes and properties from the dump into two new files preserving the Wikidata data model.
       -  *Property usage statistics*
            - Store property usage for domain and range of classes.
            - Compute summary from the stored property usage for each class and property.   
-3. Extraction 
+4. Extraction 
    - The data from separated wikidata classes and properties are extracted into a simplified data model.
-4. Modification
+5. Modification
    - Semantic and structural modifications are done on the simplified data model.
-5. Property Recommendations
+6. Property Recommendations
    - Merging of recommendations from property usage statistics with property constraints.
    - Boosting "properties for this type" properties.
-6. Loading to search engine
-   - Load labels and aliases into ElasticSearch service.
+7. Search Engines Data Preparation
+   - Prepares the data that will be loaded into Search engine and appropariate databases (Elastic and Qdrant).
+   - Consists of 5 parts:
+     1. Reduction of property usage 
+         - Enables efficient filtering for classes containing a set of properties.
+     2. Expanding to language fields 
+         - Expands specified entity ids fields into language fields (e.g. subclass of ids will be expanded to class labels)
+         - Essentially needs to iterate over the Wikidata dump again if the fields contain references to entities not present in the ontology.
+         - This enables a better lexicalization of entities.
+      3. Lexicalize entities
+         - Creates lexicalization of entities that will be subsequently vectorized.
+      4. Vecorize entities
+         - Vectorize the lexicalization of entities into dense and sparse vectors.
+      5. Minimization
+         - Creates new files containing minimized entities.
+         - Since the Search service itself does not need all the data from the preparation phase, this enables a faster start up of the Search service.        
+8. Loading to search engine
+   - Loads the prepared data into Qdrant database (vector search) and Elastic search (full-text search).
 
 > Note: 
 > 1. During 1. and 2. phase, there are running statistics for property usage happening during the dump pases. The statistics run with during 1. and 2. phase to reduce time of the computation.
@@ -52,7 +68,7 @@ There is also a script that is able to run all the phases at once (the bottom of
 ## Before running the scippts
 
 - Before running the scripts, read the instructions and preferably comments for each of the phases in `phases` folder.
-- The the pipeline also assumes there is an Elastic Search service running, that is later used by the API service.
+- The the last phases of the pipeline assumes there are runnig services: Qdrant, Elastic Search, and possibly the Seach service and API service in case the restart is needed - this service can restart the two mentioned services that is equivalent to reloading the new ontology files.
 - Read at the end how to run in development and containerization.
 
 ### Requirements
@@ -60,16 +76,22 @@ There is also a script that is able to run all the phases at once (the bottom of
 - Python 3.11 and above
 - Elastic Search 8.13 and above
 - Mamory and time
-  - The runtimes and memory was measured on virtual infrasctructure with Ubuntu 22 with 64 GB of RAM and 32 core processor (altough this phase does not use multithreading).
+  - The runtimes and memory was measured on virtual infrasctructure with Ubuntu 22 with 64 GB of RAM and 32 core processor.
+    - Most of the scripts are single thread, the vectorization uses multiple threads from within the `pytorch` library.
   - Memory
-    - Wikidata gzip dump ~ 130 GB (as of 4.4.2024) on disk, depending on the current size
-    - Phases (counting in reserves and disregarding Elastic Search):
+    - Wikidata gzip dump ~ 130 GB (as of 4.4.2024) on disk, depending on the current size.
+    - Phases (counting in reserves):
       - The 1. and 2. phase of preprocessing require at least 32 GB of RAM
       - For the rest at least 16 GB
   - Time
     - Downloading depends on the internet connection
       - A university server took ~ 7 hours
-    - After downloading, ~ 11 hours to preprocess everything. 
+    - After downloading
+      -  ~ 11 hours to be able to load data into API service.
+         -  Mostly linear in execution and hard to parallelize.
+      -  ~ 14 hours to prepare the data for loading.
+         -  The excessive time comes from the Language models vectorization.
+         -  It can be improved with the GPU or more CPUs.
 
 ### Installing dependencies
 
@@ -100,7 +122,7 @@ The main script is `p_download.py`.
         $> python p_download.py
 
 - Output:
-  - A file in the folder of script execution.
+  - A file in the `output` directory.
     - `latest-all.json.gz` - the downloaded Wikidata json dump in GZIP format.
 
 - Logging prefix: `download`
@@ -147,7 +169,7 @@ The main script is `p_extraction.py`.
       - For both extractions - use `both`
   - Required paths to `classes.json.gz` and `properties.json.gz` from previous phase, in the given order.
 
-        $> python p_extraction.py both classes.json.gz properties.json.gz
+        $> python p_extraction.py both ./output/classes.json.gz ./output/properties.json.gz
 
 - Output:
   - Files in the `output` directory, containing entities in the new simplified model.
@@ -166,7 +188,7 @@ The main script is `p_modification.py`.
 - Input:
   - Required paths to `classes-ex.json`, `properties-ex.json`, `classes-property-usage.json` and `properties-domain-range-usage.json` in the given order, from the 3. phase
 
-        $> python p_modification.py classes-ex.json properties-ex.json classes-property-usage.json properties-domain-range-usage.json
+        $> python p_modification.py ./output/classes-ex.json ./output/properties-ex.json ./output/classes-property-usage.json ./output/properties-domain-range-usage.json
 
 - Output:
   - Files in the `output` directory, containing the modified classes and properties.
@@ -185,7 +207,7 @@ The main script is `p_property_recommendations.py`.
 - Input:
   - Required paths to `classes-mod.json` and `properties-mod.json` in the given order from the fourth phase.
 
-        $> python p_property_recommendations.py classes-mod.json properties-mod.json
+        $> python p_property_recommendations.py ./output/classes-mod.json ./output/properties-mod.json
 
 - Output:
   - Files in the `output` directory, containing the merged and reordered domains/ranges of classes and properties.
@@ -194,7 +216,7 @@ The main script is `p_property_recommendations.py`.
 
 - Logging prefix: `property_recommendations`
 
-## Loading into search service (6. phase)
+## (DEPRECATED) Loading into search service (6. phase)
 
 The phase loads labels and aliases into a search service - elastic search. 
 Assuming the Elastic search runs on client from `utils.elastic_search.py`.
@@ -242,7 +264,84 @@ It either creates, refreshes or deletes classes and properties indices.
 
 - Logging prefix: `es_helpers`
 
-## Restart the Wikidata ontology API service or the Wikidata Search service
+
+## Search engine data preparation (6. phase)
+
+The phase prepares the data to be loaded into a Search service and appropriate databases (Qdrant and Elastic search).
+Assuming there are running Qdrant and Elastic search services.
+The main script is `p_experimental_search_engine_data_preparation.py`.
+
+- Input:
+  - A required `phase` parameter.
+    - Each phase represents a part of the preparation.
+    - Phases: `["all", "reduce", "expand", "lexicalize", "vectorize", "minimize"]`
+    - `all` essentially runs all the parts.
+    - Each phase is dependent on the previous one. Order is as given in the phases array above (except the `all` phase).
+  - Required file paths `classJsonFile` and `propertiesJsonFile` to the preprocessed files from 5. phase (`recs` phase).
+  - A required file path `gzipDumpFile` to the Wikidata GZIP json dump. Needed for expanding to langauge fields phase. 
+
+          &> python p_experimental_search_engine_data_preparation all ./output/classes-recs.json ./output/properties-recs.json ./latest-all.json.gz
+
+- Output:
+  - For each phase, there is a set of output files in the `output` directory.
+    - All files start with a prefix `(properties|clases)-experimental-prep-` followed by the number of the phase and its name (the same as in the phases array above).
+
+- Logging prefix: `experimental_search_engine_data_preparation`
+
+## Loading to search engines (7. phase)
+
+The phase loads the prepared data to Elastic search and Qdrant database.
+The main script is `p_experimental_search_engine_loading.py`.
+
+- Input:
+  - A required `phase` parameter.
+    - Each phase represents the loading to the database.
+    - Phases: `["elastic", "qdrant", "both"]`
+    - `both` meaning to load to both Elastic search and Qdrant.
+  - Required file paths `classesJsonFile` and `propertiesJsonFile` to the `vectorize` phase output.
+  - A required file path `expandedLabelsJsonFile` to the `expand` phase output.
+    - To enable modification of the data passed to Elastic. 
+
+        &> python p_experimental_search_engine_loading both ./output/classes-experimental-prep-4-vectorize.json ./output/properties-experimental-prep-4-vectorize.json ./output/classes-experimental-prep-2-expand
+
+- Output:
+  - None 
+
+- Logging prefix: `experimental_search_engine_loading`
+
+### Helpers
+
+The phase also contains a script `p_experimental_search_engine_loading_helpers.py` for easier monitoring and working with the Databases. 
+
+- Usage:
+
+      # Get Qdrant collections status
+      $> python p_experimental_search_engine_loading_helpers.py qdrant_info
+
+      # Delete all Qdrant collections
+      $> python p_experimental_search_engine_loading_helpers.py qdrant_delete
+
+      # Create Elastic indices
+      $> python p_experimental_search_engine_loading_helpers.py es_create
+
+      # Delete all Elastic indices
+      $> python p_experimental_search_engine_loading_helpers.py es_delete
+
+      # Refreshing Elastic indices
+      $> python p_experimental_search_engine_loading_helpers.py es_refresh
+
+      # Listing Elastic indices
+      $> python p_experimental_search_engine_loading_helpers.py es_list
+
+      # List Elastic mappings of indices
+      $> python p_experimental_search_engine_loading_helpers.py es_mappings
+
+      # List Elastic indices sizes
+      $> python p_experimental_search_engine_loading_helpers.py es_size
+
+## Additional scripts
+
+### Restart the Wikidata ontology API service or the Wikidata Search service
 
 The scripts are `p_restart_api_service.py` and `p_restart_search_service.py`.
 They restart the Wikidata API/Search service in order to load the new preprocessed ontology.
@@ -263,27 +362,28 @@ They restart the Wikidata API/Search service in order to load the new preprocess
 
 - Logging prefix: `restart_service`
 
-## Run all script
+### Run all script
 
 The script runs all phases.
 The main file is `p_run_all_phases.py`.
+If you need more fine-grained approach, use the specific scripts.
 
 - Input:
   - Optional boolean flag argument whether to donwload the newest dump.
     - `--donwload`
     - Defaults to `False`
     - The `True` will **overwrite the existing dump** in the current folder.
+    - It is expected that the GZIP dump file is located in the `output` directory if downloading is disabled. 
   - Optional boolean flag argument whether to restart the API service.
     - `--restart`
     - Defaults to `False`.
   - Optional argument to continue from a specific phase.
-    - `--continue-from` `[id_sep | ext | mod | recs | load]`
+    - `--continue-from` `[id_sep | ext | mod | recs | prep | load]`
     - Each value represents a phase based on the output files suffixes.
     - The preprocessing will continue from the given phase.
     - If the argument is used, the download flag is disregarded.
-  - Optional flag to exclude the loading into the Elastic search.
+  - Optional flag to exclude the loading into the Elastic search and Qdrant.
     - `--no-load`
-    - In case you wanted to run the pipeline without relying on the Elastic. You can always run it separately.
 
 ## Notes on the file output formats
 
