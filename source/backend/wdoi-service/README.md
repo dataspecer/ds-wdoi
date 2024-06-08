@@ -139,6 +139,13 @@ For properties right now we do not store any constraints except the merged usage
 
 - This was done in order to obtain priority from Wikidata itself, while keeping the returned classes consistent with the ontology.
 
+### Search v2
+
+- There is a new Search service that enables to search for properties and classes.
+- This way, the this service only needs to send the request to the Search service and materialize results, since it answers only numeric ids.
+- The Search service has its configuration on input.
+  - The input to the search v2 routes match these configurations.
+
 # How to run the service
 
 ## Requirements and installing
@@ -156,12 +163,14 @@ The input is handled via `.env` file during development. In conteinerized applic
 
 - Environment variales:
 
+      ES_NODE='http://localhost:9200'
       SEARCH_CLASSES_ENDPOINT='http://localhost:3062/search-classes'
       SEARCH_PROPERTIES_ENDPOINT='http://localhost:3062/search-properties'
       CLASSES_PATH='/path/to/preprocessed/classes/file.json'
       PROPERTIES_PATH='/path/to/preprocessed/properties/file.json'
       RESTART_KEY="1234567"
 
+- `ES_NODE` is the endpoint url of the Elastic search, to enable search v1.
 - The service expects two files from preprocessing phase `CLASSES_PATH` and `PROPERTIES_PATH` in json format.
   - The files should be output from the 5. phase (Property recommendations), or other, but the loading must be adjusted to the specific phase output format.
 - The assumptions is that there is a running Search service instance with the endpoins `SEARCH_CLASSES_ENDPOINT` and `SEARCH_PROPERTIES_ENDPOINT`.
@@ -212,6 +221,7 @@ For this reason, running with the start proved to be more beneficial.
     -p 3042:3042 \
     --restart unless-stopped \
     --network your_bridge \
+    -e ES_NODE="http://localhost:9200" \
     -e SEARCH_CLASSES_ENDPOINT=http://search:3062/search-classes" \
     -e SEARCH_PROPERTIES_ENDPOINT="http://search:3062/search-properties" \
     -e RESTART_KEY="1234567" \

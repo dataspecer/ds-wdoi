@@ -6,6 +6,7 @@ We are extracting/creating ontology from the Wikidata.
     - `preprocessing` - donwloads, extracts and creates the ontology
     - `backend` - serves as an api to the ontology 
     - `frontend` - servers as a testing ground for the api and integration into the Dataspecer tool.
+      - Not maintained, we have moved directly to the Dataspecer.
 
 How to run and use the parts, as for more in depth documentation, visit the mentioned subfolders.
 
@@ -22,18 +23,18 @@ We are reusing rules for identifing classes from ([Wikidata ontology project](ht
   - the *item* is a value of an instance of (P31) statement in any other item, or
   - the *item* is a value of a subclass of (P279) statement in any other item, or
   - the *item* contains a subclass of (P279) statement.
-  - Everything a subclass of an entity (Q35120).
+  - Everything is a subclass of an entity (Q35120).
 
 We also extend this model to account only for *items*. 
 Meaning we are excluding lexicographic entities.
 
-- Imlicitly the classes form a subclass of hierarchy with the root as entity (Q35120). 
+- Imlicitly the classes form a subclass of hierarchy with the entity (Q35120) as root. 
 - We also keep the instance of information among classes (e.g. volcano is instance of a volcanic landform and subclass of a mountain).
 
 <br>
 
 - Classes of instances:
-  - When looking into the data, we have noticed there are roughly 3 million classes that are simultaneously instance of a either protein (Q8054), gene (Q7187), and type of chemical entity (Q113145171), and a group of stereoisomers (Q59199015).
+  - When looking into the data, we have noticed there are roughly 3 million classes that are instances of either protein (Q8054), gene (Q7187), and type of chemical entity (Q113145171), and a group of stereoisomers (Q59199015).
     - Their labels, descriptions, and aliases repeat a lot.
   - We have decided to remove the classes that are simultaneously instances of the above mentioned classes, but keeping the mentioned classes in the ontology.
 
@@ -45,7 +46,7 @@ Meaning we are excluding lexicographic entities.
     - [In depth about datatypes](https://www.wikidata.org/wiki/Help:Data_type)
 
 Properties have datatypes (higher level type, e.g. language string, table, wikidata-item, wikidata-property ) and an underlying type (lower level type, e.g. item, string, quantity).
-Each property can also have assigned constraints - the constraints are not enforced or checked, so it is not a trustworthy source of information.
+Each property can also have assigned constraints - the constraints are not enforced or checked (most of the times).
 
 - We extract and use all properties except:
   - `subclass of` and `instance of`
@@ -62,7 +63,7 @@ Each property can also have assigned constraints - the constraints are not enfor
   - In terms of modeling it means, that our "new" association property used on an instance of our "new" class can point to any class from the ammased range of the property. Or looking at our "new" property domains, denotes that each class from the domain classes can use the property.
   - Each of the extracted domains/ranges we enrich with the Wikidata property constraints information.
 - We also assume inheritance in the subclass of hierarchy - meaning properties of ancestors can be used in their subclasses.
-    - This was implemented since many classes do not have any instances, thus are not domain of any property.
+    - This was implemented since many classes do not have any instances, thus are not a domain of any property.
 - Each association property has always defined a range if it has defined a domain.
 - Associations are oriented edges.
 
@@ -76,14 +77,14 @@ Each property can also have assigned constraints - the constraints are not enfor
   - However, removing the classes can lead to breaking the hierarchy, but the question is whether the highly specific classes dependent on language form deep hierarchies.
       - On the other, it is hard to assess the benefit of highly specific classes depending on the language inside Dataspecer.
       - It can also mean that the classes were some testing case of a user and can bear no value.
-  - Right now, we have decided to exclude all the classes and properties with no label.
-- In case of expansion in the future, there is the need to change the extraction, modification, and loading phases in the preprocessing and accomodate the Wikidata API service.
+  - Right now, we have decided to exclude all the classes and properties with no English label.
+- In case of expansion in the future, there is the need to change the extraction, modification, and loading phases in the preprocessing and accomodate the Wikidata API service and the Search service.
 
 ## Architecture overview
 
 ![missing image](./readme-pictures/overall.png)
 
-- The architecture consists of the main three containers.
+- The architecture consists of eight containers.
   1. Preprocessing pipeline 
       - Downloads and preprocesses Wikidata GZIP dump file.
       - The output of the pipeline are files containing Wikidata ontology as described above.
@@ -95,23 +96,29 @@ Each property can also have assigned constraints - the constraints are not enfor
       - The API is modelled to fit the [Dataspecer](https://github.com/mff-uk/dataspecer) needs.
       - The code and documentation is located in `backend/wdoi-service` folder.
       - The code contains a Node.js application running with `Fastify`, and can be run inside Docker.
-  3. Elastic search
-      - Provides full-text search over the Wikidata ontology.
-      - Assuming the Elastic Search is running somewhere inside Docker container provided by the offical source.
+  3. Search service
+      - Provides an interface for searching classes and properties.
+      - It is connected to the language models (CrossEncoder, Dense embedding, and Sparse embedding services), and to the Qdrant and Elastic Search databases. 
+      - It enables to choose a way to handle the search request with a configuration inside the request.
+      - E.g. choosing a dense embedding search instead of text matching.
+  4. CrossEncoder reranker service
+      - Enables to rerank provided sentences based on the query.
+      - Is used by the Search service.
+  5. Dense Embedding service
+      - Embeds provided sentence into a dense vector representation.
+      - Is used by the Search service.
+  6. Sparse Embedding service
+      - Embeds provided sentence into a sparse vector representation. 
+      - Is used by the Search service.
+  7. Elastic search
+     - Is used by the Search service. 
+  8. Qdrant vector database
+     - Is used by the Search service.  
 - To learn more about each part, visit their specific subfolders.
   - Regarding Elastic search configuration you can view documentation and usage of 6. phase of the preprocessing pipeline.
 
 There also exists a `ds-mockup` inside `frontend` folder, which serves solely for development porposes.
 Usually it is not updated frequently to match the latest API of the service.
-
-### Dependencies 
-
-- As of now there are dependencies between the containers.
-  - The preprocessing pipeline assumes there is running an Elastic search service
-    - Since the last phase of the pipeline loads the ontology into the service.
-  - The Wikidata ontology API service depends on the output from the preprocessing pipeline.
-    - Since the output files of the pipeline needs to be loaded into the API service.
-  - The Wikidata ontology API service depends on the Elastic search service, which enables searching the ontology.
 
 ### Comments on running
 

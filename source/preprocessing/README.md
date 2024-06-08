@@ -373,7 +373,7 @@ If you need more fine-grained approach, use the specific scripts.
     - `--donwload`
     - Defaults to `False`
     - The `True` will **overwrite the existing dump** in the current folder.
-    - It is expected that the GZIP dump file is located in the `output` directory if downloading is disabled. 
+    - **It is expected that the GZIP dump file is located in the `output` directory if downloading is disabled.** 
   - Optional boolean flag argument whether to restart the API service.
     - `--restart`
     - Defaults to `False`.

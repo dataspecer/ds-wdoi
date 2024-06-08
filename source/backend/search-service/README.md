@@ -217,13 +217,13 @@ For this reason, running with the start proved to be more beneficial.
     docker run --rm --restart unless-stopped \
     --network your_bridge \
     -e ES_NODE="http://elastic:9200" \
-    -e QDRANT_NODE="http://qdrant:6333"
-    -e CROSS_RERANKER_NODE="http://cross:8300/rerank"
-    -e DENSE_EMBED_NODE="http://dense:8100/embed"
-    -e SPARSE_EMBED_NODE="http://sparse:8200/embed"
+    -e QDRANT_NODE="http://qdrant:6333" \
+    -e CROSS_RERANKER_NODE="http://cross:8300/rerank" \
+    -e DENSE_EMBED_NODE="http://dense:8100/embed" \
+    -e SPARSE_EMBED_NODE="http://sparse:8200/embed" \
     -e RESTART_KEY="1234567" \
-    -e CLASSES_PATH="/app/input/classes.json"
-    -e PROPERTIES_PATH="/app/input/properties.json"
+    -e CLASSES_PATH="/app/input/classes.json" \
+    -e PROPERTIES_PATH="/app/input/properties.json" \
     --mount type=bind,source=/path/to/ds-wdoi/source/preprocessing/output/classes-experimental-prep-5-minimize.json,target=/app/input/classes.json,readonly \
     --mount type=bind,source=/path/to/ds-wdoi/source/preprocessing/output/properties-experimental-prep-5-minimize.json,target=/app/input/properties.json,readonly \
     --name search_service search_service_image
