@@ -76,5 +76,7 @@ def main_number_of_same_info(json_file_path: pathlib.Path, part: Part):
         
         resultsList.sort(reverse=True, key=lambda x: x["n"])
         with open(create_output_file_name(part), "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in resultsList:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.close_json_array_in_files([o])

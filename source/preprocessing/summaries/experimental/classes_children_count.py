@@ -7,20 +7,20 @@ from phases.experimental_search_engine_data_preparation.data_entities.data_class
 from summaries.summaries import main_logger
 from core.utils.timer import timed
 
-logger = main_logger.getChild("classes_ancestors_count")
+logger = main_logger.getChild("classes_children_count")
 
-OUTPUT_FILE = "classes_ancestors_count.json"
+OUTPUT_FILE = "classes_children_count.json"
 
 @timed(logger)
 def __load_classes_to_dict(json_file_path: pathlib.Path) -> dict:
     return decoding.load_entities_to_dict(json_file_path, logger, ul.CLASSES_PROGRESS_STEP)
 
-def __ancestors_of(id, cls, classes_dict: dict):
+def __children_of(id, cls, classes_dict: dict):
     visited_ids = set()
     queue = deque()
     
     visited_ids.add(id)
-    queue.append(cls[ClassFields.SUBCLASS_OF.value])
+    queue.append(cls[ClassFields.CHILDREN.value])
     
     while (len(queue) != 0):
         next_ids = queue.popleft()
@@ -28,17 +28,17 @@ def __ancestors_of(id, cls, classes_dict: dict):
             if next_class_id not in visited_ids:
                 visited_ids.add(next_class_id)
                 next_cls = classes_dict[next_class_id]
-                queue.append(next_cls[ClassFields.SUBCLASS_OF.value])
+                queue.append(next_cls[ClassFields.CHILDREN.value])
                 yield next_cls
     
 @timed(logger)
-def main_classes_ancestors_count(classes_json_file_path: pathlib.Path):
+def main_classes_children_count(classes_json_file_path: pathlib.Path):
     classes_dict = __load_classes_to_dict(classes_json_file_path)
     with open(OUTPUT_FILE, "wb") as output_file:
         results = []
         for i, [id, cls] in enumerate(classes_dict.items()):
             count = 0
-            for _ in __ancestors_of(id, cls, classes_dict):
+            for _ in __children_of(id, cls, classes_dict):
                 count += 1
             results.append({
                 "n": count,

@@ -23,5 +23,9 @@ def main_classes_ancestors_defining_property_count(classes_json_file_path: pathl
         
         results.sort(reverse=True, key=lambda x: x["n"])
         with open(OUTPUT_FILE, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.init_json_array_in_files([o])
+        
+            

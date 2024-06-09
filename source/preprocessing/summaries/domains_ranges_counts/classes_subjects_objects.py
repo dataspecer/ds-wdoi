@@ -23,21 +23,29 @@ def main_classes_subjects_objects(classes_json_file_path: pathlib.Path):
 
         results.sort(reverse=True, key=lambda x: x['subject_of_count_consts'])    
         with open("classes_subjects_objects_sorted_subjects.json", "wb") as o:
+            decoding.init_json_array_in_files([o])
             for cls in results:
                 decoding.write_wd_entity_to_file(cls, o)
+            decoding.close_json_array_in_files([o])
         
         results.sort(reverse=True, key=lambda x: x['value_of_count_consts'])    
         with open("classes_subjects_objects_sorted_objects.json", "wb") as o:
+            decoding.init_json_array_in_files([o])
             for cls in results:
                 decoding.write_wd_entity_to_file(cls, o)
-        
+            decoding.close_json_array_in_files([o])
+            
         results.sort(reverse=True, key=lambda x: x['subject_of_count_stats'])    
         with open("classes_subjects_objects_sorted_subjects_stats.json", "wb") as o:
+            decoding.init_json_array_in_files([o])
             for cls in results:
                 decoding.write_wd_entity_to_file(cls, o)
+            decoding.close_json_array_in_files([o])
         
         results.sort(reverse=True, key=lambda x: x['value_of_count_stats'])      
         with open("classes_subjects_objects_sorted_objects_stats.json", "wb") as o:
+            decoding.init_json_array_in_files([o])
             for cls in results:
                 decoding.write_wd_entity_to_file(cls, o)
+            decoding.close_json_array_in_files([o])
                 

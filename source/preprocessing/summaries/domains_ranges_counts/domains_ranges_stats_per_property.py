@@ -33,10 +33,14 @@ def main_domains_ranges_per_property(properties_json_file_path: pathlib.Path):
             
         results.sort(reverse=True, key=lambda x: x["domain_count_stats"])
         with open(DOMAINS_OUTPUT_FILE, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.close_json_array_in_files([o])
 
         results.sort(reverse=True, key=lambda x: x["range_count_stats"])
         with open(RANGES_OUTPUT_FILE, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.close_json_array_in_files([o])

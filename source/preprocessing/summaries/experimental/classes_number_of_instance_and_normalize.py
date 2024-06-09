@@ -45,5 +45,7 @@ def main_classes_number_of_instances_and_normalize(classes_json_file_path: pathl
         normalize_satu(results)
         
         with open(OUTPUT_FILE, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.close_json_array_in_files([o])

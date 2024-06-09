@@ -23,5 +23,8 @@ def main_classes_defining_property_count(property_json_file_path: pathlib.Path):
         
         results.sort(reverse=True, key=lambda x: x["n"])
         with open(OUTPUT_FILE, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.close_json_array_in_files([o])
+            

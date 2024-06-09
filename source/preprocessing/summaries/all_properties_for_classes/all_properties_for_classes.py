@@ -46,6 +46,7 @@ def main_all_properties_for_classes(classes_json_file_path: pathlib.Path):
     with (open(OUTPUT_FILE_ALL, "wb") as output_all_file,
           open(OUTPUT_FILE_COUNT_ONLY, "wb") as output_counts_file
     ):
+        decoding.init_json_array_in_files([output_all_file, output_counts_file])
         for i, [id, cls] in enumerate(classes_dict.items()):
             cls_props = __props_for_class(id, cls, classes_dict)
             decoding.write_wd_entity_to_file({
@@ -58,6 +59,7 @@ def main_all_properties_for_classes(classes_json_file_path: pathlib.Path):
                 "len": len(cls_props)
             }, output_counts_file)
             ul.try_log_progress(logger, i, ul.CLASSES_PROGRESS_STEP)
+        decoding.close_json_array_in_files([output_all_file, output_counts_file])
         
         
     

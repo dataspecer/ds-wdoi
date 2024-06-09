@@ -44,5 +44,7 @@ def main_properties_number_of_external_mappings_and_normalize(properties_json_fi
         normalize_satu(results)
         
         with open(OUTPUT_FILE, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for stat in results:
                 decoding.write_wd_entity_to_file(stat, o)
+            decoding.close_json_array_in_files([o])

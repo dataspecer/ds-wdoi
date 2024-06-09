@@ -31,5 +31,7 @@ def main_domains_ranges_per_class(classes_json_file_path: pathlib.Path, field: L
             output_file_name = RANGES_OUTPUT_FILE
         
         with open(output_file_name, "wb") as o:
+            decoding.init_json_array_in_files([o])
             for idx, res in enumerate(results):
                 decoding.write_wd_entity_to_file(res, o)
+            decoding.close_json_array_in_files([o])
