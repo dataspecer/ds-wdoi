@@ -7,7 +7,7 @@ import json
 from core.default_languages import ENGLISH_LANGUAGE
 from core.model_simplified.classes import ClassFields
 
-RANDOM_SEED =  777
+RANDOM_SEED = 333
 random.seed(RANDOM_SEED)
 
 logger = ul.root_logger.getChild("initial_search_class_selection")
@@ -17,7 +17,7 @@ VALUES_TO_SELECT = 6
 OUTPUT_FILE_PATH_JSON = "initial_search_class_selection.json"
 OUTPUT_FILE_PATH_CSV = "initial_search_class_selection.csv"
 
-INSTANCES_COUNT_MIN = 1
+INSTANCES_COUNT_MIN = 100
 INSTANCES_COUNT_MAX = 1_000_000_000
 INSTANCE_COUNT_RANGES = [(INSTANCES_COUNT_MIN, 1_000), (1_000, 10_000), (10_000, 100_000), (100_000, INSTANCES_COUNT_MAX)]
 
@@ -28,8 +28,6 @@ CHILDREN_COUNT_RANGES = [(100, 1_000), (1_000, 10_000), (10_000, 100_000), (100_
 ANCESTORS_COUNT_MIN = 1
 ANCESTORS_COUNT_MAX = 1_000_000_000
 ANCESTORS_COUNT_RANGES = [(100, 200), (200, ANCESTORS_COUNT_MAX)]
-
-
 
 def find_bucket_index(value, bucket_ranges) -> int | None:
     for idx, range_tuple in enumerate(bucket_ranges):
@@ -81,7 +79,7 @@ def filter_out_wikimedia_labels(entities_dict: dict) -> dict:
     new_dict = dict()
     for id, entity in entities_dict.items():
         lowercase = entity["name"].lower()
-        if "wikimedia" not in lowercase and "wikidata" not in lowercase and "wikipedia" not in lowercase and "template" not in lowercase:
+        if "wikimedia" not in lowercase and "wikidata" not in lowercase and "wikipedia" not in lowercase and "template" not in lowercase and "wikinews" not in lowercase:
             new_dict[id] = entity
     return new_dict
     
@@ -104,14 +102,14 @@ def main_initial_search_class_selection(classes_json_file_path: Path, instance_c
     children_buckets = split_into_buckets(children_counts_dict.values(), lambda entity: entity["n"], CHILDREN_COUNT_RANGES)
     
     context = set()
+    ##ancestor_selections = create_selections_for_buckets("ancestors", classes_dict, ancestors_buckets, ANCESTORS_COUNT_RANGES, context)
     instance_selections = create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
-    ancestor_selections = create_selections_for_buckets("ancestors", classes_dict, ancestors_buckets, ANCESTORS_COUNT_RANGES, context)
     children_selections = create_selections_for_buckets("children", classes_dict, children_buckets, CHILDREN_COUNT_RANGES, context)
     
     logger.info("Writing to a json file")
     with open(OUTPUT_FILE_PATH_JSON, "w") as json_file:
         json.dump({
+            #"ancestors": ancestor_selections,
             "instances": instance_selections,
-            "ancestors": ancestor_selections,
             "children": children_selections
         }, json_file, indent=2, sort_keys=True)
