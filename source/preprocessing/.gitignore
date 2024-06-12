@@ -166,6 +166,7 @@ cython_debug/
 *.json
 *.bz2
 *.gz
+*.csv
 preprocessing-env
 statistics-and-logs
 /data

@@ -10,6 +10,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g" 
     networks:
       - wdoi_internal
 

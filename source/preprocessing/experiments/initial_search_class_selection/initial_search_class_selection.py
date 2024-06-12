@@ -3,31 +3,33 @@ import core.utils.decoding as decoding
 import core.utils.logging as ul
 import random
 import json
+import re
+import csv
 
 from core.default_languages import ENGLISH_LANGUAGE
 from core.model_simplified.classes import ClassFields
 
-RANDOM_SEED = 333
+RANDOM_SEED = 2222
 random.seed(RANDOM_SEED)
 
 logger = ul.root_logger.getChild("initial_search_class_selection")
 
-VALUES_TO_SELECT = 6
+VALUES_TO_SELECT = 10
 
 OUTPUT_FILE_PATH_JSON = "initial_search_class_selection.json"
-OUTPUT_FILE_PATH_CSV = "initial_search_class_selection.csv"
+OUTPUT_FILE_CSV_PREFIX = "initial_search_class_selection"
 
 INSTANCES_COUNT_MIN = 100
 INSTANCES_COUNT_MAX = 1_000_000_000
 INSTANCE_COUNT_RANGES = [(INSTANCES_COUNT_MIN, 1_000), (1_000, 10_000), (10_000, 100_000), (100_000, INSTANCES_COUNT_MAX)]
 
-CHILDREN_COUNT_MIN = 1
+CHILDREN_COUNT_MIN = 10_000
 CHILDREN_COUNT_MAX = 1_000_000_000
-CHILDREN_COUNT_RANGES = [(100, 1_000), (1_000, 10_000), (10_000, 100_000), (100_000, CHILDREN_COUNT_MAX)]
+CHILDREN_COUNT_RANGES = [(CHILDREN_COUNT_MIN, 100_000), (100_000, CHILDREN_COUNT_MAX)]
 
-ANCESTORS_COUNT_MIN = 1
+ANCESTORS_COUNT_MIN = 150
 ANCESTORS_COUNT_MAX = 1_000_000_000
-ANCESTORS_COUNT_RANGES = [(100, 200), (200, ANCESTORS_COUNT_MAX)]
+ANCESTORS_COUNT_RANGES = [(ANCESTORS_COUNT_MIN, 180), (180, ANCESTORS_COUNT_MAX)]
 
 def find_bucket_index(value, bucket_ranges) -> int | None:
     for idx, range_tuple in enumerate(bucket_ranges):
@@ -66,8 +68,8 @@ def create_selections_for_buckets(name: str, classes_dict: dict, buckets, ranges
             "selection": [
                     {
                         "id": entity_id, 
+                        "iri": classes_dict[entity_id][ClassFields.IRI.value],
                         "label": classes_dict[entity_id][ClassFields.LABELS.value][ENGLISH_LANGUAGE],
-                        "iri": classes_dict[entity_id][ClassFields.IRI.value]
                     } 
                     for entity_id in random_selection
                 ]
@@ -79,9 +81,28 @@ def filter_out_wikimedia_labels(entities_dict: dict) -> dict:
     new_dict = dict()
     for id, entity in entities_dict.items():
         lowercase = entity["name"].lower()
-        if "wikimedia" not in lowercase and "wikidata" not in lowercase and "wikipedia" not in lowercase and "template" not in lowercase and "wikinews" not in lowercase:
+        if "wikimedia" not in lowercase and "wikidata" not in lowercase and "wikipedia" not in lowercase and "template" not in lowercase and "wikinews" not in lowercase and not bool(re.search(r'\d', lowercase)):
             new_dict[id] = entity
     return new_dict
+
+def create_sublists(selections: list, *, shuffle: bool = False):
+    sublists = []
+    for idx in range(VALUES_TO_SELECT):
+        sl = []
+        for selection in selections:
+            sl.append(selection["selection"][idx])
+        if shuffle:
+            random.shuffle(sl)
+        sublists.append(sl)
+    return sublists
+    
+def print_sublists_to_csv(sublists, csv_file_path: Path):
+    with open(csv_file_path, "w", newline="") as file:
+        writer = csv.writer(file, delimiter='|')
+        for sl in sublists:
+            for item in sl:
+                writer.writerow([item["id"], item["iri"], item["label"]])
+            writer.writerow(["", "", ""])
     
 def main_initial_search_class_selection(classes_json_file_path: Path, instance_count_summary_file_path: Path, ancestor_count_summary_file_path: Path, children_count_summary_file_path: Path):
     logger.info("Loading classes")
@@ -94,22 +115,38 @@ def main_initial_search_class_selection(classes_json_file_path: Path, instance_c
     logger.info("Loading children info classes")
     children_counts_dict = filter_out_wikimedia_labels(decoding.load_entities_to_dict(children_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
     
-    logger.info("Splitting classes into instances buckets")
-    instance_buckets = split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
     logger.info("Splitting classes into ancestors buckets")
     ancestors_buckets = split_into_buckets(ancestor_counts_dict.values(), lambda entity: entity["n"], ANCESTORS_COUNT_RANGES)
+    
     logger.info("Splitting classes into children buckets")
     children_buckets = split_into_buckets(children_counts_dict.values(), lambda entity: entity["n"], CHILDREN_COUNT_RANGES)
     
+    logger.info("Splitting classes into instances buckets")
+    instance_buckets = split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
+    
     context = set()
-    ##ancestor_selections = create_selections_for_buckets("ancestors", classes_dict, ancestors_buckets, ANCESTORS_COUNT_RANGES, context)
     instance_selections = create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
     children_selections = create_selections_for_buckets("children", classes_dict, children_buckets, CHILDREN_COUNT_RANGES, context)
+    ancestor_selections = create_selections_for_buckets("ancestors", classes_dict, ancestors_buckets, ANCESTORS_COUNT_RANGES, context)
     
     logger.info("Writing to a json file")
     with open(OUTPUT_FILE_PATH_JSON, "w") as json_file:
         json.dump({
-            #"ancestors": ancestor_selections,
+            "ancestors": ancestor_selections,
             "instances": instance_selections,
             "children": children_selections
         }, json_file, indent=2, sort_keys=True)
+        
+    concatenated_selections = instance_selections + children_selections + ancestor_selections
+    
+    logger.info("Creating sublists")
+    sublists = create_sublists(concatenated_selections)
+
+    logger.info("Creating sublists shuffled")
+    sublists_shuffled = create_sublists(concatenated_selections, shuffle=True)
+
+    logger.info("Writing sublists to csv")
+    print_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + ".csv")
+
+    logger.info("Writing sublists shuffled to csv")
+    print_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled" + ".csv")
