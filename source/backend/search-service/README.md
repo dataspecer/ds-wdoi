@@ -112,7 +112,7 @@ Here the maximum number of results denotes the number of results retrieved from 
 ### Fusion
 
 The fusion part is the `multiple` part in the `Compose` design pattern.
-Here we use only the selectors as the children and only allow tuple fusions, but it can be extended to a variable number of fusions.
+Here we use only the selectors as the children and only tuple and triple fusions.
 The fusion of the selectors then merges the results and returns the top N results as defined in the maximum number of results during creation.
 
 ### Reranking

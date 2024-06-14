@@ -16,7 +16,7 @@ logger = ul.root_logger.getChild("initial_search_class_selection")
 
 VALUES_TO_SELECT = 10
 
-OUTPUT_FILE_PATH_JSON = "initial_search_class_selection.json"
+OUTPUT_FILE_JSON_PREFIX = "initial_search_class_selection"
 OUTPUT_FILE_CSV_PREFIX = "initial_search_class_selection"
 
 INSTANCES_COUNT_MIN = 100
@@ -77,11 +77,18 @@ def create_selections_for_buckets(name: str, classes_dict: dict, buckets, ranges
     return selections
 
 
-def filter_out_wikimedia_labels(entities_dict: dict) -> dict:
+def filter_out_entities(entities_dict: dict) -> dict:
     new_dict = dict()
     for id, entity in entities_dict.items():
         lowercase = entity["name"].lower()
-        if "wikimedia" not in lowercase and "wikidata" not in lowercase and "wikipedia" not in lowercase and "template" not in lowercase and "wikinews" not in lowercase and not bool(re.search(r'\d', lowercase)):
+        if ( 
+            "wikimedia" not in lowercase and 
+            "wikidata" not in lowercase and 
+            "wikipedia" not in lowercase and 
+            "template" not in lowercase and 
+            "wikinews" not in lowercase and 
+            not bool(re.search(r'\d', lowercase))
+        ):
             new_dict[id] = entity
     return new_dict
 
@@ -104,17 +111,7 @@ def print_sublists_to_csv(sublists, csv_file_path: Path):
                 writer.writerow([item["id"], item["iri"], item["label"]])
             writer.writerow(["", "", ""])
     
-def main_initial_search_class_selection(classes_json_file_path: Path, instance_count_summary_file_path: Path, ancestor_count_summary_file_path: Path, children_count_summary_file_path: Path):
-    logger.info("Loading classes")
-    classes_dict = decoding.load_entities_to_dict(classes_json_file_path, logger, ul.CLASSES_PROGRESS_STEP)
-    
-    logger.info("Loading instances info classes")
-    instance_counts_dict = filter_out_wikimedia_labels(decoding.load_entities_to_dict(instance_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
-    logger.info("Loading ancestors info classes")
-    ancestor_counts_dict = filter_out_wikimedia_labels(decoding.load_entities_to_dict(ancestor_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
-    logger.info("Loading children info classes")
-    children_counts_dict = filter_out_wikimedia_labels(decoding.load_entities_to_dict(children_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
-    
+def initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict):
     logger.info("Splitting classes into ancestors buckets")
     ancestors_buckets = split_into_buckets(ancestor_counts_dict.values(), lambda entity: entity["n"], ANCESTORS_COUNT_RANGES)
     
@@ -124,13 +121,12 @@ def main_initial_search_class_selection(classes_json_file_path: Path, instance_c
     logger.info("Splitting classes into instances buckets")
     instance_buckets = split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
     
-    context = set()
     instance_selections = create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
     children_selections = create_selections_for_buckets("children", classes_dict, children_buckets, CHILDREN_COUNT_RANGES, context)
     ancestor_selections = create_selections_for_buckets("ancestors", classes_dict, ancestors_buckets, ANCESTORS_COUNT_RANGES, context)
     
     logger.info("Writing to a json file")
-    with open(OUTPUT_FILE_PATH_JSON, "w") as json_file:
+    with open(OUTPUT_FILE_JSON_PREFIX + ".json", "w") as json_file:
         json.dump({
             "ancestors": ancestor_selections,
             "instances": instance_selections,
@@ -149,4 +145,46 @@ def main_initial_search_class_selection(classes_json_file_path: Path, instance_c
     print_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + ".csv")
 
     logger.info("Writing sublists shuffled to csv")
-    print_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled" + ".csv")
+    print_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled" + ".csv")   
+    
+
+def substitution_sublists(context, classes_dict, instance_counts_dict):    
+    logger.info("Splitting classes into instances buckets")
+    instance_buckets = split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
+    
+    instance_selections = create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
+    
+    logger.info("Writing to a json file")
+    with open(OUTPUT_FILE_JSON_PREFIX + "_substitution.json", "w") as json_file:
+        json.dump({
+            "instances": instance_selections,
+        }, json_file, indent=2, sort_keys=True)
+        
+    concatenated_selections = instance_selections
+    
+    logger.info("Creating sublists")
+    sublists = create_sublists(concatenated_selections)
+
+    logger.info("Creating sublists shuffled")
+    sublists_shuffled = create_sublists(concatenated_selections, shuffle=True)
+
+    logger.info("Writing sublists to csv")
+    print_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + "_substitution.csv")
+
+    logger.info("Writing sublists shuffled to csv")
+    print_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled_substitution" + ".csv")   
+    
+def main_initial_search_class_selection(classes_json_file_path: Path, instance_count_summary_file_path: Path, ancestor_count_summary_file_path: Path, children_count_summary_file_path: Path):
+    logger.info("Loading classes")
+    classes_dict = decoding.load_entities_to_dict(classes_json_file_path, logger, ul.CLASSES_PROGRESS_STEP)
+    
+    logger.info("Loading instances info classes")
+    instance_counts_dict = filter_out_entities(decoding.load_entities_to_dict(instance_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
+    logger.info("Loading ancestors info classes")
+    ancestor_counts_dict = filter_out_entities(decoding.load_entities_to_dict(ancestor_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
+    logger.info("Loading children info classes")
+    children_counts_dict = filter_out_entities(decoding.load_entities_to_dict(children_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
+    
+    context = set()
+    initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict)
+    substitution_sublists(context, classes_dict, instance_counts_dict)

@@ -8,7 +8,7 @@ import {
 import { ElasticSelector } from '../../pipeline/pipeline-parts/candidate-selectors/elastic/elastic-selector.js';
 import { QdrantClassQueryCreator } from '../../pipeline/pipeline-parts/candidate-selectors/qdrant/qdrant-query-creator.js';
 import { QdrantSelector } from '../../pipeline/pipeline-parts/candidate-selectors/qdrant/qdrant-selector.js';
-import { TupleFusion } from '../../pipeline/pipeline-parts/fusion/tuple-fusion.js';
+import { Fusion } from '../../pipeline/pipeline-parts/fusion/fusion.js';
 import { CrossEncoderReranker } from '../../pipeline/pipeline-parts/rerankers/cross-encoder-reranker.js';
 import { ClassInstancesAndMappingsReranker } from '../../pipeline/pipeline-parts/rerankers/tuple-feature-reranker/class-instances-x-mapping-reranker.js';
 import type { ClassQuery } from '../../pipeline/query.js';
@@ -44,7 +44,7 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
     query: ClassQuery,
     ontologyContext: WdOntologyContext,
     config: CandidateSelectorFactoryConfig<ClassCandidateSelectorsIds>,
-  ): PipelinePart {
+  ): PipelinePart | never {
     const isBM25 = config.id === 'elastic_bm25';
     const isBM25Fielded = config.id === 'elastic_bm25_fielded';
     const isDense = config.id === 'qdrant_dense';
@@ -87,24 +87,73 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
     }
   }
 
-  protected checkFusionConfig(
+  protected fusionConfigIsNotMissingCandidates(
     config: FusionCandidateSelectorFactoryConfig<
       ClassFusionCandidateSelectorsIds,
       ClassCandidateSelectorsIds
     >,
-  ): void | never {
+  ): boolean {
     if (
       config.candidateSelectors == null ||
       config.fusionWeights == null ||
-      config.candidateSelectors.length !== 2 ||
-      config.fusionWeights.length !== 1 ||
+      config.candidateSelectors.length < 2 ||
+      config.candidateSelectors.length > 3 ||
+      config.fusionWeights.length !== config.candidateSelectors.length
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  protected fusionConfigIsValidTuple(
+    config: FusionCandidateSelectorFactoryConfig<
+      ClassFusionCandidateSelectorsIds,
+      ClassCandidateSelectorsIds
+    >,
+  ): boolean {
+    if (
       config.candidateSelectors[0].id !== 'qdrant_dense' ||
       (config.candidateSelectors[1].id !== 'elastic_bm25' &&
         config.candidateSelectors[1].id !== 'elastic_bm25_fielded' &&
         config.candidateSelectors[1].id !== 'qdrant_sparse')
     ) {
-      throw new Error('Invalid arguments to classes fusion.');
+      return false;
     }
+    return true;
+  }
+
+  protected fusionConfigIsValidTriple(
+    config: FusionCandidateSelectorFactoryConfig<
+      ClassFusionCandidateSelectorsIds,
+      ClassCandidateSelectorsIds
+    >,
+  ): boolean {
+    if (
+      config.candidateSelectors[0].id !== 'qdrant_dense' ||
+      config.candidateSelectors[1].id !== 'qdrant_sparse' ||
+      (config.candidateSelectors[2].id !== 'elastic_bm25_fielded' &&
+        config.candidateSelectors[2].id !== 'elastic_bm25')
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  protected fusionConfigIsValid(
+    config: FusionCandidateSelectorFactoryConfig<
+      ClassFusionCandidateSelectorsIds,
+      ClassCandidateSelectorsIds
+    >,
+  ): boolean {
+    if (
+      config.id !== 'fusion' ||
+      !this.fusionConfigIsNotMissingCandidates(config) ||
+      (config.candidateSelectors.length === 2 && !this.fusionConfigIsValidTuple(config)) ||
+      (config.candidateSelectors.length === 3 && !this.fusionConfigIsValidTriple(config))
+    ) {
+      return false;
+    }
+    return true;
   }
 
   createFusionCandidateSelector(
@@ -114,31 +163,21 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
       ClassFusionCandidateSelectorsIds,
       ClassCandidateSelectorsIds
     >,
-  ): PipelinePart {
-    if (config.id === 'fusion') {
-      this.checkFusionConfig(config);
-      const first = this.createCandidateSelector(
-        query,
-        ontologyContext,
-        config.candidateSelectors[0],
+  ): PipelinePart | never {
+    if (this.fusionConfigIsValid(config)) {
+      const candidateSelectors = config.candidateSelectors.map((selector) =>
+        this.createCandidateSelector(query, ontologyContext, selector),
       );
-      const second = this.createCandidateSelector(
-        query,
-        ontologyContext,
-        config.candidateSelectors[1],
-      );
-      const firstWeight = config.fusionWeights[0];
-      return new TupleFusion(
+      return new Fusion(
         query,
         ontologyContext,
         config.maxResults,
-        [first, second],
-        firstWeight,
+        candidateSelectors,
+        config.fusionWeights,
         minMaxNormalizer,
       );
-    } else {
-      throw new Error(`Missing constructor for classes in fusion factory.`);
     }
+    throw new Error(`Missing constructor for classes in fusion factory.`);
   }
 
   createReranker(
@@ -146,12 +185,13 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
     ontologyContext: WdOntologyContext,
     predecessor: PipelinePart,
     config: RerankerFactoryConfig<ClassRerankersIds>,
-  ): PipelinePart {
+  ): PipelinePart | never {
     if (config.id === 'cross_encoder') {
       return new CrossEncoderReranker(
         query,
         ontologyContext,
         predecessor,
+        config.maxResults,
         crossEncoderClient,
         false,
       );
@@ -161,7 +201,7 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
         config.featureWeights == null ||
         config.featureWeights.length !== 1
       ) {
-        throw new Error('Invalid parameters of class reranker.');
+        throw new Error('Invalid parameters of feature_instance_mappings class reranker.');
       }
       return new ClassInstancesAndMappingsReranker(
         query,

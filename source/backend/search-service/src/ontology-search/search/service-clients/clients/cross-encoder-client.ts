@@ -13,18 +13,10 @@ export interface CrossEncoderRerankerScoreItem {
   score: number;
 }
 
-export const CROSS_ENCODER_MAX_SENTENCES: number = 30;
-
 export class CrossEncoderRerankerClient extends ServiceClient {
-  protected sliceInputInPlace(input: CrossEncoderRerankerInput): void {
-    input.ids = input.ids.slice(0, CROSS_ENCODER_MAX_SENTENCES);
-    input.sentences = input.sentences.slice(0, CROSS_ENCODER_MAX_SENTENCES);
-  }
-
   async rerank(
     input: CrossEncoderRerankerInput,
   ): Promise<ServiceOutput<CrossEncoderRerankerScoreItem[]>> {
-    this.sliceInputInPlace(input);
     return await this.postToService<CrossEncoderRerankerInput, CrossEncoderRerankerScoreItem[]>(
       input,
     );

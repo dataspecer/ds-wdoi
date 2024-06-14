@@ -1,6 +1,5 @@
 import { type WdOntologyContext } from '../../../../ontology-context/ontology-context.js';
 import {
-  CROSS_ENCODER_MAX_SENTENCES,
   type CrossEncoderRerankerClient,
   type CrossEncoderRerankerInput,
 } from '../../../service-clients/clients/cross-encoder-client.js';
@@ -21,10 +20,11 @@ export class CrossEncoderReranker extends PipelinePartSingle {
     query: Query,
     ontologyContext: WdOntologyContext,
     predecessor: PipelinePart | undefined,
+    maxResults: number,
     crossEncoderClient: CrossEncoderRerankerClient,
     isProperty: boolean = false,
   ) {
-    super(query, ontologyContext, CROSS_ENCODER_MAX_SENTENCES, predecessor);
+    super(query, ontologyContext, maxResults, predecessor);
     this.crossEncoderClient = crossEncoderClient;
     this.isProperty = isProperty;
   }
@@ -45,11 +45,13 @@ export class CrossEncoderReranker extends PipelinePartSingle {
     };
 
     const entityMap = this.getEntityMap();
-    predecessorResults.forEach((ppr, i) => {
-      const entity = entityMap.get(ppr.id);
-      if (entity !== undefined) {
-        input.ids.push(entity.id);
-        input.sentences.push(entity.lexicalization);
+    predecessorResults.forEach((ppr, idx) => {
+      if (idx < this.maxResults) {
+        const entity = entityMap.get(ppr.id);
+        if (entity !== undefined) {
+          input.ids.push(entity.id);
+          input.sentences.push(entity.lexicalization);
+        }
       }
     });
 
