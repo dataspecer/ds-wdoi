@@ -5,6 +5,8 @@ import { type WdProperty } from '../entities/wd-property.js';
 
 export type ClassHierarchyWalkerParts = 'full' | 'parents' | 'children';
 
+const MAXIMUM_NUMBER_OF_CHILDREN = 100;
+
 export class ClassHierarchyReturnWrapper {
   public readonly startClassId: EntityId;
   public readonly parentsIds: EntityIdsList;
@@ -129,7 +131,10 @@ export class ClassHierarchyWalker {
     }
 
     if (part === 'children' || part === 'full') {
-      childrenIds = this.walkChildrenHierarchy(startClass, hierarchyClassesExtractor);
+      childrenIds = this.walkChildrenHierarchy(startClass, hierarchyClassesExtractor).slice(
+        0,
+        MAXIMUM_NUMBER_OF_CHILDREN,
+      );
     }
     return new ClassHierarchyReturnWrapper(
       startClass.id,
