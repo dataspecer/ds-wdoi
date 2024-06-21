@@ -37,23 +37,23 @@ ANCESTORS_COUNT_MIN = 150
 ANCESTORS_COUNT_MAX = 1_000_000_000
 ANCESTORS_COUNT_RANGES = [(ANCESTORS_COUNT_MIN, 180), (180, ANCESTORS_COUNT_MAX)]
 
-def find_bucket_index(value, bucket_ranges) -> int | None:
+def __find_bucket_index(value, bucket_ranges) -> int | None:
     for idx, range_tuple in enumerate(bucket_ranges):
         if value >= range_tuple[0] and value < range_tuple[1]:
             return idx
     
-def split_into_buckets(entities: list, value_getter, bucket_ranges):
+def __split_into_buckets(entities: list, value_getter, bucket_ranges):
     buckets = [[] for _ in range(len(bucket_ranges))]
     
     for entity in entities:
         value = value_getter(entity)
-        bucket_idx = find_bucket_index(value, bucket_ranges)
+        bucket_idx = __find_bucket_index(value, bucket_ranges)
         if bucket_idx != None:
             buckets[bucket_idx].append(entity[ClassFields.ID.value])
 
     return buckets
 
-def select_random_entites_from_bucket_no_repetition(random: Random, bucket: list[int], count: int, context: set) -> list:
+def __select_random_entites_from_bucket_no_repetition(random: Random, bucket: list[int], count: int, context: set) -> list:
     if len(bucket) < count:
         raise ValueError(f"Cannot select {count} values from array of length {len(bucket)}")
     else:
@@ -65,10 +65,10 @@ def select_random_entites_from_bucket_no_repetition(random: Random, bucket: list
                 selected.append(selected_entity_id)
         return selected
 
-def create_selections_for_buckets(name: str, classes_dict: dict, buckets, ranges, context: set):
+def __create_selections_for_buckets(name: str, classes_dict: dict, buckets, ranges, context: set):
     selections = []
     for idx, bucket in enumerate(buckets):
-        random_selection = select_random_entites_from_bucket_no_repetition(random, bucket, VALUES_TO_SELECT, context)
+        random_selection = __select_random_entites_from_bucket_no_repetition(random, bucket, VALUES_TO_SELECT, context)
         selections.append({
             "id": "_".join([name, str(ranges[idx][0]), str(ranges[idx][1])]),
             "selection": [
@@ -83,7 +83,7 @@ def create_selections_for_buckets(name: str, classes_dict: dict, buckets, ranges
     return selections
 
 
-def filter_out_entities(entities_dict: dict) -> dict:
+def __filter_out_entities(entities_dict: dict) -> dict:
     new_dict = dict()
     for id, entity in entities_dict.items():
         lowercase = entity["name"].lower()
@@ -98,7 +98,7 @@ def filter_out_entities(entities_dict: dict) -> dict:
             new_dict[id] = entity
     return new_dict
 
-def create_sublists(selections: list, *, shuffle: bool = False):
+def __create_sublists(selections: list, *, shuffle: bool = False):
     sublists = []
     for idx in range(VALUES_TO_SELECT):
         sl = []
@@ -109,7 +109,7 @@ def create_sublists(selections: list, *, shuffle: bool = False):
         sublists.append(sl)
     return sublists
     
-def save_sublists_to_csv(sublists, csv_file_path: Path):
+def __save_sublists_to_csv(sublists, csv_file_path: Path):
     with open(csv_file_path, "w", newline="") as file:
         writer = csv.writer(file, delimiter='|')
         for sl in sublists:
@@ -117,14 +117,14 @@ def save_sublists_to_csv(sublists, csv_file_path: Path):
                 writer.writerow([item["id"], item["iri"], item["label"]])
             writer.writerow(["", "", ""])
     
-def save_sublists_to_json(sublists, json_file_path: Path):
+def __save_sublists_to_json(sublists, json_file_path: Path):
     with open(json_file_path, "w") as output_file:
             json.dump(sublists, output_file, indent=2, sort_keys=True)
     
     
-def select_test_entities_for_selection(selections: list, classes_dict: dict, buckets: list, context):
+def __select_test_entities_for_selection(selections: list, classes_dict: dict, buckets: list, context):
     for idx, category in enumerate(selections):
-        test_random_selection = select_random_entites_from_bucket_no_repetition(test_random, buckets[idx], TEST_VALUES_TO_SELECT, context)
+        test_random_selection = __select_random_entites_from_bucket_no_repetition(test_random, buckets[idx], TEST_VALUES_TO_SELECT, context)
         category["test_selection"] = [
             {
                 "id": entity_id, 
@@ -134,58 +134,58 @@ def select_test_entities_for_selection(selections: list, classes_dict: dict, buc
             for entity_id in test_random_selection
         ]
         
-def initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict):
-    ancestor_buckets = split_into_buckets(ancestor_counts_dict.values(), lambda entity: entity["n"], ANCESTORS_COUNT_RANGES)
-    children_buckets = split_into_buckets(children_counts_dict.values(), lambda entity: entity["n"], CHILDREN_COUNT_RANGES)
-    instance_buckets = split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
+def __initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict):
+    ancestor_buckets = __split_into_buckets(ancestor_counts_dict.values(), lambda entity: entity["n"], ANCESTORS_COUNT_RANGES)
+    children_buckets = __split_into_buckets(children_counts_dict.values(), lambda entity: entity["n"], CHILDREN_COUNT_RANGES)
+    instance_buckets = __split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
     
-    instance_selections = create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
-    children_selections = create_selections_for_buckets("children", classes_dict, children_buckets, CHILDREN_COUNT_RANGES, context)
-    ancestor_selections = create_selections_for_buckets("ancestors", classes_dict, ancestor_buckets, ANCESTORS_COUNT_RANGES, context)
+    instance_selections = __create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
+    children_selections = __create_selections_for_buckets("children", classes_dict, children_buckets, CHILDREN_COUNT_RANGES, context)
+    ancestor_selections = __create_selections_for_buckets("ancestors", classes_dict, ancestor_buckets, ANCESTORS_COUNT_RANGES, context)
     
-    select_test_entities_for_selection(instance_selections, classes_dict, instance_buckets, context)
-    select_test_entities_for_selection(children_selections, classes_dict, children_buckets, context)
-    select_test_entities_for_selection(ancestor_selections, classes_dict, ancestor_buckets, context)
+    __select_test_entities_for_selection(instance_selections, classes_dict, instance_buckets, context)
+    __select_test_entities_for_selection(children_selections, classes_dict, children_buckets, context)
+    __select_test_entities_for_selection(ancestor_selections, classes_dict, ancestor_buckets, context)
     
-    save_sublists_to_json({
+    __save_sublists_to_json({
             "ancestors": ancestor_selections,
             "instances": instance_selections,
             "children": children_selections
         }, OUTPUT_FILE_JSON_PREFIX + ".json")
         
     concatenated_selections = instance_selections + children_selections + ancestor_selections
-    sublists = create_sublists(concatenated_selections)
-    sublists_shuffled = create_sublists(concatenated_selections, shuffle=True)
-    save_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + ".csv")
-    save_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled" + ".csv")   
+    sublists = __create_sublists(concatenated_selections)
+    sublists_shuffled = __create_sublists(concatenated_selections, shuffle=True)
+    __save_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + ".csv")
+    __save_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled" + ".csv")   
     
 
-def substitution_sublists(context, classes_dict, instance_counts_dict):    
-    instance_buckets = split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
-    instance_selections = create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
+def __substitution_sublists(context, classes_dict, instance_counts_dict):    
+    instance_buckets = __split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
+    instance_selections = __create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
     
-    select_test_entities_for_selection(instance_selections, classes_dict, instance_buckets, context)
+    __select_test_entities_for_selection(instance_selections, classes_dict, instance_buckets, context)
     
-    save_sublists_to_json({
+    __save_sublists_to_json({
             "instances": instance_selections,
         }, OUTPUT_FILE_JSON_PREFIX + "_substitution.json")
 
     concatenated_selections = instance_selections
-    sublists = create_sublists(concatenated_selections)
-    sublists_shuffled = create_sublists(concatenated_selections, shuffle=True)
-    save_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + "_substitution.csv")
-    save_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled_substitution" + ".csv")   
+    sublists = __create_sublists(concatenated_selections)
+    sublists_shuffled = __create_sublists(concatenated_selections, shuffle=True)
+    __save_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + "_substitution.csv")
+    __save_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled_substitution" + ".csv")   
     
 def main_initial_search_class_selection(classes_json_file_path: Path, instance_count_summary_file_path: Path, ancestor_count_summary_file_path: Path, children_count_summary_file_path: Path):
     logger.info("Loading classes")
     classes_dict = decoding.load_entities_to_dict(classes_json_file_path, logger, ul.CLASSES_PROGRESS_STEP)
     logger.info("Loading instances info classes")
-    instance_counts_dict = filter_out_entities(decoding.load_entities_to_dict(instance_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
+    instance_counts_dict = __filter_out_entities(decoding.load_entities_to_dict(instance_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
     logger.info("Loading ancestors info classes")
-    ancestor_counts_dict = filter_out_entities(decoding.load_entities_to_dict(ancestor_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
+    ancestor_counts_dict = __filter_out_entities(decoding.load_entities_to_dict(ancestor_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
     logger.info("Loading children info classes")
-    children_counts_dict = filter_out_entities(decoding.load_entities_to_dict(children_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
+    children_counts_dict = __filter_out_entities(decoding.load_entities_to_dict(children_count_summary_file_path, logger, ul.CLASSES_PROGRESS_STEP))
     
     context = set()
-    initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict)
-    substitution_sublists(context, classes_dict, instance_counts_dict)
+    __initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict)
+    __substitution_sublists(context, classes_dict, instance_counts_dict)
