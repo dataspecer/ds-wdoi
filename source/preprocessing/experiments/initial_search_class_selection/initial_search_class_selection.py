@@ -8,6 +8,7 @@ import csv
 
 from core.default_languages import ENGLISH_LANGUAGE
 from core.model_simplified.classes import ClassFields
+from core.utils.timer import timed
 
 RANDOM_SEED = 2222
 random = Random()
@@ -176,6 +177,7 @@ def __substitution_sublists(context, classes_dict, instance_counts_dict):
     __save_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + "_substitution.csv")
     __save_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled_substitution" + ".csv")   
     
+@timed(logger)
 def main_initial_search_class_selection(classes_json_file_path: Path, instance_count_summary_file_path: Path, ancestor_count_summary_file_path: Path, children_count_summary_file_path: Path):
     logger.info("Loading classes")
     classes_dict = decoding.load_entities_to_dict(classes_json_file_path, logger, ul.CLASSES_PROGRESS_STEP)

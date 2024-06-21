@@ -12,5 +12,3 @@ from summaries.experimental.classes_number_of_external_mappings_and_normalize im
 from summaries.experimental.properties_number_of_external_mappings_and_normalize import main_properties_number_of_external_mappings_and_normalize 
 from summaries.experimental.properties_number_of_usage_and_normalize import main_properties_number_of_usage_and_normalize 
 from summaries.experimental.classes_children_count import main_classes_children_count
-
-# Choose which ones to run.

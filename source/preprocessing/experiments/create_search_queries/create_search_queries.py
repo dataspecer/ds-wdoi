@@ -5,6 +5,7 @@ import core.utils.decoding as decoding
 import core.utils.logging as ul
 from core.default_languages import ENGLISH_LANGUAGE
 from core.model_simplified.classes import ClassFields
+from core.utils.timer import timed
 
 logger = ul.root_logger.getChild("create_search_queries")
 OUTPUT_FILE_PATH = "search_queries.json"
@@ -120,7 +121,8 @@ def __generate_machanic_queries(user_queries: list, classes: dict):
 def __save_queries_to_json(queries, json_file_path: Path):
     with open(json_file_path, "w") as output_file:
         json.dump(queries, output_file, indent=2)
-   
+
+@timed(logger)
 def main_create_search_queries(classes_json_file_path: Path, initial_selections_json_file_paths: list[Path], user_generated_queries_file_path: Path):
     logger.info("Loading classes")
     classes = decoding.load_entities_to_dict(classes_json_file_path, logger, ul.CLASSES_PROGRESS_STEP)
