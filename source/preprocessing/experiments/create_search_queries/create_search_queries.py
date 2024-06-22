@@ -3,14 +3,16 @@ import json
 from pathlib import Path
 import core.utils.decoding as decoding
 import core.utils.logging as ul
+from experiments.main_logger import main_logger
 from core.default_languages import ENGLISH_LANGUAGE
 from core.model_simplified.classes import ClassFields
 from core.utils.timer import timed
 
-logger = ul.root_logger.getChild("create_search_queries")
+logger = main_logger.getChild("create_search_queries")
 OUTPUT_FILE_PATH = "search_queries.json"
 
 MECHANIC_USER_ID = 0
+MECHANIC_USER_MIX_USER_ID = 100
 
 def __load_selections_from_files(selection_file_paths: list[Path]) -> dict:
     selections = []
@@ -29,6 +31,7 @@ def __map_selection_classes_to_category_ids(selections: list):
                     selection_classes[cls["id"]] = category_id
     return selection_classes
 
+@timed(logger)
 def __load_user_queries_from_csv(csv_file_path: Path):
     queries = []
     with open(csv_file_path, "r") as input_file:
@@ -100,11 +103,21 @@ def __generate_label_description_query(user_query, wd_class):
                 "query_id": "mech_label_desc",
                 "query": f"{label}, {description}"
             }
+        
+def __generate_label_user_query(user_query, wd_class):
+    label = __get_class_label(wd_class)
+    return {
+            "user_id": MECHANIC_USER_MIX_USER_ID + user_query["user_id"],
+            "class_id": user_query["class_id"],
+            "query_id": f"mech_label_{user_query["query_id"]}",
+            "query": f"{label}, {user_query["query"]}"
+        }
 
 def __append_query_if_not_empty(query, storage: list):
     if query != None:
         storage.append(query)
 
+@timed(logger)
 def __generate_machanic_queries(user_queries: list, classes: dict):
     mech_only_once = set()
     mechanic_queries = []
@@ -116,6 +129,7 @@ def __generate_machanic_queries(user_queries: list, classes: dict):
             __append_query_if_not_empty(__generate_description_query(query, wd_class), mechanic_queries)
             __append_query_if_not_empty(__generate_label_description_query(query, wd_class), mechanic_queries)
             mech_only_once.add(wd_class_id)
+        __append_query_if_not_empty(__generate_label_user_query(query, wd_class), mechanic_queries)
     return mechanic_queries
    
 def __save_queries_to_json(queries, json_file_path: Path):

@@ -6,6 +6,7 @@ import json
 import re
 import csv
 
+from experiments.main_logger import main_logger
 from core.default_languages import ENGLISH_LANGUAGE
 from core.model_simplified.classes import ClassFields
 from core.utils.timer import timed
@@ -18,7 +19,7 @@ TEST_RANDOM_SEED = 3333
 test_random = Random()
 test_random.seed(TEST_RANDOM_SEED)
 
-logger = ul.root_logger.getChild("initial_search_class_selection")
+logger = main_logger.getChild("initial_search_class_selection")
 
 VALUES_TO_SELECT = 10
 TEST_VALUES_TO_SELECT = 1
@@ -134,7 +135,8 @@ def __select_test_entities_for_selection(selections: list, classes_dict: dict, b
             } 
             for entity_id in test_random_selection
         ]
-        
+
+@timed(logger)
 def __initial_sublists(context, classes_dict, instance_counts_dict, ancestor_counts_dict, children_counts_dict):
     ancestor_buckets = __split_into_buckets(ancestor_counts_dict.values(), lambda entity: entity["n"], ANCESTORS_COUNT_RANGES)
     children_buckets = __split_into_buckets(children_counts_dict.values(), lambda entity: entity["n"], CHILDREN_COUNT_RANGES)
@@ -160,7 +162,7 @@ def __initial_sublists(context, classes_dict, instance_counts_dict, ancestor_cou
     __save_sublists_to_csv(sublists, OUTPUT_FILE_CSV_PREFIX + ".csv")
     __save_sublists_to_csv(sublists_shuffled, OUTPUT_FILE_CSV_PREFIX + "_shuffled" + ".csv")   
     
-
+@timed(logger)
 def __substitution_sublists(context, classes_dict, instance_counts_dict):    
     instance_buckets = __split_into_buckets(instance_counts_dict.values(), lambda entity: entity["nins"], INSTANCE_COUNT_RANGES)
     instance_selections = __create_selections_for_buckets("instances", classes_dict, instance_buckets, INSTANCE_COUNT_RANGES, context)
