@@ -8,7 +8,7 @@ import core.utils.logging as ul
 from core.utils.timer import timed
 from experiments.main_logger import main_logger
 from dotenv import load_dotenv, find_dotenv
-from experiments.execute_seach_queries.config_generators import configs_without_reranking
+from experiments.execute_seach_queries.config_generators import configs_without_reranking, configs_with_boost_reranking
 
 load_dotenv(find_dotenv())
 
@@ -80,8 +80,7 @@ def __main_execution(queries_json_file_path: Path, output_json_file_path: Path, 
 def main_methods_without_reranking(queries_json_file_path: Path):
     __main_execution(queries_json_file_path, OUTPUT_FILE_PATH_PREFIX + "no_rerank.json", configs_without_reranking)
     
-
 @timed(logger)
-def main_methods_with_boost_reranker():
-    pass
+def main_methods_with_boost_reranker(queries_json_file_path: Path):
+    __main_execution(queries_json_file_path, OUTPUT_FILE_PATH_PREFIX + "boost_rerank.json", configs_with_boost_reranking)
 
