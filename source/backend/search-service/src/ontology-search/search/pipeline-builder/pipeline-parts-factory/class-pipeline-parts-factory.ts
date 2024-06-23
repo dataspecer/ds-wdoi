@@ -34,6 +34,13 @@ export type ClassFusionCandidateSelectorsIds = 'fusion';
 
 export type ClassRerankersIds = 'cross_encoder' | 'feature_instance_mappings';
 
+const VALID_CANDIDATE_SELECTORS_IDS: ClassCandidateSelectorsIds[] = [
+  'elastic_bm25',
+  'elastic_bm25_fielded',
+  'qdrant_sparse',
+  'qdrant_dense',
+];
+
 export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
   ClassCandidateSelectorsIds,
   ClassFusionCandidateSelectorsIds,
@@ -112,10 +119,9 @@ export class ClassesPipelinePartsFactory extends PipelinePartsFactory<
     >,
   ): boolean {
     if (
-      config.candidateSelectors[0].id !== 'qdrant_dense' ||
-      (config.candidateSelectors[1].id !== 'elastic_bm25' &&
-        config.candidateSelectors[1].id !== 'elastic_bm25_fielded' &&
-        config.candidateSelectors[1].id !== 'qdrant_sparse')
+      config.candidateSelectors[0].id === config.candidateSelectors[1].id ||
+      !VALID_CANDIDATE_SELECTORS_IDS.includes(config.candidateSelectors[0].id) ||
+      !VALID_CANDIDATE_SELECTORS_IDS.includes(config.candidateSelectors[1].id)
     ) {
       return false;
     }
