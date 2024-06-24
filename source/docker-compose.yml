@@ -2,18 +2,6 @@ name: wdoi
 
 services:
 
-  elastic:
-    image: elasticsearch:8.13.0
-    restart: unless-stopped
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms8g -Xmx8g" 
-    networks:
-      - wdoi_internal
-
   api:
     build: ./backend/wdoi-service
     restart: unless-stopped
@@ -23,6 +11,8 @@ services:
       - wdoi_internal
     environment:
       ES_NODE: http://elastic:9200
+      SEARCH_CLASSES_ENDPOINT: http://search:3062/search-classes
+      SEARCH_PROPERTIES_ENDPOINT: http://search:3062/search-properties
       CLASSES_PATH: /app/input/classes-recs.json
       PROPERTIES_PATH: /app/input/properties-recs.json
       RESTART_KEY: "1234567"
@@ -34,9 +24,87 @@ services:
         bind:
           create_host_path: true
 
+  search:
+    build: ./backend/search-service
+    restart: unless-stopped
+    networks:
+      - wdoi_internal
+    environment:
+      ES_NODE: http://elastic:9200
+      QDRANT_NODE: http://qdrant:6333
+      CLASSES_PATH: /app/input/classes-experimental-prep-5-minimize.json
+      PROPERTIES_PATH: /app/input/properties-experimental-prep-5-minimize.json
+      RESTART_KEY: "1234567"
+      CROSS_RERANKER_NODE: http://cross_encoder:8300/rerank
+      DENSE_EMBED_NODE: http://dense_embed:8100/embed
+      SPARSE_EMBED_NODE: http://sparse_embed:8200/embed
+    volumes:
+      - type: bind
+        source: ./preprocessing/output
+        target: /app/input
+        read_only: true
+        bind:
+          create_host_path: true
+
+
+  elastic: 
+    image: elasticsearch:8.13.0
+    restart: unless-stopped
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g" 
+    networks:
+      - wdoi_internal
+
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    volumes:
+      - qddata:/qdrant/storage
+    environment:
+      - QDRANT__TELEMETRY_DISABLED=True
+    networks:
+      - wdoi_internal
+
+
+  cross_encoder:
+    build: ./backend/cross-encoder-reranker-service
+    restart: unless-stopped
+    environment:
+      NUM_THREADS: 8
+    networks:
+      - wdoi_internal
+
+
+  dense_embed:
+    build: ./backend/dense-embedding-service
+    restart: unless-stopped
+    environment:
+      NUM_THREADS: 4
+    networks:
+      - wdoi_internal
+
+
+  sparse_embed:
+    build: ./backend/sparse-embedding-service
+    restart: unless-stopped
+    environment:
+      NUM_THREADS: 2
+      ACCESS_TOKEN: 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
+    networks:
+      - wdoi_internal
+
+
 volumes:
   esdata:
     driver: local
+  qddata:
+    driver: local
+
 
 networks:
   wdoi_internal:

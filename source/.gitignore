@@ -1,2 +1,1 @@
-docker-compose.dev.local.yml
-docker-compose.dev.test.local.yml
+*local.yml
