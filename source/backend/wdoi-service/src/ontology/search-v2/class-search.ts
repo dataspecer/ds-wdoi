@@ -6,6 +6,7 @@ import { EntitySearch } from './entity-search.js';
 
 export class ClassSearch extends EntitySearch<SearchClassesBodyType, WdClass, EntityIdsList> {
   async search(config: SearchClassesBodyType): Promise<WdClass[]> {
+    config.query.text = config.query.text.trim();
     if (WdClass.URI_REGEXP.test(config.query.text)) {
       const uriSearchResult = this.searchBasedOnURI(config.query.text);
       if (uriSearchResult?.wdClass !== undefined) {

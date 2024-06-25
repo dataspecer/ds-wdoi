@@ -10,6 +10,7 @@ export class PropertySearch extends EntitySearch<
   EntityIdsList
 > {
   async search(config: SearchPropertiesBodyType): Promise<WdProperty[]> {
+    config.query.text = config.query.text.trim();
     if (WdProperty.URI_REGEXP.test(config.query.text)) {
       const uriSearchResult = this.searchBasedOnURI(config.query.text);
       if (uriSearchResult?.wdProperty !== undefined) {
