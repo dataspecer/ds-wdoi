@@ -5,7 +5,6 @@
 
 # C extensions
 *.so
-
 test.py
 es_config.py
 
