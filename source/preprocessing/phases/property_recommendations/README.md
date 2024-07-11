@@ -22,3 +22,6 @@ This phase assumes already merged property usage statistics from modification ph
         - But the ranges on property_score_fields are kept the same.
         - From this point out its used only for ordering when displaying to the user.
     - If the property from statistics do not have a usage and the merged property constraint is missing subject constraint or value constraint, it is not merged, Since that would mean it points nowhere.
+      - But the properties are not deleted.
+      - They can still be access through the Wdoi API service.
+      - In the Dataspecer, it just means that they cannot be used.
