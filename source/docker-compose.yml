@@ -94,7 +94,7 @@ services:
     restart: unless-stopped
     environment:
       NUM_THREADS: 2
-      ACCESS_TOKEN: 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
+      ACCESS_TOKEN: 
     networks:
       - wdoi_internal
 
